@@ -1,243 +1,85 @@
-# OpsGuardian™ Command Center X (CCX)
+# OpsGuardian™
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Salesforce API](https://img.shields.io/badge/API-62.0+-blue.svg)](#status--compatibility)
-[![CI/CD](https://img.shields.io/badge/CI/CD-GitHub%20Actions-yellow.svg)](.github/workflows)
-
-**A Salesforce-Native Compliance, Security, and AI Monitoring Framework**  
-Built for regulated industries, government, and enterprises that demand governance, observability, and proactive remediation on Salesforce.
+OpsGuardian™ is a Salesforce-native monitoring and compliance framework that extends beyond native tools like Event Monitoring and Shield. It provides real-time observability, AI diagnostics, and automation to help regulated organizations (finance, healthcare, government) maintain compliance, prevent failures, and scale securely.
 
 ---
 
-## Status & Compatibility
-
-- **Status:** Production-ready (AppExchange submission in progress)  
-- **Version:** 1.0.0  
-- **API Version:** Salesforce 62.0+  
-- **Supported Orgs:** Scratch, Sandbox, Developer Edition, Production  
-- **Limitations:** Slack/Jira plugins shipped as stubs; multi-cloud ingestion planned for v2.0  
-
----
-
-## Features
-
-- Governor Limits Dashboard – Real-time CPU, SOQL, DML, and heap tracking  
-- Flow & Transaction Monitor – Surfacing faulting Flows and heavy transactions  
-- AI Diagnostics Tile – GPT + Einstein hybrid anomaly detection and scoring  
-- Predictive Alerts – Proactive risk scores via Platform Events  
-- Policy-as-Code – Custom Metadata (`OG_Policy__mdt`) for configurable thresholds  
-- Remediation Automation – Flow Invocables to auto-rollback or create Jira/Slack tickets  
-- Multi-Org Hub-and-Spoke – Secure Apex REST endpoint for cross-org telemetry  
-- CI/CD Ready – Jest tests, GitHub Actions pipelines, PMD + sf-scanner integrated  
+## Table of Contents
+1. [Overview](#1-overview)
+2. [What It Does](#2-what-it-does)
+3. [Core Features](#3-core-features)
+4. [Tech Stack](#4-tech-stack)
+5. [Architecture](#5-architecture)
+6. [Roadmap](#6-roadmap)
+7. [Compliance](#7-compliance)
+8. [Installation](#8-installation)
+9. [Usage](#9-usage)
+10. [Contribution](#10-contribution)
+11. [License](#11-license)
+12. [Appendix](#12-appendix)
 
 ---
 
-## Architecture & Security
-
-- Managed Package (2GP) structure for AppExchange readiness  
-- Permissions: `OpsGuardian_Admin` with least-privilege model  
-- Security Enforcement:  
-  - `WITH SECURITY_ENFORCED` in all SOQL queries  
-  - `Security.stripInaccessible()` on all DML operations  
-- Authentication: OAuth 2.0 (JWT / Client Credentials) in Named Credentials; TLS 1.3 required  
-- Resilience: Queueable + Batch Apex, circuit breaker patterns, retry/backoff for callouts  
-- Accessibility & i18n: LWCs with ARIA labels, text externalized to Custom Labels  
+## 1. Overview
+OpsGuardian™ is built as a second-generation managed package (2GP) designed for AppExchange distribution. It provides:
+- Real-time monitoring of Salesforce governor limits, Flows, and API calls.
+- AI-assisted diagnostics (Einstein + external LLM integration).
+- Policy-driven rules management via Custom Metadata.
+- Event-driven alerts to Slack, Jira, or other systems.
 
 ---
 
-## Installation
+## 2. What It Does
+- Captures and logs operational events into `OpsGuardian_History__c`.
+- Analyzes performance and compliance risks in real time.
+- Publishes alerts via Platform Events.
+- Provides dashboards and Lightning Web Components (LWCs) for monitoring.
+- Automates remediation through Flows and Invocable Apex.
 
-### Scratch Org (Developer Testing)
-```bash
-# Authenticate to Dev Hub
-sfdx force:auth:web:login -d -a DevHub
+---
 
-# Create a scratch org
-sfdx force:org:create -f config/project-scratch-def.json -a OGCCX -d 7
+## 3. Core Features
+- **Governance**: Real-time detection of Flow faults, governor limits, and API misuse.  
+- **Compliance**: Shield Platform Encryption + full FLS/CRUD enforcement.  
+- **AI Diagnostics**: GPT + Einstein hybrid scoring with recommended remediations.  
+- **Plugins**: Extensible architecture for Slack, Jira, or custom webhooks.  
+- **Multi-Org**: Hub-and-spoke ingestion for enterprise telemetry.  
+- **Offline Resilience**: LocalStorage caching in LWCs.  
+- **DevOps Ready**: GitHub Actions pipeline with PMD scans and Jest testing.
 
-# Push source and assign permissions
-sfdx force:source:push
-sfdx force:user:permset:assign -n OpsGuardian_Admin
+---
 
-# Launch the Lightning App
-sfdx force:org:open -p /lightning/app/OpsGuardian
+## 4. Tech Stack
+- **Salesforce Platform**
+  - Apex, Lightning Web Components (LWC), Platform Events
+  - Shield Platform Encryption, Custom Metadata Types (CMDT)
+- **AI Integration**
+  - OpenAI via OAuth Named Credentials
+  - Einstein Prediction Builder + Next Best Action
+- **DevOps**
+  - Salesforce DX (SFDX)
+  - GitHub Actions (CI/CD, test, package deploy)
+  - Jest (LWC unit testing)
+- **Integrations**
+  - MuleSoft for multi-cloud ingestion
+  - Plugin framework for Slack/Jira
+- **Compliance**
+  - GDPR, SOC 2, HIPAA-ready patterns
 
-Sandbox (UAT)
-	1.	Use package install link:
-Install in Sandbox
-	2.	Assign OpsGuardian_Admin permission set.
-	3.	Upload Chart.js static resource if dashboards don’t render.
+---
 
-Production (AppExchange)
-	•	Once listed: AppExchange Install Link
-	•	Supports upgrades via 2GP managed package.
+## 5. Architecture
 
-⸻
-
-Upgrade Notes
-	•	CMDT Records: Preserved across upgrades.
-	•	Custom Objects: OpsGuardian_History__c data retained.
-	•	Permission Sets: Updated automatically; review after upgrade.
-	•	Flows & Apex: Replaced by new versions; check customizations before upgrade.
-
-⸻
-
-Post-Install Checklist
-
-Step	Description
-Upload Chart.js static resource	Required for dashboard charts
-Confirm OpsGuardian_History__c object	Schema must match managed package
-Verify Platform Event Performance_Alert__e	Ensure deployed and subscribed
-Assign OpsGuardian_Admin perm set	Grants access
-Adjust thresholds via CMDT	Configure OG_Policy__mdt records
-Test AI Diagnostics Tile	Validate OpenAI + Einstein integration
-
-
-⸻
-
-Screenshots & Architecture
-
-Command Center Dashboard
-
-Real-time governor limit tracking and alerts.
-
-AI Diagnostics Tile
-
-Hybrid AI scoring with remediation options.
-
-Policy Management
-
-Thresholds configurable via Custom Metadata.
-
-High-Level Architecture Diagram
-
+```mermaid
 flowchart TD
   subgraph Salesforce Org
     A[OpsGuardian LWC Tiles] --> B[Lightning App Page]
     B --> C[OpsGuardian Apex Services]
-    C --> D[OpsGuardian_History__c]
+    C --> D[OpsGuardian_History__c Object]
     C --> E[Platform Events]
     C --> F[CMDT: OG_Policy__mdt]
   end
-  C -->|Named Credential (JWT)| G[(External AI)]
+
+  C -->|Named Credential (JWT)| G[(External AI Service)]
   C -->|REST API Hub| H[Other Salesforce Orgs]
-  C -->|Plugins| I[(Slack/Jira)]
-
-
-⸻
-
-Roadmap
-	•	v1.0: AppExchange package, pilot deployments
-	•	v1.1: Slack/Jira plugins, enhanced dashboards, i18n improvements
-	•	v2.0: Multi-cloud ingestion + standalone SaaS dashboard
-
-⸻
-
-Running Tests
-
-Apex Unit Tests
-
-sfdx force:apex:test:run --codecoverage --resultformat human --outputdir test-results --wait 10
-
-LWC Jest Tests
-
-npm install
-npm test
-
-	•	Target: 95%+ coverage across Apex + LWC
-	•	Codecov/coverage badge integration recommended
-
-⸻
-
-Demo Data
-
-Import demo records to see dashboards in action:
-
-# Import sample governor limit history
-sfdx force:data:tree:import -p data/OG_History-plan.json
-
-# Import sample flow executions
-sfdx force:data:tree:import -p data/OG_Flow-plan.json
-
-Files included:
-	•	data/OG_History-plan.json + OG_History.json
-	•	data/OG_Flow-plan.json + OG_Flow.json
-
-⸻
-
-CI/CD Example
-
-Minimal GitHub Actions workflow (.github/workflows/deploy.yml):
-
-name: Validate & Deploy
-
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Salesforce CLI
-        run: npm install sfdx-cli --global
-      - name: Authenticate Dev Hub
-        run: sfdx force:auth:sfdxurl:store -f ./auth/devhub.json -a DevHub
-      - name: Push Metadata
-        run: sfdx force:source:push -u DevHub
-      - name: Run Apex Tests
-        run: sfdx force:apex:test:run --codecoverage --resultformat human --wait 10
-      - name: Static Code Scan
-        run: sfdx scanner:run --target force-app --format table
-
-
-⸻
-
-Compliance Readiness
-	•	95%+ Apex coverage target
-	•	Jest tests for LWCs
-	•	PMD + sf-scanner static analysis
-	•	GDPR + SOC 2 data flow docs in /docs/compliance/
-	•	Security Review packet prepared: incident response + deletion policies
-
-⸻
-
-Contributing
-
-We welcome contributions:
-	•	Fork repo & branch from main
-	•	Run all tests (npm test + Apex tests) before PRs
-	•	Follow CONTRIBUTING.md and CODE_OF_CONDUCT.md
-
-⸻
-
-License & Support
-	•	Licensed under MIT
-	•	Maintainer: OpsGuardian Dev Team
-	•	Email: security@opsguardian.dev
-	•	SLA: Critical <48h | High <5d | Normal = next release cycle
-
-⸻
-
-Appendix
-
-Dependencies
-	•	Salesforce CLI (sfdx) v7+
-	•	Node.js (for Jest)
-	•	Chart.js static resource (for dashboards)
-	•	GitHub Actions (for CI/CD)
-	•	PMD + sf-scanner (for static analysis)
-
-Developer Resources
-	•	Salesforce DX Developer Guide
-	•	AppExchange Security Review Guide
-	•	Einstein Prediction Builder
-
-Compliance Artifacts
-	•	/docs/compliance/data-flow.png – PII flow diagram
-	•	/docs/compliance/encryption.md – Shield/TLS details
-	•	/docs/compliance/incident-response.md – Triage & escalation policy
-	•	/docs/compliance/deletion-policy.md – Data deletion procedures
-
----
-
-=
+  C -->|Plugins| I[(Slack/Jira/Webhooks)]
