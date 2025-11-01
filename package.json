@@ -1,13 +1,16 @@
 {
   "name": "command-center-x",
   "private": true,
+  "type": "module",
   "scripts": {
     "fmt": "prettier -w \"**/*.{js,ts,html,md,json,yml,yaml,xml}\"",
     "fmt:check": "prettier -c \"**/*.{js,ts,html,md,json,yml,yaml,xml}\"",
-    "lint": "eslint \"force-app/**/*.js\" --max-warnings=0 || true"
+    "lint": "eslint \"force-app/**/*.js\" --max-warnings=0"
   },
   "devDependencies": {
-    "@lwc/eslint-plugin-lwc": "^1.7.1",
+    "@babel/core": "^7.28.5",
+    "@babel/eslint-parser": "^7.28.5",
+    "@lwc/eslint-plugin-lwc": "^3.3.0",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.3.3"
