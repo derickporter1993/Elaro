@@ -8,7 +8,7 @@ jobs:
   lint-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Node setup
         uses: actions/setup-node@v6
         with:
@@ -25,7 +25,7 @@ jobs:
   sfdx-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: sfdx-actions/setup-sfdx@v2
       - name: Install Salesforce Code Analyzer
         run: sfdx plugins:install @salesforce/sfdx-scanner
