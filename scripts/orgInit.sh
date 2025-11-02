@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-alias_name="${1:-CCX}"
+alias_name="${1:-OpsGuardian}"
 # Ensure DevHub exists
 if ! sfdx force:org:list --json | grep -q '"isDevHub": true'; then
   echo "Please auth a DevHub first: sfdx auth:web:login -d -a DevHub"

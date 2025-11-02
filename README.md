@@ -362,7 +362,7 @@ Escalation
 Scratch Org (developer testing)
 
 sfdx force:auth:web:login -d -a DevHub
-sfdx force:org:create -f config/project-scratch-def.json -a OGCCX -d 7
+sfdx force:org:create -f config/project-scratch-def.json -a OpsGuardian -d 7
 sfdx force:source:push
 sfdx force:user:permset:assign -n OpsGuardian_Admin
 sfdx force:org:open -p /lightning/app/OpsGuardian

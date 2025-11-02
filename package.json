@@ -1,5 +1,7 @@
 {
-  "name": "command-center-x",
+  "name": "ops-guardian",
+  "version": "1.0.0",
+  "description": "Salesforce-native monitoring and compliance framework with real-time observability, AI diagnostics, and automation",
   "private": true,
   "scripts": {
     "fmt": "prettier -w \"**/*.{js,ts,html,md,json,yml,yaml,xml}\"",
