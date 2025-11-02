@@ -26,9 +26,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: sfdx-actions/setup-sfdx@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli
       - name: Install Salesforce Code Analyzer
-        run: sfdx plugins:install @salesforce/sfdx-scanner
+        run: sf plugins install @salesforce/sfdx-scanner
       - name: Scan (if apex exists)
         run: |
-          if [ -d "force-app" ]; then sfdx scanner:run --target "force-app" --format table; fi
+          if [ -d "force-app" ]; then sf scanner run --target "force-app" --format table; fi
