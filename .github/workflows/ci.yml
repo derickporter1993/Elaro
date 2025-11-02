@@ -16,7 +16,7 @@ jobs:
       - name: Install tooling
         run: |
           npm init -y >/dev/null 2>&1 || true
-          npm i -D prettier eslint @lwc/eslint-plugin-lwc eslint-config-prettier
+          npm i -D prettier eslint @lwc/eslint-plugin-lwc eslint-config-prettier @babel/core @babel/eslint-parser
       - name: Prettier check
         run: npx prettier -c "**/*.{js,ts,html,md,json,yml,yaml,xml}"
       - name: Lint (if src exists)
@@ -26,9 +26,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: sfdx-actions/setup-sfdx@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli
       - name: Install Salesforce Code Analyzer
-        run: sfdx plugins:install @salesforce/sfdx-scanner
+        run: sf plugins install @salesforce/sfdx-scanner
       - name: Scan (if apex exists)
         run: |
-          if [ -d "force-app" ]; then sfdx scanner:run --target "force-app" --format table; fi
+          if [ -d "force-app" ]; then sf scanner run --target "force-app" --format table; fi
