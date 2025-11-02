@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a problem in CCX
+about: Report a problem in OpsGuardian
 labels: bug
 ---
 
