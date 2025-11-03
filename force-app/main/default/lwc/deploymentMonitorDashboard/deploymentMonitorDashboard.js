@@ -12,18 +12,47 @@ export default class DeploymentMonitorDashboard extends LightningElement {
     { label: "Failed", fieldName: "testsFailed", type: "number" },
   ];
   timer;
+
   connectedCallback() {
     this.load();
-    this.timer = setInterval(() => this.load(), 60000);
+    this.startPolling();
+    // Pause polling when tab is hidden
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
   }
+
   disconnectedCallback() {
-    if (this.timer) clearInterval(this.timer);
+    this.stopPolling();
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
   }
+
+  handleVisibilityChange = () => {
+    if (document.visibilityState === "visible") {
+      this.startPolling();
+      this.load(); // Load immediately when becoming visible
+    } else {
+      this.stopPolling();
+    }
+  };
+
+  startPolling() {
+    if (!this.timer && document.visibilityState === "visible") {
+      this.timer = setInterval(() => this.load(), 60000);
+    }
+  }
+
+  stopPolling() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
   async load() {
     try {
       this.rows = await recent({ limitSize: 20 });
     } catch (e) {
-      /* eslint-disable no-console */ console.error(e);
+      /* eslint-disable no-console */
+      console.error(e);
     }
   }
 }
