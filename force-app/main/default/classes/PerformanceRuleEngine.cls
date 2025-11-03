@@ -8,12 +8,22 @@ public with sharing class PerformanceRuleEngine {
         public String message;
     }
 
+    // Cache for custom settings to avoid repeated queries
+    private static CCX_Settings__c cachedSettings;
+    
+    private static CCX_Settings__c getSettings() {
+        if (cachedSettings == null) {
+            cachedSettings = CCX_Settings__c.getInstance();
+        }
+        return cachedSettings;
+    }
+
     @AuraEnabled
     public static EvalResult evaluateAndPublish(
         LimitMetrics.GovernorStats stats,
         String contextRecordId
     ) {
-        CCX_Settings__c s = CCX_Settings__c.getInstance();
+        CCX_Settings__c s = getSettings();
         Integer cpuWarn = (s != null && s.CPU_Warn__c != null)
             ? Integer.valueOf(s.CPU_Warn__c)
             : 8000;

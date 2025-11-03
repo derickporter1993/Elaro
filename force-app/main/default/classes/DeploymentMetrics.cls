@@ -17,8 +17,12 @@ public with sharing class DeploymentMetrics {
             LIMIT :Math.max(1, limitSize)
         ]) {
             DeployRow r = new DeployRow();
-            r.name = d.Name; r.status = d.Status__c; r.startedOn = d.Started_On__c; r.finishedOn = d.Finished_On__c;
-            r.testsPassed = (Integer)d.Tests_Passed__c; r.testsFailed = (Integer)d.Tests_Failed__c;
+            r.name = d.Name;
+            r.status = d.Status__c;
+            r.startedOn = d.Started_On__c;
+            r.finishedOn = d.Finished_On__c;
+            r.testsPassed = (Integer)d.Tests_Passed__c;
+            r.testsFailed = (Integer)d.Tests_Failed__c;
             out.add(r);
         }
         return out;
