@@ -61,8 +61,6 @@ export default class PollingManager {
       this.visibilityHandler = () => {
         if (document.visibilityState === 'visible') {
           this.start();
-          // Optionally trigger immediate callback when becoming visible
-          this.callback();
         } else {
           this.stop();
         }
