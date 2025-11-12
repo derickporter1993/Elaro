@@ -48,9 +48,7 @@ export default class ApiUsageDashboard extends LightningElement {
       if (this.errorBackoffMultiplier > 1) {
         this.errorBackoffMultiplier = 1;
         this.currentInterval = this.pollInterval;
-        if (this.pollingManager) {
-          this.pollingManager.updateInterval(this.currentInterval);
-        }
+        this.pollingManager.updateInterval(this.currentInterval);
 
       }
     } catch (error) {
