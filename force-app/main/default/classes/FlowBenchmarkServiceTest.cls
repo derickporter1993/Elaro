@@ -5,15 +5,15 @@ private class FlowBenchmarkServiceTest {
         // Create test data with known distribution for percentile testing
         List<Flow_Execution__c> executions = new List<Flow_Execution__c>();
 
-        // TestFlow1 - 100 executions with predictable CPU distribution
-        // Range: 1000ms to 10000ms (increments of 90ms)
-        for (Integer i = 0; i < 100; i++) {
+        // TestFlow1 - 30 executions with predictable CPU distribution
+        // Range: 1000ms to 10000ms (increments of ~310ms)
+        for (Integer i = 0; i < 30; i++) {
             executions.add(
                 new Flow_Execution__c(
                     Flow_Name__c = 'TestFlow1',
-                    CPU__c = 1000 + (i * 90), // 1000, 1090, 1180, ... 9910ms
-                    SOQL__c = 5 + i / 10,
-                    DML__c = 2 + i / 20,
+                    CPU__c = 1000 + (i * 310), // 1000, 1310, 1620, ... 9990ms
+                    SOQL__c = 5 + i / 3,
+                    DML__c = 2 + i / 6,
                     Status__c = 'SUCCESS',
                     Run_Time__c = System.now().addMinutes(-i)
                 )
@@ -62,29 +62,29 @@ private class FlowBenchmarkServiceTest {
 
         System.assertNotEquals(null, stats, 'Stats should not be null');
         System.assertEquals('TestFlow1', stats.flowName, 'Flow name should match');
-        System.assertEquals(100, stats.sampleSize, 'Should have 100 samples');
+        System.assertEquals(30, stats.sampleSize, 'Should have 30 samples');
 
         // Verify percentile calculations (approximately)
-        // With 100 samples (1000-9910ms):
+        // With 30 samples (1000-9990ms):
         // 50th percentile should be around 5500ms
-        // 90th percentile should be around 9100ms
-        // 99th percentile should be around 9900ms
+        // 90th percentile should be around 9000ms
+        // 99th percentile should be around 9990ms
         System.assert(
             stats.percentile50 >= 5000 && stats.percentile50 <= 6000,
             'Percentile 50 should be ~5500ms, got: ' + stats.percentile50
         );
         System.assert(
             stats.percentile90 >= 8500 && stats.percentile90 <= 9500,
-            'Percentile 90 should be ~9100ms, got: ' + stats.percentile90
+            'Percentile 90 should be ~9000ms, got: ' + stats.percentile90
         );
         System.assert(
             stats.percentile99 >= 9500,
-            'Percentile 99 should be ~9900ms, got: ' + stats.percentile99
+            'Percentile 99 should be ~9990ms, got: ' + stats.percentile99
         );
 
         // Verify min/max
         System.assertEquals(1000, stats.minCpu, 'Min should be 1000ms');
-        System.assertEquals(9910, stats.maxCpu, 'Max should be 9910ms');
+        System.assertEquals(9990, stats.maxCpu, 'Max should be 9990ms');
 
         // Verify average is in expected range
         System.assert(
@@ -160,7 +160,7 @@ private class FlowBenchmarkServiceTest {
         Test.startTest();
         FlowBenchmarkService.PerformanceRating rating = FlowBenchmarkService.rateFlowExecution(
             'TestFlow1',
-            7000, // Between p50 (~5500) and p90 (~9100)
+            7000, // Between p50 (~5500) and p90 (~9000)
             30
         );
         Test.stopTest();
@@ -179,7 +179,7 @@ private class FlowBenchmarkServiceTest {
         Test.startTest();
         FlowBenchmarkService.PerformanceRating rating = FlowBenchmarkService.rateFlowExecution(
             'TestFlow1',
-            9500, // Between p90 (~9100) and p99 (~9900)
+            9500, // Between p90 (~9000) and p99 (~9990)
             30
         );
         Test.stopTest();
@@ -198,7 +198,7 @@ private class FlowBenchmarkServiceTest {
         Test.startTest();
         FlowBenchmarkService.PerformanceRating rating = FlowBenchmarkService.rateFlowExecution(
             'TestFlow1',
-            12000, // Well above p99 (~9900ms)
+            12000, // Well above p99 (~9990ms)
             30
         );
         Test.stopTest();
