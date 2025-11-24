@@ -61,11 +61,9 @@ EVENTS --> JIRA
 APEX <-. REST .-> HUB
 ```
 
-Optional static fallback image: docs/images/architecture.png
-
 ⸻
 
-Requirements
+## Requirements
 
 - Salesforce API 63.0+ (tested through 65.0, Winter '26)
 - Salesforce CLI (sf), Dev Hub enabled
@@ -74,7 +72,7 @@ Requirements
 
 ⸻
 
-Quick Start
+## Quick Start
 
 **A) Scratch Org (dev sandbox)**
 
