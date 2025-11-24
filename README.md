@@ -1,6 +1,8 @@
 # Sentinel
 
-**Compliance-first Salesforce configuration drift guardrail and audit evidence engine for regulated orgs.**
+**The AI Compliance Brain for Salesforce — Configuration drift detection, audit evidence automation, and intelligent compliance analysis for regulated organizations.**
+
+*Current: v1.0 — Compliance Drift Guardrail | Evolving: AI Compliance Intelligence Platform*
 
 <div align="center">
 
@@ -18,9 +20,11 @@
 
 Sentinel makes your Salesforce org **audit-ready and protected from configuration drift** in 24 hours.
 
-It continuously monitors your Salesforce configuration for compliance violations, permission sprawl, and undocumented changes — then generates audit evidence and a baseline compliance report that regulators actually want to see.
+**Today (v1.0)**: Sentinel continuously monitors your Salesforce configuration for compliance violations, permission sprawl, and undocumented changes — then generates audit evidence and a baseline compliance report that regulators actually want to see.
 
-**Think of it as**: A compliance guardrail that stops your Salesforce org from drifting into non-compliance between audits.
+**Tomorrow (v1.5+)**: Sentinel evolves into an **AI Compliance Brain** that doesn't just detect drift, but interprets the *intent, impact, and compliance reasoning* behind every change — answering questions no other tool can answer.
+
+**Think of it as**: Your AI compliance analyst that works 24/7, understands regulatory frameworks, and speaks both technical and auditor language.
 
 ---
 
@@ -103,6 +107,124 @@ To keep Sentinel simple and focused, v1 intentionally:
 - ❌ **Does not prevent changes**: It detects and alerts; it doesn't block (approval workflows are future work)
 
 Sentinel is a **compliance drift detector**, not a full GRC platform.
+
+---
+
+## The Future: AI Compliance Intelligence
+
+Sentinel is evolving into the world's first **AI Compliance Brain** — a system that doesn't just detect drift, but **interprets the meaning, intent, and compliance impact** of every change.
+
+**Vision**: Intelligence, not dashboards.
+
+Where competitors show logs, Sentinel will provide judgment, context, and compliance reasoning.
+
+### Coming in v1.5 (Q2 2025) — AI-Assisted Remediation
+
+#### **Change Intent Analysis** 🧠
+The signature feature that sets Sentinel apart — AI that understands the *why* behind every change:
+
+**What competitors show**:
+```
+Permission Set "Financial_Data_Access" modified by j.smith@acme.org
+```
+
+**What Sentinel shows**:
+```
+⚠️ High-Risk Change Detected
+
+Change: Permission Set "Financial_Data_Access" modified
+Changed By: j.smith@acme.org
+Risk Score: 8.7/10
+
+AI Analysis:
+This change grants 45 users "Modify All Data" permission, which:
+• Violates SOC2-CC6.3 (logical access controls)
+• Expands donor-data exposure by 340%
+• Bypasses approval workflow for financial records
+• Fails HIPAA "minimum necessary" access rule (§164.514(d))
+
+Compliance Impact:
+- HIPAA: ❌ Non-compliant
+- SOC 2: ❌ Control failure (CC6.1)
+- SOX: ❌ Segregation of duties violation
+
+Recommended Fix:
+Create granular permission set with access to:
+- Financial_Transactions__c (Read/Edit only)
+- Account.AnnualRevenue (Read only)
+
+Evidence Generated: Attached to audit trail
+```
+
+This level of reasoning is **impossible for competitors to match** without rebuilding their entire platform.
+
+#### **Automated Remediation Suggestions** 🛠️
+One-click fixes for common compliance violations:
+- Remove stale permission set assignments (users inactive >90 days)
+- Revert OWD settings to "Private" when changed without approval
+- Re-enable Field History Tracking on compliance-sensitive objects
+
+#### **Jira Integration** 🎫
+Auto-create tickets for high-risk changes with full compliance evidence attached.
+
+---
+
+### Coming in v2.0 (Q4 2025) — Multi-Org Governance
+
+#### **Compliance Co-Pilot** 🤖
+Natural language interface for compliance queries:
+
+```
+You: "Show me all risky flows touching PII"
+Sentinel: [Displays 12 flows with PII exposure risks, ranked by severity]
+
+You: "Generate SOC2 evidence for Q2"
+Sentinel: [Exports audit-ready PDF with all Q2 evidence]
+
+You: "Why did our readiness score drop from 87 to 72?"
+Sentinel: "3 high-risk changes detected:
+1. 23 users granted 'View All Data' without approval
+2. Patient_Records__c sharing changed to Public Read/Write
+3. Shield Platform Encryption disabled on SSN__c field"
+```
+
+#### **Cross-CRM Unified Governance** 🌐
+One compliance model across all your CRMs:
+- Salesforce
+- HubSpot
+- Dynamics 365
+- Zendesk
+- ServiceNow
+- Custom apps
+
+**The Moat**: Once Sentinel builds this unified compliance graph, competitors cannot catch up without 3-4 years of development.
+
+#### **Predictive Risk Modeling** 📈
+Proactive alerts before violations happen:
+
+```
+⚡ Predictive Alert
+
+Based on recent admin behavior and automation dependencies,
+the upcoming Flow deployment has an 87% probability of causing
+HIPAA access violations.
+
+Suggested Action: Review Flow permissions before deployment.
+```
+
+---
+
+### Why This Matters — Sentinel's Uncopyable Differentiators
+
+1. **AI Change Intent Analysis** — Competitors show *what* changed; Sentinel explains *why it matters*
+2. **Automated Compliance Mapping** — Instant mapping to SOC2, HIPAA, NIST, FedRAMP, GDPR
+3. **Evidence Packs** — Auto-generated, auditor-ready documentation
+4. **Cross-CRM Intelligence** — Unified compliance model (impossible to copy quickly)
+5. **Nonprofit-Focused** — Purpose-built for regulated nonprofits (underserved market)
+
+**No one else is building this.**
+
+[See full roadmap →](ROADMAP.md)
 
 ---
 
