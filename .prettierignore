@@ -1,0 +1,13 @@
+# Salesforce metadata files
+**/*-meta.xml
+**/*.object-meta.xml
+**/*.permissionset-meta.xml
+**/*.event-meta.xml
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build artifacts
+.sfdx/
+.sf/
