@@ -10,7 +10,7 @@ jobs:
   lint-format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Node setup
         uses: actions/setup-node@v6
@@ -30,7 +30,7 @@ jobs:
   sfdx-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Setup Salesforce CLI
         uses: sfdx-actions/setup-sfdx@v2
