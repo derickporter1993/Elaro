@@ -67,7 +67,7 @@ jobs:
   # Job to run ESLint
   eslint-check:
     executor: node-executor
-    parallelism: 2 # Run with parallelism to speed up linting
+    parallelism: 2 # Demonstrating parallelism feature - adjust based on codebase size
     steps:
       - checkout
       - attach_workspace:
@@ -84,18 +84,18 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: Install Salesforce CLI
+          name: Setup Salesforce CLI
           command: |
-            npm install -g @salesforce/cli
+            npm install -g sfdx-cli
       - run:
           name: Install Salesforce Code Analyzer
           command: |
-            sf plugins install @salesforce/sfdx-scanner
+            sfdx plugins:install @salesforce/sfdx-scanner
       - run:
           name: Run Salesforce Code Analyzer
           command: |
             if [ -d "force-app" ]; then
-              sf scanner run --target "force-app" --format table
+              sfdx scanner:run --target "force-app" --format table
             else
               echo "No force-app directory found, skipping scan"
             fi
@@ -135,9 +135,10 @@ workflows:
           requires:
             - install-dependencies
 
-      - additional-checks:
-          requires:
-            - install-dependencies
+      # Uncomment when additional checks are implemented
+      # - additional-checks:
+      #     requires:
+      #       - install-dependencies
 
   # Nightly workflow (optional - runs on a schedule)
   nightly-build:
