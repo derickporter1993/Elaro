@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a problem in OpsGuardian
+about: Report a problem in Sentinel
 labels: bug
 ---
 

@@ -1,4 +1,4 @@
-# OpsGuardian™
+# Sentinel™
 
 <div align="center">
 
@@ -17,9 +17,9 @@
 
 ## Overview
 
-OpsGuardian™ is a comprehensive Salesforce-native monitoring and compliance framework designed for regulated industries. It provides real-time observability, AI-powered diagnostics, and automated remediation to help organizations maintain compliance, prevent outages, and scale securely.
+Sentinel™ is a comprehensive Salesforce-native monitoring and compliance framework designed for regulated industries. It provides real-time observability, AI-powered diagnostics, and automated remediation to help organizations maintain compliance, prevent outages, and scale securely.
 
-### Why OpsGuardian?
+### Why Sentinel?
 
 - **Real-Time Monitoring**: Track governor limits, Flow execution, API usage, and system performance
 - **AI-Powered Insights**: Leverage Einstein and external LLMs for intelligent diagnostics
@@ -88,9 +88,9 @@ OpsGuardian™ is a comprehensive Salesforce-native monitoring and compliance fr
 ```mermaid
 flowchart TB
     subgraph "Salesforce Org"
-        LWC[OpsGuardian LWC]
+        LWC[Sentinel LWC]
         APEX[Apex Services]
-        DATA[(OpsGuardian Data)]
+        DATA[(Sentinel Data)]
         EVENTS[Platform Events]
         CMDT[Custom Metadata]
 
@@ -120,9 +120,9 @@ flowchart TB
 
 ### Key Components
 
-1. **OpsGuardian LWC Tiles**: Real-time dashboard components
+1. **Sentinel LWC Tiles**: Real-time dashboard components
 2. **Apex Services**: Core business logic, API integrations
-3. **Custom Objects**: `OpsGuardian_History__c`, `Flow_Execution__c`, `API_Usage_Snapshot__c`
+3. **Custom Objects**: `Sentinel_History__c`, `Flow_Execution__c`, `API_Usage_Snapshot__c`
 4. **Platform Events**: `Performance_Alert__e` for real-time alerting
 5. **Custom Metadata**: `OG_Policy__mdt` for configurable thresholds
 
@@ -144,16 +144,16 @@ sf org login web --set-default-dev-hub --alias DevHub
 
 # Create scratch org
 sf org create scratch --definition-file config/project-scratch-def.json \
-  --alias OpsGuardian --duration-days 7 --set-default
+  --alias Sentinel --duration-days 7 --set-default
 
 # Push source
 sf project deploy start
 
 # Assign permission set
-sf org assign permset --name OpsGuardian_Admin
+sf org assign permset --name Sentinel_Admin
 
 # Open org
-sf org open --path /lightning/app/OpsGuardian
+sf org open --path /lightning/app/Sentinel
 ```
 
 ### Option 2: Sandbox/Production
@@ -163,7 +163,7 @@ sf org open --path /lightning/app/OpsGuardian
    https://login.salesforce.com/packaging/installPackage.apexp?p0=04t...
    ```
 
-2. Assign the `OpsGuardian_Admin` permission set to administrators
+2. Assign the `Sentinel_Admin` permission set to administrators
 
 3. Configure thresholds in Setup → Custom Metadata Types → `OG_Policy__mdt`
 
@@ -194,7 +194,7 @@ Configure Slack webhook:
 
 ### 3. View Dashboards
 
-Open the **OpsGuardian** Lightning app to access:
+Open the **Sentinel** Lightning app to access:
 
 - API Usage Dashboard
 - Flow Execution Monitor
@@ -208,7 +208,7 @@ Query operational events:
 
 ```sql
 SELECT Event_Type__c, Severity__c, Message__c, Timestamp__c
-FROM OpsGuardian_History__c
+FROM Sentinel_History__c
 WHERE Severity__c = 'Critical'
 ORDER BY Timestamp__c DESC
 LIMIT 50
@@ -233,7 +233,7 @@ Integer cpuWarn = settings.CPU_Warn__c?.intValue();
 1. **Setup → Named Credentials → External Credentials**
 2. Create `OG_AI` with JWT Bearer flow
 3. Configure endpoint URL for your AI service
-4. Assign principal to `OpsGuardian_Admin` permission set
+4. Assign principal to `Sentinel_Admin` permission set
 
 ### Platform Events
 
@@ -297,13 +297,13 @@ curl -X POST "$SF_URL/services/apexrest/og/v1/ingest" \
 
 ## Plugin SDK
 
-Extend OpsGuardian with custom integrations:
+Extend Sentinel with custom integrations:
 
 ### Plugin Interface
 
 ```apex
 public interface OG_Plugin {
-    void send(OpsGuardian_History__c eventRec);
+    void send(Sentinel_History__c eventRec);
     Boolean supports(String eventType, String severity);
 }
 ```
@@ -312,7 +312,7 @@ public interface OG_Plugin {
 
 ```apex
 public class MyCustomPlugin implements OG_Plugin {
-    public void send(OpsGuardian_History__c eventRec) {
+    public void send(Sentinel_History__c eventRec) {
         // Send to external system
         HttpRequest req = new HttpRequest();
         req.setEndpoint('callout:MyWebhook');
@@ -381,7 +381,7 @@ sf scanner run --target force-app --format table
 
 ### Threat Model
 
-OpsGuardian follows security best practices:
+Sentinel follows security best practices:
 
 | Threat | Mitigation |
 |--------|-----------|
@@ -409,7 +409,7 @@ Report security issues via [GitHub Security Advisories](https://github.com/deric
 
 ## Compliance & Regulatory
 
-OpsGuardian is designed from the ground up for regulated industries. Compliance isn't an add-on—it's built into every layer of the system.
+Sentinel is designed from the ground up for regulated industries. Compliance isn't an add-on—it's built into every layer of the system.
 
 ### Why Compliance Matters
 
@@ -441,7 +441,7 @@ Every system event is logged in an immutable, encrypted record that regulators c
 **Implementation:**
 ```apex
 // Automatic audit logging
-OpsGuardian_History__c auditLog = new OpsGuardian_History__c(
+Sentinel_History__c auditLog = new Sentinel_History__c(
     Event_Type__c = 'DATA_ACCESS',
     User__c = UserInfo.getUserName(),
     Action__c = 'READ',
@@ -496,7 +496,7 @@ global class DataRetentionBatch implements Database.Batchable<sObject> {
     global Database.QueryLocator start(Database.BatchableContext bc) {
         Date cutoffDate = Date.today().addDays(-180);
         return Database.getQueryLocator([
-            SELECT Id FROM OpsGuardian_History__c
+            SELECT Id FROM Sentinel_History__c
             WHERE CreatedDate < :cutoffDate
             AND Severity__c != 'Critical'
         ]);
@@ -522,14 +522,14 @@ When a customer requests data deletion:
 public class GDPRDeletionService {
     public static void processErasureRequest(Id customerId) {
         // Step 1: Find all related records
-        List<OpsGuardian_History__c> records = [
+        List<Sentinel_History__c> records = [
             SELECT Id, Details__c, User__c
-            FROM OpsGuardian_History__c
+            FROM Sentinel_History__c
             WHERE Customer_Id__c = :customerId
         ];
 
         // Step 2: Anonymize (keep statistics, remove identity)
-        for (OpsGuardian_History__c rec : records) {
+        for (Sentinel_History__c rec : records) {
             rec.Details__c = 'Customer data anonymized per GDPR request';
             rec.User__c = 'ANONYMIZED-USER-' + rec.Id.to15();
             rec.Customer_Id__c = null;
@@ -540,7 +540,7 @@ public class GDPRDeletionService {
         delete [SELECT Id FROM Customer__c WHERE Id = :customerId];
 
         // Step 4: Log the deletion (for audit)
-        insert new OpsGuardian_History__c(
+        insert new Sentinel_History__c(
             Event_Type__c = 'GDPR_ERASURE',
             Severity__c = 'Info',
             Message__c = 'Customer data erased per GDPR Article 17',
@@ -570,7 +570,7 @@ All sensitive data encrypted at the database level:
 
 ```apex
 // Encrypted fields (transparent to code)
-OpsGuardian_History__c record
+Sentinel_History__c record
 ├── Message__c         (ENCRYPTED with AES-256)
 ├── Details__c         (ENCRYPTED with AES-256)
 ├── User__c            (ENCRYPTED with AES-256)
@@ -607,7 +607,7 @@ All communications encrypted with:
 
 ```
 ┌─────────────────────────────────────────┐
-│  Permission Set: OpsGuardian_Admin      │
+│  Permission Set: Sentinel_Admin      │
 │  - Full CRUD on all objects             │
 │  - Export audit logs                    │
 │  - Configure policies                   │
@@ -616,7 +616,7 @@ All communications encrypted with:
          ├─────────────────────────────────┐
          │                                 │
 ┌────────▼──────────┐      ┌──────────────▼─────────┐
-│ OpsGuardian_User  │      │ OpsGuardian_Auditor    │
+│ Sentinel_User  │      │ Sentinel_Auditor    │
 │ - Read dashboards │      │ - Read-only logs       │
 │ - View alerts     │      │ - Export reports       │
 │ - No admin access │      │ - No modifications     │
@@ -627,7 +627,7 @@ All communications encrypted with:
 ```apex
 // WITH SECURITY_ENFORCED enforces sharing rules
 SELECT Id, Message__c, Severity__c
-FROM OpsGuardian_History__c
+FROM Sentinel_History__c
 WHERE Source_Org_Id__c = :UserInfo.getOrganizationId()
 WITH SECURITY_ENFORCED  // Respects user permissions
 LIMIT 100
@@ -636,10 +636,10 @@ LIMIT 100
 **Field-Level Security (FLS):**
 ```apex
 // Strip inaccessible fields before returning data
-public static List<OpsGuardian_History__c> getAuditLogs() {
-    List<OpsGuardian_History__c> records = [
+public static List<Sentinel_History__c> getAuditLogs() {
+    List<Sentinel_History__c> records = [
         SELECT Id, Event_Type__c, Message__c, User__c, Timestamp__c
-        FROM OpsGuardian_History__c
+        FROM Sentinel_History__c
         LIMIT 1000
     ];
 
@@ -679,7 +679,7 @@ SELECT
     Action__c,
     Message__c,
     Correlation_Id__c
-FROM OpsGuardian_History__c
+FROM Sentinel_History__c
 WHERE Correlation_Id__c = 'incident-2025-01-15-security-breach'
 ORDER BY Timestamp__c ASC
 ```
@@ -710,9 +710,9 @@ Containment Time: 105 seconds
 public class IncidentReportGenerator {
     public static void generateReport(String correlationId) {
         // Query all related events
-        List<OpsGuardian_History__c> events = [
+        List<Sentinel_History__c> events = [
             SELECT Timestamp__c, Event_Type__c, User__c, Message__c
-            FROM OpsGuardian_History__c
+            FROM Sentinel_History__c
             WHERE Correlation_Id__c = :correlationId
             ORDER BY Timestamp__c
         ];
@@ -725,7 +725,7 @@ public class IncidentReportGenerator {
         report += 'Total Events: ' + events.size() + '\n\n';
         report += 'TIMELINE:\n';
 
-        for (OpsGuardian_History__c evt : events) {
+        for (Sentinel_History__c evt : events) {
             report += evt.Timestamp__c.format('HH:mm:ss') + ' | ';
             report += evt.Event_Type__c + ' | ';
             report += evt.Message__c + '\n';
@@ -739,7 +739,7 @@ public class IncidentReportGenerator {
 
 **GDPR Article 33 Compliance:**
 
-OpsGuardian helps meet the 72-hour breach notification requirement:
+Sentinel helps meet the 72-hour breach notification requirement:
 
 1. **Detection** (automated): Anomaly detected within seconds
 2. **Alerting** (automated): Security team notified immediately
@@ -769,7 +769,7 @@ OpsGuardian helps meet the 72-hour breach notification requirement:
 ```bash
 # Export for auditors (CSV)
 sf data export bulk \
-  --query "SELECT * FROM OpsGuardian_History__c
+  --query "SELECT * FROM Sentinel_History__c
            WHERE CreatedDate >= 2025-01-01T00:00:00Z" \
   --output-file audit-export-2025-Q1.csv
 
@@ -816,7 +816,7 @@ sf data export --format json --query "..." > events.json
 
 ### Regulatory Compliance Matrix
 
-| Regulation | Requirement | OpsGuardian Feature | Status |
+| Regulation | Requirement | Sentinel Feature | Status |
 |------------|-------------|---------------------|---------|
 | **GDPR** | Right to access | Audit log export | ✅ |
 | **GDPR** | Right to erasure | Automated deletion | ✅ |
@@ -846,7 +846,7 @@ sf data export --format json --query "..." > events.json
 ```sql
 -- Run query (takes 10 seconds)
 SELECT User__c, Action__c, Timestamp__c, Details__c
-FROM OpsGuardian_History__c
+FROM Sentinel_History__c
 WHERE Event_Type__c = 'ADMIN_ACCESS'
   AND CreatedDate >= 2024-10-01T00:00:00Z
   AND CreatedDate < 2025-01-01T00:00:00Z
@@ -855,7 +855,7 @@ ORDER BY Timestamp__c
 
 **Export to CSV** → Email to auditor → **Done in 5 minutes**
 
-**Without OpsGuardian:** Manually search logs for weeks ❌
+**Without Sentinel:** Manually search logs for weeks ❌
 
 ---
 
@@ -864,7 +864,7 @@ ORDER BY Timestamp__c
 **Customer Request:**
 > "Delete all my personal data per GDPR Article 17"
 
-**OpsGuardian Workflow:**
+**Sentinel Workflow:**
 1. Click "Process GDPR Deletion Request"
 2. Enter customer ID
 3. System finds all related records (2 seconds)
@@ -882,7 +882,7 @@ ORDER BY Timestamp__c
 
 **Scenario:** Suspicious access to patient records detected
 
-**OpsGuardian Response:**
+**Sentinel Response:**
 ```
 🚨 ALERT: Anomalous data access detected
 ───────────────────────────────────────────
@@ -915,7 +915,7 @@ Report: incident-2025-001.pdf (auto-generated)
 
 ### Compliance Documentation
 
-OpsGuardian includes comprehensive compliance documentation:
+Sentinel includes comprehensive compliance documentation:
 
 ```
 docs/compliance/
@@ -936,18 +936,18 @@ docs/compliance/
 
 #### Cost Avoidance
 
-| Risk | Without OpsGuardian | With OpsGuardian |
+| Risk | Without Sentinel | With Sentinel |
 |------|---------------------|------------------|
 | **GDPR fine** | €20M or 4% revenue | ✅ Compliant - €0 |
 | **Failed audit** | Lost contracts, reputation | ✅ Pass audit - €0 |
 | **Breach notification** | Manual (days) = fines | ✅ Auto (minutes) - €0 |
 | **Manual log collection** | 40 hours @ $150/hr = $6,000 | ✅ 5 minutes - $0 |
 
-**Annual ROI:** Prevent one €1M fine = OpsGuardian pays for itself 100x over
+**Annual ROI:** Prevent one €1M fine = Sentinel pays for itself 100x over
 
 #### Time Savings
 
-| Task | Manual Process | With OpsGuardian | Savings |
+| Task | Manual Process | With Sentinel | Savings |
 |------|---------------|------------------|---------|
 | Audit preparation | 2 weeks | 2 hours | 95% faster |
 | Incident investigation | 8 hours | 30 minutes | 93% faster |
@@ -971,7 +971,7 @@ docs/compliance/
 
 3. **Assign Permission Sets**
    ```
-   Setup → Users → Permission Sets → OpsGuardian_Admin → Assign
+   Setup → Users → Permission Sets → Sentinel_Admin → Assign
    ```
 
 4. **Schedule Retention Batch Job**
@@ -981,12 +981,12 @@ docs/compliance/
 
 5. **Test Export Functionality**
    ```bash
-   sf data export bulk --query "SELECT * FROM OpsGuardian_History__c LIMIT 100"
+   sf data export bulk --query "SELECT * FROM Sentinel_History__c LIMIT 100"
    ```
 
 6. **Review Compliance Dashboard**
    ```
-   Open OpsGuardian app → Compliance Dashboard → Verify 100% green
+   Open Sentinel app → Compliance Dashboard → Verify 100% green
    ```
 
 ---
@@ -1033,7 +1033,7 @@ Need help with compliance?
 **Solution**: Upload Chart.js static resource and clear app cache
 
 #### FLS/DML exceptions during ingest
-**Solution**: Verify `OpsGuardian_Admin` field-level permissions; confirm `Security.stripInaccessible()` is deployed
+**Solution**: Verify `Sentinel_Admin` field-level permissions; confirm `Security.stripInaccessible()` is deployed
 
 #### 429 responses from ingest
 **Solution**: Org is rate-limited; inspect Platform Cache keys (`rl:*`); lower event volume or increase quota
