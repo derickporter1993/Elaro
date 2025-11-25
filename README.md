@@ -64,7 +64,7 @@ Modern Salesforce programs need **reliable telemetry** (limits, flows, APIs), **
 
 ⸻
 
-Requirements
+## Requirements
 - Salesforce API 63.0+ (tested through 65.0, Winter ’26)
 - Salesforce CLI (sf), Dev Hub enabled
 - Node.js 18+ (for LWC tests/linting)
