@@ -86,16 +86,16 @@ jobs:
       - run:
           name: Setup Salesforce CLI
           command: |
-            npm install -g sfdx-cli
+            npm install -g @salesforce/cli
       - run:
           name: Install Salesforce Code Analyzer
           command: |
-            sfdx plugins:install @salesforce/sfdx-scanner
+            sf plugins install @salesforce/sfdx-scanner
       - run:
           name: Run Salesforce Code Analyzer
           command: |
             if [ -d "force-app" ]; then
-              sfdx scanner:run --target "force-app" --format table
+              sf scanner run --target "force-app" --format table
             else
               echo "No force-app directory found, skipping scan"
             fi
