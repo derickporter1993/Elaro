@@ -192,7 +192,12 @@ public class SlackPlugin implements OG_Plugin {
         req.setEndpoint('callout:Slack_Webhook');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(evt));
-        new Http().send(req);
+        try {
+            new Http().send(req);
+        } catch (CalloutException ex) {
+            System.debug('SlackPlugin callout failed: ' + ex.getMessage());
+            // In production, consider logging this error or taking other action
+        }
     }
     public Boolean supports(String type, String severity) {
         return severity == 'Critical';
