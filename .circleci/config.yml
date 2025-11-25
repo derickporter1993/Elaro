@@ -68,7 +68,7 @@ jobs:
           command: |
             TESTFILES=$(circleci tests glob "force-app/**/*.js" | circleci tests split --split-by=filesize)
             if [ -n "$TESTFILES" ]; then
-              npx eslint $TESTFILES --max-warnings=0
+              npx eslint "$TESTFILES" --max-warnings=0
             else
               echo "No JS files to lint in this container."
             fi
