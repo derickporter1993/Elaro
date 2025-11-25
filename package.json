@@ -1,31 +1,15 @@
 {
-  "name": "sentinel",
+  "name": "ops-guardian",
   "version": "1.0.0",
-  "description": "AI-native compliance intelligence platform for Salesforce",
+  "description": "Sentinel - AI Compliance Brain for Salesforce",
   "type": "module",
-  "private": true,
   "scripts": {
-    "fmt": "prettier -w \"**/*.{js,cls,html,md,json,yml,yaml,xml}\"",
-    "fmt:check": "prettier -c \"**/*.{js,cls,html,md,json,yml,yaml,xml}\"",
-    "lint": "eslint \"force-app/**/*.js\" --max-warnings=0",
-    "lint:fix": "eslint \"force-app/**/*.js\" --fix",
-    "test": "npm run test:unit && npm run test:apex",
-    "test:apex": "echo 'Run: sfdx force:apex:test:run -c -r human -w 10'",
-    "test:unit": "echo 'LWC Jest tests would run here'",
-    "test:watch": "echo 'Jest watch mode'",
-    "prepare": "husky",
-    "security-scan": "echo 'Security scanner would run here'",
-    "evidence": "bash scripts/generate-evidence.sh",
-    "deploy:scratch": "sfdx force:org:create -f config/project-scratch-def.json -a sentinel-scratch && sfdx force:source:push -u sentinel-scratch",
-    "deploy:prod": "sfdx force:source:deploy -x manifest/package.xml -u production"
-  },
-  "lint-staged": {
-    "**/*.{js,html,md,json,yml,yaml,xml}": [
-      "prettier --write"
-    ],
-    "**/*.js": [
-      "eslint --max-warnings=0 --fix"
-    ]
+    "lint": "eslint .",
+    "fmt:check": "prettier --check .",
+    "fmt:write": "prettier --write .",
+    "test": "jest",
+    "build": "echo 'Build step here'",
+    "deploy": "echo 'Deploy step here'"
   },
   "repository": {
     "type": "git",
@@ -43,13 +27,13 @@
   "author": "Sentinel Team",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.24.0",
-    "@babel/eslint-parser": "^7.24.0",
+    "@eslint/js": "^9.0.0",
     "@lwc/eslint-plugin-lwc": "^3.3.0",
-    "eslint": "^9.39.1",
-    "eslint-config-prettier": "^9.1.0",
-    "husky": "^9.1.6",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.3.3"
+    "eslint": "^9.0.0",
+    "prettier": "^3.2.0",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
