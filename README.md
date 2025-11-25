@@ -191,7 +191,14 @@ public class SlackPlugin implements OG_Plugin {
         req.setMethod('POST');
         req.setEndpoint('callout:Slack_Webhook');
         req.setHeader('Content-Type', 'application/json');
-        req.setBody(JSON.serialize(evt));
+        // Only include non-sensitive fields in the payload. Review and sanitize fields as needed.
+        Map<String, Object> payload = new Map<String, Object>{
+            'Event_Type__c' => evt.Event_Type__c,
+            'Message__c'    => evt.Message__c,
+            'Severity__c'   => evt.Severity__c,
+            'CreatedDate'   => evt.CreatedDate
+        };
+        req.setBody(JSON.serialize(payload));
         try {
             new Http().send(req);
         } catch (CalloutException ex) {
