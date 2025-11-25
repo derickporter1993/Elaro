@@ -252,7 +252,7 @@ Test org: Enterprise Edition, ~1M history rows, ~10k events/hour.
 
 ## Development
 
-If your repository is still named Ops-Gurdian, adjust the URL below.
+If your repository is still named Ops-Guardian, adjust the URL below.
 
 ```bash
 # Clone
