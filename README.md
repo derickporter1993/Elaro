@@ -523,7 +523,7 @@ sf apex run test --target-org myorg --tests PerformanceRuleEngineTest
 
 ```bash
 # Format code
-npm run fmt
+npm run fmt:write
 
 # Check formatting
 npm run fmt:check
@@ -903,7 +903,7 @@ npm install
 # Run tests & linters
 npm test
 npm run lint
-npm run fmt
+npm run fmt:write
 
 # Apex tests & coverage
 sf apex run test --test-level RunLocalTests --code-coverage --result-format human
