@@ -26,12 +26,10 @@ jobs:
 
       - name: Check Formatting
         run: npm run fmt:check
-                continue-on-error: true
-
+          continue-on-error: true
       - name: Lint JavaScript
         run: npm run lint
-                continue-on-error: true
-
+          continue-on-error: true
       - name: Run Security Scan
         run: npm run security-scan
         continue-on-error: true
