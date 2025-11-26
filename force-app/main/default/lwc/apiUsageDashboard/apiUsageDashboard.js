@@ -1,10 +1,7 @@
 import { LightningElement, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getSnapshots from "@salesforce/apex/ApiUsageDashboardController.recent";
-claude/code-review-011CUi1bZPTjuA3wVwGkDreP
-=======
 import PollingManager from "c/pollingManager";
-main
 
 export default class ApiUsageDashboard extends LightningElement {
   @track rows = [];
