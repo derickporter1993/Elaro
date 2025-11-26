@@ -225,6 +225,14 @@ public with sharing class FlowBenchmarkService {
         }
     }
 
+    /**
+     * Creates a PerformanceRating for a Flow execution record
+     * @param exec The Flow execution record to rate
+     * @param benchmarks The benchmark statistics for the Flow
+     * @param flowName The name of the Flow
+     * @param startDate The start date for benchmark calculations
+     * @return A PerformanceRating with rating, percentile rank, and benchmarks
+     */
     private static PerformanceRating createPerformanceRating(
         Flow_Execution__c exec,
         BenchmarkStats benchmarks,
@@ -232,10 +240,11 @@ public with sharing class FlowBenchmarkService {
         Datetime startDate
     ) {
         PerformanceRating perfRating = new PerformanceRating();
+        perfRating.benchmarks = benchmarks;
+        
         if (benchmarks != null && exec.CPU__c != null) {
             perfRating.rating = getRating(exec.CPU__c, benchmarks);
             perfRating.percentileRank = calculatePercentileRank(exec.CPU__c, flowName, startDate);
-            perfRating.benchmarks = benchmarks;
         } else {
             perfRating.rating = 'Unknown';
             perfRating.percentileRank = null;
