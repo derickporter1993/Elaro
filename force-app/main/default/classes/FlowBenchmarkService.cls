@@ -29,6 +29,13 @@ public with sharing class FlowBenchmarkService {
         public BenchmarkStats benchmarks;
     }
 
+    public class ExecutionWithRating {
+        @AuraEnabled
+        public Flow_Execution__c execution;
+        @AuraEnabled
+        public PerformanceRating rating;
+    }
+
     /**
      * Calculate benchmark statistics for a specific Flow
      */
@@ -123,7 +130,7 @@ public with sharing class FlowBenchmarkService {
      * Get performance rating for recent executions of a Flow
      */
     @AuraEnabled(cacheable=true)
-    public static List<Map<String, Object>> getRecentExecutionsWithRatings(
+    public static List<ExecutionWithRating> getRecentExecutionsWithRatings(
         String flowName,
         Integer limitSize,
         Integer daysBack
@@ -147,20 +154,21 @@ public with sharing class FlowBenchmarkService {
             LIMIT :Math.max(1, limitSize)
         ];
 
-        List<Map<String, Object>> results = new List<Map<String, Object>>();
+        List<ExecutionWithRating> results = new List<ExecutionWithRating>();
 
         for (Flow_Execution__c exec : executions) {
-            Map<String, Object> record = new Map<String, Object>();
-            record.put('execution', exec);
+            ExecutionWithRating record = new ExecutionWithRating();
+            record.execution = exec;
 
+            PerformanceRating perfRating = new PerformanceRating();
             if (benchmarks != null && exec.CPU__c != null) {
-                String execRating = getRating(exec.CPU__c, benchmarks);
-                record.put('rating', execRating);
-                record.put('percentileRank', calculatePercentileRank(exec.CPU__c, flowName, startDate));
+                perfRating.rating = getRating(exec.CPU__c, benchmarks);
+                perfRating.percentileRank = calculatePercentileRank(exec.CPU__c, flowName, startDate);
             } else {
-                record.put('rating', 'Unknown');
-                record.put('percentileRank', null);
+                perfRating.rating = 'Unknown';
+                perfRating.percentileRank = null;
             }
+            record.rating = perfRating;
 
             results.add(record);
         }
