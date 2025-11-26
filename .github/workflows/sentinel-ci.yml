@@ -22,7 +22,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Security Audit
         run: npm audit --audit-level=high || echo "⚠️  Security vulnerabilities found"
@@ -44,7 +44,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run LWC Tests
         run: npm run test:unit || echo "⚠️  LWC tests failed"
