@@ -1,23 +1,44 @@
+import js from "@eslint/js";
 import babelParser from "@babel/eslint-parser";
 import lwc from "@lwc/eslint-plugin-lwc";
 import prettier from "eslint-config-prettier";
 
+const sharedLanguageOptions = {
+  parser: babelParser,
+  parserOptions: {
+    requireConfigFile: false,
+    babelOptions: {
+      parserOpts: {
+        plugins: ["classProperties", "decorators-legacy"],
+      },
+    },
+    ecmaVersion: 2021,
+    sourceType: "module",
+  },
+};
+
+const lwcRecommended = lwc.configs.recommended ?? {};
+
 export default [
   {
+    ignores: ["**/node_modules/**", "**/*.zip", "**/coverage/**"],
+  },
+  {
+    ...js.configs.recommended,
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
+    languageOptions: {
+      ...(js.configs.recommended.languageOptions ?? {}),
+      ...sharedLanguageOptions,
+    },
+  },
+  {
+    ...lwcRecommended,
     files: ["force-app/**/*.js"],
     languageOptions: {
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
-        babelOptions: {
-          parserOpts: {
-            plugins: ["classProperties", "decorators-legacy"],
-          },
-        },
-        ecmaVersion: 2021,
-        sourceType: "module",
-      },
+      ...(lwcRecommended.languageOptions ?? {}),
+      ...sharedLanguageOptions,
       globals: {
+        ...(lwcRecommended.languageOptions?.globals ?? {}),
         console: "readonly",
         document: "readonly",
         setInterval: "readonly",
@@ -29,24 +50,13 @@ export default [
       },
     },
     plugins: {
+      ...(lwcRecommended.plugins ?? {}),
       lwc,
     },
     rules: {
-      // Standard JavaScript rules
+      ...(lwcRecommended.rules ?? {}),
       "no-console": "warn",
-      "no-unused-vars": "warn",
-
-      // LWC specific rules
-      "lwc/consistent-component-name": "error",
-      "lwc/no-api-reassignments": "error",
-      "lwc/no-deprecated": "warn",
-      "lwc/no-document-query": "error",
-      "lwc/no-inner-html": "error",
-      "lwc/no-async-await": "off",
-      "lwc/no-leading-uppercase-api-name": "error",
-      "lwc/valid-api": "error",
-      "lwc/valid-track": "error",
-      "lwc/valid-wire": "error",
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
     },
   },
   prettier,
