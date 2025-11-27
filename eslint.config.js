@@ -1,22 +1,31 @@
+import js from "@eslint/js";
 import babelParser from "@babel/eslint-parser";
 import lwc from "@lwc/eslint-plugin-lwc";
 import prettier from "eslint-config-prettier";
 
+const sharedLanguageOptions = {
+  parser: babelParser,
+  parserOptions: {
+    requireConfigFile: false,
+    babelOptions: {
+      parserOpts: {
+        plugins: ["classProperties", "decorators-legacy"],
+      },
+    },
+    ecmaVersion: 2021,
+    sourceType: "module",
+  },
+};
+
 export default [
+  {
+    ignores: ["**/node_modules/**", "**/*.zip", "**/coverage/**"],
+  },
+  js.configs.recommended,
   {
     files: ["force-app/**/*.js"],
     languageOptions: {
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
-        babelOptions: {
-          parserOpts: {
-            plugins: ["classProperties", "decorators-legacy"],
-          },
-        },
-        ecmaVersion: 2021,
-        sourceType: "module",
-      },
+      ...sharedLanguageOptions,
       globals: {
         console: "readonly",
         document: "readonly",
@@ -32,17 +41,14 @@ export default [
       lwc,
     },
     rules: {
-      // Standard JavaScript rules
+      ...js.configs.recommended.rules,
       "no-console": "warn",
-      "no-unused-vars": "warn",
-
-      // LWC specific rules
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "lwc/consistent-component-name": "error",
       "lwc/no-api-reassignments": "error",
       "lwc/no-deprecated": "warn",
       "lwc/no-document-query": "error",
       "lwc/no-inner-html": "error",
-      "lwc/no-async-await": "off",
       "lwc/no-leading-uppercase-api-name": "error",
       "lwc/valid-api": "error",
       "lwc/valid-track": "error",
