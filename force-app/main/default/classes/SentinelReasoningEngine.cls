@@ -1,6 +1,10 @@
 public without sharing class SentinelReasoningEngine {
     private static final Decimal MIN_CONFIDENCE = 0.85;
 
+    private static Decimal getConfidenceThreshold(Sentinel_AI_Settings__c settings) {
+        return settings.Confidence_Threshold__c != null ? settings.Confidence_Threshold__c : MIN_CONFIDENCE;
+    }
+
     public static ReasoningResult explainViolation(String nodeHash, String framework) {
         Sentinel_Compliance_Graph__b node = queryGraphNode(nodeHash);
         Sentinel_AI_Settings__c settings = Sentinel_AI_Settings__c.getInstance();
@@ -13,6 +17,7 @@ public without sharing class SentinelReasoningEngine {
         Compliance_Policy__mdt policy = queryRelevantPolicy(einsteinResult.policyId, framework);
         String explanation = buildSafeExplanation(policy, node, einsteinResult, settings);
         String adjudicationId = logAdjudication(nodeHash, explanation, einsteinResult.confidence);
+        Decimal confidenceThreshold = getConfidenceThreshold(settings);
 
         return new ReasoningResult(
             einsteinResult.isViolation,
@@ -21,7 +26,7 @@ public without sharing class SentinelReasoningEngine {
             policy.Legal_Citation__c,
             explanation,
             adjudicationId,
-            einsteinResult.confidence < settings.Confidence_Threshold__c
+            einsteinResult.confidence < confidenceThreshold
         );
     }
 
@@ -70,7 +75,8 @@ public without sharing class SentinelReasoningEngine {
     }
 
     private static String buildSafeExplanation(Compliance_Policy__mdt policy, Sentinel_Compliance_Graph__b node, PredictionResult einsteinResult, Sentinel_AI_Settings__c settings) {
-        String prefix = einsteinResult.confidence < settings.Confidence_Threshold__c ? '[REVIEW REQUIRED] ' : '';
+        Decimal confidenceThreshold = getConfidenceThreshold(settings);
+        String prefix = einsteinResult.confidence < confidenceThreshold ? '[REVIEW REQUIRED] ' : '';
         return prefix + String.format(
             '{0} change to {1} violated {2} ({3}). Risk: {4}/10. Remediation: {5}',
             new Object[]{
