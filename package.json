@@ -10,7 +10,11 @@
     "fmt:write": "prettier --write .",
     "test": "jest --passWithNoTests",
     "build": "echo 'Build step here'",
-    "deploy": "echo 'Deploy step here'"
+    "deploy": "echo 'Deploy step here'",
+    "evidence": "bash scripts/generate-evidence.sh",
+    "evidence:soc2": "bash scripts/generate-evidence.sh SOC2",
+    "evidence:hipaa": "bash scripts/generate-evidence.sh HIPAA",
+    "evidence:fedramp": "bash scripts/generate-evidence.sh FedRAMP"
   },
   "repository": {
     "type": "git",
