@@ -251,7 +251,9 @@ public with sharing class WeeklyScorecardScheduler implements Schedulable {
     public static String scheduleWeekly(String channel) {
         // Calculate next Monday at 9 AM
         Datetime now = Datetime.now();
-        Integer daysUntilMonday = (8 - now.format('E').toInteger()) % 7;
+        // Get day of week (1=Sunday, 2=Monday, ..., 7=Saturday)
+        Integer dayOfWeek = Integer.valueOf(now.format('u')); // ISO day of week (1=Monday, 7=Sunday)
+        Integer daysUntilMonday = Math.mod(8 - dayOfWeek, 7);
         if (daysUntilMonday == 0 && now.hour() >= 9) {
             daysUntilMonday = 7; // If it's Monday after 9 AM, schedule for next Monday
         }

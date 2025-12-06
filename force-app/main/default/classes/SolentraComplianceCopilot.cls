@@ -413,17 +413,33 @@ public with sharing class SolentraComplianceCopilot {
         
         String framework = classification.framework != null ? classification.framework : SolentraConstants.FRAMEWORK_HIPAA;
         
-        // Get framework-specific stats
-        AggregateResult[] stats = [
-            SELECT COUNT(Id) total, 
-                   SUM(CASE WHEN Drift_Category__c = 'POLICY_VIOLATION' THEN 1 ELSE 0 END) violations
-            FROM Solentra_Compliance_Graph__b
-            WHERE Compliance_Framework__c = :framework
-            AND Timestamp__c >= LAST_N_DAYS:30
-        ];
+        // Get framework-specific stats - use separate queries since CASE WHEN not supported in SOQL
+        Integer total = 0;
+        Integer violations = 0;
         
-        Integer total = stats.isEmpty() ? 0 : (Integer)stats[0].get('total');
-        Integer violations = stats.isEmpty() ? 0 : (Integer)stats[0].get('violations');
+        try {
+            // Count total records
+            AggregateResult[] totalStats = [
+                SELECT COUNT(Id) cnt
+                FROM Solentra_Compliance_Graph__b
+                WHERE Compliance_Framework__c = :framework
+                AND Timestamp__c >= LAST_N_DAYS:30
+            ];
+            total = totalStats.isEmpty() ? 0 : (Integer)totalStats[0].get('cnt');
+            
+            // Count violations separately
+            AggregateResult[] violationStats = [
+                SELECT COUNT(Id) cnt
+                FROM Solentra_Compliance_Graph__b
+                WHERE Compliance_Framework__c = :framework
+                AND Timestamp__c >= LAST_N_DAYS:30
+                AND Drift_Category__c = :SolentraConstants.DRIFT_POLICY_VIOLATION
+            ];
+            violations = violationStats.isEmpty() ? 0 : (Integer)violationStats[0].get('cnt');
+        } catch (Exception e) {
+            // Big Object may not exist yet - return defaults
+            System.debug(LoggingLevel.WARN, '[SolentraComplianceCopilot] Stats query failed: ' + e.getMessage());
+        }
         
         // Calculate compliance percentage
         Decimal complianceRate = total > 0 ? ((Decimal)(total - violations) / total * 100).setScale(1) : 100.0;

@@ -1,4 +1,18 @@
+/**
+ * SlackNotifier - Slack Integration for Solentra Compliance Alerts
+ * 
+ * Sends notifications to Slack channels via Incoming Webhooks.
+ * Supports both simple text messages and rich Block Kit messages.
+ * 
+ * @author Solentra
+ * @version 1.0
+ */
 public with sharing class SlackNotifier {
+    
+    /**
+     * Send simple text notification to Slack asynchronously
+     * @param text The message text to send
+     */
     @future(callout=true)
     public static void notifyAsync(String text) {
         try {
@@ -9,19 +23,17 @@ public with sharing class SlackNotifier {
             req.setBody(JSON.serialize(new Map<String, Object>{ 'text' => text }));
             HttpResponse res = new Http().send(req);
             if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                System.debug(
-                    LoggingLevel.ERROR,
-                    'Slack notify failed with status ' +
-                        res.getStatusCode() +
-                        ': ' +
-                        res.getStatus()
-                );
+                System.debug(LoggingLevel.ERROR, '[SlackNotifier] Notify failed: ' + res.getStatus());
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Slack notify exception: ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR, '[SlackNotifier] Notify exception: ' + e.getMessage());
         }
     }
-
+    
+    /**
+     * Send rich Block Kit notification to Slack asynchronously
+     * @param jsonPayload The full Slack Block Kit payload as JSON string
+     */
     @future(callout=true)
     public static void notifyRichAsync(String jsonPayload) {
         try {
@@ -32,233 +44,138 @@ public with sharing class SlackNotifier {
             req.setBody(jsonPayload);
             HttpResponse res = new Http().send(req);
             if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                System.debug(
-                    LoggingLevel.ERROR,
-                    'Slack rich notify failed with status ' +
-                        res.getStatusCode() +
-                        ': ' +
-                        res.getStatus()
-                );
+                System.debug(LoggingLevel.ERROR, '[SlackNotifier] Rich notify failed: ' + res.getStatus());
             }
         } catch (Exception e) {
-            System.debug(
-                LoggingLevel.ERROR,
-                'Slack rich notify exception: ' + e.getMessage()
-            );
+            System.debug(LoggingLevel.ERROR, '[SlackNotifier] Rich notify exception: ' + e.getMessage());
         }
     }
-
-    public static void notifyPerformanceEvent(Performance_Alert__e evt) {
-        // Use rich formatting for performance alerts
-        String jsonPayload = buildPerformanceAlertBlocks(evt);
-        notifyRichAsync(jsonPayload);
-    }
-
-    // Build Slack Block Kit JSON for performance alerts
-    private static String buildPerformanceAlertBlocks(Performance_Alert__e evt) {
-        // Determine severity emoji and color
-        String emoji = '⚠️';
-        String color = '#ffb75d'; // Warning (orange)
-
-        Decimal percentOfLimit = (evt.Value__c / evt.Threshold__c) * 100;
-
-        if (percentOfLimit >= 95) {
-            emoji = '🔴';
-            color = '#c23934'; // Critical (red)
-        } else if (percentOfLimit >= 90) {
-            emoji = '🟡';
-            color = '#ffb75d'; // Warning (orange)
-        }
-
-        // Build the blocks structure
-        Map<String, Object> payload = new Map<String, Object>();
-
-        // Fallback text for notifications
-        payload.put(
-            'text',
-            emoji +
-            ' Sentinel Alert: ' +
-            evt.Metric__c +
-            ' at ' +
-            percentOfLimit.setScale(1) +
-            '%'
-        );
-
-        // Build rich blocks
-        List<Map<String, Object>> blocks = new List<Map<String, Object>>();
-
-        // Header block
-        Map<String, Object> headerBlock = new Map<String, Object>();
-        headerBlock.put('type', 'header');
-        Map<String, Object> headerText = new Map<String, Object>();
-        headerText.put('type', 'plain_text');
-        headerText.put(
-            'text',
-            emoji +
-            ' ' +
-            evt.Metric__c +
-            ' Performance Alert'
-        );
-        headerBlock.put('text', headerText);
-        blocks.add(headerBlock);
-
-        // Divider
-        blocks.add(new Map<String, Object>{ 'type' => 'divider' });
-
-        // Main info section
-        Map<String, Object> infoSection = new Map<String, Object>();
-        infoSection.put('type', 'section');
-        List<Map<String, Object>> fields = new List<Map<String, Object>>();
-
-        // Current Value
-        Map<String, Object> valueField = new Map<String, Object>();
-        valueField.put('type', 'mrkdwn');
-        valueField.put(
-            'text',
-            '*Current Value:*\n' +
-            String.valueOf(evt.Value__c.setScale(0)) +
-            ' (' +
-            percentOfLimit.setScale(1) +
-            '%)'
-        );
-        fields.add(valueField);
-
-        // Threshold
-        Map<String, Object> thresholdField = new Map<String, Object>();
-        thresholdField.put('type', 'mrkdwn');
-        thresholdField.put(
-            'text',
-            '*Threshold:*\n' +
-            String.valueOf(evt.Threshold__c.setScale(0))
-        );
-        fields.add(thresholdField);
-
-        // Metric Type
-        Map<String, Object> metricField = new Map<String, Object>();
-        metricField.put('type', 'mrkdwn');
-        metricField.put('text', '*Metric:*\n' + evt.Metric__c);
-        fields.add(metricField);
-
-        // Context Record (if available)
-        if (!String.isBlank(evt.Context_Record__c)) {
-            Map<String, Object> contextField = new Map<String, Object>();
-            contextField.put('type', 'mrkdwn');
-            contextField.put('text', '*Context:*\n' + evt.Context_Record__c);
-            fields.add(contextField);
-        }
-
-        infoSection.put('fields', fields);
-        blocks.add(infoSection);
-
-        // Stack trace context (if available)
-        if (!String.isBlank(evt.Stack__c)) {
-            Map<String, Object> stackSection = new Map<String, Object>();
-            stackSection.put('type', 'section');
-            Map<String, Object> stackText = new Map<String, Object>();
-            stackText.put('type', 'mrkdwn');
-            stackText.put('text', '*Details:*\n```' + evt.Stack__c + '```');
-            stackSection.put('text', stackText);
-            blocks.add(stackSection);
-        }
-
-        // Divider before actions
-        blocks.add(new Map<String, Object>{ 'type' => 'divider' });
-
-        // Action buttons (if Salesforce URL is available)
-        String orgUrl = URL.getOrgDomainUrl().toExternalForm();
-        Map<String, Object> actionsBlock = new Map<String, Object>();
-        actionsBlock.put('type', 'actions');
-        List<Map<String, Object>> elements = new List<Map<String, Object>>();
-
-        // View Dashboard button
-        Map<String, Object> dashboardButton = new Map<String, Object>();
-        dashboardButton.put('type', 'button');
-        Map<String, Object> dashboardText = new Map<String, Object>();
-        dashboardText.put('type', 'plain_text');
-        dashboardText.put('text', '📊 View Dashboard');
-        dashboardButton.put('text', dashboardText);
-        dashboardButton.put('url', orgUrl + '/lightning/page/home');
-        elements.add(dashboardButton);
-
-        actionsBlock.put('elements', elements);
-        blocks.add(actionsBlock);
-
-        // Add blocks and attachments to payload
-        payload.put('blocks', blocks);
-
-        // Add attachment for color bar
-        List<Map<String, Object>> attachments = new List<Map<String, Object>>();
-        Map<String, Object> attachment = new Map<String, Object>();
-        attachment.put('color', color);
-        attachment.put(
-            'footer',
-            'Sentinel | ' +
-            Datetime.now().format('yyyy-MM-dd HH:mm:ss')
-        );
-        attachments.add(attachment);
-        payload.put('attachments', attachments);
-
-        return JSON.serialize(payload);
-    }
-
-    // Build Slack notification for Flow performance issues
-    public static void notifyFlowPerformance(
-        String flowName,
-        Decimal cpuTime,
-        String rating,
-        Decimal percentileRank
+    
+    /**
+     * Send compliance alert with rich formatting
+     * @param title Alert title
+     * @param severity Severity level (CRITICAL, HIGH, MEDIUM, LOW)
+     * @param framework Compliance framework (HIPAA, SOC2, etc.)
+     * @param description Alert description
+     * @param nodeId Graph node ID for linking
+     * @param confidence AI confidence score (0-1)
+     */
+    public static void notifyComplianceAlert(
+        String title,
+        String severity,
+        String framework,
+        String description,
+        String nodeId,
+        Decimal confidence
     ) {
+        String emoji = severity == SolentraConstants.SEVERITY_CRITICAL ? '🔴' : 
+                       severity == SolentraConstants.SEVERITY_HIGH ? '🟡' : 'ℹ️';
+        String color = severity == SolentraConstants.SEVERITY_CRITICAL ? '#e74c3c' : 
+                       severity == SolentraConstants.SEVERITY_HIGH ? '#f39c12' : '#3498db';
+        
+        String orgUrl = URL.getOrgDomainUrl().toExternalForm();
+        
         Map<String, Object> payload = new Map<String, Object>();
-
-        String emoji = rating == 'Critical' ? '🔴' : rating == 'Slow' ? '🟡' : 'ℹ️';
-
-        payload.put('text', emoji + ' Flow Performance Alert: ' + flowName);
-
+        payload.put('text', emoji + ' Solentra Compliance Alert: ' + title);
+        
         List<Map<String, Object>> blocks = new List<Map<String, Object>>();
-
+        
         // Header
-        Map<String, Object> headerBlock = new Map<String, Object>();
-        headerBlock.put('type', 'header');
-        Map<String, Object> headerText = new Map<String, Object>();
-        headerText.put('type', 'plain_text');
-        headerText.put('text', emoji + ' Flow Performance: ' + flowName);
-        headerBlock.put('text', headerText);
-        blocks.add(headerBlock);
-
+        blocks.add(new Map<String, Object>{
+            'type' => 'header',
+            'text' => new Map<String, Object>{
+                'type' => 'plain_text',
+                'text' => emoji + ' ' + title
+            }
+        });
+        
+        // Details section
+        blocks.add(new Map<String, Object>{
+            'type' => 'section',
+            'fields' => new List<Map<String, Object>>{
+                new Map<String, Object>{'type' => 'mrkdwn', 'text' => '*Severity:*\n' + severity},
+                new Map<String, Object>{'type' => 'mrkdwn', 'text' => '*Framework:*\n' + framework},
+                new Map<String, Object>{'type' => 'mrkdwn', 'text' => '*Confidence:*\n' + (confidence * 100).setScale(1) + '%'}
+            }
+        });
+        
+        // Description
+        blocks.add(new Map<String, Object>{
+            'type' => 'section',
+            'text' => new Map<String, Object>{
+                'type' => 'mrkdwn',
+                'text' => description
+            }
+        });
+        
         blocks.add(new Map<String, Object>{ 'type' => 'divider' });
-
-        // Info section
-        Map<String, Object> infoSection = new Map<String, Object>();
-        infoSection.put('type', 'section');
-        List<Map<String, Object>> fields = new List<Map<String, Object>>();
-
-        Map<String, Object> cpuField = new Map<String, Object>();
-        cpuField.put('type', 'mrkdwn');
-        cpuField.put('text', '*CPU Time:*\n' + cpuTime.setScale(0) + 'ms');
-        fields.add(cpuField);
-
-        Map<String, Object> ratingField = new Map<String, Object>();
-        ratingField.put('type', 'mrkdwn');
-        ratingField.put('text', '*Rating:*\n' + rating);
-        fields.add(ratingField);
-
-        if (percentileRank != null) {
-            Map<String, Object> percentileField = new Map<String, Object>();
-            percentileField.put('type', 'mrkdwn');
-            percentileField.put(
-                'text',
-                '*Percentile:*\n' +
-                percentileRank.setScale(1) +
-                'th'
-            );
-            fields.add(percentileField);
-        }
-
-        infoSection.put('fields', fields);
-        blocks.add(infoSection);
-
+        
+        // Action buttons
+        blocks.add(new Map<String, Object>{
+            'type' => 'actions',
+            'elements' => new List<Map<String, Object>>{
+                new Map<String, Object>{
+                    'type' => 'button',
+                    'text' => new Map<String, Object>{'type' => 'plain_text', 'text' => '📊 View in Solentra'},
+                    'url' => orgUrl + '/lightning/page/home'
+                }
+            }
+        });
+        
         payload.put('blocks', blocks);
-
+        
+        // Color attachment
+        payload.put('attachments', new List<Map<String, Object>>{
+            new Map<String, Object>{'color' => color}
+        });
+        
+        notifyRichAsync(JSON.serialize(payload));
+    }
+    
+    /**
+     * Send remediation notification
+     * @param result The remediation result
+     * @param framework The compliance framework
+     */
+    public static void notifyRemediation(SentinelRemediationEngine.RemediationResult result, String framework) {
+        String emoji = result.success ? '🛡️' : '⚠️';
+        String color = result.success ? '#2ecc71' : '#f39c12';
+        
+        Map<String, Object> payload = new Map<String, Object>();
+        payload.put('text', emoji + ' Solentra Auto-Remediation: ' + result.action);
+        
+        List<Map<String, Object>> blocks = new List<Map<String, Object>>();
+        
+        blocks.add(new Map<String, Object>{
+            'type' => 'header',
+            'text' => new Map<String, Object>{
+                'type' => 'plain_text',
+                'text' => emoji + ' Auto-Remediation ' + (result.success ? 'Complete' : 'Pending Review')
+            }
+        });
+        
+        blocks.add(new Map<String, Object>{
+            'type' => 'section',
+            'fields' => new List<Map<String, Object>>{
+                new Map<String, Object>{'type' => 'mrkdwn', 'text' => '*Action:*\n' + result.action},
+                new Map<String, Object>{'type' => 'mrkdwn', 'text' => '*Framework:*\n' + framework},
+                new Map<String, Object>{'type' => 'mrkdwn', 'text' => '*Status:*\n' + (result.success ? 'Success' : 'Pending')}
+            }
+        });
+        
+        blocks.add(new Map<String, Object>{
+            'type' => 'section',
+            'text' => new Map<String, Object>{
+                'type' => 'mrkdwn',
+                'text' => result.message
+            }
+        });
+        
+        payload.put('blocks', blocks);
+        payload.put('attachments', new List<Map<String, Object>>{
+            new Map<String, Object>{'color' => color}
+        });
+        
         notifyRichAsync(JSON.serialize(payload));
     }
 }

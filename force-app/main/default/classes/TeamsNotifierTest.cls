@@ -74,8 +74,8 @@ private class TeamsNotifierTest {
         Test.startTest();
         TeamsNotifier.notifyComplianceAlert(
             'Test Alert',
-            SentinelConstants.SEVERITY_HIGH,
-            SentinelConstants.FRAMEWORK_HIPAA,
+            SolentraConstants.SEVERITY_HIGH,
+            SolentraConstants.FRAMEWORK_HIPAA,
             'This is a test compliance alert',
             'node123',
             0.95
@@ -93,10 +93,10 @@ private class TeamsNotifierTest {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
         
         List<String> severities = new List<String>{
-            SentinelConstants.SEVERITY_CRITICAL,
-            SentinelConstants.SEVERITY_HIGH,
-            SentinelConstants.SEVERITY_MEDIUM,
-            SentinelConstants.SEVERITY_LOW
+            SolentraConstants.SEVERITY_CRITICAL,
+            SolentraConstants.SEVERITY_HIGH,
+            SolentraConstants.SEVERITY_MEDIUM,
+            SolentraConstants.SEVERITY_LOW
         };
         
         Test.startTest();
@@ -104,7 +104,7 @@ private class TeamsNotifierTest {
             TeamsNotifier.notifyComplianceAlert(
                 'Test Alert - ' + severity,
                 severity,
-                SentinelConstants.FRAMEWORK_SOC2,
+                SolentraConstants.FRAMEWORK_SOC2,
                 'Test description',
                 'node123',
                 0.85
@@ -123,18 +123,18 @@ private class TeamsNotifierTest {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
         
         List<String> frameworks = new List<String>{
-            SentinelConstants.FRAMEWORK_HIPAA,
-            SentinelConstants.FRAMEWORK_SOC2,
-            SentinelConstants.FRAMEWORK_NIST,
-            SentinelConstants.FRAMEWORK_FEDRAMP,
-            SentinelConstants.FRAMEWORK_GDPR
+            SolentraConstants.FRAMEWORK_HIPAA,
+            SolentraConstants.FRAMEWORK_SOC2,
+            SolentraConstants.FRAMEWORK_NIST,
+            SolentraConstants.FRAMEWORK_FEDRAMP,
+            SolentraConstants.FRAMEWORK_GDPR
         };
         
         Test.startTest();
         for (String framework : frameworks) {
             TeamsNotifier.notifyComplianceAlert(
                 'Test Alert - ' + framework,
-                SentinelConstants.SEVERITY_HIGH,
+                SolentraConstants.SEVERITY_HIGH,
                 framework,
                 'Test description',
                 'node123',
@@ -214,7 +214,7 @@ private class TeamsNotifierTest {
         result.reviewDeadline = Datetime.now().addDays(7);
         
         Test.startTest();
-        TeamsNotifier.notifyRemediation(result, SentinelConstants.FRAMEWORK_HIPAA);
+        TeamsNotifier.notifyRemediation(result, SolentraConstants.FRAMEWORK_HIPAA);
         Test.stopTest();
         
         System.assert(true, 'Remediation notification should send successfully');
