@@ -4,7 +4,7 @@
     <hasActivationRequired>false</hasActivationRequired>
     <label>Solentra Admin</label>
     
-    <!-- Apex Class Access -->
+    <!-- Apex Class Access - Only classes deployed to org -->
     <classAccesses>
         <apexClass>SolentraConstants</apexClass>
         <enabled>true</enabled>
@@ -38,15 +38,7 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>ApiUsageSnapshot</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>DeploymentMetrics</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>FlowExecutionLogger</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -55,10 +47,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>LimitMetrics</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>PerformanceAlertPublisher</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -104,56 +92,116 @@
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     
-    <!-- Custom Settings Access -->
-    <objectPermissions>
-        <allowCreate>true</allowCreate>
-        <allowDelete>true</allowDelete>
-        <allowEdit>true</allowEdit>
-        <allowRead>true</allowRead>
-        <modifyAllRecords>true</modifyAllRecords>
-        <object>Solentra_Settings__c</object>
-        <viewAllRecords>true</viewAllRecords>
-    </objectPermissions>
+    <!-- Field Permissions for Performance_Alert_History__c -->
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Performance_Alert_History__c.Metric__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Performance_Alert_History__c.Value__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Performance_Alert_History__c.Threshold__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Performance_Alert_History__c.Context_Record__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Performance_Alert_History__c.Stack__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     
-    <!-- Field Permissions for CCX_Settings__c -->
+    <!-- Field Permissions for API_Usage_Snapshot__c -->
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.CPU_Warn__c</field>
+        <field>API_Usage_Snapshot__c.Taken_On__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.CPU_Crit__c</field>
+        <field>API_Usage_Snapshot__c.Daily_Used__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.Heap_Warn__c</field>
+        <field>API_Usage_Snapshot__c.Daily_Limit__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.Heap_Crit__c</field>
+        <field>API_Usage_Snapshot__c.Percent_Used__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.SOQL_Warn__c</field>
+        <field>API_Usage_Snapshot__c.Projected_Exhaustion__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    
+    <!-- Field Permissions for Flow_Execution__c -->
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Flow_Execution__c.Flow_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.SOQL_Crit__c</field>
+        <field>Flow_Execution__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.DML_Warn__c</field>
+        <field>Flow_Execution__c.CPU__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>CCX_Settings__c.DML_Crit__c</field>
+        <field>Flow_Execution__c.SOQL__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Flow_Execution__c.DML__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Flow_Execution__c.Run_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    
+    <!-- Field Permissions for Deployment_Job__c -->
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Deployment_Job__c.Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Deployment_Job__c.Started_On__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Deployment_Job__c.Finished_On__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Deployment_Job__c.Tests_Passed__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Deployment_Job__c.Tests_Failed__c</field>
         <readable>true</readable>
     </fieldPermissions>
     
@@ -166,12 +214,24 @@
         <tab>standard-report</tab>
         <visibility>Visible</visibility>
     </tabSettings>
+    <tabSettings>
+        <tab>Performance_Alert_History__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>API_Usage_Snapshot__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Flow_Execution__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Deployment_Job__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
     
     <!-- User Permissions -->
-    <userPermissions>
-        <enabled>true</enabled>
-        <name>ViewSetup</name>
-    </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
         <name>ApiEnabled</name>
@@ -184,9 +244,4 @@
         <enabled>true</enabled>
         <name>ExportReport</name>
     </userPermissions>
-    <userPermissions>
-        <enabled>true</enabled>
-        <name>ScheduleReports</name>
-    </userPermissions>
 </PermissionSet>
-
