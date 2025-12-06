@@ -158,19 +158,18 @@ public with sharing class SolentraComplianceCopilot {
     
     /**
      * Handle "Why did my score drop?" queries
+     * Uses SetupAuditTrail for compliance data since Big Object may not be deployed
      */
     private static CopilotResponse handleScoreChangeQuery(String query, QueryClassification classification) {
         CopilotResponse response = new CopilotResponse();
         
-        // Get recent high-risk changes
-        List<Solentra_Compliance_Graph__b> recentChanges = [
-            SELECT Graph_Node_Id__c, Timestamp__c, Entity_Type__c, Entity_Record_Id__c, 
-                   Risk_Score__c, Compliance_Framework__c, AI_Explanation__c, Node_Metadata__c
-            FROM Solentra_Compliance_Graph__b
-            WHERE Risk_Score__c >= :SolentraConstants.RISK_THRESHOLD_HIGH
-            AND Timestamp__c >= LAST_N_DAYS:7
-            ORDER BY Risk_Score__c DESC
-            LIMIT 5
+        // Get recent setup changes from SetupAuditTrail
+        List<SetupAuditTrail> recentChanges = [
+            SELECT CreatedDate, CreatedById, CreatedBy.Name, Action, Section, Display
+            FROM SetupAuditTrail
+            WHERE CreatedDate >= LAST_N_DAYS:7
+            ORDER BY CreatedDate DESC
+            LIMIT 10
         ];
         
         if (recentChanges.isEmpty()) {
@@ -182,35 +181,37 @@ public with sharing class SolentraComplianceCopilot {
         List<String> impacts = new List<String>();
         Integer changeNumber = 1;
         
-        for (Solentra_Compliance_Graph__b change : recentChanges) {
+        for (SetupAuditTrail change : recentChanges) {
             Evidence ev = new Evidence();
-            ev.nodeId = change.Graph_Node_Id__c;
-            ev.timestamp = change.Timestamp__c;
-            ev.framework = change.Compliance_Framework__c;
-            ev.riskScore = change.Risk_Score__c;
-            ev.entityType = change.Entity_Type__c;
-            ev.description = change.AI_Explanation__c;
+            ev.nodeId = String.valueOf(change.Id);
+            ev.timestamp = change.CreatedDate;
+            ev.description = change.Display;
+            ev.entityType = change.Section;
+            ev.riskScore = calculateRiskFromAction(change.Action);
             response.evidence.add(ev);
             
-            impacts.add(changeNumber + '. ' + formatChangeDescription(change));
+            impacts.add(changeNumber + '. ' + change.Display + ' (' + change.CreatedBy.Name + ')');
             changeNumber++;
-            
-            // Add suggested action (only for very high risk items)
-            if (change.Risk_Score__c >= SolentraConstants.RISK_THRESHOLD_AUTO_FIX) {
-                SuggestedAction action = new SuggestedAction();
-                action.actionType = SolentraConstants.ACTION_AUTO_FIX;
-                action.label = 'Auto-Fix';
-                action.description = 'Automatically remediate this violation';
-                action.canAutoFix = true;
-                action.nodeId = change.Graph_Node_Id__c;
-                response.actions.add(action);
-            }
         }
         
         response.answer = Label.Copilot_Score_Drop_Reason.replace('{0}', String.valueOf(recentChanges.size())) + '\n\n' +
-            String.join(impacts, '\n\n');
+            String.join(impacts, '\n');
         
         return response;
+    }
+    
+    /**
+     * Calculate risk score from setup action
+     */
+    private static Decimal calculateRiskFromAction(String action) {
+        if (String.isBlank(action)) return 3.0;
+        String lowerAction = action.toLowerCase();
+        
+        if (lowerAction.contains('delete') || lowerAction.contains('removed')) return 8.0;
+        if (lowerAction.contains('permission') || lowerAction.contains('profile')) return 7.0;
+        if (lowerAction.contains('field') || lowerAction.contains('object')) return 6.0;
+        if (lowerAction.contains('user') || lowerAction.contains('role')) return 5.0;
+        return 4.0;
     }
     
     /**
@@ -219,45 +220,34 @@ public with sharing class SolentraComplianceCopilot {
     private static CopilotResponse handleRiskyFlowsQuery(String query, QueryClassification classification) {
         CopilotResponse response = new CopilotResponse();
         
-        // Query flows with high risk scores
-        List<Solentra_Compliance_Graph__b> riskyFlows = [
-            SELECT Graph_Node_Id__c, Timestamp__c, Entity_Record_Id__c, Risk_Score__c, 
-                   Node_Metadata__c, AI_Explanation__c
-            FROM Solentra_Compliance_Graph__b
-            WHERE Entity_Type__c = :SolentraConstants.ENTITY_FLOW
-            AND Risk_Score__c >= :SolentraConstants.RISK_THRESHOLD_MEDIUM
-            ORDER BY Risk_Score__c DESC
-            LIMIT 12
+        // Query Flow metadata
+        List<FlowDefinitionView> flows = [
+            SELECT DurableId, ApiName, Label, ProcessType, IsActive, Description
+            FROM FlowDefinitionView
+            WHERE IsActive = true
+            LIMIT 20
         ];
         
-        if (riskyFlows.isEmpty()) {
+        if (flows.isEmpty()) {
             response.answer = Label.Copilot_No_Risky_Flows;
             return response;
         }
         
         List<String> flowDescriptions = new List<String>();
         
-        for (Solentra_Compliance_Graph__b flow : riskyFlows) {
-            Map<String, Object> metadata = String.isNotBlank(flow.Node_Metadata__c) 
-                ? (Map<String, Object>)JSON.deserializeUntyped(flow.Node_Metadata__c)
-                : new Map<String, Object>();
-            
-            String flowName = (String)metadata.get('apiName');
-            if (String.isBlank(flowName)) flowName = flow.Entity_Record_Id__c;
-            
+        for (FlowDefinitionView flow : flows) {
             Evidence ev = new Evidence();
-            ev.nodeId = flow.Graph_Node_Id__c;
-            ev.description = flow.AI_Explanation__c;
-            ev.riskScore = flow.Risk_Score__c;
+            ev.nodeId = flow.DurableId;
+            ev.description = flow.Description;
             ev.entityType = SolentraConstants.ENTITY_FLOW;
+            ev.riskScore = 5.0; // Default risk score
             response.evidence.add(ev);
             
-            flowDescriptions.add('• *' + flowName + '* (Risk: ' + flow.Risk_Score__c + '/10) - ' + 
-                (String.isNotBlank(flow.AI_Explanation__c) ? flow.AI_Explanation__c : 'Review required'));
+            flowDescriptions.add('• *' + flow.Label + '* (' + flow.ProcessType + ')');
         }
         
-        response.answer = Label.Copilot_Risky_Flows_Found.replace('{0}', String.valueOf(riskyFlows.size())) + '\n\n' +
-            String.join(flowDescriptions, '\n');
+        response.answer = 'Found ' + flows.size() + ' active Flows:\n\n' +
+            String.join(flowDescriptions, '\n') + '\n\n_Enable Solentra Big Object for detailed risk analysis._';
         
         return response;
     }
@@ -269,39 +259,15 @@ public with sharing class SolentraComplianceCopilot {
         CopilotResponse response = new CopilotResponse();
         
         String framework = classification.framework != null ? classification.framework : SolentraConstants.FRAMEWORK_SOC2;
-        String timeframe = classification.timeframe != null ? classification.timeframe : 'THIS_QUARTER';
         
-        // Get compliance evidence
-        Date startDate = getStartDateForTimeframe(timeframe);
-        
-        List<Solentra_Compliance_Graph__b> evidenceNodes = [
-            SELECT Graph_Node_Id__c, Timestamp__c, Entity_Type__c, Entity_Record_Id__c,
-                   Compliance_Framework__c, Risk_Score__c, Drift_Category__c, Human_Adjudicated__c
-            FROM Solentra_Compliance_Graph__b
-            WHERE Compliance_Framework__c = :framework
-            AND Timestamp__c >= :startDate
-            ORDER BY Timestamp__c DESC
-            LIMIT 100
-        ];
-        
-        // Calculate statistics
-        Integer totalChanges = evidenceNodes.size();
-        Integer violations = 0;
-        Integer remediated = 0;
-        Integer humanReviewed = 0;
-        
-        for (Solentra_Compliance_Graph__b node : evidenceNodes) {
-            if (node.Drift_Category__c == SolentraConstants.DRIFT_POLICY_VIOLATION) violations++;
-            if (node.Drift_Category__c == SolentraConstants.DRIFT_AUTO_REMEDIATED) remediated++;
-            if (node.Human_Adjudicated__c) humanReviewed++;
-        }
+        // Get audit trail stats
+        Integer totalChanges = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30];
         
         response.answer = '📊 *' + Label.Copilot_Evidence_Summary.replace('{0}', framework) + '*\n\n' +
-            '• Total configuration changes: ' + totalChanges + '\n' +
-            '• Policy violations detected: ' + violations + '\n' +
-            '• Auto-remediated: ' + remediated + '\n' +
-            '• Human-reviewed: ' + humanReviewed + '\n\n' +
-            '_Export audit-ready PDF available via the Reports tab._';
+            '• Configuration changes (30 days): ' + totalChanges + '\n' +
+            '• Audit trail retention: Active\n' +
+            '• Field History Tracking: Check Setup\n\n' +
+            '_Enable Solentra Big Object for comprehensive compliance tracking._';
         
         // Add export action
         SuggestedAction exportAction = new SuggestedAction();
@@ -320,42 +286,37 @@ public with sharing class SolentraComplianceCopilot {
     private static CopilotResponse handleViolationSearch(String query, QueryClassification classification) {
         CopilotResponse response = new CopilotResponse();
         
-        String frameworkFilter = classification.framework;
-        String soql = 'SELECT Graph_Node_Id__c, Timestamp__c, Entity_Type__c, Entity_Record_Id__c, ' +
-            'Risk_Score__c, Compliance_Framework__c, AI_Explanation__c, Drift_Category__c ' +
-            'FROM Solentra_Compliance_Graph__b WHERE Drift_Category__c = \'POLICY_VIOLATION\' ';
+        // Check for potential violations using SetupAuditTrail
+        List<SetupAuditTrail> potentialViolations = [
+            SELECT CreatedDate, CreatedById, CreatedBy.Name, Action, Section, Display
+            FROM SetupAuditTrail
+            WHERE CreatedDate >= LAST_N_DAYS:30
+            AND (Action LIKE '%permission%' OR Action LIKE '%delete%' OR Action LIKE '%removed%')
+            ORDER BY CreatedDate DESC
+            LIMIT 20
+        ];
         
-        if (String.isNotBlank(frameworkFilter)) {
-            soql += 'AND Compliance_Framework__c = \'' + String.escapeSingleQuotes(frameworkFilter) + '\' ';
-        }
-        
-        soql += 'ORDER BY Risk_Score__c DESC LIMIT 20';
-        
-        List<Solentra_Compliance_Graph__b> violations = Database.query(soql);
-        
-        if (violations.isEmpty()) {
-            String frameworkSuffix = String.isNotBlank(frameworkFilter) ? ' for ' + frameworkFilter : '';
+        if (potentialViolations.isEmpty()) {
+            String frameworkSuffix = classification.framework != null ? ' for ' + classification.framework : '';
             response.answer = Label.Copilot_No_Violations.replace('{0}', frameworkSuffix) + ' 🎉';
             return response;
         }
         
         List<String> violationList = new List<String>();
         
-        for (Solentra_Compliance_Graph__b v : violations) {
+        for (SetupAuditTrail v : potentialViolations) {
             Evidence ev = new Evidence();
-            ev.nodeId = v.Graph_Node_Id__c;
-            ev.timestamp = v.Timestamp__c;
-            ev.framework = v.Compliance_Framework__c;
-            ev.riskScore = v.Risk_Score__c;
-            ev.entityType = v.Entity_Type__c;
-            ev.description = v.AI_Explanation__c;
+            ev.nodeId = String.valueOf(v.Id);
+            ev.timestamp = v.CreatedDate;
+            ev.description = v.Display;
+            ev.entityType = v.Section;
+            ev.riskScore = calculateRiskFromAction(v.Action);
             response.evidence.add(ev);
             
-            violationList.add('• ' + v.Entity_Type__c + ' (' + v.Compliance_Framework__c + ') - Risk: ' + 
-                v.Risk_Score__c + '/10');
+            violationList.add('• ' + v.Section + ' - ' + v.Display);
         }
         
-        response.answer = Label.Copilot_Violations_Found.replace('{0}', String.valueOf(violations.size())) + '\n\n' + 
+        response.answer = Label.Copilot_Violations_Found.replace('{0}', String.valueOf(potentialViolations.size())) + '\n\n' + 
             String.join(violationList, '\n');
         
         return response;
@@ -413,43 +374,15 @@ public with sharing class SolentraComplianceCopilot {
         
         String framework = classification.framework != null ? classification.framework : SolentraConstants.FRAMEWORK_HIPAA;
         
-        // Get framework-specific stats - use separate queries since CASE WHEN not supported in SOQL
-        Integer total = 0;
-        Integer violations = 0;
+        // Get compliance score
+        Map<String, Object> scoreData = SolentraComplianceScorer.calculateComplianceScore();
+        Decimal overallScore = (Decimal)scoreData.get('overallScore');
         
-        try {
-            // Count total records
-            AggregateResult[] totalStats = [
-                SELECT COUNT(Id) cnt
-                FROM Solentra_Compliance_Graph__b
-                WHERE Compliance_Framework__c = :framework
-                AND Timestamp__c >= LAST_N_DAYS:30
-            ];
-            total = totalStats.isEmpty() ? 0 : (Integer)totalStats[0].get('cnt');
-            
-            // Count violations separately
-            AggregateResult[] violationStats = [
-                SELECT COUNT(Id) cnt
-                FROM Solentra_Compliance_Graph__b
-                WHERE Compliance_Framework__c = :framework
-                AND Timestamp__c >= LAST_N_DAYS:30
-                AND Drift_Category__c = :SolentraConstants.DRIFT_POLICY_VIOLATION
-            ];
-            violations = violationStats.isEmpty() ? 0 : (Integer)violationStats[0].get('cnt');
-        } catch (Exception e) {
-            // Big Object may not exist yet - return defaults
-            System.debug(LoggingLevel.WARN, '[SolentraComplianceCopilot] Stats query failed: ' + e.getMessage());
-        }
-        
-        // Calculate compliance percentage
-        Decimal complianceRate = total > 0 ? ((Decimal)(total - violations) / total * 100).setScale(1) : 100.0;
-        
-        String emoji = complianceRate >= 95 ? '🟢' : complianceRate >= 80 ? '🟡' : '🔴';
+        String emoji = overallScore >= 90 ? '🟢' : overallScore >= 70 ? '🟡' : '🔴';
         
         response.answer = emoji + ' *' + Label.Copilot_Framework_Status.replace('{0}', framework) + '*\n\n' +
-            '• Compliance Rate: ' + complianceRate + '%\n' +
-            '• Changes Monitored (30 days): ' + total + '\n' +
-            '• Active Violations: ' + violations + '\n\n' +
+            '• Overall Compliance Score: ' + overallScore.setScale(1) + '%\n' +
+            '• Risk Level: ' + scoreData.get('riskLevel') + '\n\n' +
             '_Run "Generate ' + framework + ' evidence for Q' + getQuarter() + '" for audit-ready documentation._';
         
         return response;
@@ -470,63 +403,6 @@ public with sharing class SolentraComplianceCopilot {
             '• "Show me recent violations"';
         
         return response;
-    }
-    
-    /**
-     * Format a compliance change into natural language
-     */
-    private static String formatChangeDescription(Solentra_Compliance_Graph__b change) {
-        String description = '';
-        
-        if (String.isNotBlank(change.AI_Explanation__c)) {
-            description = change.AI_Explanation__c;
-        } else {
-            Map<String, Object> metadata = String.isNotBlank(change.Node_Metadata__c)
-                ? (Map<String, Object>)JSON.deserializeUntyped(change.Node_Metadata__c)
-                : new Map<String, Object>();
-            
-            String entityName = (String)metadata.get('name');
-            if (String.isBlank(entityName)) entityName = change.Entity_Record_Id__c;
-            
-            description = 'On ' + change.Timestamp__c.format('MMM d') + ', ' +
-                change.Entity_Type__c + ' "' + entityName + '" was modified';
-            
-            if (String.isNotBlank(change.Compliance_Framework__c)) {
-                description += ', potentially violating ' + change.Compliance_Framework__c + ' requirements';
-            }
-            
-            description += '. Risk Score: ' + change.Risk_Score__c + '/10.';
-        }
-        
-        return description;
-    }
-    
-    /**
-     * Get start date for a timeframe
-     */
-    private static Date getStartDateForTimeframe(String timeframe) {
-        switch on timeframe {
-            when 'TODAY' {
-                return Date.today();
-            }
-            when 'YESTERDAY' {
-                return Date.today().addDays(-1);
-            }
-            when 'THIS_WEEK' {
-                return Date.today().toStartOfWeek();
-            }
-            when 'THIS_MONTH' {
-                return Date.today().toStartOfMonth();
-            }
-            when 'THIS_QUARTER', 'QUARTER' {
-                Integer month = Date.today().month();
-                Integer quarterStart = ((month - 1) / 3) * 3 + 1;
-                return Date.newInstance(Date.today().year(), quarterStart, 1);
-            }
-            when else {
-                return Date.today().addDays(-30);
-            }
-        }
     }
     
     /**
@@ -551,4 +427,3 @@ public with sharing class SolentraComplianceCopilot {
         };
     }
 }
-

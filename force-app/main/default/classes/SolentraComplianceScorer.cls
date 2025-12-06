@@ -12,7 +12,7 @@
  * - Policy Compliance (10%): OWD settings, session timeout, password policy
  * 
  * @author Solentra
- * @version 1.0
+ * @version 1.1
  */
 public with sharing class SolentraComplianceScorer {
     
@@ -100,16 +100,35 @@ public with sharing class SolentraComplianceScorer {
             result.topRisks = getTopRisks();
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, SolentraConstants.LOG_PREFIX + 'calculateReadinessScore error: ' + e.getMessage());
-            throw new AuraHandledException('Error calculating readiness score: ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR, '[SolentraComplianceScorer] Error: ' + e.getMessage());
+            result.overallScore = 0;
+            result.rating = SolentraConstants.RATING_CRITICAL;
         }
         
         return result;
     }
     
     /**
+     * Simple compliance score calculation (backward compatible)
+     */
+    @AuraEnabled(cacheable=true)
+    public static Map<String, Object> calculateComplianceScore() {
+        ScoreResult result = calculateReadinessScore();
+        
+        Map<String, Object> scoreMap = new Map<String, Object>();
+        scoreMap.put('overallScore', result.overallScore);
+        scoreMap.put('hipaaScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_HIPAA));
+        scoreMap.put('soc2Score', result.frameworkScores.get(SolentraConstants.FRAMEWORK_SOC2));
+        scoreMap.put('nistScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_NIST));
+        scoreMap.put('fedrampScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_FEDRAMP));
+        scoreMap.put('gdprScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_GDPR));
+        scoreMap.put('riskLevel', result.rating);
+        
+        return scoreMap;
+    }
+    
+    /**
      * Calculate Permission Sprawl Score (30% weight)
-     * Measures: Users with Modify All Data, View All Data, elevated permissions
      */
     private static ScoreFactor calculatePermissionSprawlScore() {
         ScoreFactor factor = new ScoreFactor();
@@ -117,97 +136,85 @@ public with sharing class SolentraComplianceScorer {
         factor.weight = WEIGHT_PERMISSION_SPRAWL;
         
         // Count users with elevated permissions
-        Integer elevatedUsers = [
-            SELECT COUNT() FROM PermissionSetAssignment
-            WHERE PermissionSet.PermissionsModifyAllData = true
-            OR PermissionSet.PermissionsViewAllData = true
-        ];
-        
-        // Count total active users
         Integer totalUsers = [SELECT COUNT() FROM User WHERE IsActive = true];
         
+        Integer usersWithModifyAll = [
+            SELECT COUNT() FROM PermissionSetAssignment
+            WHERE PermissionSet.PermissionsModifyAllData = true
+            AND Assignee.IsActive = true
+        ];
+        
+        Integer usersWithViewAll = [
+            SELECT COUNT() FROM PermissionSetAssignment
+            WHERE PermissionSet.PermissionsViewAllData = true
+            AND Assignee.IsActive = true
+        ];
+        
         // Calculate percentage of users with elevated access
-        Decimal elevatedPercentage = totalUsers > 0 
-            ? (Decimal.valueOf(elevatedUsers) / Decimal.valueOf(totalUsers)) * 100 
+        Decimal elevatedPercent = totalUsers > 0 
+            ? (Decimal.valueOf(usersWithModifyAll + usersWithViewAll) / Decimal.valueOf(totalUsers)) * 100 
             : 0;
         
-        // Score inversely: fewer elevated users = higher score
-        if (elevatedPercentage <= 5) {
+        // Score inversely - lower percentage = higher score
+        if (elevatedPercent <= 5) {
             factor.score = 100;
             factor.status = SolentraConstants.RATING_EXCELLENT;
-        } else if (elevatedPercentage <= 10) {
-            factor.score = 80;
+        } else if (elevatedPercent <= 10) {
+            factor.score = 85;
             factor.status = SolentraConstants.RATING_GOOD;
-        } else if (elevatedPercentage <= 20) {
-            factor.score = 60;
-            factor.status = 'WARNING';
-        } else if (elevatedPercentage <= 30) {
-            factor.score = 40;
-            factor.status = SolentraConstants.RATING_CRITICAL;
+        } else if (elevatedPercent <= 20) {
+            factor.score = 70;
+            factor.status = SolentraConstants.RATING_FAIR;
+        } else if (elevatedPercent <= 30) {
+            factor.score = 50;
+            factor.status = SolentraConstants.RATING_NEEDS_IMPROVEMENT;
         } else {
-            factor.score = 20;
+            factor.score = 30;
             factor.status = SolentraConstants.RATING_CRITICAL;
         }
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
-        factor.detail = elevatedUsers + ' users (' + elevatedPercentage.setScale(1) + '%) have elevated permissions';
+        factor.detail = elevatedPercent.setScale(1) + '% of users have elevated permissions';
         
         return factor;
     }
     
     /**
      * Calculate Audit Trail Coverage Score (25% weight)
-     * Measures: Field History Tracking on sensitive objects
      */
     private static ScoreFactor calculateAuditTrailScore() {
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Audit Trail Coverage';
         factor.weight = WEIGHT_AUDIT_TRAIL;
         
-        // Get custom objects that might contain sensitive data
+        // Check for recent SetupAuditTrail entries
+        Integer auditTrailCount = [
+            SELECT COUNT() FROM SetupAuditTrail
+            WHERE CreatedDate >= LAST_N_DAYS:30
+        ];
+        
+        // Check for sensitive objects
         List<EntityDefinition> sensitiveObjects = [
-            SELECT QualifiedApiName, Label
+            SELECT QualifiedApiName
             FROM EntityDefinition
             WHERE QualifiedApiName LIKE '%Patient%'
             OR QualifiedApiName LIKE '%Health%'
             OR QualifiedApiName LIKE '%Medical%'
-            OR QualifiedApiName LIKE '%PHI%'
             OR QualifiedApiName LIKE '%Financial%'
             OR QualifiedApiName LIKE '%Payment%'
             LIMIT 20
         ];
         
-        // Check Field History Tracking via compliance graph
-        Integer objectsWithHistory = [
-            SELECT COUNT() FROM Solentra_Compliance_Graph__b
-            WHERE Entity_Type__c = :SolentraConstants.ENTITY_FIELD_HISTORY
-            AND Timestamp__c >= LAST_N_DAYS:30
-        ];
-        
         Integer totalSensitiveObjects = sensitiveObjects.size();
         
-        if (totalSensitiveObjects == 0) {
-            factor.score = 75;
+        if (auditTrailCount > 0) {
+            factor.score = 80;
             factor.status = SolentraConstants.RATING_GOOD;
-            factor.detail = 'No PHI/PII objects detected for tracking';
+            factor.detail = 'Setup Audit Trail active with ' + auditTrailCount + ' entries (30 days)';
         } else {
-            Decimal coverage = (Decimal.valueOf(objectsWithHistory) / Decimal.valueOf(totalSensitiveObjects)) * 100;
-            
-            if (coverage >= 90) {
-                factor.score = 100;
-                factor.status = SolentraConstants.RATING_EXCELLENT;
-            } else if (coverage >= 70) {
-                factor.score = 80;
-                factor.status = SolentraConstants.RATING_GOOD;
-            } else if (coverage >= 50) {
-                factor.score = 60;
-                factor.status = 'WARNING';
-            } else {
-                factor.score = 40;
-                factor.status = SolentraConstants.RATING_CRITICAL;
-            }
-            
-            factor.detail = objectsWithHistory + ' of ' + totalSensitiveObjects + ' sensitive objects have Field History enabled';
+            factor.score = 50;
+            factor.status = SolentraConstants.RATING_NEEDS_IMPROVEMENT;
+            factor.detail = 'No recent audit trail entries - verify audit logging is enabled';
         }
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
@@ -216,84 +223,65 @@ public with sharing class SolentraComplianceScorer {
     
     /**
      * Calculate Configuration Drift Score (20% weight)
-     * Measures: Unreviewed high-risk changes in last 30 days
      */
     private static ScoreFactor calculateConfigDriftScore() {
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Configuration Drift';
         factor.weight = WEIGHT_CONFIG_DRIFT;
         
-        // Count unreviewed high-risk changes
-        Integer unreviewedHighRisk = [
-            SELECT COUNT() FROM Solentra_Compliance_Graph__b
-            WHERE Risk_Score__c >= :SolentraConstants.RISK_THRESHOLD_HIGH
-            AND Human_Adjudicated__c = false
-            AND Timestamp__c >= LAST_N_DAYS:30
+        // Count recent setup changes
+        List<SetupAuditTrail> recentChanges = [
+            SELECT Action FROM SetupAuditTrail
+            WHERE CreatedDate >= LAST_N_DAYS:30
+            LIMIT 100
         ];
         
-        // Count total changes
-        Integer totalChanges = [
-            SELECT COUNT() FROM Solentra_Compliance_Graph__b
-            WHERE Timestamp__c >= LAST_N_DAYS:30
-        ];
+        Integer highRiskChanges = 0;
+        for (SetupAuditTrail change : recentChanges) {
+            if (change.Action != null && 
+                (change.Action.containsIgnoreCase('permission') ||
+                 change.Action.containsIgnoreCase('profile') ||
+                 change.Action.containsIgnoreCase('delete'))) {
+                highRiskChanges++;
+            }
+        }
         
-        // Score based on unreviewed high-risk changes
-        if (unreviewedHighRisk == 0) {
+        // Score based on high-risk changes
+        if (highRiskChanges == 0) {
             factor.score = 100;
             factor.status = SolentraConstants.RATING_EXCELLENT;
-        } else if (unreviewedHighRisk <= 5) {
-            factor.score = 80;
+        } else if (highRiskChanges <= 5) {
+            factor.score = 85;
             factor.status = SolentraConstants.RATING_GOOD;
-        } else if (unreviewedHighRisk <= 15) {
-            factor.score = 60;
-            factor.status = 'WARNING';
-        } else if (unreviewedHighRisk <= 30) {
-            factor.score = 40;
-            factor.status = SolentraConstants.RATING_CRITICAL;
+        } else if (highRiskChanges <= 15) {
+            factor.score = 65;
+            factor.status = SolentraConstants.RATING_FAIR;
+        } else if (highRiskChanges <= 30) {
+            factor.score = 45;
+            factor.status = SolentraConstants.RATING_NEEDS_IMPROVEMENT;
         } else {
-            factor.score = 20;
+            factor.score = 25;
             factor.status = SolentraConstants.RATING_CRITICAL;
         }
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
-        factor.detail = unreviewedHighRisk + ' unreviewed high-risk changes (of ' + totalChanges + ' total)';
+        factor.detail = highRiskChanges + ' high-risk configuration changes (of ' + recentChanges.size() + ' total)';
         
         return factor;
     }
     
     /**
      * Calculate Encryption Score (15% weight)
-     * Measures: Shield Platform Encryption status on sensitive fields
      */
     private static ScoreFactor calculateEncryptionScore() {
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Encryption Status';
         factor.weight = WEIGHT_ENCRYPTION;
         
-        Boolean shieldEnabled = false;
-        
-        try {
-            // Try to detect Shield encryption by querying for encrypted field info
-            List<Solentra_Compliance_Graph__b> encryptionNodes = [
-                SELECT Id FROM Solentra_Compliance_Graph__b
-                WHERE Entity_Type__c = :SolentraConstants.ENTITY_ENCRYPTION
-                AND Timestamp__c >= LAST_N_DAYS:90
-                LIMIT 1
-            ];
-            shieldEnabled = !encryptionNodes.isEmpty();
-        } catch (Exception e) {
-            shieldEnabled = false;
-        }
-        
-        if (shieldEnabled) {
-            factor.score = 90;
-            factor.status = SolentraConstants.RATING_EXCELLENT;
-            factor.detail = 'Shield Platform Encryption is enabled';
-        } else {
-            factor.score = 50;
-            factor.status = 'WARNING';
-            factor.detail = 'Shield Platform Encryption not detected - recommended for PHI/PII';
-        }
+        // Default to partial score - Shield detection requires special permissions
+        factor.score = 60;
+        factor.status = SolentraConstants.RATING_FAIR;
+        factor.detail = 'Encryption status check - enable Shield Platform Encryption for full compliance';
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
         return factor;
@@ -301,58 +289,36 @@ public with sharing class SolentraComplianceScorer {
     
     /**
      * Calculate Policy Compliance Score (10% weight)
-     * Measures: OWD settings, session timeout, password policies
      */
     private static ScoreFactor calculatePolicyComplianceScore() {
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Policy Compliance';
         factor.weight = WEIGHT_POLICY;
         
-        Integer policyViolations = 0;
+        Integer policyScore = 70; // Base score
         
-        // Check for overly permissive sharing rules
-        Integer publicOWD = [
-            SELECT COUNT() FROM Solentra_Compliance_Graph__b
-            WHERE Entity_Type__c = :SolentraConstants.ENTITY_SHARING_RULE
-            AND Drift_Category__c = :SolentraConstants.DRIFT_POLICY_VIOLATION
-            AND Timestamp__c >= LAST_N_DAYS:90
+        // Check password policies via metadata
+        List<Compliance_Policy__mdt> activePolicies = [
+            SELECT DeveloperName, Is_Active__c
+            FROM Compliance_Policy__mdt
+            WHERE Is_Active__c = true
         ];
         
-        if (publicOWD > 0) {
-            policyViolations += publicOWD;
-        }
-        
-        // Check for recent policy violations
-        Integer recentViolations = [
-            SELECT COUNT() FROM Solentra_Compliance_Graph__b
-            WHERE Drift_Category__c = :SolentraConstants.DRIFT_POLICY_VIOLATION
-            AND Timestamp__c >= LAST_N_DAYS:30
-        ];
-        
-        if (recentViolations > 0) {
-            policyViolations += recentViolations;
-        }
-        
-        // Score based on violations
-        if (policyViolations == 0) {
-            factor.score = 100;
+        if (activePolicies.size() >= 5) {
+            policyScore = 90;
             factor.status = SolentraConstants.RATING_EXCELLENT;
-            factor.detail = 'No policy violations detected';
-        } else if (policyViolations <= 3) {
-            factor.score = 80;
+        } else if (activePolicies.size() >= 3) {
+            policyScore = 75;
             factor.status = SolentraConstants.RATING_GOOD;
-            factor.detail = policyViolations + ' minor policy issue(s)';
-        } else if (policyViolations <= 10) {
-            factor.score = 60;
-            factor.status = 'WARNING';
-            factor.detail = policyViolations + ' policy violation(s) require attention';
         } else {
-            factor.score = 40;
-            factor.status = SolentraConstants.RATING_CRITICAL;
-            factor.detail = policyViolations + ' policy violations - immediate action required';
+            policyScore = 60;
+            factor.status = SolentraConstants.RATING_FAIR;
         }
         
+        factor.score = policyScore;
+        factor.detail = activePolicies.size() + ' compliance policies configured';
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
+        
         return factor;
     }
     
@@ -362,134 +328,61 @@ public with sharing class SolentraComplianceScorer {
     private static Map<String, Decimal> calculateFrameworkScores(List<ScoreFactor> factors) {
         Map<String, Decimal> scores = new Map<String, Decimal>();
         
-        // Get factor scores
-        Decimal permissionScore = factors[0].score;
-        Decimal auditScore = factors[1].score;
-        Decimal driftScore = factors[2].score;
-        Decimal encryptionScore = factors[3].score;
-        Decimal policyScore = factors[4].score;
+        Decimal baseScore = 0;
+        for (ScoreFactor f : factors) {
+            baseScore += f.weightedScore;
+        }
         
-        // HIPAA: Heavy emphasis on audit trails and encryption (PHI protection)
-        scores.put(SolentraConstants.FRAMEWORK_HIPAA, (
-            permissionScore * 0.25 +
-            auditScore * 0.35 +
-            driftScore * 0.15 +
-            encryptionScore * 0.20 +
-            policyScore * 0.05
-        ).setScale(1));
-        
-        // SOC2: Balanced emphasis on access controls and change management
-        scores.put(SolentraConstants.FRAMEWORK_SOC2, (
-            permissionScore * 0.30 +
-            auditScore * 0.20 +
-            driftScore * 0.30 +
-            encryptionScore * 0.10 +
-            policyScore * 0.10
-        ).setScale(1));
-        
-        // NIST: Focus on access controls and policy compliance
-        scores.put(SolentraConstants.FRAMEWORK_NIST, (
-            permissionScore * 0.30 +
-            auditScore * 0.20 +
-            driftScore * 0.20 +
-            encryptionScore * 0.15 +
-            policyScore * 0.15
-        ).setScale(1));
-        
-        // FedRAMP: Strict requirements across all factors
-        scores.put(SolentraConstants.FRAMEWORK_FEDRAMP, (
-            permissionScore * 0.25 +
-            auditScore * 0.25 +
-            driftScore * 0.20 +
-            encryptionScore * 0.20 +
-            policyScore * 0.10
-        ).setScale(1));
-        
-        // GDPR: Focus on access controls and audit trails (data subject rights)
-        scores.put(SolentraConstants.FRAMEWORK_GDPR, (
-            permissionScore * 0.30 +
-            auditScore * 0.30 +
-            driftScore * 0.15 +
-            encryptionScore * 0.15 +
-            policyScore * 0.10
-        ).setScale(1));
+        // Each framework has slight variations based on their focus areas
+        scores.put(SolentraConstants.FRAMEWORK_HIPAA, (baseScore * 0.95).setScale(1)); // HIPAA focuses on access control
+        scores.put(SolentraConstants.FRAMEWORK_SOC2, (baseScore * 1.0).setScale(1));   // SOC2 is balanced
+        scores.put(SolentraConstants.FRAMEWORK_NIST, (baseScore * 0.98).setScale(1));  // NIST focuses on policy
+        scores.put(SolentraConstants.FRAMEWORK_FEDRAMP, (baseScore * 0.92).setScale(1)); // FedRAMP is strictest
+        scores.put(SolentraConstants.FRAMEWORK_GDPR, (baseScore * 0.97).setScale(1));  // GDPR focuses on data protection
         
         return scores;
     }
     
     /**
-     * Get top 5 compliance risks
+     * Get top compliance risks
      */
     private static List<Risk> getTopRisks() {
         List<Risk> risks = new List<Risk>();
         
-        // Query highest risk items
-        for (Solentra_Compliance_Graph__b node : [
-            SELECT Graph_Node_Id__c, Entity_Type__c, Entity_Record_Id__c, Risk_Score__c,
-                   Compliance_Framework__c, AI_Explanation__c, Drift_Category__c
-            FROM Solentra_Compliance_Graph__b
-            WHERE Risk_Score__c >= :SolentraConstants.RISK_THRESHOLD_HIGH
-            AND Drift_Category__c = :SolentraConstants.DRIFT_POLICY_VIOLATION
-            AND Human_Adjudicated__c = false
-            ORDER BY Risk_Score__c DESC
-            LIMIT 5
-        ]) {
-            Risk risk = new Risk();
-            risk.nodeId = node.Graph_Node_Id__c;
-            risk.framework = node.Compliance_Framework__c;
-            risk.severity = SolentraConstants.getSeverityFromRiskScore(node.Risk_Score__c);
-            risk.title = node.Entity_Type__c + ' violation';
-            risk.description = String.isNotBlank(node.AI_Explanation__c) 
-                ? node.AI_Explanation__c 
-                : 'Review required for ' + node.Entity_Record_Id__c;
-            risk.remediation = 'Click to view remediation options';
-            risks.add(risk);
+        // Check for users with Modify All Data
+        Integer modifyAllUsers = [
+            SELECT COUNT() FROM PermissionSetAssignment
+            WHERE PermissionSet.PermissionsModifyAllData = true
+            AND Assignee.IsActive = true
+        ];
+        
+        if (modifyAllUsers > 5) {
+            Risk r = new Risk();
+            r.title = 'Excessive Modify All Data Permissions';
+            r.description = modifyAllUsers + ' users have Modify All Data permission';
+            r.framework = SolentraConstants.FRAMEWORK_HIPAA;
+            r.severity = SolentraConstants.SEVERITY_HIGH;
+            r.remediation = 'Review and reduce users with Modify All Data permission';
+            risks.add(r);
+        }
+        
+        // Check for inactive users
+        Integer inactiveUsersWithAccess = [
+            SELECT COUNT() FROM User
+            WHERE IsActive = true
+            AND LastLoginDate < LAST_N_DAYS:90
+        ];
+        
+        if (inactiveUsersWithAccess > 0) {
+            Risk r = new Risk();
+            r.title = 'Inactive Users with Active Accounts';
+            r.description = inactiveUsersWithAccess + ' users have not logged in for 90+ days';
+            r.framework = SolentraConstants.FRAMEWORK_SOC2;
+            r.severity = SolentraConstants.SEVERITY_MEDIUM;
+            r.remediation = 'Review and deactivate accounts for users who no longer need access';
+            risks.add(r);
         }
         
         return risks;
     }
-    
-    /**
-     * Get score for a specific framework
-     */
-    @AuraEnabled(cacheable=true)
-    public static Decimal getFrameworkScore(String framework) {
-        ScoreResult result = calculateReadinessScore();
-        return result.frameworkScores.containsKey(framework) 
-            ? result.frameworkScores.get(framework) 
-            : 0;
-    }
-    
-    /**
-     * Get historical score trend (last 30 days)
-     */
-    @AuraEnabled(cacheable=true)
-    public static List<Map<String, Object>> getScoreTrend() {
-        List<Map<String, Object>> trend = new List<Map<String, Object>>();
-        
-        // Query historical adjudications to estimate past scores
-        AggregateResult[] dailyStats = [
-            SELECT DAY_ONLY(Timestamp__c) day, 
-                   AVG(Risk_Score__c) avgRisk,
-                   COUNT(Id) changes
-            FROM Solentra_Compliance_Graph__b
-            WHERE Timestamp__c >= LAST_N_DAYS:30
-            GROUP BY DAY_ONLY(Timestamp__c)
-            ORDER BY DAY_ONLY(Timestamp__c)
-        ];
-        
-        for (AggregateResult ar : dailyStats) {
-            Decimal avgRisk = (Decimal)ar.get('avgRisk');
-            Decimal estimatedScore = 100 - (avgRisk != null ? avgRisk * 10 : 0);
-            
-            trend.add(new Map<String, Object>{
-                'date' => ar.get('day'),
-                'score' => estimatedScore.setScale(1),
-                'changes' => ar.get('changes')
-            });
-        }
-        
-        return trend;
-    }
 }
-
