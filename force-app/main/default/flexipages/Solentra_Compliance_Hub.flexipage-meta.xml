@@ -4,19 +4,29 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>solentraDashboard</componentName>
+                <componentName>c:solentraDashboard</componentName>
+                <identifier>solentraDashboard1</identifier>
             </componentInstance>
         </itemInstances>
-        <name>left</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>solentraCopilot</componentName>
+                <componentName>c:solentraCopilot</componentName>
+                <identifier>solentraCopilot1</identifier>
             </componentInstance>
         </itemInstances>
-        <name>right</name>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:systemMonitorDashboard</componentName>
+                <identifier>systemMonitorDashboard1</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:apiUsageDashboard</componentName>
+                <identifier>apiUsageDashboard1</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Solentra Compliance Hub</masterLabel>
@@ -25,4 +35,3 @@
     </template>
     <type>AppPage</type>
 </FlexiPage>
-
