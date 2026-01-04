@@ -17,13 +17,13 @@ public with sharing class AlertHistoryService {
     
     @AuraEnabled(cacheable=true)
     public static List<AlertRow> recent(Integer limitSize) {
-        Integer limit = Math.max(1, limitSize);
+        Integer maxRecords = Math.max(1, limitSize);
         List<AlertRow> out = new List<AlertRow>();
         for (Performance_Alert_History__c r : [
             SELECT Metric__c, Value__c, Threshold__c, Context_Record__c, CreatedDate
             FROM Performance_Alert_History__c
             ORDER BY CreatedDate DESC
-            LIMIT :limit
+            LIMIT :maxRecords
         ]) {
             out.add(new AlertRow(r));
         }

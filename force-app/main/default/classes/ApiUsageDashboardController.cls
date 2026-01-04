@@ -5,7 +5,7 @@ public with sharing class ApiUsageDashboardController {
         @AuraEnabled
         public Integer used;
         @AuraEnabled
-        public Integer limit;
+        public Integer apiLimit;
         @AuraEnabled
         public Decimal percent;
         @AuraEnabled
@@ -14,7 +14,7 @@ public with sharing class ApiUsageDashboardController {
         public Row(API_Usage_Snapshot__c snapshot) {
             this.takenOn = snapshot.Taken_On__c;
             this.used = (Integer) snapshot.Daily_Used__c;
-            this.limit = (Integer) snapshot.Daily_Limit__c;
+            this.apiLimit = (Integer) snapshot.Daily_Limit__c;
             this.percent = snapshot.Percent_Used__c;
             this.projected = snapshot.Projected_Exhaustion__c;
         }
@@ -23,7 +23,7 @@ public with sharing class ApiUsageDashboardController {
     @AuraEnabled(cacheable = true)
     public static List<Row> recent(Integer limitSize) {
         List<Row> out = new List<Row>();
-        Integer limit = Math.max(1, limitSize);
+        Integer maxRecords = Math.max(1, limitSize);
         
         for (API_Usage_Snapshot__c r : [
             SELECT
@@ -34,7 +34,7 @@ public with sharing class ApiUsageDashboardController {
                 Projected_Exhaustion__c
             FROM API_Usage_Snapshot__c
             ORDER BY Taken_On__c DESC
-            LIMIT :limit
+            LIMIT :maxRecords
         ]) {
             out.add(new Row(r));
         }

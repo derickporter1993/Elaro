@@ -19,13 +19,13 @@ public with sharing class DeploymentMetrics {
     
     @AuraEnabled(cacheable=true)
     public static List<DeployRow> recent(Integer limitSize) {
-        Integer limit = Math.max(1, limitSize);
+        Integer maxRecords = Math.max(1, limitSize);
         List<DeployRow> out = new List<DeployRow>();
         for (Deployment_Job__c d : [
             SELECT Name, Status__c, Started_On__c, Finished_On__c, Tests_Passed__c, Tests_Failed__c
             FROM Deployment_Job__c
             ORDER BY CreatedDate DESC
-            LIMIT :limit
+            LIMIT :maxRecords
         ]) {
             out.add(new DeployRow(d));
         }

@@ -15,7 +15,7 @@ public with sharing class FlowExecutionStats {
     
     @AuraEnabled(cacheable=true)
     public static List<ExecAgg> topFlows(Integer limitSize) {
-        Integer limit = Math.max(1, limitSize);
+        Integer maxRecords = Math.max(1, limitSize);
         List<AggregateResult> ars = [
             SELECT Flow_Name__c fn,
                    COUNT(Id) runs,
@@ -24,7 +24,7 @@ public with sharing class FlowExecutionStats {
             FROM Flow_Execution__c
             GROUP BY Flow_Name__c
             ORDER BY runs DESC
-            LIMIT :limit
+            LIMIT :maxRecords
         ];
         List<ExecAgg> out = new List<ExecAgg>();
         for (AggregateResult ar : ars) {
