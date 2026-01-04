@@ -39,7 +39,7 @@
                     </div>
                     <h2>How can I help with compliance today?</h2>
                     <p class="welcome-subtitle">Ask me about your compliance posture, violations, or generate audit evidence.</p>
-                    
+
                     <!-- Quick Actions Grid -->
                     <div class="quick-actions-grid">
                         <template for:each={quickCommands} for:item="cmd">
@@ -122,7 +122,7 @@
                                     </div>
                                     <div class="message-content">
                                         <lightning-formatted-rich-text value={message.content} class="message-text"></lightning-formatted-rich-text>
-                                        
+
                                         <!-- Evidence Cards -->
                                         <template lwc:if={message.hasEvidence}>
                                             <div class="evidence-section">
@@ -156,8 +156,8 @@
                                         <template lwc:if={message.hasActions}>
                                             <div class="actions-section">
                                                 <template for:each={message.copilotResponse.actions} for:item="action">
-                                                    <button 
-                                                        key={action.actionType} 
+                                                    <button
+                                                        key={action.actionType}
                                                         class="action-button"
                                                         data-action-type={action.actionType}
                                                         data-node-id={action.nodeId}
@@ -213,8 +213,8 @@
                     onkeypress={handleKeyPress}
                     disabled={isLoading}
                 />
-                <button 
-                    class="send-button" 
+                <button
+                    class="send-button"
                     onclick={handleSubmit}
                     disabled={isLoading}
                 >
@@ -227,4 +227,3 @@
         </div>
     </div>
 </template>
-

@@ -294,7 +294,7 @@ public with sharing class TeamsNotifier {
             // Return safe default URL without ID parameter
             return baseUrl + path;
         }
-        
+
         // URL encode to prevent injection
         String encodedId = EncodingUtil.urlEncode(recordId, 'UTF-8');
         return baseUrl + path + '?id=' + encodedId;

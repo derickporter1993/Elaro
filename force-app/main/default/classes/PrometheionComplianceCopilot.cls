@@ -61,22 +61,22 @@ public with sharing class PrometheionComplianceCopilot {
                 response.queryType = PrometheionConstants.QUERY_GENERAL;
                 return response;
             }
-            
+
             // Validate input length (prevent abuse)
             if (query.length() > 5000) {
                 throw new AuraHandledException('Query exceeds maximum length of 5000 characters');
             }
-            
+
             // Rate limiting check using Platform Cache
             String cacheKey = 'copilot_query_' + UserInfo.getUserId();
             try {
                 Cache.OrgPartition orgCache = Cache.Org.getPartition('local.PrometheionCompliance');
                 Integer queryCount = (Integer) orgCache.get(cacheKey);
-                
+
                 if (queryCount != null && queryCount > 10) {
                     throw new AuraHandledException('Rate limit exceeded. Please wait before submitting another query.');
                 }
-                
+
                 // Increment counter with 5-minute TTL
                 orgCache.put(cacheKey, (queryCount == null ? 1 : queryCount + 1), 300);
             } catch (Cache.Org.OrgCacheException e) {
@@ -120,7 +120,7 @@ public with sharing class PrometheionComplianceCopilot {
             // Structured logging without stack traces in production
             String correlationId = 'COPILOT-' + System.now().getTime();
             String errorMessage = PrometheionConstants.LOG_PREFIX + 'askCopilot error: ' + e.getTypeName() + ' - ' + e.getMessage() + ' [CorrelationId: ' + correlationId + ']';
-            
+
             // Only include stack trace in test mode
             if (Test.isRunningTest()) {
                 System.debug(LoggingLevel.ERROR, errorMessage + '\n' + e.getStackTraceString());

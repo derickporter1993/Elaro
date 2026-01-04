@@ -1,7 +1,7 @@
 # Phase 0: Pre-flight Audit Results
 
-**Date:** January 3, 2026  
-**Org:** prod-org (dbporter93@curious-unicorn-gmfip0.com)  
+**Date:** January 3, 2026
+**Org:** prod-org (dbporter93@curious-unicorn-gmfip0.com)
 **Purpose:** Baseline assessment before compliance services implementation
 
 ---
@@ -110,7 +110,7 @@ List<Contact> c = [SELECT Id FROM Contact WITH SECURITY_ENFORCED];
 
 // DML
 SObjectAccessDecision decision = Security.stripInaccessible(
-    AccessType.CREATABLE, 
+    AccessType.CREATABLE,
     records
 );
 insert decision.getRecords();
