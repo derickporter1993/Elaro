@@ -141,7 +141,7 @@ public with sharing class TeamsNotifier {
                             new Map<String, Object>{
                                 'type' => 'Action.OpenUrl',
                                 'title' => '✅ Approve',
-                                'url' => orgUrl + '/apex/SentinelApprove?id=' + nodeId
+                                'url' => validateAndBuildUrl(orgUrl, nodeId, '/apex/PrometheionApprove')
                             }
                         }
                     }
@@ -278,5 +278,25 @@ public with sharing class TeamsNotifier {
             });
         }
         return facts;
+    }
+
+    /**
+     * Validate and build URL with proper encoding and validation
+     * @param baseUrl The base org URL
+     * @param recordId The Salesforce record ID to validate
+     * @param path The path to append (e.g., '/apex/PrometheionApprove')
+     * @return Validated and encoded URL
+     */
+    private static String validateAndBuildUrl(String baseUrl, String recordId, String path) {
+        // Validate recordId format (Salesforce ID: 15 or 18 characters, alphanumeric)
+        if (String.isBlank(recordId) || !Pattern.matches('^[a-zA-Z0-9]{15,18}$', recordId)) {
+            System.debug(LoggingLevel.WARN, 'TeamsNotifier: Invalid recordId format: ' + recordId);
+            // Return safe default URL without ID parameter
+            return baseUrl + path;
+        }
+        
+        // URL encode to prevent injection
+        String encodedId = EncodingUtil.urlEncode(recordId, 'UTF-8');
+        return baseUrl + path + '?id=' + encodedId;
     }
 }

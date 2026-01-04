@@ -61,6 +61,28 @@ public with sharing class PrometheionComplianceCopilot {
                 response.queryType = PrometheionConstants.QUERY_GENERAL;
                 return response;
             }
+            
+            // Validate input length (prevent abuse)
+            if (query.length() > 5000) {
+                throw new AuraHandledException('Query exceeds maximum length of 5000 characters');
+            }
+            
+            // Rate limiting check using Platform Cache
+            String cacheKey = 'copilot_query_' + UserInfo.getUserId();
+            try {
+                Cache.OrgPartition orgCache = Cache.Org.getPartition('local.PrometheionCompliance');
+                Integer queryCount = (Integer) orgCache.get(cacheKey);
+                
+                if (queryCount != null && queryCount > 10) {
+                    throw new AuraHandledException('Rate limit exceeded. Please wait before submitting another query.');
+                }
+                
+                // Increment counter with 5-minute TTL
+                orgCache.put(cacheKey, (queryCount == null ? 1 : queryCount + 1), 300);
+            } catch (Cache.Org.OrgCacheException e) {
+                // Cache not configured, continue without rate limiting
+                System.debug(LoggingLevel.WARN, 'PrometheionComplianceCopilot: Cache not available for rate limiting');
+            }
 
             // Classify the query type
             QueryClassification classification = classifyQuery(query);
@@ -95,7 +117,16 @@ public with sharing class PrometheionComplianceCopilot {
             String errorMsg = String.isNotBlank(e.getMessage()) ? e.getMessage() : 'Unknown error';
             response.answer = Label.Copilot_Error_General.replace('{0}', errorMsg);
             response.confidence = 0.0;
-            System.debug(LoggingLevel.ERROR, PrometheionConstants.LOG_PREFIX + 'askCopilot error: ' + e.getMessage() + '\n' + e.getStackTraceString());
+            // Structured logging without stack traces in production
+            String correlationId = 'COPILOT-' + System.now().getTime();
+            String errorMessage = PrometheionConstants.LOG_PREFIX + 'askCopilot error: ' + e.getTypeName() + ' - ' + e.getMessage() + ' [CorrelationId: ' + correlationId + ']';
+            
+            // Only include stack trace in test mode
+            if (Test.isRunningTest()) {
+                System.debug(LoggingLevel.ERROR, errorMessage + '\n' + e.getStackTraceString());
+            } else {
+                System.debug(LoggingLevel.ERROR, errorMessage);
+            }
         }
 
         return response;

@@ -72,7 +72,7 @@
                                                 max-width: 85%;
                                             "
                                         >
-                                            <p class="slds-text-longform">{message.content}</p>
+                                            <lightning-formatted-rich-text value={message.content} class="slds-text-longform"></lightning-formatted-rich-text>
 
                                             <!-- Evidence List -->
                                             <template lwc:if={message.hasEvidence}>
