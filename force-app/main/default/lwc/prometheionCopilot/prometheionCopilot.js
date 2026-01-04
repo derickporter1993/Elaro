@@ -204,4 +204,3 @@ export default class PrometheionCopilot extends LightningElement {
         }
     }
 }
-

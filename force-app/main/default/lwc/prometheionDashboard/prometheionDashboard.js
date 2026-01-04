@@ -47,7 +47,7 @@ export default class PrometheionDashboard extends LightningElement {
 
     get frameworkList() {
         if (!this.scoreResult?.frameworkScores) return [];
-        
+
         const frameworks = [
             { key: 'HIPAA', name: 'HIPAA', color: '#6366f1' },
             { key: 'SOC2', name: 'SOC 2', color: '#8b5cf6' },
@@ -69,7 +69,7 @@ export default class PrometheionDashboard extends LightningElement {
 
     get factors() {
         if (!this.scoreResult?.factors) return [];
-        
+
         return this.scoreResult.factors.map(factor => ({
             ...factor,
             statusClass: this.getStatusClass(factor.status),
@@ -80,7 +80,7 @@ export default class PrometheionDashboard extends LightningElement {
 
     get topRisks() {
         if (!this.scoreResult?.topRisks) return [];
-        
+
         return this.scoreResult.topRisks.map(risk => ({
             ...risk,
             severityClass: `severity-badge severity-${risk.severity.toLowerCase()}`
@@ -152,4 +152,3 @@ export default class PrometheionDashboard extends LightningElement {
         );
     }
 }
-

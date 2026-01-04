@@ -99,7 +99,7 @@
         <shortDescription>General Help Message</shortDescription>
         <value>I can help you with compliance questions. Try asking:</value>
     </labels>
-    
+
     <!-- UI Labels -->
     <labels>
         <fullName>Prometheion_Quick_Commands</fullName>
@@ -185,7 +185,7 @@
         <shortDescription>Processing Error Message</shortDescription>
         <value>I encountered an error processing your request. Please try again.</value>
     </labels>
-    
+
     <!-- Scheduler Labels -->
     <labels>
         <fullName>Scorecard_Subject</fullName>

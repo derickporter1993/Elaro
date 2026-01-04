@@ -1,5 +1,5 @@
 /**
- * PrometheionComplianceScorer - Multi-Framework Compliance Scoring Engine
+ * SolentraComplianceScorer - Multi-Framework Compliance Scoring Engine
  * 
  * Calculates compliance scores across HIPAA, SOC2, NIST, FedRAMP, and GDPR frameworks.
  * Provides both aggregate and framework-specific scoring with actionable insights.
@@ -11,10 +11,10 @@
  * - Encryption Status (15%): Shield Platform Encryption
  * - Policy Compliance (10%): OWD settings, session timeout, password policy
  * 
- * @author Prometheion Team
+ * @author Solentra
  * @version 1.1
  */
-public with sharing class PrometheionComplianceScorer {
+public with sharing class SolentraComplianceScorer {
     
     // Scoring weights
     private static final Decimal WEIGHT_PERMISSION_SPRAWL = 0.30;
@@ -91,7 +91,7 @@ public with sharing class PrometheionComplianceScorer {
             ).setScale(1);
             
             // Determine rating
-            result.rating = PrometheionConstants.getRatingFromScore(result.overallScore);
+            result.rating = SolentraConstants.getRatingFromScore(result.overallScore);
             
             // Calculate framework-specific scores
             result.frameworkScores = calculateFrameworkScores(result.factors);
@@ -100,9 +100,9 @@ public with sharing class PrometheionComplianceScorer {
             result.topRisks = getTopRisks();
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, '[PrometheionComplianceScorer] Error: ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR, '[SolentraComplianceScorer] Error: ' + e.getMessage());
             result.overallScore = 0;
-            result.rating = PrometheionConstants.RATING_CRITICAL;
+            result.rating = SolentraConstants.RATING_CRITICAL;
         }
         
         return result;
@@ -117,11 +117,11 @@ public with sharing class PrometheionComplianceScorer {
         
         Map<String, Object> scoreMap = new Map<String, Object>();
         scoreMap.put('overallScore', result.overallScore);
-        scoreMap.put('hipaaScore', result.frameworkScores.get(PrometheionConstants.FRAMEWORK_HIPAA));
-        scoreMap.put('soc2Score', result.frameworkScores.get(PrometheionConstants.FRAMEWORK_SOC2));
-        scoreMap.put('nistScore', result.frameworkScores.get(PrometheionConstants.FRAMEWORK_NIST));
-        scoreMap.put('fedrampScore', result.frameworkScores.get(PrometheionConstants.FRAMEWORK_FEDRAMP));
-        scoreMap.put('gdprScore', result.frameworkScores.get(PrometheionConstants.FRAMEWORK_GDPR));
+        scoreMap.put('hipaaScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_HIPAA));
+        scoreMap.put('soc2Score', result.frameworkScores.get(SolentraConstants.FRAMEWORK_SOC2));
+        scoreMap.put('nistScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_NIST));
+        scoreMap.put('fedrampScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_FEDRAMP));
+        scoreMap.put('gdprScore', result.frameworkScores.get(SolentraConstants.FRAMEWORK_GDPR));
         scoreMap.put('riskLevel', result.rating);
         
         return scoreMap;
@@ -164,7 +164,7 @@ public with sharing class PrometheionComplianceScorer {
                 WITH SECURITY_ENFORCED
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[PrometheionComplianceScorer] Security exception calculating permission sprawl: ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR, '[SolentraComplianceScorer] Security exception calculating permission sprawl: ' + e.getMessage());
             factor.score = 0;
             factor.status = 'ERROR';
             factor.detail = 'Security exception: Unable to query permission data.';
@@ -180,19 +180,19 @@ public with sharing class PrometheionComplianceScorer {
         // Score inversely - lower percentage = higher score
         if (elevatedPercent <= 5) {
             factor.score = 100;
-            factor.status = PrometheionConstants.RATING_EXCELLENT;
+            factor.status = SolentraConstants.RATING_EXCELLENT;
         } else if (elevatedPercent <= 10) {
             factor.score = 85;
-            factor.status = PrometheionConstants.RATING_GOOD;
+            factor.status = SolentraConstants.RATING_GOOD;
         } else if (elevatedPercent <= 20) {
             factor.score = 70;
-            factor.status = PrometheionConstants.RATING_FAIR;
+            factor.status = SolentraConstants.RATING_FAIR;
         } else if (elevatedPercent <= 30) {
             factor.score = 50;
-            factor.status = PrometheionConstants.RATING_NEEDS_IMPROVEMENT;
+            factor.status = SolentraConstants.RATING_NEEDS_IMPROVEMENT;
         } else {
             factor.score = 30;
-            factor.status = PrometheionConstants.RATING_CRITICAL;
+            factor.status = SolentraConstants.RATING_CRITICAL;
         }
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
@@ -231,11 +231,11 @@ public with sharing class PrometheionComplianceScorer {
         
         if (auditTrailCount > 0) {
             factor.score = 80;
-            factor.status = PrometheionConstants.RATING_GOOD;
+            factor.status = SolentraConstants.RATING_GOOD;
             factor.detail = 'Setup Audit Trail active with ' + auditTrailCount + ' entries (30 days)';
         } else {
             factor.score = 50;
-            factor.status = PrometheionConstants.RATING_NEEDS_IMPROVEMENT;
+            factor.status = SolentraConstants.RATING_NEEDS_IMPROVEMENT;
             factor.detail = 'No recent audit trail entries - verify audit logging is enabled';
         }
         
@@ -271,19 +271,19 @@ public with sharing class PrometheionComplianceScorer {
         // Score based on high-risk changes
         if (highRiskChanges == 0) {
             factor.score = 100;
-            factor.status = PrometheionConstants.RATING_EXCELLENT;
+            factor.status = SolentraConstants.RATING_EXCELLENT;
         } else if (highRiskChanges <= 5) {
             factor.score = 85;
-            factor.status = PrometheionConstants.RATING_GOOD;
+            factor.status = SolentraConstants.RATING_GOOD;
         } else if (highRiskChanges <= 15) {
             factor.score = 65;
-            factor.status = PrometheionConstants.RATING_FAIR;
+            factor.status = SolentraConstants.RATING_FAIR;
         } else if (highRiskChanges <= 30) {
             factor.score = 45;
-            factor.status = PrometheionConstants.RATING_NEEDS_IMPROVEMENT;
+            factor.status = SolentraConstants.RATING_NEEDS_IMPROVEMENT;
         } else {
             factor.score = 25;
-            factor.status = PrometheionConstants.RATING_CRITICAL;
+            factor.status = SolentraConstants.RATING_CRITICAL;
         }
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
@@ -302,7 +302,7 @@ public with sharing class PrometheionComplianceScorer {
         
         // Default to partial score - Shield detection requires special permissions
         factor.score = 60;
-        factor.status = PrometheionConstants.RATING_FAIR;
+        factor.status = SolentraConstants.RATING_FAIR;
         factor.detail = 'Encryption status check - enable Shield Platform Encryption for full compliance';
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
@@ -326,19 +326,19 @@ public with sharing class PrometheionComplianceScorer {
             activePolicyCount = Database.countQuery('SELECT COUNT() FROM Compliance_Policy__mdt WHERE Is_Active__c = true');
         } catch (Exception e) {
             // Custom metadata may not exist or have different schema
-            System.debug(LoggingLevel.WARN, '[PrometheionComplianceScorer] Could not query policies: ' + e.getMessage());
+            System.debug(LoggingLevel.WARN, '[SolentraComplianceScorer] Could not query policies: ' + e.getMessage());
             activePolicyCount = 0;
         }
         
         if (activePolicyCount >= 5) {
             policyScore = 90;
-            factor.status = PrometheionConstants.RATING_EXCELLENT;
+            factor.status = SolentraConstants.RATING_EXCELLENT;
         } else if (activePolicyCount >= 3) {
             policyScore = 75;
-            factor.status = PrometheionConstants.RATING_GOOD;
+            factor.status = SolentraConstants.RATING_GOOD;
         } else {
             policyScore = 65;
-            factor.status = PrometheionConstants.RATING_FAIR;
+            factor.status = SolentraConstants.RATING_FAIR;
         }
         
         factor.score = policyScore;
@@ -360,11 +360,11 @@ public with sharing class PrometheionComplianceScorer {
         }
         
         // Each framework has slight variations based on their focus areas
-        scores.put(PrometheionConstants.FRAMEWORK_HIPAA, (baseScore * 0.95).setScale(1)); // HIPAA focuses on access control
-        scores.put(PrometheionConstants.FRAMEWORK_SOC2, (baseScore * 1.0).setScale(1));   // SOC2 is balanced
-        scores.put(PrometheionConstants.FRAMEWORK_NIST, (baseScore * 0.98).setScale(1));  // NIST focuses on policy
-        scores.put(PrometheionConstants.FRAMEWORK_FEDRAMP, (baseScore * 0.92).setScale(1)); // FedRAMP is strictest
-        scores.put(PrometheionConstants.FRAMEWORK_GDPR, (baseScore * 0.97).setScale(1));  // GDPR focuses on data protection
+        scores.put(SolentraConstants.FRAMEWORK_HIPAA, (baseScore * 0.95).setScale(1)); // HIPAA focuses on access control
+        scores.put(SolentraConstants.FRAMEWORK_SOC2, (baseScore * 1.0).setScale(1));   // SOC2 is balanced
+        scores.put(SolentraConstants.FRAMEWORK_NIST, (baseScore * 0.98).setScale(1));  // NIST focuses on policy
+        scores.put(SolentraConstants.FRAMEWORK_FEDRAMP, (baseScore * 0.92).setScale(1)); // FedRAMP is strictest
+        scores.put(SolentraConstants.FRAMEWORK_GDPR, (baseScore * 0.97).setScale(1));  // GDPR focuses on data protection
         
         return scores;
     }
@@ -386,8 +386,8 @@ public with sharing class PrometheionComplianceScorer {
             Risk r = new Risk();
             r.title = 'Excessive Modify All Data Permissions';
             r.description = modifyAllUsers + ' users have Modify All Data permission';
-            r.framework = PrometheionConstants.FRAMEWORK_HIPAA;
-            r.severity = PrometheionConstants.SEVERITY_HIGH;
+            r.framework = SolentraConstants.FRAMEWORK_HIPAA;
+            r.severity = SolentraConstants.SEVERITY_HIGH;
             r.remediation = 'Review and reduce users with Modify All Data permission';
             risks.add(r);
         }
@@ -403,8 +403,8 @@ public with sharing class PrometheionComplianceScorer {
             Risk r = new Risk();
             r.title = 'Inactive Users with Active Accounts';
             r.description = inactiveUsersWithAccess + ' users have not logged in for 90+ days';
-            r.framework = PrometheionConstants.FRAMEWORK_SOC2;
-            r.severity = PrometheionConstants.SEVERITY_MEDIUM;
+            r.framework = SolentraConstants.FRAMEWORK_SOC2;
+            r.severity = SolentraConstants.SEVERITY_MEDIUM;
             r.remediation = 'Review and deactivate accounts for users who no longer need access';
             risks.add(r);
         }

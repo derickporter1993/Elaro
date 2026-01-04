@@ -1,16 +1,16 @@
 /**
  * TeamsNotifier - Microsoft Teams Integration for Sentinel Alerts
- * 
+ *
  * Q1 2025 Priority 2 Feature (alongside Slack)
- * 
+ *
  * Sends rich notifications to Microsoft Teams channels via Incoming Webhooks.
  * Supports Adaptive Cards for interactive compliance alerts with approve/reject buttons.
- * 
+ *
  * @author Sentinel Enterprise
  * @version 1.0
  */
 public with sharing class TeamsNotifier {
-    
+
     /**
      * Send simple text notification to Teams
      */
@@ -30,7 +30,7 @@ public with sharing class TeamsNotifier {
             System.debug(LoggingLevel.ERROR, 'Teams notify exception: ' + e.getMessage());
         }
     }
-    
+
     /**
      * Send rich Adaptive Card notification to Teams
      */
@@ -50,7 +50,7 @@ public with sharing class TeamsNotifier {
             System.debug(LoggingLevel.ERROR, 'Teams rich notify exception: ' + e.getMessage());
         }
     }
-    
+
     /**
      * Send compliance alert with Adaptive Card
      */
@@ -65,7 +65,7 @@ public with sharing class TeamsNotifier {
         String payload = buildComplianceAlertCard(title, severity, framework, description, nodeId, confidence);
         notifyRichAsync(payload);
     }
-    
+
     /**
      * Send auto-remediation notification
      */
@@ -73,7 +73,7 @@ public with sharing class TeamsNotifier {
         String payload = buildRemediationCard(result, framework);
         notifyRichAsync(payload);
     }
-    
+
     /**
      * Build Adaptive Card for compliance alerts
      */
@@ -88,9 +88,9 @@ public with sharing class TeamsNotifier {
         // Determine color based on severity
         String color = severity == 'CRITICAL' ? 'attention' : severity == 'HIGH' ? 'warning' : 'accent';
         String emoji = severity == 'CRITICAL' ? '🔴' : severity == 'HIGH' ? '🟡' : 'ℹ️';
-        
+
         String orgUrl = URL.getOrgDomainUrl().toExternalForm();
-        
+
         Map<String, Object> card = new Map<String, Object>{
             'type' => 'message',
             'attachments' => new List<Map<String, Object>>{
@@ -148,10 +148,10 @@ public with sharing class TeamsNotifier {
                 }
             }
         };
-        
+
         return JSON.serialize(card);
     }
-    
+
     /**
      * Build Adaptive Card for remediation notifications
      */
@@ -159,7 +159,7 @@ public with sharing class TeamsNotifier {
         String orgUrl = URL.getOrgDomainUrl().toExternalForm();
         String emoji = result.success ? '🛡️' : '⚠️';
         String color = result.success ? 'good' : 'warning';
-        
+
         Map<String, Object> card = new Map<String, Object>{
             'type' => 'message',
             'attachments' => new List<Map<String, Object>>{
@@ -213,19 +213,19 @@ public with sharing class TeamsNotifier {
                 }
             }
         };
-        
+
         return JSON.serialize(card);
     }
-    
+
     /**
      * Send weekly compliance scorecard
      */
     public static void sendWeeklyScorecard() {
         PrometheionComplianceScorer.ScoreResult score = PrometheionComplianceScorer.calculateReadinessScore();
-        
+
         String emoji = score.overallScore >= 80 ? '🟢' : score.overallScore >= 60 ? '🟡' : '🔴';
         String orgUrl = URL.getOrgDomainUrl().toExternalForm();
-        
+
         Map<String, Object> card = new Map<String, Object>{
             'type' => 'message',
             'attachments' => new List<Map<String, Object>>{
@@ -265,10 +265,10 @@ public with sharing class TeamsNotifier {
                 }
             }
         };
-        
+
         notifyRichAsync(JSON.serialize(card));
     }
-    
+
     private static List<Map<String, Object>> buildFrameworkFacts(Map<String, Decimal> scores) {
         List<Map<String, Object>> facts = new List<Map<String, Object>>();
         for (String framework : scores.keySet()) {

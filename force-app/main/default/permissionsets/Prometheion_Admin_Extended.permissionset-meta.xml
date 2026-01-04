@@ -3,7 +3,7 @@
     <description>Full administrative access to all Prometheion compliance platform features including AI Copilot, dashboards, scoring, and notifications.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Prometheion Admin Extended</label>
-    
+
     <!-- Apex Class Access - Only classes deployed to org -->
     <classAccesses>
         <apexClass>PrometheionConstants</apexClass>
@@ -53,7 +53,7 @@
         <apexClass>PerformanceRuleEngine</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    
+
     <!-- Custom Object Permissions -->
     <objectPermissions>
         <allowCreate>true</allowCreate>
@@ -91,7 +91,7 @@
         <object>API_Usage_Snapshot__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
-    
+
     <!-- Field Permissions for Performance_Alert_History__c -->
     <fieldPermissions>
         <editable>true</editable>
@@ -118,7 +118,7 @@
         <field>Performance_Alert_History__c.Stack__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
+
     <!-- Field Permissions for API_Usage_Snapshot__c -->
     <fieldPermissions>
         <editable>true</editable>
@@ -145,7 +145,7 @@
         <field>API_Usage_Snapshot__c.Projected_Exhaustion__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
+
     <!-- Field Permissions for Flow_Execution__c -->
     <fieldPermissions>
         <editable>true</editable>
@@ -177,7 +177,7 @@
         <field>Flow_Execution__c.Run_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
+
     <!-- Field Permissions for Deployment_Job__c -->
     <fieldPermissions>
         <editable>true</editable>
@@ -204,7 +204,7 @@
         <field>Deployment_Job__c.Tests_Failed__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    
+
     <!-- Tab Visibility -->
     <tabSettings>
         <tab>standard-Dashboard</tab>
@@ -230,7 +230,7 @@
         <tab>Deployment_Job__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
-    
+
     <!-- User Permissions -->
     <userPermissions>
         <enabled>true</enabled>
