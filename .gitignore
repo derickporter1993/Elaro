@@ -1,3 +1,7 @@
+# Deployment packages
+*.zip
+
+# Keep existing patterns
 node_modules/
 .DS_Store
 .cache/

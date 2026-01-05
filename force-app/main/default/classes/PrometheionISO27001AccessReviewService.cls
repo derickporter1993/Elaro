@@ -14,7 +14,7 @@
  * @author Prometheion
  * @version 1.0
  */
-public with sharing class ISO27001AccessReviewService {
+public with sharing class PrometheionISO27001AccessReviewService {
 
     private static final Integer QUARTERLY_REVIEW_DAYS = 90;
     private static final Integer ANNUAL_CERTIFICATION_DAYS = 365;
@@ -100,15 +100,24 @@ public with sharing class ISO27001AccessReviewService {
         List<Access_Review__c> reviews = new List<Access_Review__c>();
 
         // Find users with privileged access
+        // First get users with privileged permission sets
+        Set<Id> privilegedUserIds = new Set<Id>();
+        for (PermissionSetAssignment psa : [
+            SELECT AssigneeId FROM PermissionSetAssignment
+            WHERE PermissionSet.Name IN :PRIVILEGED_PERMISSIONS
+            WITH USER_MODE
+        ]) {
+            privilegedUserIds.add(psa.AssigneeId);
+        }
+
+        // Then get all active users who are admins or have privileged permissions
         List<User> privilegedUsers = [
             SELECT Id, Name, Username, Profile.Name, ManagerId, LastLoginDate,
                    (SELECT PermissionSet.Name FROM PermissionSetAssignments
                     WHERE PermissionSet.IsOwnedByProfile = false)
             FROM User
             WHERE IsActive = true
-            AND (Profile.Name = 'System Administrator'
-                 OR Id IN (SELECT AssigneeId FROM PermissionSetAssignment
-                           WHERE PermissionSet.Name IN :PRIVILEGED_PERMISSIONS))
+            AND (Profile.Name = 'System Administrator' OR Id IN :privilegedUserIds)
             WITH USER_MODE
             LIMIT 200
         ];
@@ -201,8 +210,7 @@ public with sharing class ISO27001AccessReviewService {
         for (User u : dormantUsers) {
             DormantAccountInfo info = new DormantAccountInfo();
             info.userId = u.Id;
-            info.userName = u.Name;
-            info.username = u.Username;
+            info.userName = u.Username;
             info.profileName = u.Profile.Name;
             info.lastLoginDate = u.LastLoginDate;
             info.daysSinceLogin = u.LastLoginDate != null ?
@@ -339,13 +347,19 @@ public with sharing class ISO27001AccessReviewService {
         ]);
 
         // Privileged users count
+        Set<Id> privUserIds = new Set<Id>();
+        for (PermissionSetAssignment psa : [
+            SELECT AssigneeId FROM PermissionSetAssignment
+            WHERE PermissionSet.Name IN :PRIVILEGED_PERMISSIONS
+            WITH USER_MODE
+        ]) {
+            privUserIds.add(psa.AssigneeId);
+        }
         metrics.put('privilegedUsersCount', [
             SELECT COUNT()
             FROM User
             WHERE IsActive = true
-            AND (Profile.Name = 'System Administrator'
-                 OR Id IN (SELECT AssigneeId FROM PermissionSetAssignment
-                           WHERE PermissionSet.Name IN :PRIVILEGED_PERMISSIONS))
+            AND (Profile.Name = 'System Administrator' OR Id IN :privUserIds)
             WITH USER_MODE
         ]);
 
@@ -438,7 +452,6 @@ public with sharing class ISO27001AccessReviewService {
     public class DormantAccountInfo {
         @AuraEnabled public Id userId;
         @AuraEnabled public String userName;
-        @AuraEnabled public String username;
         @AuraEnabled public String profileName;
         @AuraEnabled public Datetime lastLoginDate;
         @AuraEnabled public Integer daysSinceLogin;

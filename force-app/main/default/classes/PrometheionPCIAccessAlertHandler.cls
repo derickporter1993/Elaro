@@ -10,7 +10,7 @@
  * @author Prometheion
  * @version 1.0
  */
-public with sharing class PCIAccessAlertHandler {
+public with sharing class PrometheionPCIAccessAlertHandler {
 
     private static final Integer FAILED_ACCESS_THRESHOLD = 3;
     private static final Integer BULK_ACCESS_THRESHOLD = 50;

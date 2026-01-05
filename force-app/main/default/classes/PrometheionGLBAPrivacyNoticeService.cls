@@ -13,7 +13,7 @@
  * @author Prometheion
  * @version 1.0
  */
-public with sharing class GLBAPrivacyNoticeService {
+public with sharing class PrometheionGLBAPrivacyNoticeService {
 
     private static final Integer OPT_OUT_DEADLINE_DAYS = 30;
     private static final Integer ANNUAL_NOTICE_INTERVAL_DAYS = 365;
@@ -311,13 +311,19 @@ public with sharing class GLBAPrivacyNoticeService {
      * @param action - Action description
      */
     private static void publishNoticeEvent(Privacy_Notice__c notice, String action) {
-        EventBus.publish(new GLBA_Compliance_Event__e(
-            Notice_Id__c = notice.Id,
-            Contact_Id__c = notice.Contact__c,
-            Notice_Type__c = notice.Notice_Type__c,
-            Action__c = action,
-            Timestamp__c = System.now(),
-            User_Id__c = UserInfo.getUserId()
+        // Use generic Prometheion_Raw_Event__e due to custom object limit
+        Map<String, Object> eventData = new Map<String, Object>{
+            'noticeId' => notice.Id,
+            'contactId' => notice.Contact__c,
+            'noticeType' => notice.Notice_Type__c,
+            'action' => action,
+            'userId' => UserInfo.getUserId()
+        };
+
+        EventBus.publish(new Prometheion_Raw_Event__e(
+            Event_Type__c = 'GLBA_COMPLIANCE',
+            Event_Data__c = JSON.serialize(eventData),
+            Timestamp__c = System.now()
         ));
     }
 
@@ -327,18 +333,23 @@ public with sharing class GLBAPrivacyNoticeService {
      * @param action - Action description
      */
     private static void publishBulkNoticeEvent(List<Privacy_Notice__c> notices, String action) {
-        List<GLBA_Compliance_Event__e> events = new List<GLBA_Compliance_Event__e>();
+        List<Prometheion_Raw_Event__e> events = new List<Prometheion_Raw_Event__e>();
         String userId = UserInfo.getUserId();
         Datetime now = System.now();
 
         for (Privacy_Notice__c notice : notices) {
-            events.add(new GLBA_Compliance_Event__e(
-                Notice_Id__c = notice.Id,
-                Contact_Id__c = notice.Contact__c,
-                Notice_Type__c = notice.Notice_Type__c,
-                Action__c = action,
-                Timestamp__c = now,
-                User_Id__c = userId
+            Map<String, Object> eventData = new Map<String, Object>{
+                'noticeId' => notice.Id,
+                'contactId' => notice.Contact__c,
+                'noticeType' => notice.Notice_Type__c,
+                'action' => action,
+                'userId' => userId
+            };
+
+            events.add(new Prometheion_Raw_Event__e(
+                Event_Type__c = 'GLBA_COMPLIANCE',
+                Event_Data__c = JSON.serialize(eventData),
+                Timestamp__c = now
             ));
         }
 

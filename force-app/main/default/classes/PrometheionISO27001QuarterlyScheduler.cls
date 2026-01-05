@@ -1,24 +1,24 @@
 /**
- * ISO27001QuarterlyReviewScheduler - Scheduled job for ISO 27001 access reviews
+ * PrometheionISO27001QuarterlyScheduler - Scheduled job for ISO 27001 access reviews
  *
  * Automatically initiates quarterly access reviews at the start of each quarter.
  * Also runs privileged access reviews monthly.
  *
  * Schedule Example:
- * System.schedule('ISO 27001 Quarterly Reviews', '0 0 7 1 1,4,7,10 ?', new ISO27001QuarterlyReviewScheduler());
+ * System.schedule('ISO 27001 Quarterly Reviews', '0 0 7 1 1,4,7,10 ?', new PrometheionISO27001QuarterlyScheduler());
  *
  * @author Prometheion
  * @version 1.0
  */
-public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements Schedulable {
+public with sharing class PrometheionISO27001QuarterlyScheduler implements Schedulable {
 
     private String reviewType;
 
-    public PrometheionISO27001QuarterlyReviewScheduler() {
+    public PrometheionISO27001QuarterlyScheduler() {
         this.reviewType = 'quarterly';
     }
 
-    public ISO27001QuarterlyReviewScheduler(String reviewType) {
+    public PrometheionISO27001QuarterlyScheduler(String reviewType) {
         this.reviewType = reviewType;
     }
 
@@ -39,17 +39,17 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
      */
     private void initiateQuarterlyReviews() {
         try {
-            List<Access_Review__c> reviews = ISO27001AccessReviewService.initiateQuarterlyReviews();
+            List<Access_Review__c> reviews = PrometheionISO27001AccessReviewService.initiateQuarterlyReviews();
 
             System.debug(LoggingLevel.INFO,
-                '[ISO27001QuarterlyReviewScheduler] Created ' + reviews.size() + ' quarterly reviews');
+                '[PrometheionISO27001QuarterlyScheduler] Created ' + reviews.size() + ' quarterly reviews');
 
             // Send notification to reviewers
             sendReviewerNotifications(reviews);
 
         } catch (Exception e) {
             System.debug(LoggingLevel.ERROR,
-                '[ISO27001QuarterlyReviewScheduler] Error initiating quarterly reviews: ' + e.getMessage());
+                '[PrometheionISO27001QuarterlyScheduler] Error initiating quarterly reviews: ' + e.getMessage());
         }
     }
 
@@ -58,17 +58,17 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
      */
     private void initiatePrivilegedReviews() {
         try {
-            List<Access_Review__c> reviews = ISO27001AccessReviewService.initiatePrivilegedAccessReviews();
+            List<Access_Review__c> reviews = PrometheionISO27001AccessReviewService.initiatePrivilegedAccessReviews();
 
             System.debug(LoggingLevel.INFO,
-                '[ISO27001QuarterlyReviewScheduler] Created ' + reviews.size() + ' privileged access reviews');
+                '[PrometheionISO27001QuarterlyScheduler] Created ' + reviews.size() + ' privileged access reviews');
 
             // Send urgent notifications for privileged reviews
             sendPrivilegedReviewNotifications(reviews);
 
         } catch (Exception e) {
             System.debug(LoggingLevel.ERROR,
-                '[ISO27001QuarterlyReviewScheduler] Error initiating privileged reviews: ' + e.getMessage());
+                '[PrometheionISO27001QuarterlyScheduler] Error initiating privileged reviews: ' + e.getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
         for (Id reviewerId : reviewsByReviewer.keySet()) {
             Integer reviewCount = reviewsByReviewer.get(reviewerId).size();
             System.debug(LoggingLevel.INFO,
-                '[ISO27001QuarterlyReviewScheduler] Reviewer ' + reviewerId +
+                '[PrometheionISO27001QuarterlyScheduler] Reviewer ' + reviewerId +
                 ' assigned ' + reviewCount + ' reviews');
         }
     }
@@ -105,7 +105,7 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
     private void sendPrivilegedReviewNotifications(List<Access_Review__c> reviews) {
         for (Access_Review__c review : reviews) {
             System.debug(LoggingLevel.INFO,
-                '[ISO27001QuarterlyReviewScheduler] Privileged review created for user: ' +
+                '[PrometheionISO27001QuarterlyScheduler] Privileged review created for user: ' +
                 review.User__c + ' assigned to: ' + review.Reviewer__c);
         }
     }
@@ -119,7 +119,7 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
         return System.schedule(
             'ISO 27001 Quarterly Access Reviews',
             cronExp,
-            new ISO27001QuarterlyReviewScheduler('quarterly')
+            new PrometheionISO27001QuarterlyScheduler('quarterly')
         );
     }
 
@@ -132,7 +132,7 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
         return System.schedule(
             'ISO 27001 Privileged Access Reviews - Monthly',
             cronExp,
-            new ISO27001QuarterlyReviewScheduler('privileged')
+            new PrometheionISO27001QuarterlyScheduler('privileged')
         );
     }
 }
