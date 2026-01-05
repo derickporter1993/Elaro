@@ -163,7 +163,7 @@ private class PrometheionConstantsTest {
     static void testVersionAndLogging() {
         System.assertEquals('64.0', PrometheionConstants.SALESFORCE_API_VERSION);
         System.assertEquals('3.0.0', PrometheionConstants.PROMETHEION_VERSION);
-        System.assertEquals('[Solentra] ', PrometheionConstants.LOG_PREFIX);
+        System.assertEquals('[Prometheion] ', PrometheionConstants.LOG_PREFIX);
     }
 }
 
