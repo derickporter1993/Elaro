@@ -11,4 +11,39 @@
     <apexClass>PrometheionComplianceCopilot</apexClass>
     <enabled>true</enabled>
   </classAccesses>
+  <classAccesses>
+    <apexClass>ComplianceDashboardController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>AuditReportController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <objectPermissions>
+    <object>Compliance_Evidence__c</object>
+    <allowCreate>false</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>false</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>false</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Compliance_Gap__c</object>
+    <allowCreate>false</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>false</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>false</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Compliance_Score__c</object>
+    <allowCreate>false</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>false</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>false</viewAllRecords>
+  </objectPermissions>
 </PermissionSet>
