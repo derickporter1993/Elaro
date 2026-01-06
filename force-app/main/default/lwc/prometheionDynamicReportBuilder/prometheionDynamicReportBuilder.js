@@ -108,12 +108,16 @@ export default class PrometheionDynamicReportBuilder extends LightningElement {
     }
 
     handleAddFilter() {
-        this.filters.push({
-            id: Date.now() + Math.random(),
-            field: '',
-            operator: '=',
-            value: ''
-        });
+        // Create new array reference to trigger reactivity
+        this.filters = [
+            ...this.filters,
+            {
+                id: Date.now() + Math.random(),
+                field: '',
+                operator: '=',
+                value: ''
+            }
+        ];
     }
 
     handleRemoveFilter(event) {
