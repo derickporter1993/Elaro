@@ -4,7 +4,16 @@
       <p class="slds-text-color_weak slds-m-bottom_small">
         Feed this via CI (create Deployment_Job__c records).
       </p>
-      <lightning-datatable key-field="name" data={rows} columns={columns}></lightning-datatable>
+      <!-- Mobile-responsive wrapper for datatable -->
+      <div class="datatable-wrapper">
+        <lightning-datatable 
+          key-field="name" 
+          data={rows} 
+          columns={columns}
+          hide-checkbox-column
+          show-row-number-column
+        ></lightning-datatable>
+      </div>
     </div>
   </lightning-card>
 </template>

@@ -1,11 +1,16 @@
 <template>
   <lightning-card title="Flow Execution Monitor">
     <div class="slds-p-around_medium">
-      <lightning-datatable
-        key-field="flowName"
-        data={rows}
-        columns={columns}
-      ></lightning-datatable>
+      <!-- Mobile-responsive wrapper for datatable -->
+      <div class="datatable-wrapper">
+        <lightning-datatable
+          key-field="flowName"
+          data={rows}
+          columns={columns}
+          hide-checkbox-column
+          show-row-number-column
+        ></lightning-datatable>
+      </div>
     </div>
   </lightning-card>
 </template>

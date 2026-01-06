@@ -1,7 +1,12 @@
-// LWC1702 is a known false positive for Jest test files
-// The LWC compiler incorrectly validates test files as components
-// This import is valid for Jest testing
+/**
+ * LWC1702 is a known false positive for Jest test files.
+ * The LWC compiler incorrectly validates test files as LWC components.
+ * This import is valid for Jest testing and should be ignored.
+ * 
+ * @see https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.testing
+ */
 // eslint-disable-next-line @lwc/lwc/no-invalid-import
+// @ts-ignore - LWC1702 false positive for Jest test files
 import { createElement } from 'lwc';
 import ComplianceCopilot from 'c/complianceCopilot';
 import askCopilot from '@salesforce/apex/PrometheionComplianceCopilot.askCopilot';

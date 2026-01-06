@@ -14,8 +14,8 @@ public with sharing class FlowExecutionStats {
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<ExecAgg> topFlows(Integer limitSize) {
-        Integer maxRecords = Math.max(1, limitSize);
+    public static List<ExecAgg> getTopFlows(Integer limitSize) {
+        Integer recordLimit = Math.max(1, limitSize);
         // SOQL doesn't support CASE WHEN in aggregate queries, so we'll count faults separately
         List<AggregateResult> ars = [
             SELECT Flow_Name__c fn,
@@ -24,7 +24,7 @@ public with sharing class FlowExecutionStats {
             FROM Flow_Execution__c
             GROUP BY Flow_Name__c
             ORDER BY COUNT(Id) DESC
-            LIMIT :maxRecords
+            LIMIT :recordLimit
         ];
 
         // Count faults separately for each flow
@@ -52,5 +52,14 @@ public with sharing class FlowExecutionStats {
             out.add(agg);
         }
         return out;
+    }
+    
+    /**
+     * @deprecated Use getTopFlows instead
+     */
+    @Deprecated
+    @AuraEnabled(cacheable=true)
+    public static List<ExecAgg> topFlows(Integer limitSize) {
+        return getTopFlows(limitSize);
     }
 }

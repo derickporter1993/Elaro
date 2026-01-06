@@ -2,7 +2,7 @@
 
 **The AI Compliance Brain for Salesforce — Configuration drift detection, audit evidence automation, and intelligent compliance analysis for regulated organizations.**
 
-*Current: v3.0 — Unified Enterprise Platform | Combining best of Sentinel + Solentra*
+_Current: v3.0 — Unified Enterprise Platform | Combining best of Sentinel + Solentra_
 
 <div align="center">
 
@@ -22,7 +22,7 @@ Prometheion makes your Salesforce org **audit-ready and protected from configura
 
 **Today (v3.0)**: Prometheion continuously monitors your Salesforce configuration for compliance violations, permission sprawl, and undocumented changes — then generates audit evidence and a baseline compliance report that regulators actually want to see.
 
-**Tomorrow (v1.5+)**: Prometheion evolves into an **AI Compliance Brain** that doesn't just detect drift, but interprets the *intent, impact, and compliance reasoning* behind every change — answering questions no other tool can answer.
+**Tomorrow (v1.5+)**: Prometheion evolves into an **AI Compliance Brain** that doesn't just detect drift, but interprets the _intent, impact, and compliance reasoning_ behind every change — answering questions no other tool can answer.
 
 **Think of it as**: Your AI compliance analyst that works 24/7, understands regulatory frameworks, and speaks both technical and auditor language.
 
@@ -55,6 +55,7 @@ If you're spending weeks preparing for audits, manually reviewing permissions, o
 ### 1. **Compliance Baseline Scan** 📊
 
 Generates a comprehensive compliance baseline report showing:
+
 - Audit Readiness Score (0-100)
 - Top 5 compliance risks ranked by severity
 - Permissions overview (who has access to what)
@@ -66,6 +67,7 @@ Generates a comprehensive compliance baseline report showing:
 ### 2. **Configuration Drift Detection** 🔍
 
 Tracks Salesforce metadata changes in real-time:
+
 - Profile & permission set modifications
 - Sharing rule changes
 - Object & field-level security updates
@@ -77,6 +79,7 @@ Tracks Salesforce metadata changes in real-time:
 ### 3. **Audit Evidence Export** 📁
 
 Automatically collects audit evidence:
+
 - Setup Audit Trail exports
 - Field History Tracking data
 - Event Monitoring logs (if Shield is enabled)
@@ -88,6 +91,7 @@ Automatically collects audit evidence:
 ### 4. **Audit Readiness Score** 🎯
 
 Calculates a compliance score based on:
+
 - Permission sprawl (how many users have elevated access)
 - Audit trail coverage (% of objects with field history enabled)
 - Configuration drift (# of unreviewed changes)
@@ -121,14 +125,17 @@ Where competitors show logs, Prometheion will provide judgment, context, and com
 ### Coming in v1.5 (Q2 2025) — AI-Assisted Remediation
 
 #### **Change Intent Analysis** 🧠
-The signature feature that sets Prometheion apart — AI that understands the *why* behind every change:
+
+The signature feature that sets Prometheion apart — AI that understands the _why_ behind every change:
 
 **What competitors show**:
+
 ```
 Permission Set "Financial_Data_Access" modified by j.smith@acme.org
 ```
 
 **What Prometheion shows**:
+
 ```
 ⚠️ High-Risk Change Detected
 
@@ -159,12 +166,15 @@ Evidence Generated: Attached to audit trail
 This level of reasoning is **impossible for competitors to match** without rebuilding their entire platform.
 
 #### **Automated Remediation Suggestions** 🛠️
+
 One-click fixes for common compliance violations:
+
 - Remove stale permission set assignments (users inactive >90 days)
 - Revert OWD settings to "Private" when changed without approval
 - Re-enable Field History Tracking on compliance-sensitive objects
 
 #### **Jira Integration** 🎫
+
 Auto-create tickets for high-risk changes with full compliance evidence attached.
 
 ---
@@ -172,6 +182,7 @@ Auto-create tickets for high-risk changes with full compliance evidence attached
 ### Coming in v2.0 (Q4 2025) — Multi-Org Governance
 
 #### **Compliance Co-Pilot** 🤖
+
 Natural language interface for compliance queries:
 
 ```
@@ -189,7 +200,9 @@ Prometheion: "3 high-risk changes detected:
 ```
 
 #### **Cross-CRM Unified Governance** 🌐
+
 One compliance model across all your CRMs:
+
 - Salesforce
 - HubSpot
 - Dynamics 365
@@ -200,6 +213,7 @@ One compliance model across all your CRMs:
 **The Moat**: Once Prometheion builds this unified compliance graph, competitors cannot catch up without 3-4 years of development.
 
 #### **Predictive Risk Modeling** 📈
+
 Proactive alerts before violations happen:
 
 ```
@@ -216,7 +230,7 @@ Suggested Action: Review Flow permissions before deployment.
 
 ### Why This Matters — Prometheion's Uncopyable Differentiators
 
-1. **AI Change Intent Analysis** — Competitors show *what* changed; Prometheion explains *why it matters*
+1. **AI Change Intent Analysis** — Competitors show _what_ changed; Prometheion explains _why it matters_
 2. **Automated Compliance Mapping** — Instant mapping to SOC2, HIPAA, NIST, FedRAMP, GDPR
 3. **Evidence Packs** — Auto-generated, auditor-ready documentation
 4. **Cross-CRM Intelligence** — Unified compliance model (impossible to copy quickly)
@@ -288,6 +302,7 @@ sf org open --target-org myorg
 **What it does**: Scans your Salesforce org's configuration and generates a compliance baseline report.
 
 **What it scans**:
+
 - Profiles and Permission Sets (elevated permissions, stale assignments)
 - Sharing Rules and OWD settings (over-permissioned objects)
 - Object and Field-Level Security (sensitive data exposure)
@@ -295,6 +310,7 @@ sf org open --target-org myorg
 - Platform Encryption status (Shield enabled/disabled)
 
 **How to use**:
+
 ```apex
 // Programmatically trigger a scan
 ComplianceBaselineScanner scanner = new ComplianceBaselineScanner();
@@ -311,6 +327,7 @@ Or use the Lightning Web Component dashboard (navigate to Prometheion app).
 **What it does**: Monitors Setup Audit Trail and Field History for configuration changes.
 
 **What it tracks**:
+
 - Profile/Permission Set modifications
 - Sharing Rule changes
 - Custom Object/Field changes
@@ -318,12 +335,14 @@ Or use the Lightning Web Component dashboard (navigate to Prometheion app).
 - Integration/Connected App changes
 
 **How it works**:
+
 1. **Platform Events**: Prometheion listens to Salesforce Platform Events for real-time changes
 2. **Scheduled Jobs**: Runs hourly to poll Setup Audit Trail API
 3. **Risk Scoring**: Each change is scored based on impact (Critical/High/Medium/Low)
 4. **Alerting**: High-risk changes trigger Slack/email notifications
 
 **Sample alert**:
+
 ```
 ⚠️ Prometheion Drift Alert
 
@@ -336,6 +355,7 @@ Action Required: Review and approve or rollback
 ```
 
 **Schedule automatic scans**:
+
 ```bash
 # Run this script to schedule hourly drift detection
 ./scripts/scheduleApiSnapshot.sh myorg
@@ -348,17 +368,20 @@ Action Required: Review and approve or rollback
 **What it does**: Collects and exports audit evidence required by auditors.
 
 **Evidence collected**:
+
 - Setup Audit Trail (last 180 days)
 - Field History records for compliance-sensitive objects
 - Permission set assignment changes
 - Login history and session activity (if Event Monitoring enabled)
 
 **Export formats**:
+
 - **Markdown**: Human-readable reports
 - **CSV**: For import into GRC tools
 - **JSON**: For SIEM integration
 
 **Export a compliance report**:
+
 ```bash
 # Using Salesforce CLI
 sf apex run --file scripts/exportEvidenceReport.apex --target-org myorg
@@ -373,15 +396,16 @@ sf apex run --file scripts/exportEvidenceReport.apex --target-org myorg
 
 **How it's calculated**:
 
-| Factor | Weight | Criteria |
-|--------|--------|----------|
-| **Permission Sprawl** | 30% | # of users with "Modify All" or "View All" permissions |
-| **Audit Trail Coverage** | 25% | % of compliance-sensitive objects with Field History enabled |
-| **Configuration Drift** | 20% | # of unreviewed high-risk changes in last 30 days |
-| **Encryption Status** | 15% | Shield Platform Encryption enabled for PHI/PII fields |
-| **Policy Compliance** | 10% | OWD settings, session timeout, password policy |
+| Factor                   | Weight | Criteria                                                     |
+| ------------------------ | ------ | ------------------------------------------------------------ |
+| **Permission Sprawl**    | 30%    | # of users with "Modify All" or "View All" permissions       |
+| **Audit Trail Coverage** | 25%    | % of compliance-sensitive objects with Field History enabled |
+| **Configuration Drift**  | 20%    | # of unreviewed high-risk changes in last 30 days            |
+| **Encryption Status**    | 15%    | Shield Platform Encryption enabled for PHI/PII fields        |
+| **Policy Compliance**    | 10%    | OWD settings, session timeout, password policy               |
 
 **Example score calculation**:
+
 ```
 Base Score: 100
 
@@ -396,6 +420,7 @@ Final Score: 100 - 63 = 37/100 (🔴 Critical)
 ```
 
 **Improving your score**:
+
 1. Follow the "Suggested Actions" in your baseline report
 2. Re-run the scan after making changes
 3. Track score improvements over time
@@ -407,6 +432,7 @@ Final Score: 100 - 63 = 37/100 (🔴 Critical)
 Prometheion includes Lightning Web Components for real-time monitoring:
 
 ### 1. **System Monitor Dashboard**
+
 - Governor limit tracking (CPU, Heap, SOQL, DML)
 - Real-time alerts when limits are approaching
 - Historical trending
@@ -414,6 +440,7 @@ Prometheion includes Lightning Web Components for real-time monitoring:
 **Location**: `force-app/main/default/lwc/systemMonitorDashboard/`
 
 ### 2. **API Usage Dashboard**
+
 - API call consumption tracking
 - Predict when you'll hit API limits
 - Integration health monitoring
@@ -421,6 +448,7 @@ Prometheion includes Lightning Web Components for real-time monitoring:
 **Location**: `force-app/main/default/lwc/apiUsageDashboard/`
 
 ### 3. **Flow Execution Monitor**
+
 - Track Flow runs, faults, and performance
 - Identify slow or failing automations
 - Audit trail for business logic changes
@@ -428,6 +456,7 @@ Prometheion includes Lightning Web Components for real-time monitoring:
 **Location**: `force-app/main/default/lwc/flowExecutionMonitor/`
 
 ### 4. **Performance Alert Panel**
+
 - Real-time alerts for threshold breaches
 - Configurable alert rules
 - Integration with Slack/Jira
@@ -442,14 +471,14 @@ Prometheion includes Lightning Web Components for real-time monitoring:
 
 Configure compliance thresholds in **Prometheion Settings** (Custom Settings):
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| `CPU_Warn__c` | CPU time warning threshold (ms) | 8000 |
-| `CPU_Crit__c` | CPU time critical threshold (ms) | 9500 |
-| `Heap_Warn__c` | Heap size warning threshold (KB) | 10000 |
-| `Heap_Crit__c` | Heap size critical threshold (KB) | 11500 |
-| `SOQL_Warn__c` | SOQL query warning threshold | 80 |
-| `SOQL_Crit__c` | SOQL query critical threshold | 95 |
+| Setting        | Description                       | Default |
+| -------------- | --------------------------------- | ------- |
+| `CPU_Warn__c`  | CPU time warning threshold (ms)   | 8000    |
+| `CPU_Crit__c`  | CPU time critical threshold (ms)  | 9500    |
+| `Heap_Warn__c` | Heap size warning threshold (KB)  | 10000   |
+| `Heap_Crit__c` | Heap size critical threshold (KB) | 11500   |
+| `SOQL_Warn__c` | SOQL query warning threshold      | 80      |
+| `SOQL_Crit__c` | SOQL query critical threshold     | 95      |
 
 **Access**: Setup → Custom Settings → Prometheion Settings → Manage
 
@@ -608,6 +637,7 @@ npm run lint
 Prometheion is under active development. Contributions welcome!
 
 **Priority areas for v3.0+**:
+
 - Improved drift detection rules
 - Test coverage improvements (target 75%+)
 - Enhanced error handling and logging
@@ -634,4 +664,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-*Prometheion™ — Keep your Salesforce org audit-ready, every day.*
+_Prometheion™ — Keep your Salesforce org audit-ready, every day._

@@ -1,5 +1,5 @@
 import { LightningElement, track } from "lwc";
-import topFlows from "@salesforce/apex/FlowExecutionStats.topFlows";
+import getTopFlows from "@salesforce/apex/FlowExecutionStats.getTopFlows";
 import PollingManager from "c/pollingManager";
 
 export default class FlowExecutionMonitor extends LightningElement {
@@ -27,7 +27,7 @@ export default class FlowExecutionMonitor extends LightningElement {
 
   async load() {
     try {
-      this.rows = await topFlows({ limitSize: 20 });
+      this.rows = await getTopFlows({ limitSize: 20 });
     } catch (e) {
       /* eslint-disable no-console */
       console.error("Error loading flow execution stats:", e);

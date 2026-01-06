@@ -27,7 +27,9 @@ public with sharing class SlackNotifier {
             PrometheionSlackNotifierQueueable job = new PrometheionSlackNotifierQueueable(jsonPayload, correlationId);
             System.enqueueJob(job);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue notification. Error: ' + e.getMessage());
+            String correlationId = 'TEXT-ERROR-' + System.now().getTime();
+            logIntegrationError('SLACK', 'Failed to enqueue notification', e.getMessage(), e.getStackTraceString(), correlationId, text);
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         }
     }
 
@@ -59,9 +61,13 @@ public with sharing class SlackNotifier {
             PrometheionSlackNotifierQueueable job = new PrometheionSlackNotifierQueueable(jsonPayload, correlationId);
             System.enqueueJob(job);
         } catch (JSONException e) {
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Invalid JSON payload. Error: ' + e.getMessage());
+            String correlationId = 'RICH-ERROR-' + System.now().getTime();
+            logIntegrationError('SLACK', 'Invalid JSON payload', e.getMessage(), e.getStackTraceString(), correlationId, jsonPayload);
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Invalid JSON payload. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue rich notification. Error: ' + e.getMessage());
+            String correlationId = 'RICH-ERROR-' + System.now().getTime();
+            logIntegrationError('SLACK', 'Failed to enqueue rich notification', e.getMessage(), e.getStackTraceString(), correlationId, jsonPayload);
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue rich notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         }
     }
 
@@ -296,5 +302,36 @@ public with sharing class SlackNotifier {
         payload.put('blocks', blocks);
 
         notifyRichAsyncQueueable(JSON.serialize(payload));
+    }
+    
+    /**
+     * Log integration errors to Integration_Error__c object for tracking and retry
+     */
+    private static void logIntegrationError(String errorType, String errorMessage, String stackTrace, String correlationId, String context) {
+        logIntegrationError(errorType, errorMessage, stackTrace, correlationId, context, null);
+    }
+    
+    private static void logIntegrationError(String errorType, String errorMessage, String stackTrace, String correlationId, String context, String additionalContext) {
+        if (String.isBlank(errorMessage)) {
+            errorMessage = 'Unknown error';
+        }
+        if (String.isBlank(stackTrace)) {
+            stackTrace = '';
+        }
+        try {
+            Integration_Error__c error = new Integration_Error__c(
+                Error_Type__c = errorType,
+                Error_Message__c = errorMessage,
+                Stack_Trace__c = stackTrace,
+                Correlation_Id__c = correlationId,
+                Context__c = additionalContext != null ? context + '\n\nAdditional Context: ' + additionalContext : context,
+                Status__c = 'NEW',
+                Timestamp__c = System.now()
+            );
+            insert error;
+        } catch (Exception e) {
+            // Don't fail the main operation if error logging fails
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
+        }
     }
 }

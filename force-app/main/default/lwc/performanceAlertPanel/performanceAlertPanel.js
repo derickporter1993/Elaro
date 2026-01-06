@@ -1,6 +1,6 @@
 import { LightningElement, track } from "lwc";
 import { subscribe, onError } from "lightning/empApi";
-import recent from "@salesforce/apex/AlertHistoryService.recent";
+import getRecentAlerts from "@salesforce/apex/AlertHistoryService.getRecentAlerts";
 
 export default class PerformanceAlertPanel extends LightningElement {
   channelName = "/event/Performance_Alert__e";
@@ -20,7 +20,7 @@ export default class PerformanceAlertPanel extends LightningElement {
 
   async connectedCallback() {
     try {
-      this.rows = (await recent({ limitSize: 25 })).map((r, idx) => ({
+      this.rows = (await getRecentAlerts({ limitSize: 25 })).map((r, idx) => ({
         key: `${r.createdDate}-${idx}`,
         ...r,
       }));

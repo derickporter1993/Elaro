@@ -63,6 +63,10 @@ public class PrometheionConstants {
     // Maximum risk score
     public static final Decimal RISK_SCORE_MAX = 10.0;
     
+    // Default risk scores
+    public static final Decimal DEFAULT_RISK_SCORE = 3.0;
+    public static final Decimal BASE_RISK_SCORE = 3.0;
+    
     // ============================================
     // COMPLIANCE SCORE RATINGS
     // ============================================
@@ -224,5 +228,21 @@ public class PrometheionConstants {
         }
         return false;
     }
+    
+    /**
+     * Validate framework and throw exception if invalid
+     * @param framework The framework name to validate
+     * @throws IllegalArgumentException if framework is not supported
+     */
+    public static void validateFramework(String framework) {
+        if (!isValidFramework(framework)) {
+            throw new IllegalArgumentException('Unsupported framework: ' + framework + '. Supported frameworks: ' + String.join(new List<String>(ALL_FRAMEWORKS), ', '));
+        }
+    }
+    
+    /**
+     * Supported frameworks constant (alias for ALL_FRAMEWORKS for clarity)
+     */
+    public static final Set<String> SUPPORTED_FRAMEWORKS = ALL_FRAMEWORKS;
 }
 

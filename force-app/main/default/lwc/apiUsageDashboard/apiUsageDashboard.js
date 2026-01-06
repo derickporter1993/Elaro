@@ -1,6 +1,6 @@
 import { LightningElement, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getSnapshots from "@salesforce/apex/ApiUsageDashboardController.recent";
+import getSnapshots from "@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots";
 import PollingManager from "c/pollingManager";
 
 export default class ApiUsageDashboard extends LightningElement {
@@ -14,7 +14,7 @@ export default class ApiUsageDashboard extends LightningElement {
   columns = [
     { label: "Taken On", fieldName: "takenOn", type: "date" },
     { label: "Used", fieldName: "used", type: "number" },
-    { label: "Limit", fieldName: "limit", type: "number" },
+    { label: "Limit", fieldName: "apiLimit", type: "number" },
     { label: "Percent", fieldName: "percent", type: "percent" },
     { label: "Projected Exhaustion", fieldName: "projected", type: "date" },
   ];
