@@ -16,13 +16,16 @@ export default class PrometheionReadinessScore extends NavigationMixin(Lightning
   @wire(calculateReadinessScore)
   wiredScore({ error, data }) {
     if (data) {
-      this.score = data;
+      // calculateReadinessScore returns a ScoreResult object, not a number
+      this.score = data.overallScore || 0;
       this.calculateSubScores();
       this.updateScoreStatus();
       this.updateProgressStep();
     } else if (error) {
-      this.showToast("Error", error.body.message, "error");
+      console.error('Error loading readiness score:', error);
+      this.showToast("Error", error.body?.message || 'Failed to load readiness score', "error");
       this.scoreStatus = "Error";
+      this.score = 0;
     }
   }
 
@@ -58,7 +61,9 @@ export default class PrometheionReadinessScore extends NavigationMixin(Lightning
   }
 
   get normalizedScore() {
-    return this.score / 100;
+    // Ensure we have a valid number, default to 0 if NaN or undefined
+    const score = this.score || 0;
+    return isNaN(score) ? 0 : score / 100;
   }
 
   get accessClass() {
