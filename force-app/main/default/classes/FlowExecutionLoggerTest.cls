@@ -71,4 +71,88 @@ private class FlowExecutionLoggerTest {
         ];
         System.assertEquals(10, logs.size(), 'Should have created 10 log records');
     }
+
+    @IsTest
+    static void testBulkInsert200Records() {
+        // Test bulk processing with 200+ records (P1 requirement)
+        List<FlowExecutionLogger.LogInput> inputs = new List<FlowExecutionLogger.LogInput>();
+        for (Integer i = 0; i < 200; i++) {
+            Integer mod2 = Math.mod(i, 2);
+            Integer mod10 = Math.mod(i, 10);
+            Integer mod5 = Math.mod(i, 5);
+            Integer mod3 = Math.mod(i, 3);
+            
+            FlowExecutionLogger.LogInput input = new FlowExecutionLogger.LogInput();
+            input.flowName = 'Bulk200Flow' + i;
+            input.status = mod2 == 0 ? 'SUCCESS' : 'Fault';
+            input.cpu = 100 * mod10;
+            input.soql = mod5;
+            input.dml = mod3;
+            inputs.add(input);
+        }
+
+        Test.startTest();
+        FlowExecutionLogger.logInvocable(inputs);
+        Test.stopTest();
+
+        List<Flow_Execution__c> logs = [
+            SELECT Id, Flow_Name__c, Status__c, CPU__c, SOQL__c, DML__c
+            FROM Flow_Execution__c
+            WHERE Flow_Name__c LIKE 'Bulk200Flow%'
+        ];
+        System.assertEquals(200, logs.size(), 'Should have created 200 log records');
+        
+        // Verify data integrity
+        for (Flow_Execution__c log : logs) {
+            System.assertNotEquals(null, log.Flow_Name__c, 'Flow name should not be null');
+            System.assertNotEquals(null, log.Status__c, 'Status should not be null');
+        }
+    }
+    
+    @IsTest
+    static void testInputValidation() {
+        // Test input validation
+        Test.startTest();
+        
+        // Test null inputs
+        try {
+            FlowExecutionLogger.logInvocable(null);
+            System.assert(false, 'Should have thrown exception for null inputs');
+        } catch (IllegalArgumentException e) {
+            System.assert(true, 'Expected exception for null inputs');
+        }
+        
+        // Test empty inputs
+        try {
+            FlowExecutionLogger.logInvocable(new List<FlowExecutionLogger.LogInput>());
+            System.assert(false, 'Should have thrown exception for empty inputs');
+        } catch (IllegalArgumentException e) {
+            System.assert(true, 'Expected exception for empty inputs');
+        }
+        
+        // Test blank flow name
+        FlowExecutionLogger.LogInput invalidInput = new FlowExecutionLogger.LogInput();
+        invalidInput.flowName = '';
+        invalidInput.status = 'SUCCESS';
+        try {
+            FlowExecutionLogger.logInvocable(new List<FlowExecutionLogger.LogInput>{ invalidInput });
+            System.assert(false, 'Should have thrown exception for blank flow name');
+        } catch (IllegalArgumentException e) {
+            System.assert(true, 'Expected exception for blank flow name');
+        }
+        
+        // Test negative CPU
+        FlowExecutionLogger.LogInput negativeInput = new FlowExecutionLogger.LogInput();
+        negativeInput.flowName = 'TestFlow';
+        negativeInput.status = 'SUCCESS';
+        negativeInput.cpu = -1;
+        try {
+            FlowExecutionLogger.logInvocable(new List<FlowExecutionLogger.LogInput>{ negativeInput });
+            System.assert(false, 'Should have thrown exception for negative CPU');
+        } catch (IllegalArgumentException e) {
+            System.assert(true, 'Expected exception for negative CPU');
+        }
+        
+        Test.stopTest();
+    }
 }

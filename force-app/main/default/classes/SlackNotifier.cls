@@ -1,66 +1,93 @@
 public with sharing class SlackNotifier {
+    /**
+     * @deprecated Use notifyAsyncQueueable instead for better error handling and retry logic
+     */
     @future(callout=true)
+    // @Deprecated (not supported in non-managed packages)
     public static void notifyAsync(String text) {
+        // Maintain backward compatibility, delegate to Queueable
+        notifyAsyncQueueable(text);
+    }
+
+    /**
+     * Send Slack notification using Queueable (recommended approach)
+     * Provides retry logic, error handling, and better monitoring
+     */
+    public static void notifyAsyncQueueable(String text) {
+        if (String.isBlank(text)) {
+            System.debug(LoggingLevel.WARN, 'SlackNotifier: Empty text provided, skipping notification');
+            return;
+        }
+
         try {
-            HttpRequest req = new HttpRequest();
-            req.setEndpoint('callout:Slack_Webhook');
-            req.setMethod('POST');
-            req.setHeader('Content-Type', 'application/json');
-            req.setBody(JSON.serialize(new Map<String, Object>{ 'text' => text }));
-            HttpResponse res = new Http().send(req);
-            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                System.debug(
-                    LoggingLevel.ERROR,
-                    'Slack notify failed with status ' +
-                        res.getStatusCode() +
-                        ': ' +
-                        res.getStatus()
-                );
-            }
+            Map<String, Object> payload = new Map<String, Object>{ 'text' => text };
+            String jsonPayload = JSON.serialize(payload);
+            String correlationId = 'TEXT-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
+
+            PrometheionSlackNotifierQueueable job = new PrometheionSlackNotifierQueueable(jsonPayload, correlationId);
+            System.enqueueJob(job);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Slack notify exception: ' + e.getMessage());
+            String correlationId = 'TEXT-ERROR-' + System.now().getTime();
+            logIntegrationError('SLACK', 'Failed to enqueue notification', e.getMessage(), e.getStackTraceString(), correlationId, text);
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         }
     }
 
+    /**
+     * @deprecated Use notifyRichAsyncQueueable instead for better error handling and retry logic
+     */
     @future(callout=true)
+    // @Deprecated (not supported in non-managed packages)
     public static void notifyRichAsync(String jsonPayload) {
+        // Maintain backward compatibility, delegate to Queueable
+        notifyRichAsyncQueueable(jsonPayload);
+    }
+
+    /**
+     * Send rich Slack notification using Queueable (recommended approach)
+     * Provides retry logic, payload validation, and better error handling
+     */
+    public static void notifyRichAsyncQueueable(String jsonPayload) {
+        if (String.isBlank(jsonPayload)) {
+            System.debug(LoggingLevel.WARN, 'SlackNotifier: Empty payload provided, skipping notification');
+            return;
+        }
+
         try {
-            HttpRequest req = new HttpRequest();
-            req.setEndpoint('callout:Slack_Webhook');
-            req.setMethod('POST');
-            req.setHeader('Content-Type', 'application/json');
-            req.setBody(jsonPayload);
-            HttpResponse res = new Http().send(req);
-            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                System.debug(
-                    LoggingLevel.ERROR,
-                    'Slack rich notify failed with status ' +
-                        res.getStatusCode() +
-                        ': ' +
-                        res.getStatus()
-                );
-            }
+            // Validate JSON format
+            JSON.deserializeUntyped(jsonPayload);
+
+            String correlationId = 'RICH-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
+            PrometheionSlackNotifierQueueable job = new PrometheionSlackNotifierQueueable(jsonPayload, correlationId);
+            System.enqueueJob(job);
+        } catch (JSONException e) {
+            String correlationId = 'RICH-ERROR-' + System.now().getTime();
+            logIntegrationError('SLACK', 'Invalid JSON payload', e.getMessage(), e.getStackTraceString(), correlationId, jsonPayload);
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Invalid JSON payload. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         } catch (Exception e) {
-            System.debug(
-                LoggingLevel.ERROR,
-                'Slack rich notify exception: ' + e.getMessage()
-            );
+            String correlationId = 'RICH-ERROR-' + System.now().getTime();
+            logIntegrationError('SLACK', 'Failed to enqueue rich notification', e.getMessage(), e.getStackTraceString(), correlationId, jsonPayload);
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue rich notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         }
     }
 
-    public static void notifyPerformanceEvent(Performance_Alert__e evt) {
-        // Use rich formatting for performance alerts
-        String jsonPayload = buildPerformanceAlertBlocks(evt);
-        notifyRichAsync(jsonPayload);
+    /**
+     * Notify about a performance event
+     * Note: Performance_Alert__e platform event not available due to org limits.
+     * Use notifyPerformanceAlert(String, Decimal, Decimal, String) instead.
+     */
+    public static void notifyPerformanceAlert(String metric, Decimal value, Decimal threshold, String contextRecord) {
+        String jsonPayload = buildPerformanceAlertBlocks(metric, value, threshold, contextRecord, null);
+        notifyRichAsyncQueueable(jsonPayload);
     }
 
-    // Build Slack Block Kit JSON for performance alerts
-    private static String buildPerformanceAlertBlocks(Performance_Alert__e evt) {
+    // Build Slack Block Kit JSON for performance alerts (without platform event dependency)
+    private static String buildPerformanceAlertBlocks(String metric, Decimal value, Decimal threshold, String contextRecord, String stack) {
         // Determine severity emoji and color
         String emoji = '⚠️';
         String color = '#ffb75d'; // Warning (orange)
 
-        Decimal percentOfLimit = (evt.Value__c / evt.Threshold__c) * 100;
+        Decimal percentOfLimit = (value / threshold) * 100;
 
         if (percentOfLimit >= 95) {
             emoji = '🔴';
@@ -78,7 +105,7 @@ public with sharing class SlackNotifier {
             'text',
             emoji +
             ' Prometheion Alert: ' +
-            evt.Metric__c +
+            metric +
             ' at ' +
             percentOfLimit.setScale(1) +
             '%'
@@ -96,7 +123,7 @@ public with sharing class SlackNotifier {
             'text',
             emoji +
             ' ' +
-            evt.Metric__c +
+            metric +
             ' Performance Alert'
         );
         headerBlock.put('text', headerText);
@@ -116,7 +143,7 @@ public with sharing class SlackNotifier {
         valueField.put(
             'text',
             '*Current Value:*\n' +
-            String.valueOf(evt.Value__c.setScale(0)) +
+            String.valueOf(value.setScale(0)) +
             ' (' +
             percentOfLimit.setScale(1) +
             '%)'
@@ -129,34 +156,41 @@ public with sharing class SlackNotifier {
         thresholdField.put(
             'text',
             '*Threshold:*\n' +
-            String.valueOf(evt.Threshold__c.setScale(0))
+            String.valueOf(threshold.setScale(0))
         );
         fields.add(thresholdField);
 
         // Metric Type
         Map<String, Object> metricField = new Map<String, Object>();
         metricField.put('type', 'mrkdwn');
-        metricField.put('text', '*Metric:*\n' + evt.Metric__c);
+        metricField.put('text', '*Metric:*\n' + metric);
         fields.add(metricField);
 
         // Context Record (if available)
-        if (!String.isBlank(evt.Context_Record__c)) {
+        if (!String.isBlank(contextRecord)) {
             Map<String, Object> contextField = new Map<String, Object>();
             contextField.put('type', 'mrkdwn');
-            contextField.put('text', '*Context:*\n' + evt.Context_Record__c);
+            contextField.put('text', '*Context:*\n' + contextRecord);
             fields.add(contextField);
         }
 
         infoSection.put('fields', fields);
         blocks.add(infoSection);
 
-        // Stack trace context (if available)
-        if (!String.isBlank(evt.Stack__c)) {
+        // Stack trace context (if available) - truncate to prevent Slack limits
+        if (!String.isBlank(stack)) {
+            // Slack has a 3000 character limit per block, truncate if needed
+            String stackTrace = stack;
+            Integer maxLength = 2500; // Leave room for markdown formatting
+            if (stackTrace.length() > maxLength) {
+                stackTrace = stackTrace.substring(0, maxLength) + '\n... (truncated)';
+            }
+            
             Map<String, Object> stackSection = new Map<String, Object>();
             stackSection.put('type', 'section');
             Map<String, Object> stackText = new Map<String, Object>();
             stackText.put('type', 'mrkdwn');
-            stackText.put('text', '*Details:*\n```' + evt.Stack__c + '```');
+            stackText.put('text', '*Details:*\n```' + stackTrace + '```');
             stackSection.put('text', stackText);
             blocks.add(stackSection);
         }
@@ -208,6 +242,18 @@ public with sharing class SlackNotifier {
         String rating,
         Decimal percentileRank
     ) {
+        // Validate inputs
+        if (String.isBlank(flowName)) {
+            System.debug(LoggingLevel.WARN, 'SlackNotifier: Empty flowName provided, skipping notification');
+            return;
+        }
+        if (cpuTime == null || cpuTime < 0) {
+            System.debug(LoggingLevel.WARN, 'SlackNotifier: Invalid cpuTime provided, skipping notification');
+            return;
+        }
+        if (String.isBlank(rating)) {
+            rating = 'Unknown';
+        }
         Map<String, Object> payload = new Map<String, Object>();
 
         String emoji = rating == 'Critical' ? '🔴' : rating == 'Slow' ? '🟡' : 'ℹ️';
@@ -259,6 +305,37 @@ public with sharing class SlackNotifier {
 
         payload.put('blocks', blocks);
 
-        notifyRichAsync(JSON.serialize(payload));
+        notifyRichAsyncQueueable(JSON.serialize(payload));
+    }
+    
+    /**
+     * Log integration errors to Integration_Error__c object for tracking and retry
+     */
+    private static void logIntegrationError(String errorType, String errorMessage, String stackTrace, String correlationId, String context) {
+        logIntegrationError(errorType, errorMessage, stackTrace, correlationId, context, null);
+    }
+    
+    private static void logIntegrationError(String errorType, String errorMessage, String stackTrace, String correlationId, String context, String additionalContext) {
+        if (String.isBlank(errorMessage)) {
+            errorMessage = 'Unknown error';
+        }
+        if (String.isBlank(stackTrace)) {
+            stackTrace = '';
+        }
+        try {
+            Integration_Error__c error = new Integration_Error__c(
+                Error_Type__c = errorType,
+                Error_Message__c = errorMessage,
+                Stack_Trace__c = stackTrace,
+                Correlation_Id__c = correlationId,
+                Context__c = additionalContext != null ? context + '\n\nAdditional Context: ' + additionalContext : context,
+                Status__c = 'NEW',
+                Timestamp__c = System.now()
+            );
+            insert error;
+        } catch (Exception e) {
+            // Don't fail the main operation if error logging fails
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
+        }
     }
 }

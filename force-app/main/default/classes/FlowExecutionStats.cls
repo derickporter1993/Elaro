@@ -4,7 +4,7 @@ public with sharing class FlowExecutionStats {
         @AuraEnabled public Integer runs;
         @AuraEnabled public Integer faults;
         @AuraEnabled public Datetime lastRun;
-        
+
         public ExecAgg(AggregateResult ar) {
             this.flowName = (String) ar.get('fn');
             this.runs = (Integer) ar.get('runs');
@@ -12,24 +12,54 @@ public with sharing class FlowExecutionStats {
             this.lastRun = (Datetime) ar.get('lastRun');
         }
     }
-    
+
     @AuraEnabled(cacheable=true)
-    public static List<ExecAgg> topFlows(Integer limitSize) {
-        Integer limit = Math.max(1, limitSize);
+    public static List<ExecAgg> getTopFlows(Integer limitSize) {
+        Integer recordLimit = Math.max(1, limitSize);
+        // SOQL doesn't support CASE WHEN in aggregate queries, so we'll count faults separately
         List<AggregateResult> ars = [
             SELECT Flow_Name__c fn,
                    COUNT(Id) runs,
-                   SUM(CASE WHEN Status__c = 'Fault' THEN 1 ELSE 0 END) faults,
                    MAX(Run_Time__c) lastRun
             FROM Flow_Execution__c
             GROUP BY Flow_Name__c
-            ORDER BY runs DESC
-            LIMIT :limit
+            ORDER BY COUNT(Id) DESC
+            LIMIT :recordLimit
         ];
+
+        // Count faults separately for each flow
+        Set<String> flowNames = new Set<String>();
+        for (AggregateResult ar : ars) {
+            flowNames.add((String)ar.get('fn'));
+        }
+
+        Map<String, Integer> faultCounts = new Map<String, Integer>();
+        if (!flowNames.isEmpty()) {
+            List<AggregateResult> faultArs = [
+                SELECT Flow_Name__c fn, COUNT(Id) faultCount
+                FROM Flow_Execution__c
+                WHERE Flow_Name__c IN :flowNames AND Status__c = 'Fault'
+                GROUP BY Flow_Name__c
+            ];
+            for (AggregateResult fa : faultArs) {
+                faultCounts.put((String)fa.get('fn'), (Integer)fa.get('faultCount'));
+            }
+        }
         List<ExecAgg> out = new List<ExecAgg>();
         for (AggregateResult ar : ars) {
-            out.add(new ExecAgg(ar));
+            ExecAgg agg = new ExecAgg(ar);
+            agg.faults = faultCounts.containsKey(agg.flowName) ? faultCounts.get(agg.flowName) : 0;
+            out.add(agg);
         }
         return out;
+    }
+    
+    /**
+     * @deprecated Use getTopFlows instead
+     */
+    // @Deprecated (not supported in non-managed packages)
+    @AuraEnabled(cacheable=true)
+    public static List<ExecAgg> topFlows(Integer limitSize) {
+        return getTopFlows(limitSize);
     }
 }

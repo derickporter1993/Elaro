@@ -10,11 +10,11 @@
  * @author Prometheion
  * @version 1.0
  */
-public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements Schedulable {
+public with sharing class ISO27001QuarterlyReviewScheduler implements Schedulable {
 
     private String reviewType;
 
-    public PrometheionISO27001QuarterlyReviewScheduler() {
+    public ISO27001QuarterlyReviewScheduler() {
         this.reviewType = 'quarterly';
     }
 
@@ -39,7 +39,7 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
      */
     private void initiateQuarterlyReviews() {
         try {
-            List<Access_Review__c> reviews = ISO27001AccessReviewService.initiateQuarterlyReviews();
+            List<Access_Review__c> reviews = PrometheionISO27001AccessReviewService.initiateQuarterlyReviews();
 
             System.debug(LoggingLevel.INFO,
                 '[ISO27001QuarterlyReviewScheduler] Created ' + reviews.size() + ' quarterly reviews');
@@ -58,7 +58,7 @@ public with sharing class PrometheionISO27001QuarterlyReviewScheduler implements
      */
     private void initiatePrivilegedReviews() {
         try {
-            List<Access_Review__c> reviews = ISO27001AccessReviewService.initiatePrivilegedAccessReviews();
+            List<Access_Review__c> reviews = PrometheionISO27001AccessReviewService.initiatePrivilegedAccessReviews();
 
             System.debug(LoggingLevel.INFO,
                 '[ISO27001QuarterlyReviewScheduler] Created ' + reviews.size() + ' privileged access reviews');

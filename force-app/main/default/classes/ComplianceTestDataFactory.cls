@@ -19,12 +19,15 @@ public class ComplianceTestDataFactory {
         List<Compliance_Gap__c> gaps = new List<Compliance_Gap__c>();
         
         for (Integer i = 0; i < count; i++) {
+            Integer mod4 = Math.mod(i, 4);
+            Integer mod3 = Math.mod(i, 3);
+            
             Compliance_Gap__c gap = new Compliance_Gap__c(
                 Framework__c = framework,
                 Policy_Reference__c = 'TEST_POLICY_' + i,
                 Gap_Description__c = 'Test gap ' + i + ' for ' + framework,
-                Severity__c = i % 4 == 0 ? 'CRITICAL' : i % 4 == 1 ? 'HIGH' : i % 4 == 2 ? 'MEDIUM' : 'LOW',
-                Status__c = i % 3 == 0 ? 'OPEN' : i % 3 == 1 ? 'IN_PROGRESS' : 'REMEDIATED',
+                Severity__c = mod4 == 0 ? 'CRITICAL' : mod4 == 1 ? 'HIGH' : mod4 == 2 ? 'MEDIUM' : 'LOW',
+                Status__c = mod3 == 0 ? 'OPEN' : mod3 == 1 ? 'IN_PROGRESS' : 'REMEDIATED',
                 Risk_Score__c = 5.0 + (i * 0.5),
                 Detected_Date__c = System.now().addDays(-i),
                 Entity_Type__c = 'PERMISSION_SET',
@@ -51,6 +54,8 @@ public class ComplianceTestDataFactory {
         };
         
         for (Integer i = 0; i < count; i++) {
+            Integer mod2 = Math.mod(i, 2);
+            
             Compliance_Evidence__c ev = new Compliance_Evidence__c(
                 Framework__c = framework,
                 Evidence_Type__c = evidenceTypes[Math.mod(i, evidenceTypes.size())],
@@ -61,7 +66,7 @@ public class ComplianceTestDataFactory {
                     'framework' => framework,
                     'createdDate' => String.valueOf(System.now())
                 }),
-                Status__c = i % 2 == 0 ? 'COLLECTED' : 'APPROVED',
+                Status__c = mod2 == 0 ? 'COLLECTED' : 'APPROVED',
                 Compliance_Score__c = 70.0 + (i * 2.0)
             );
             evidence.add(ev);
@@ -84,6 +89,8 @@ public class ComplianceTestDataFactory {
         };
         
         for (Integer i = 0; i < count; i++) {
+            Integer mod4 = Math.mod(i, 4);
+            
             Metadata_Change__c change = new Metadata_Change__c(
                 Change_Type__c = changeTypes[Math.mod(i, changeTypes.size())],
                 Metadata_Type__c = metadataTypes[Math.mod(i, metadataTypes.size())],
@@ -95,7 +102,7 @@ public class ComplianceTestDataFactory {
                     'before' => 'OldValue' + i,
                     'after' => 'NewValue' + i
                 }),
-                Risk_Level__c = i % 4 == 0 ? 'CRITICAL' : i % 4 == 1 ? 'HIGH' : i % 4 == 2 ? 'MEDIUM' : 'LOW'
+                Risk_Level__c = mod4 == 0 ? 'CRITICAL' : mod4 == 1 ? 'HIGH' : mod4 == 2 ? 'MEDIUM' : 'LOW'
             );
             changes.add(change);
         }
