@@ -318,22 +318,20 @@ public with sharing class SlackNotifier {
         if (String.isBlank(stackTrace)) {
             stackTrace = '';
         }
-        // TODO: Re-enable Integration_Error__c logging after creating object in org
-        // try {
-        //     Integration_Error__c error = new Integration_Error__c(
-        //         Error_Type__c = errorType,
-        //         Error_Message__c = errorMessage,
-        //         Stack_Trace__c = stackTrace,
-        //         Correlation_Id__c = correlationId,
-        //         Context__c = additionalContext != null ? context + '\n\nAdditional Context: ' + additionalContext : context,
-        //         Status__c = 'NEW',
-        //         Timestamp__c = System.now()
-        //     );
-        //     insert error;
-        // } catch (Exception e) {
-        //     // Don't fail the main operation if error logging fails
-        //     System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
-        // }
-        System.debug(LoggingLevel.ERROR, 'SlackNotifier: Integration error logged. Type: ' + errorType + ', CorrelationId: ' + correlationId + ', Error: ' + errorMessage);
+        try {
+            Integration_Error__c error = new Integration_Error__c(
+                Error_Type__c = errorType,
+                Error_Message__c = errorMessage,
+                Stack_Trace__c = stackTrace,
+                Correlation_Id__c = correlationId,
+                Context__c = additionalContext != null ? context + '\n\nAdditional Context: ' + additionalContext : context,
+                Status__c = 'NEW',
+                Timestamp__c = System.now()
+            );
+            insert error;
+        } catch (Exception e) {
+            // Don't fail the main operation if error logging fails
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
+        }
     }
 }
