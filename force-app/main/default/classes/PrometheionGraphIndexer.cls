@@ -2,6 +2,21 @@ public with sharing class PrometheionGraphIndexer {
     private static final String GRAPH_VERSION = 'v3.0';
 
     public static String indexChange(String entityType, String entityId, String parentNodeId, String framework) {
+        // Input validation
+        if (String.isBlank(entityType)) {
+            throw new PrometheionException('Entity type cannot be blank');
+        }
+        if (String.isBlank(entityId)) {
+            throw new PrometheionException('Entity ID cannot be blank');
+        }
+        if (String.isBlank(framework)) {
+            throw new PrometheionException('Framework cannot be blank');
+        }
+        // Validate framework is supported
+        if (!PrometheionConstants.isValidFramework(framework)) {
+            throw new PrometheionException('Unsupported framework: ' + framework);
+        }
+        
         String nodeHash = generateDeterministicHash(entityType, entityId, framework);
         Map<String, Object> metadata = queryEntityMetadata(entityType, entityId);
         Decimal riskScore = calculateRiskScore(metadata, framework);
@@ -61,7 +76,7 @@ public with sharing class PrometheionGraphIndexer {
                         (SELECT SObjectType, Field, PermissionsEdit FROM FieldPerms LIMIT 200)
                     FROM PermissionSet
                     WHERE Id = :entityId
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                     LIMIT 1
                 ];
                 if (psList.isEmpty()) {
@@ -78,7 +93,7 @@ public with sharing class PrometheionGraphIndexer {
                     SELECT ApiName, Label, TriggerType, ProcessType
                     FROM FlowDefinitionView
                     WHERE DurableId = :entityId
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                     LIMIT 1
                 ];
                 if (fdList.isEmpty()) {
@@ -106,18 +121,50 @@ public with sharing class PrometheionGraphIndexer {
     private static Decimal callEinsteinPrediction(Map<String, Object> metadata, String framework) {
         // Einstein Platform integration - fallback to rule-based scoring if not available
         // In production, if Einstein is required, ensure it's installed before deployment
-        return calculateFallbackRiskScore(metadata, framework);
+        try {
+            // TODO: Implement Einstein Platform callout when available
+            // For now, fallback to rule-based scoring
+            return calculateFallbackRiskScore(metadata, framework);
+        } catch (Exception e) {
+            // Log Einstein prediction failure
+            String correlationId = generateCorrelationId('EINSTEIN', framework);
+            System.debug(LoggingLevel.ERROR, 
+                '[PrometheionGraphIndexer] Einstein prediction failed - CorrelationId: ' + correlationId + 
+                ', Framework: ' + framework + 
+                ', Error: ' + e.getMessage() + 
+                ', StackTrace: ' + e.getStackTraceString());
+            
+            // Log to Integration_Error__c if available
+            try {
+                Integration_Error__c error = new Integration_Error__c(
+                    Error_Type__c = 'EINSTEIN',
+                    Error_Message__c = 'Einstein prediction failed: ' + e.getMessage(),
+                    Stack_Trace__c = e.getStackTraceString(),
+                    Correlation_Id__c = correlationId,
+                    Context__c = 'Framework: ' + framework + ', Metadata: ' + JSON.serialize(metadata),
+                    Status__c = 'NEW',
+                    Timestamp__c = System.now()
+                );
+                insert error;
+            } catch (Exception logError) {
+                // Don't fail if error logging fails
+                System.debug(LoggingLevel.WARN, 'Failed to log Einstein error: ' + logError.getMessage());
+            }
+            
+            // Fallback to rule-based scoring
+            return calculateFallbackRiskScore(metadata, framework);
+        }
     }
 
     private static Decimal calculateFallbackRiskScore(Map<String, Object> metadata, String framework) {
-        Decimal score = 3.0;
+        Decimal score = PrometheionConstants.BASE_RISK_SCORE;
         if (metadata.containsKey('objectPermissionCount')) {
             Object permCount = metadata.get('objectPermissionCount');
             if (permCount != null) {
                 score += Decimal.valueOf(String.valueOf(permCount)); // Simple heuristic
             }
         }
-        return Math.min(score, 10.0);
+        return Math.min(score, PrometheionConstants.RISK_SCORE_MAX);
     }
 
     private static String determineDriftCategory(Decimal riskScore, Map<String, Object> metadata) {
@@ -134,6 +181,92 @@ public with sharing class PrometheionGraphIndexer {
         String input = entityType + '|' + entityId + '|' + UserInfo.getUserId() + '|' + System.now().getTime();
         Blob hash = Crypto.generateDigest('MD5', Blob.valueOf(input));
         return EncodingUtil.base64Encode(hash).substring(0, 16);
+    }
+
+    /**
+     * Bulk index multiple changes at once
+     * Input structure for bulk indexing
+     */
+    public class IndexInput {
+        public String entityType;
+        public String entityId;
+        public String parentNodeId;
+        public String framework;
+    }
+    
+    /**
+     * Bulk index changes for better performance
+     * @param inputs List of IndexInput objects to index
+     * @return Map of entityId to nodeHash
+     */
+    public static Map<String, String> indexChangeBulk(List<IndexInput> inputs) {
+        if (inputs == null || inputs.isEmpty()) {
+            throw new PrometheionException('Inputs cannot be null or empty');
+        }
+        
+        Map<String, String> results = new Map<String, String>();
+        List<Prometheion_Compliance_Graph__b> nodesToInsert = new List<Prometheion_Compliance_Graph__b>();
+        
+        for (IndexInput input : inputs) {
+            try {
+                // Validate input
+                if (String.isBlank(input.entityType) || String.isBlank(input.entityId) || String.isBlank(input.framework)) {
+                    System.debug(LoggingLevel.WARN, 'PrometheionGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
+                    continue;
+                }
+                
+                // Validate framework
+                if (!PrometheionConstants.isValidFramework(input.framework)) {
+                    System.debug(LoggingLevel.WARN, 'PrometheionGraphIndexer: Skipping invalid framework - ' + input.framework);
+                    continue;
+                }
+                
+                String nodeHash = generateDeterministicHash(input.entityType, input.entityId, input.framework);
+                Map<String, Object> metadata = queryEntityMetadata(input.entityType, input.entityId);
+                Decimal riskScore = calculateRiskScore(metadata, input.framework);
+                
+                Prometheion_Compliance_Graph__b node = new Prometheion_Compliance_Graph__b(
+                    Graph_Node_Id__c = nodeHash,
+                    Parent_Node_Id__c = input.parentNodeId,
+                    Timestamp__c = System.now(),
+                    Entity_Type__c = input.entityType,
+                    Entity_Record_Id__c = input.entityId,
+                    Compliance_Framework__c = input.framework,
+                    Risk_Score__c = riskScore,
+                    Drift_Category__c = determineDriftCategory(riskScore, metadata),
+                    Node_Metadata__c = JSON.serialize(metadata),
+                    AI_Confidence__c = 0.0,
+                    Graph_Version__c = GRAPH_VERSION
+                );
+                
+                nodesToInsert.add(node);
+                results.put(input.entityId, nodeHash);
+            } catch (Exception e) {
+                String correlationId = generateCorrelationId(input.entityType, input.entityId);
+                System.debug(LoggingLevel.ERROR, 
+                    '[PrometheionGraphIndexer] Bulk indexing failed for entity - CorrelationId: ' + correlationId + 
+                    ', EntityType: ' + input.entityType + 
+                    ', EntityId: ' + input.entityId + 
+                    ', Error: ' + e.getMessage());
+                // Continue with other records
+            }
+        }
+        
+        // Bulk insert all nodes
+        if (!nodesToInsert.isEmpty()) {
+            try {
+                insert nodesToInsert;
+            } catch (DmlException e) {
+                String correlationId = generateCorrelationId('BULK', String.valueOf(nodesToInsert.size()));
+                System.debug(LoggingLevel.ERROR, 
+                    '[PrometheionGraphIndexer] Bulk insert failed - CorrelationId: ' + correlationId + 
+                    ', Records: ' + nodesToInsert.size() + 
+                    ', Error: ' + e.getMessage());
+                throw new PrometheionException('Bulk indexing failed: ' + e.getDmlMessage(0));
+            }
+        }
+        
+        return results;
     }
 
     public class PrometheionException extends Exception {}

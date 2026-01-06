@@ -99,13 +99,33 @@ public with sharing class PrometheionAISettingsController {
                 throw new AuraHandledException('No accessible fields to update');
             }
 
+            Prometheion_AI_Settings__c oldSettings = Prometheion_AI_Settings__c.getInstance();
+            
             upsert sanitizedSettings[0];
+            
+            // Audit log for settings changes
+            logAuditEvent('AI_SETTINGS_CHANGED', 'Prometheion_AI_Settings__c', sanitizedSettings[0].Id, 
+                'AI Settings updated by ' + UserInfo.getUserName());
         } catch (DmlException e) {
             System.debug(LoggingLevel.ERROR, 'DML error saving settings: ' + e.getMessage());
             throw new AuraHandledException('Error saving settings: ' + e.getDmlMessage(0));
         } catch (Exception e) {
             System.debug(LoggingLevel.ERROR, 'Error saving settings: ' + e.getMessage());
             throw new AuraHandledException('Error saving settings: ' + e.getMessage());
+        }
+    }
+    
+    /**
+     * Log audit event for AI settings changes
+     */
+    private static void logAuditEvent(String action, String entityType, String entityId, String details) {
+        try {
+            // Create audit log entry (will be created as custom object in P3)
+            System.debug(LoggingLevel.INFO, '[Audit] ' + action + ' - ' + entityType + ' (' + entityId + '): ' + details);
+            // TODO: Insert into Prometheion_Audit_Log__c when object is created
+        } catch (Exception e) {
+            // Don't fail the main operation if audit logging fails
+            System.debug(LoggingLevel.WARN, 'PrometheionAISettingsController: Failed to log audit event: ' + e.getMessage());
         }
     }
 }

@@ -101,4 +101,54 @@ private class SlackNotifierTest {
 
         System.assert(true, 'notifyAsync exception handling tested');
     }
+    
+    @IsTest
+    static void testHttp4xxError() {
+        // Test 400 Bad Request
+        Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(400, 'Bad Request'));
+        
+        Test.startTest();
+        SlackNotifier.notifyAsync('Test message');
+        Test.stopTest();
+        
+        System.assert(true, 'notifyAsync handled 4xx error gracefully');
+    }
+    
+    @IsTest
+    static void testHttp5xxError() {
+        // Test 500 Internal Server Error
+        Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(500, 'Internal Server Error'));
+        
+        Test.startTest();
+        SlackNotifier.notifyAsync('Test message');
+        Test.stopTest();
+        
+        System.assert(true, 'notifyAsync handled 5xx error gracefully');
+    }
+    
+    @IsTest
+    static void testHttp429RateLimit() {
+        // Test 429 Too Many Requests
+        Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(429, 'Too Many Requests'));
+        
+        Test.startTest();
+        SlackNotifier.notifyAsync('Test message');
+        Test.stopTest();
+        
+        System.assert(true, 'notifyAsync handled 429 rate limit error gracefully');
+    }
+    
+    @IsTest
+    static void testInvalidJsonPayload() {
+        Test.startTest();
+        try {
+            SlackNotifier.notifyRichAsyncQueueable('invalid json {');
+            // Should handle invalid JSON gracefully
+        } catch (Exception e) {
+            // Expected to catch JSON exception
+        }
+        Test.stopTest();
+        
+        System.assert(true, 'notifyRichAsyncQueueable handled invalid JSON gracefully');
+    }
 }

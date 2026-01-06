@@ -16,17 +16,27 @@ public with sharing class AlertHistoryService {
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<AlertRow> recent(Integer limitSize) {
-        Integer maxRecords = Math.max(1, limitSize);
+    public static List<AlertRow> getRecentAlerts(Integer limitSize) {
+        Integer recordLimit = Math.max(1, limitSize);
         List<AlertRow> out = new List<AlertRow>();
         for (Performance_Alert_History__c r : [
             SELECT Metric__c, Value__c, Threshold__c, Context_Record__c, CreatedDate
             FROM Performance_Alert_History__c
+            WITH USER_MODE
             ORDER BY CreatedDate DESC
-            LIMIT :maxRecords
+            LIMIT :recordLimit
         ]) {
             out.add(new AlertRow(r));
         }
         return out;
+    }
+    
+    /**
+     * @deprecated Use getRecentAlerts instead
+     */
+    @Deprecated
+    @AuraEnabled(cacheable=true)
+    public static List<AlertRow> recent(Integer limitSize) {
+        return getRecentAlerts(limitSize);
     }
 }

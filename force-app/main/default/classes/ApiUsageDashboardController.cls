@@ -21,9 +21,9 @@ public with sharing class ApiUsageDashboardController {
     }
 
     @AuraEnabled(cacheable = true)
-    public static List<Row> recent(Integer limitSize) {
+    public static List<Row> getRecentSnapshots(Integer limitSize) {
         List<Row> out = new List<Row>();
-        Integer maxRecords = Math.max(1, limitSize);
+        Integer recordLimit = Math.max(1, limitSize);
 
         for (API_Usage_Snapshot__c r : [
             SELECT
@@ -33,11 +33,21 @@ public with sharing class ApiUsageDashboardController {
                 Percent_Used__c,
                 Projected_Exhaustion__c
             FROM API_Usage_Snapshot__c
+            WITH USER_MODE
             ORDER BY Taken_On__c DESC
-            LIMIT :maxRecords
+            LIMIT :recordLimit
         ]) {
             out.add(new Row(r));
         }
         return out;
+    }
+    
+    /**
+     * @deprecated Use getRecentSnapshots instead
+     */
+    @Deprecated
+    @AuraEnabled(cacheable = true)
+    public static List<Row> recent(Integer limitSize) {
+        return getRecentSnapshots(limitSize);
     }
 }

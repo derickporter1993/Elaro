@@ -1,5 +1,5 @@
 import { LightningElement, track } from "lwc";
-import recent from "@salesforce/apex/DeploymentMetrics.recent";
+import getRecentDeployments from "@salesforce/apex/DeploymentMetrics.getRecentDeployments";
 import PollingManager from "c/pollingManager";
 
 export default class DeploymentMonitorDashboard extends LightningElement {
@@ -29,7 +29,7 @@ export default class DeploymentMonitorDashboard extends LightningElement {
 
   async load() {
     try {
-      this.rows = await recent({ limitSize: 20 });
+      this.rows = await getRecentDeployments({ limitSize: 20 });
     } catch (e) {
       /* eslint-disable no-console */
       console.error("Error loading deployment metrics:", e);

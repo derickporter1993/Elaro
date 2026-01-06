@@ -1,3 +1,21 @@
+/**
+ * Prometheion Reasoning Engine
+ * 
+ * This class uses `without sharing` because:
+ * 1. Big Object queries require system-level access to read Prometheion_Compliance_Graph__b records
+ * 2. Cross-org compliance analysis may need to access data across different sharing contexts
+ * 3. AI adjudication logging must be accessible regardless of user permissions for audit purposes
+ * 4. The reasoning engine operates on compliance metadata that should be accessible to all authorized users
+ * 
+ * Security is maintained through:
+ * - Input validation on all public methods
+ * - HTML escaping to prevent XSS in explanations
+ * - Deterministic hashing for audit trail integrity
+ * - Correlation IDs for traceability
+ * 
+ * @author Prometheion
+ * @version 3.0
+ */
 public without sharing class PrometheionReasoningEngine {
     private static final Decimal MIN_CONFIDENCE = 0.85;
 
@@ -47,7 +65,7 @@ public without sharing class PrometheionReasoningEngine {
             SELECT Id, Entity_Type__c, Entity_Record_Id__c, Risk_Score__c, Node_Metadata__c, Graph_Node_Id__c, Compliance_Framework__c
             FROM Prometheion_Compliance_Graph__b
             WHERE Timestamp__c >= :recentThreshold
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Timestamp__c DESC
             LIMIT 10000
         ];

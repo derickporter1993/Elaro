@@ -4,7 +4,7 @@
     <div class="dashboard-header">
       <div class="header-left">
         <div class="logo-mark">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M12 2L2 7L12 12L22 7L12 2Z" />
             <path d="M2 17L12 22L22 17" />
             <path d="M2 12L12 17L22 12" />
@@ -21,6 +21,7 @@
           onclick={refreshData}
           disabled={isLoading}
           aria-label="Refresh dashboard data"
+          title="Refresh dashboard data"
         >
           <svg
             viewBox="0 0 24 24"
@@ -66,11 +67,16 @@
             class="framework-filter"
           ></lightning-combobox>
         </div>
-        <template lwc:if={showDrillDown}>
-          <div class="drill-down-view">
-            <button class="back-button" onclick={handleBackToAll}>
-              ← Back to All Frameworks
-            </button>
+            <template lwc:if={showDrillDown}>
+              <div class="drill-down-view">
+                <button 
+                  class="back-button" 
+                  onclick={handleBackToAll} 
+                  aria-label="Back to all frameworks view"
+                  title="Back to all frameworks view"
+                >
+                  ← Back to All Frameworks
+                </button>
             <template lwc:if={selectedFrameworkDetails}>
               <div class="framework-detail-card">
                 <h4>{selectedFrameworkDetails.name}</h4>
@@ -107,12 +113,12 @@
 
     <!-- Score Factors -->
     <div class="factors-section">
-      <h3 class="section-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 20V10M18 20V4M6 20V16" />
-        </svg>
-        Score Breakdown
-      </h3>
+        <h3 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 20V10M18 20V4M6 20V16" />
+          </svg>
+          Score Breakdown
+        </h3>
       <div class="factors-grid">
         <template for:each={factors} for:item="factor">
           <div key={factor.name} class="factor-card">
@@ -141,7 +147,7 @@
     <template lwc:if={hasRisks}>
       <div class="risks-section">
         <h3 class="section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path
               d="M10.29 3.86L1.82 18C1.64 18.3 1.55 18.64 1.55 19C1.55 19.36 1.64 19.7 1.82 20C2 20.3 2.26 20.55 2.57 20.73C2.88 20.91 3.24 21 3.6 21H20.4C20.76 21 21.12 20.91 21.43 20.73C21.74 20.55 22 20.3 22.18 20C22.36 19.7 22.45 19.36 22.45 19C22.45 18.64 22.36 18.3 22.18 18L13.71 3.86C13.53 3.56 13.27 3.32 12.96 3.15C12.65 2.98 12.3 2.89 11.95 2.89C11.6 2.89 11.25 2.98 10.94 3.15C10.63 3.32 10.37 3.56 10.19 3.86H10.29Z"
             />
@@ -165,6 +171,7 @@
                     data-node-id={risk.nodeId}
                     onclick={handleRiskClick}
                     aria-label={risk.viewDetailsLabel}
+                    title={risk.viewDetailsLabel}
                   >
                     View Details →
                   </button>
@@ -182,6 +189,7 @@
         class="action-btn primary"
         onclick={handleGenerateSoc2}
         aria-label="Generate SOC2 Report"
+        title="Generate SOC2 Report"
       >
         <svg
           viewBox="0 0 24 24"
@@ -201,6 +209,7 @@
         class="action-btn secondary"
         onclick={handleGenerateHipaa}
         aria-label="Generate HIPAA Report"
+        title="Generate HIPAA Report"
       >
         <svg
           viewBox="0 0 24 24"
@@ -208,6 +217,7 @@
           stroke="currentColor"
           stroke-width="2"
           aria-hidden="true"
+          role="img"
         >
           <path d="M12 22S20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" />
         </svg>
