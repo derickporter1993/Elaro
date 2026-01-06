@@ -32,7 +32,9 @@ export default class DeploymentMonitorDashboard extends LightningElement {
       this.rows = await recent({ limitSize: 20 });
     } catch (e) {
       /* eslint-disable no-console */
-      console.error(e);
+      console.error("Error loading deployment metrics:", e);
+      // Set empty array to prevent UI errors
+      this.rows = [];
     }
   }
 }

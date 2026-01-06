@@ -19,15 +19,22 @@ export default class PerformanceAlertPanel extends LightningElement {
   ];
 
   async connectedCallback() {
-    this.rows = (await recent({ limitSize: 25 })).map((r, idx) => ({
-      key: `${r.createdDate}-${idx}`,
-      ...r,
-    }));
-    this.handleSubscribe();
-    onError((error) => {
+    try {
+      this.rows = (await recent({ limitSize: 25 })).map((r, idx) => ({
+        key: `${r.createdDate}-${idx}`,
+        ...r,
+      }));
+      this.handleSubscribe();
+      onError((error) => {
+        /* eslint-disable no-console */
+        console.error("EMP API error: ", error);
+      });
+    } catch (error) {
       /* eslint-disable no-console */
-      console.error("EMP API error: ", error);
-    });
+      console.error("Error loading performance alerts:", error);
+      // Set empty array to prevent UI errors
+      this.rows = [];
+    }
   }
 
   disconnectedCallback() {

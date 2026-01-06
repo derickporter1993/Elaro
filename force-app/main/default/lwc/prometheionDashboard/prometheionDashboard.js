@@ -69,7 +69,7 @@ export default class PrometheionDashboard extends LightningElement {
         ];
 
         return frameworks.map(fw => {
-            const score = this.scoreResult.frameworkScores[fw.key] || 0;
+            const score = this.scoreResult?.frameworkScores?.[fw.key] ?? 0;
             return {
                 ...fw,
                 score: Math.round(score),

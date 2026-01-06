@@ -30,7 +30,9 @@ export default class FlowExecutionMonitor extends LightningElement {
       this.rows = await topFlows({ limitSize: 20 });
     } catch (e) {
       /* eslint-disable no-console */
-      console.error(e);
+      console.error("Error loading flow execution stats:", e);
+      // Set empty array to prevent UI errors
+      this.rows = [];
     }
   }
 }
