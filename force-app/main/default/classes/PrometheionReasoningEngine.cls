@@ -62,12 +62,20 @@ public without sharing class PrometheionReasoningEngine {
         throw new ReasoningException('Node not found: ' + nodeHash);
     }
 
+    /**
+     * Build safe explanation with HTML/Markdown escaping and null-safe formatting
+     * Prevents XSS and malformed strings from raw node metadata
+     */
     private static String buildSimpleExplanation(Prometheion_Compliance_Graph__b node, Decimal riskScore, String framework) {
-        String entityType = String.isNotBlank(node.Entity_Type__c) ? node.Entity_Type__c : 'UNKNOWN';
-        String entityId = String.isNotBlank(node.Entity_Record_Id__c) ? node.Entity_Record_Id__c : 'UNKNOWN';
+        // Null-safe extraction with escaping
+        String entityType = escapeHtml(String.isNotBlank(node.Entity_Type__c) ? node.Entity_Type__c : 'UNKNOWN');
+        String entityId = escapeHtml(String.isNotBlank(node.Entity_Record_Id__c) ? node.Entity_Record_Id__c : 'UNKNOWN');
+        String safeFramework = escapeHtml(String.isNotBlank(framework) ? framework : 'UNKNOWN');
 
-        String severity = riskScore >= 8.0 ? 'HIGH RISK' : riskScore >= 5.0 ? 'MEDIUM RISK' : 'LOW RISK';
-        String remediation = riskScore >= 8.0 ? 'Immediate review required' : riskScore >= 5.0 ? 'Review recommended' : 'Monitor';
+        // Safe numeric formatting
+        Decimal safeRiskScore = riskScore != null ? riskScore : 0.0;
+        String severity = safeRiskScore >= 8.0 ? 'HIGH RISK' : safeRiskScore >= 5.0 ? 'MEDIUM RISK' : 'LOW RISK';
+        String remediation = safeRiskScore >= 8.0 ? 'Immediate review required' : safeRiskScore >= 5.0 ? 'Review recommended' : 'Monitor';
 
         return String.format(
             '{0} change to {1} flagged as {2}. Risk Score: {3}/10. Framework: {4}. Remediation: {5}',
@@ -75,11 +83,26 @@ public without sharing class PrometheionReasoningEngine {
                 entityType,
                 entityId,
                 severity,
-                riskScore,
-                framework,
+                safeRiskScore.setScale(1),
+                safeFramework,
                 remediation
             }
         );
+    }
+
+    /**
+     * Escape HTML/Markdown special characters to prevent XSS and malformed strings
+     */
+    private static String escapeHtml(String input) {
+        if (String.isBlank(input)) {
+            return '';
+        }
+        // Escape HTML special characters
+        return input.replace('&', '&amp;')
+                   .replace('<', '&lt;')
+                   .replace('>', '&gt;')
+                   .replace('"', '&quot;')
+                   .replace('\'', '&#39;');
     }
 
     private static String logAdjudication(String nodeHash, String explanation, Decimal confidence) {

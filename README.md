@@ -18,11 +18,11 @@
 
 ## What is Prometheion?
 
-Sentinel makes your Salesforce org **audit-ready and protected from configuration drift** in 24 hours.
+Prometheion makes your Salesforce org **audit-ready and protected from configuration drift** in 24 hours.
 
-**Today (v1.0)**: Sentinel continuously monitors your Salesforce configuration for compliance violations, permission sprawl, and undocumented changes — then generates audit evidence and a baseline compliance report that regulators actually want to see.
+**Today (v3.0)**: Prometheion continuously monitors your Salesforce configuration for compliance violations, permission sprawl, and undocumented changes — then generates audit evidence and a baseline compliance report that regulators actually want to see.
 
-**Tomorrow (v1.5+)**: Sentinel evolves into an **AI Compliance Brain** that doesn't just detect drift, but interprets the *intent, impact, and compliance reasoning* behind every change — answering questions no other tool can answer.
+**Tomorrow (v1.5+)**: Prometheion evolves into an **AI Compliance Brain** that doesn't just detect drift, but interprets the *intent, impact, and compliance reasoning* behind every change — answering questions no other tool can answer.
 
 **Think of it as**: Your AI compliance analyst that works 24/7, understands regulatory frameworks, and speaks both technical and auditor language.
 
@@ -33,24 +33,24 @@ Sentinel makes your Salesforce org **audit-ready and protected from configuratio
 - **Audits fail** because nobody can explain who changed what and why
 - **Regulated orgs** can't afford Salesforce misconfigurations or permission sprawl
 - **Existing tools** are too complex/expensive or not tailored to nonprofits and smaller regulated teams
-- **Sentinel** gives them a simple, opinionated compliance guardrail + evidence engine
+- **Prometheion** gives them a simple, opinionated compliance guardrail + evidence engine
 
 ---
 
 ## Who It's For
 
-Sentinel is built for **regulated organizations using Salesforce**:
+Prometheion is built for **regulated organizations using Salesforce**:
 
 - 🏥 **Healthcare**: HIPAA compliance, PHI protection, audit trails
 - 🏛️ **Government & Nonprofits**: FedRAMP, FISMA, grants management, donor privacy
 - 💰 **Financial Services**: SOX, PCI-DSS, transaction auditing
 - 🏢 **Any Regulated Org**: SOC 2, GDPR, or compliance frameworks requiring audit evidence
 
-If you're spending weeks preparing for audits, manually reviewing permissions, or can't explain recent configuration changes — Sentinel is for you.
+If you're spending weeks preparing for audits, manually reviewing permissions, or can't explain recent configuration changes — Prometheion is for you.
 
 ---
 
-## What v1 Does Today
+## What v3.0 Does Today
 
 ### 1. **Compliance Baseline Scan** 📊
 
@@ -97,38 +97,38 @@ Calculates a compliance score based on:
 
 ---
 
-## What v1 Does NOT Do (Non-Goals)
+## What v3.0 Does NOT Do (Non-Goals)
 
-To keep Sentinel simple and focused, v1 intentionally:
+To keep Prometheion simple and focused, v3.0 intentionally:
 
 - ❌ **Does not replace SIEM**: Not a generic security information & event management tool
 - ❌ **Does not monitor every SaaS**: Salesforce only (multi-SaaS is v2+)
 - ❌ **Does not do complex AI governance**: AI-powered change explanations are v1.5+
 - ❌ **Does not prevent changes**: It detects and alerts; it doesn't block (approval workflows are future work)
 
-Sentinel is a **compliance drift detector**, not a full GRC platform.
+Prometheion is a **compliance drift detector**, not a full GRC platform.
 
 ---
 
 ## The Future: AI Compliance Intelligence
 
-Sentinel is evolving into the world's first **AI Compliance Brain** — a system that doesn't just detect drift, but **interprets the meaning, intent, and compliance impact** of every change.
+Prometheion is evolving into the world's first **AI Compliance Brain** — a system that doesn't just detect drift, but **interprets the meaning, intent, and compliance impact** of every change.
 
 **Vision**: Intelligence, not dashboards.
 
-Where competitors show logs, Sentinel will provide judgment, context, and compliance reasoning.
+Where competitors show logs, Prometheion will provide judgment, context, and compliance reasoning.
 
 ### Coming in v1.5 (Q2 2025) — AI-Assisted Remediation
 
 #### **Change Intent Analysis** 🧠
-The signature feature that sets Sentinel apart — AI that understands the *why* behind every change:
+The signature feature that sets Prometheion apart — AI that understands the *why* behind every change:
 
 **What competitors show**:
 ```
 Permission Set "Financial_Data_Access" modified by j.smith@acme.org
 ```
 
-**What Sentinel shows**:
+**What Prometheion shows**:
 ```
 ⚠️ High-Risk Change Detected
 
@@ -176,13 +176,13 @@ Natural language interface for compliance queries:
 
 ```
 You: "Show me all risky flows touching PII"
-Sentinel: [Displays 12 flows with PII exposure risks, ranked by severity]
+Prometheion: [Displays 12 flows with PII exposure risks, ranked by severity]
 
 You: "Generate SOC2 evidence for Q2"
-Sentinel: [Exports audit-ready PDF with all Q2 evidence]
+Prometheion: [Exports audit-ready PDF with all Q2 evidence]
 
 You: "Why did our readiness score drop from 87 to 72?"
-Sentinel: "3 high-risk changes detected:
+Prometheion: "3 high-risk changes detected:
 1. 23 users granted 'View All Data' without approval
 2. Patient_Records__c sharing changed to Public Read/Write
 3. Shield Platform Encryption disabled on SSN__c field"
@@ -197,7 +197,7 @@ One compliance model across all your CRMs:
 - ServiceNow
 - Custom apps
 
-**The Moat**: Once Sentinel builds this unified compliance graph, competitors cannot catch up without 3-4 years of development.
+**The Moat**: Once Prometheion builds this unified compliance graph, competitors cannot catch up without 3-4 years of development.
 
 #### **Predictive Risk Modeling** 📈
 Proactive alerts before violations happen:
@@ -214,9 +214,9 @@ Suggested Action: Review Flow permissions before deployment.
 
 ---
 
-### Why This Matters — Sentinel's Uncopyable Differentiators
+### Why This Matters — Prometheion's Uncopyable Differentiators
 
-1. **AI Change Intent Analysis** — Competitors show *what* changed; Sentinel explains *why it matters*
+1. **AI Change Intent Analysis** — Competitors show *what* changed; Prometheion explains *why it matters*
 2. **Automated Compliance Mapping** — Instant mapping to SOC2, HIPAA, NIST, FedRAMP, GDPR
 3. **Evidence Packs** — Auto-generated, auditor-ready documentation
 4. **Cross-CRM Intelligence** — Unified compliance model (impossible to copy quickly)
@@ -242,8 +242,8 @@ Suggested Action: Review Flow permissions before deployment.
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/sentinel.git
-cd sentinel
+git clone https://github.com/derickporter1993/Solentra---Prometheion.git
+cd sentinel-code
 
 # Authenticate to your Salesforce org
 sf org login web --alias myorg
@@ -252,7 +252,7 @@ sf org login web --alias myorg
 sf project deploy start --target-org myorg
 
 # Assign permissions
-sf org assign permset --name Sentinel_Admin --target-org myorg
+sf org assign permset --name Prometheion_Admin --target-org myorg
 
 # Open the org
 sf org open --target-org myorg
@@ -267,15 +267,15 @@ sf org open --target-org myorg
 # This will:
 # - Create a 7-day scratch org
 # - Push source code
-# - Assign Sentinel_Admin permission set
+# - Assign Prometheion_Admin permission set
 # - Open the org in your browser
 ```
 
 ### Run Your First Compliance Scan
 
-1. **Navigate to Sentinel** in the App Launcher
+1. **Navigate to Prometheion** in the App Launcher
 2. **Click "Run Baseline Scan"** on the dashboard
-3. **Wait 30-60 seconds** while Sentinel analyzes your org
+3. **Wait 30-60 seconds** while Prometheion analyzes your org
 4. **View your Audit Readiness Score** and top risks
 5. **Export the report** (Markdown or PDF) for your compliance team
 
@@ -302,7 +302,7 @@ ComplianceReport report = scanner.runScan();
 System.debug('Audit Readiness Score: ' + report.getScore());
 ```
 
-Or use the Lightning Web Component dashboard (navigate to Sentinel app).
+Or use the Lightning Web Component dashboard (navigate to Prometheion app).
 
 ---
 
@@ -318,14 +318,14 @@ Or use the Lightning Web Component dashboard (navigate to Sentinel app).
 - Integration/Connected App changes
 
 **How it works**:
-1. **Platform Events**: Sentinel listens to Salesforce Platform Events for real-time changes
+1. **Platform Events**: Prometheion listens to Salesforce Platform Events for real-time changes
 2. **Scheduled Jobs**: Runs hourly to poll Setup Audit Trail API
 3. **Risk Scoring**: Each change is scored based on impact (Critical/High/Medium/Low)
 4. **Alerting**: High-risk changes trigger Slack/email notifications
 
 **Sample alert**:
 ```
-⚠️ Sentinel Drift Alert
+⚠️ Prometheion Drift Alert
 
 Change: Permission Set Modified
 Object: Financial_Data_Access
@@ -364,7 +364,7 @@ Action Required: Review and approve or rollback
 sf apex run --file scripts/exportEvidenceReport.apex --target-org myorg
 
 # Or use the LWC dashboard
-# Navigate to Sentinel → Reports → Export Compliance Evidence
+# Navigate to Prometheion → Reports → Export Compliance Evidence
 ```
 
 ---
@@ -404,7 +404,7 @@ Final Score: 100 - 63 = 37/100 (🔴 Critical)
 
 ## Dashboard Components
 
-Sentinel includes Lightning Web Components for real-time monitoring:
+Prometheion includes Lightning Web Components for real-time monitoring:
 
 ### 1. **System Monitor Dashboard**
 - Governor limit tracking (CPU, Heap, SOQL, DML)
@@ -438,9 +438,9 @@ Sentinel includes Lightning Web Components for real-time monitoring:
 
 ## Configuration
 
-### Sentinel Settings
+### Prometheion Settings
 
-Configure compliance thresholds in **Sentinel Settings** (Custom Settings):
+Configure compliance thresholds in **Prometheion Settings** (Custom Settings):
 
 | Setting | Description | Default |
 |---------|-------------|---------|
@@ -451,11 +451,11 @@ Configure compliance thresholds in **Sentinel Settings** (Custom Settings):
 | `SOQL_Warn__c` | SOQL query warning threshold | 80 |
 | `SOQL_Crit__c` | SOQL query critical threshold | 95 |
 
-**Access**: Setup → Custom Settings → Sentinel Settings → Manage
+**Access**: Setup → Custom Settings → Prometheion Settings → Manage
 
 ### Alert Integrations
 
-Sentinel supports multiple alert channels:
+Prometheion supports multiple alert channels:
 
 #### Slack Integration
 
@@ -465,7 +465,7 @@ Sentinel supports multiple alert channels:
    - URL: Your Slack webhook URL
 3. Test the integration:
    ```apex
-   SlackNotifier.notifyAsync('🚨 Test alert from Sentinel');
+   PrometheionSlackNotifierQueueable.notifyAsync('🚨 Test alert from Prometheion');
    ```
 
 #### Jira Integration (Future)
@@ -479,23 +479,24 @@ Coming in v1.5 — automatically create Jira tickets for high-risk changes.
 ### Project Structure
 
 ```
-sentinel/
+prometheion/
 ├── force-app/main/default/          # Salesforce code
 │   ├── classes/                     # Apex classes
 │   │   ├── ApiUsageSnapshot.cls     # API usage tracking
 │   │   ├── PerformanceRuleEngine.cls # Alert rule evaluation
 │   │   ├── FlowExecutionLogger.cls  # Flow monitoring
-│   │   └── SlackNotifier.cls        # Alert notifications
+│   │   └── PrometheionSlackNotifierQueueable.cls # Alert notifications
 │   ├── lwc/                         # Lightning Web Components
 │   │   ├── systemMonitorDashboard/  # Real-time monitoring UI
 │   │   ├── apiUsageDashboard/       # API usage dashboard
-│   │   └── flowExecutionMonitor/    # Flow tracking UI
+│   │   ├── prometheionDashboard/    # Main compliance dashboard
+│   │   └── complianceCopilot/       # AI compliance assistant
 │   ├── objects/                     # Custom Objects & Settings
-│   │   ├── CCX_Settings__c/         # Configuration (API name preserved)
-│   │   ├── Flow_Execution__c/       # Flow run data
+│   │   ├── Prometheion_AI_Settings__c/ # AI configuration
+│   │   ├── Prometheion_Compliance_Graph__b/ # Big Object for graph data
 │   │   └── Performance_Alert_History__c/ # Alert history
 │   └── permissionsets/              # Permission sets
-│       └── Sentinel_Admin.permissionset-meta.xml
+│       └── Prometheion_Admin.permissionset-meta.xml
 ├── scripts/                         # Automation scripts
 │   ├── orgInit.sh                   # Scratch org initialization
 │   └── scheduleApiSnapshot.sh       # Schedule periodic scans
@@ -536,7 +537,7 @@ npm run lint
 
 ## Roadmap
 
-### ✅ v1.0 (Current) - Compliance Drift Baseline
+### ✅ v3.0 (Current) - Unified Enterprise Platform
 
 - [x] Compliance Baseline Scan
 - [x] Configuration Drift Detection
@@ -544,6 +545,10 @@ npm run lint
 - [x] Audit Readiness Score
 - [x] Slack alerting
 - [x] LWC dashboards (governor limits, API usage, Flow monitoring)
+- [x] AI Compliance Copilot
+- [x] Multi-framework compliance scoring (HIPAA, SOC2, NIST, FedRAMP, GDPR)
+- [x] Enhanced error logging and correlation IDs
+- [x] Batched queries for governor limit optimization
 
 ### 🚧 v1.5 (Next 3-6 months) - AI-Assisted Remediation
 
@@ -572,25 +577,25 @@ npm run lint
 
 ## FAQ
 
-### Q: Does Sentinel prevent users from making non-compliant changes?
+### Q: Does Prometheion prevent users from making non-compliant changes?
 
-**A**: Not in v1. Sentinel **detects** and **alerts** on drift, but doesn't block changes. Automated remediation and approval workflows are planned for v2+.
+**A**: Not in v3.0. Prometheion **detects** and **alerts** on drift, but doesn't block changes. Automated remediation and approval workflows are planned for v2+.
 
-### Q: Does Sentinel require Shield Platform Encryption?
+### Q: Does Prometheion require Shield Platform Encryption?
 
 **A**: No, but it will flag missing encryption as a compliance risk in your baseline report. If you need HIPAA or SOX compliance, Shield is strongly recommended.
 
-### Q: Can I use Sentinel in a sandbox?
+### Q: Can I use Prometheion in a sandbox?
 
-**A**: Yes! We recommend testing in a sandbox first. Sentinel works in Production, Sandbox, Scratch Orgs, and Developer Orgs.
+**A**: Yes! We recommend testing in a sandbox first. Prometheion works in Production, Sandbox, Scratch Orgs, and Developer Orgs.
 
-### Q: Does Sentinel store data outside Salesforce?
+### Q: Does Prometheion store data outside Salesforce?
 
-**A**: No. All data stays in your Salesforce org. Sentinel does not send data to external servers (except for Slack/Jira if you configure those integrations).
+**A**: No. All data stays in your Salesforce org. Prometheion does not send data to external servers (except for Slack/Jira if you configure those integrations).
 
 ### Q: What about GDPR compliance?
 
-**A**: Sentinel helps with GDPR by tracking access to personal data and providing audit evidence. See the [Compliance section in the full README](docs/compliance-frameworks.md) for details.
+**A**: Prometheion helps with GDPR by tracking access to personal data and providing audit evidence. See the [Compliance section in the full README](docs/compliance-frameworks.md) for details.
 
 ### Q: Can I customize the Audit Readiness Score calculation?
 
@@ -600,13 +605,14 @@ npm run lint
 
 ## Contributing
 
-Sentinel is under active development. Contributions welcome!
+Prometheion is under active development. Contributions welcome!
 
-**Priority areas for v1**:
+**Priority areas for v3.0+**:
 - Additional compliance framework support (ISO 27001, FedRAMP)
 - Improved drift detection rules
-- Test coverage for edge cases
-- Documentation improvements
+- Test coverage improvements (target 75%+)
+- Enhanced error handling and logging
+- Performance optimizations
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
@@ -622,327 +628,11 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 - **Documentation**: [docs/](docs/)
 - **Sample Reports**: [examples/](examples/)
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/sentinel/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/sentinel/discussions)
+- **Issues**: [GitHub Issues](https://github.com/derickporter1993/Solentra---Prometheion/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/derickporter1993/Solentra---Prometheion/discussions)
 
 ---
 
-## Rename This Repo
-
-**Important**: This repository should be renamed to better reflect its purpose.
-
-**Current name**: `Ops-Gurdian` or `Sentinel`
-**Recommended name**: `sentinel-salesforce-compliance-drift-guard`
-
-**To rename**:
-1. Go to Settings → General → Repository name
-2. Change to: `sentinel-salesforce-compliance-drift-guard`
-3. Update the short description to:
-   > "Compliance-first Salesforce configuration drift guardrail and audit evidence engine for regulated orgs."
-4. Add GitHub topics: `salesforce`, `compliance`, `audit`, `security`, `governance`, `drift-detection`, `nonprofit`, `regulated-industries`, `hipaa`, `sox`, `soc2`, `gdpr`
-
 ---
 
-*Sentinel™ — Keep your Salesforce org audit-ready, every day.*
-
-
-
-> Enterprise-grade observability and compliance guardrails for Salesforce orgs.  
-> **Outcomes:** fewer outages, faster incident triage, cleaner audits, and predictable releases.
-
-[![Build](https://img.shields.io/github/actions/workflow/status/derickporter1993/Ops-Guardian/ci.yml?label=CI)](../../actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
----
-
-## Why OpsGuardian
-
-Modern Salesforce programs need **reliable telemetry** (limits, flows, APIs), **policy enforcement** (thresholds & alerts), and **production-safe automation**. OpsGuardian packages these into a **lightweight managed pattern** that you can adopt incrementally—no lock-in, no black boxes.
-
-**Who it's for**
-
-- **Admins / Platform Owners** — prevent limit breaches, see flow failures, speed root-cause.
-- **Sec/GRC** — retention, encryption patterns, audit-ready logs & access controls.
-- **DevOps** — pre-flight checks, test coverage views, deploy health, hub-and-spoke ingest.
-
----
-
-## Feature Highlights
-
-- **Real-time Performance Signals**: CPU/heap/SOQL/DML usage, Flow runs & faults, Async job health.
-- **Policy Thresholds**: Simple Custom Metadata (`OG_Policy__mdt`) to define warn/critical limits.
-- **Alerts & Routing**: Platform Events → Slack/Webhooks/Jira via plugin interface.
-- **Dashboards**: API usage, flow health, deployment/test insights (Lightning app).
-- **Hub-and-Spoke**: Optional REST ingest to centralize events from many orgs.
-- **Security by Default**: CRUD/FLS checks, `WITH SECURITY_ENFORCED`, Shield-friendly data model.
-- **Extensible**: Drop-in plugins; no changes to core package required.
-
----
-
-## Architecture
-
-```mermaid
-flowchart TB
-  subgraph "Salesforce Org"
-    LWC[OpsGuardian LWCs]
-    APEX[Apex Services]
-    DATA[(OpsGuardian Data)]
-    EVENTS[Platform Events]
-    CMDT[OG_Policy__mdt]
-    LWC --> APEX
-    APEX --> DATA
-    APEX --> EVENTS
-    APEX --> CMDT
-  end
-
-subgraph "External Systems"
-  AI[AI Services]
-  SLACK[Slack/Webhooks]
-  JIRA[Jira]
-  HUB[Central Hub Org]
-end
-
-APEX -->|Named Credential| AI
-EVENTS --> SLACK
-EVENTS --> JIRA
-APEX <-. REST .-> HUB
-```
-
----
-
-## Requirements
-
-- Salesforce API 63.0+ (tested through 65.0, Winter '26)
-- Salesforce CLI (sf), Dev Hub enabled
-- Node.js 18+ (for LWC tests/linting)
-- (Recommended) Shield Platform Encryption in production orgs
-
----
-
-## Quick Start
-
-**A) Scratch Org (dev sandbox)**
-
-```bash
-# 1) Authenticate Dev Hub (one time)
-sf org login web --set-default-dev-hub --alias DevHub
-
-# 2) Create a scratch org
-sf org create scratch \
-  --definition-file config/project-scratch-def.json \
-  --alias OG-Dev --duration-days 7 --set-default
-
-# 3) Deploy the project
-sf project deploy start
-
-# 4) Assign admin permset and open the org
-sf org assign permset --name Command_Center_Admin
-sf org open
-```
-
-After opening the org, use the App Launcher to pin the API Usage, Flow Execution, Deployment Job, and Performance Alert History tabs (no managed Lightning app is packaged yet).
-
-**B) Sandbox / Production**
-
-- Install the managed package (coming soon). Until then, deploy via `sf project deploy start` to a sandbox.
-- Assign `Command_Center_Admin`.
-- Configure policies under Setup → Custom Metadata Types → `OG_Policy__mdt`.
-- (Optional) Set up Named Credentials for Slack/Webhooks/AI.
-
----
-
-## Configuration
-
-### Policy Thresholds (`OG_Policy__mdt`)
-
-| Field               | Type   | Example | Purpose                       |
-| ------------------- | ------ | ------- | ----------------------------- |
-| `CPU_Warn__c`       | Number | 5000    | CPU warn (ms)                 |
-| `CPU_Crit__c`       | Number | 8000    | CPU critical (ms)             |
-| `SOQL_Warn__c`      | Number | 80      | SOQL warn                     |
-| `SOQL_Crit__c`      | Number | 95      | SOQL critical                 |
-| `DML_Warn__c`       | Number | 120     | DML rows warn                 |
-| `DML_Crit__c`       | Number | 150     | DML rows critical             |
-| `Retention_Days__c` | Number | 180     | History retention for cleanup |
-
-Tip: create a "Default" record and org/BU-specific overrides as needed.
-
-### Alerts (Slack/Webhook)
-
-1. Setup → Named Credentials → New
-   - Name: `Slack_Webhook`
-   - URL: Incoming webhook URL
-2. Use the provided notifier (see Plugins) or your own.
-
----
-
-## Using OpsGuardian
-
-### Dashboards (via tabs/App Launcher)
-
-- API Usage
-- Flow Health
-- System Performance
-- Deploy/Test Monitor
-- Performance Alerts
-
-### Investigate Critical Events (SOQL)
-
-```sql
-SELECT Event_Type__c, Severity__c, Message__c, Timestamp__c, Correlation_Id__c
-FROM OpsGuardian_History__c
-WHERE Severity__c = 'Critical'
-ORDER BY Timestamp__c DESC
-LIMIT 50
-```
-
-### REST Ingest (Hub-and-Spoke)
-
-- Endpoint: `/services/apexrest/og/v1/ingest`
-- Auth: JWT Bearer via Named Credential
-
-**Body**
-
-```json
-{
-  "type": "CPU",
-  "message": "CPU limit exceeded",
-  "severity": "Critical",
-  "timestamp": "2025-01-15T10:30:00Z",
-  "correlationId": "a1b2c3d4"
-}
-```
-
-**cURL**
-
-```bash
-curl -X POST "$SF_URL/services/apexrest/og/v1/ingest" \
-  -H "Authorization: Bearer $JWT" \
-  -H "Content-Type: application/json" \
-  -d '{"type":"CPU","message":"CPU limit exceeded","severity":"Critical","timestamp":"2025-01-15T10:30:00Z"}'
-```
-
-Responses: 201 OK • 400 Invalid • 401 Unauthorized • 429 Rate limited (with Retry-After)
-
----
-
-## Plugin SDK
-
-Create an outbound integration by implementing a simple interface and registering it via Custom Metadata (`OG_Plugin_Config__mdt`).
-
-```apex
-public interface OG_Plugin {
-    void send(OpsGuardian_History__c eventRec);
-    Boolean supports(String eventType, String severity);
-}
-
-public class SlackPlugin implements OG_Plugin {
-    public void send(OpsGuardian_History__c evt) {
-        HttpRequest req = new HttpRequest();
-        req.setMethod('POST');
-        req.setEndpoint('callout:Slack_Webhook');
-        req.setHeader('Content-Type', 'application/json');
-        req.setBody(JSON.serialize(evt));
-        new Http().send(req);
-    }
-    public Boolean supports(String type, String severity) {
-        return severity == 'Critical';
-    }
-}
-```
-
-Register via `OG_Plugin_Config__mdt` with `Class_Name__c = SlackPlugin`.
-
----
-
-## Security & Compliance
-
-### STRIDE at a Glance
-
-| Threat                 | Control                                                 |
-| ---------------------- | ------------------------------------------------------- |
-| Spoofing               | JWT validation, audience checks                         |
-| Tampering              | `WITH SECURITY_ENFORCED`, `Security.stripInaccessible`  |
-| Repudiation            | Append-only logs, correlation IDs                       |
-| Information Disclosure | CRUD/FLS, Shield encryption at rest                     |
-| DoS                    | 429 w/ Retry-After, platform cache, governor safeguards |
-| Elevation of Privilege | Least-privilege perm sets, with sharing classes         |
-
-### Data Privacy
-
-- Encryption: TLS 1.2/1.3 in transit; Shield at rest (if enabled).
-- Retention: Default 180 days (configurable).
-- Erasure: Admin-triggered anonymization Flow included.
-
-Report security issues via GitHub Security Advisories. Please do not open public issues for vulnerabilities.
-
----
-
-## Performance (reference env)
-
-| Scenario                  | P50   | P95    | Notes                       |
-| ------------------------- | ----- | ------ | --------------------------- |
-| Ingest API (per request)  | 90ms  | 180ms  | Queueable insert            |
-| Dashboard refresh         | 600ms | 1200ms | Indexed queries + LDS cache |
-| Risk scoring (1K records) | 120ms | 250ms  | Baseline heuristic          |
-
-Test org: Enterprise Edition, ~1M history rows, ~10k events/hour.
-
----
-
-## Development
-
-```bash
-# Clone
-git clone https://github.com/derickporter1993/Ops-Gurdian.git
-cd Ops-Gurdian
-
-# Node deps (LWC/Jest/Eslint)
-npm install
-
-# Run tests & linters
-npm test
-npm run lint
-npm run fmt
-
-# Apex tests & coverage
-sf apex run test --test-level RunLocalTests --code-coverage --result-format human
-
-# Static analysis
-sf scanner run --target force-app --format table
-```
-
-**Branching & Commits**
-
-- `main`: release branch
-- `dev`: integration branch
-- Feature branches: `feat/<key>-short-desc`
-- Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`…)
-
----
-
-## Roadmap
-
-- AppExchange listing (managed package)
-- Multi-language dashboards (ES/FR/DE)
-- Anomaly detection (ML)
-- Observability exports (Grafana/Datadog)
-- Custom report builder
-- Mobile (Salesforce Mobile SDK)
-
----
-
-## Support
-
-- Bugs/requests: GitHub Issues
-- Security: Security Advisories
-- Discussions: GitHub Discussions (if enabled)
-
----
-
-## License & Notices
-
-MIT © Derick Brian Porter.  
-Salesforce and related marks are trademarks of salesforce.com, inc. OpsGuardian is an independent project and not an official Salesforce product.
-
----
+*Prometheion™ — Keep your Salesforce org audit-ready, every day.*

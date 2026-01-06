@@ -167,13 +167,20 @@ public with sharing class SlackNotifier {
         infoSection.put('fields', fields);
         blocks.add(infoSection);
 
-        // Stack trace context (if available)
+        // Stack trace context (if available) - truncate to prevent Slack limits
         if (!String.isBlank(evt.Stack__c)) {
+            // Slack has a 3000 character limit per block, truncate if needed
+            String stackTrace = evt.Stack__c;
+            Integer maxLength = 2500; // Leave room for markdown formatting
+            if (stackTrace.length() > maxLength) {
+                stackTrace = stackTrace.substring(0, maxLength) + '\n... (truncated)';
+            }
+            
             Map<String, Object> stackSection = new Map<String, Object>();
             stackSection.put('type', 'section');
             Map<String, Object> stackText = new Map<String, Object>();
             stackText.put('type', 'mrkdwn');
-            stackText.put('text', '*Details:*\n```' + evt.Stack__c + '```');
+            stackText.put('text', '*Details:*\n```' + stackTrace + '```');
             stackSection.put('text', stackText);
             blocks.add(stackSection);
         }
