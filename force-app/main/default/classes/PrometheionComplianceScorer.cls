@@ -23,6 +23,11 @@ public with sharing class PrometheionComplianceScorer {
     private static final Decimal WEIGHT_ENCRYPTION = 0.15;
     private static final Decimal WEIGHT_POLICY = 0.10;
     
+    // Cache results within transaction scope to avoid duplicate queries
+    private static ScoreFactor permissionSprawlCache;
+    private static ScoreFactor auditTrailCache;
+    private static ScoreFactor configDriftCache;
+    
     /**
      * Comprehensive score result with framework breakdown
      */
@@ -138,8 +143,14 @@ public with sharing class PrometheionComplianceScorer {
     
     /**
      * Calculate Permission Sprawl Score (30% weight)
+     * Uses caching to avoid duplicate queries within transaction scope
      */
     private static ScoreFactor calculatePermissionSprawlScore() {
+        // Return cached result if available
+        if (permissionSprawlCache != null) {
+            return permissionSprawlCache;
+        }
+        
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Permission Sprawl';
         factor.weight = WEIGHT_PERMISSION_SPRAWL;
@@ -151,11 +162,13 @@ public with sharing class PrometheionComplianceScorer {
         
         try {
             // Batch queries using aggregates to reduce governor limit usage
+            // Add limit guard to prevent governor exhaustion
             totalUsers = [
                 SELECT COUNT() 
                 FROM User 
                 WHERE IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
+                LIMIT 10000
             ];
             
             // Batch queries: Use separate aggregate queries for each permission type
@@ -165,7 +178,7 @@ public with sharing class PrometheionComplianceScorer {
                 FROM PermissionSetAssignment
                 WHERE PermissionSet.PermissionsModifyAllData = true
                 AND Assignee.IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             List<AggregateResult> viewAllResults = [
@@ -173,7 +186,7 @@ public with sharing class PrometheionComplianceScorer {
                 FROM PermissionSetAssignment
                 WHERE PermissionSet.PermissionsViewAllData = true
                 AND Assignee.IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             // Extract counts from aggregate results
@@ -218,24 +231,34 @@ public with sharing class PrometheionComplianceScorer {
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
         factor.detail = elevatedPercent.setScale(1) + '% of users have elevated permissions';
         
+        // Cache result for reuse within transaction
+        permissionSprawlCache = factor;
         return factor;
     }
     
     /**
      * Calculate Audit Trail Coverage Score (25% weight)
+     * Uses caching to avoid duplicate queries within transaction scope
      */
     private static ScoreFactor calculateAuditTrailScore() {
+        // Return cached result if available
+        if (auditTrailCache != null) {
+            return auditTrailCache;
+        }
+        
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Audit Trail Coverage';
         factor.weight = WEIGHT_AUDIT_TRAIL;
         
-        // Check for recent SetupAuditTrail entries
+        // Check for recent SetupAuditTrail entries with limit guard
         Integer auditTrailCount = [
             SELECT COUNT() FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
+            WITH USER_MODE
+            LIMIT 10000
         ];
         
-        // Check for sensitive objects
+        // Check for sensitive objects with limit guard
         List<EntityDefinition> sensitiveObjects = [
             SELECT QualifiedApiName
             FROM EntityDefinition
@@ -244,6 +267,7 @@ public with sharing class PrometheionComplianceScorer {
             OR QualifiedApiName LIKE '%Medical%'
             OR QualifiedApiName LIKE '%Financial%'
             OR QualifiedApiName LIKE '%Payment%'
+            WITH USER_MODE
             LIMIT 20
         ];
         
@@ -260,21 +284,31 @@ public with sharing class PrometheionComplianceScorer {
         }
         
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
+        
+        // Cache result for reuse within transaction
+        auditTrailCache = factor;
         return factor;
     }
     
     /**
      * Calculate Configuration Drift Score (20% weight)
+     * Uses caching to avoid duplicate queries within transaction scope
      */
     private static ScoreFactor calculateConfigDriftScore() {
+        // Return cached result if available
+        if (configDriftCache != null) {
+            return configDriftCache;
+        }
+        
         ScoreFactor factor = new ScoreFactor();
         factor.name = 'Configuration Drift';
         factor.weight = WEIGHT_CONFIG_DRIFT;
         
-        // Count recent setup changes
+        // Count recent setup changes with limit guard
         List<SetupAuditTrail> recentChanges = [
             SELECT Action FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
+            WITH USER_MODE
             LIMIT 100
         ];
         
@@ -309,6 +343,8 @@ public with sharing class PrometheionComplianceScorer {
         factor.weightedScore = (factor.score * factor.weight).setScale(2);
         factor.detail = highRiskChanges + ' high-risk configuration changes (of ' + recentChanges.size() + ' total)';
         
+        // Cache result for reuse within transaction
+        configDriftCache = factor;
         return factor;
     }
     

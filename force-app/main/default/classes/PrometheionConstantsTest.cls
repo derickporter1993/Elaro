@@ -18,8 +18,8 @@ private class PrometheionConstantsTest {
         System.assertEquals('SOX', PrometheionConstants.FRAMEWORK_SOX, 'SOX framework constant should be defined');
         System.assertEquals('PCI_DSS', PrometheionConstants.FRAMEWORK_PCI_DSS, 'PCI_DSS framework constant should be defined');
         
-        // Verify ALL_FRAMEWORKS contains all frameworks
-        System.assertEquals(7, PrometheionConstants.ALL_FRAMEWORKS.size(), 'ALL_FRAMEWORKS should contain 7 frameworks');
+        // Verify ALL_FRAMEWORKS contains all frameworks (10 total: HIPAA, SOC2, NIST, FedRAMP, GDPR, SOX, PCI-DSS, CCPA, GLBA, ISO27001)
+        System.assertEquals(10, PrometheionConstants.ALL_FRAMEWORKS.size(), 'ALL_FRAMEWORKS should contain 10 frameworks');
         System.assert(PrometheionConstants.ALL_FRAMEWORKS.contains('HIPAA'), 'ALL_FRAMEWORKS should contain HIPAA');
         System.assert(PrometheionConstants.ALL_FRAMEWORKS.contains('SOC2'), 'ALL_FRAMEWORKS should contain SOC2');
     }

@@ -86,4 +86,32 @@
     <apexClass>PrometheionComplianceScorer</apexClass>
     <enabled>true</enabled>
   </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionGDPRComplianceService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionCCPAComplianceService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionGLBAPrivacyNoticeService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionISO27001AccessReviewService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionHIPAAComplianceService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionSOC2ComplianceService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>PrometheionPCIDSSComplianceService</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
 </PermissionSet>

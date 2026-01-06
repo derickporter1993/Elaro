@@ -191,9 +191,10 @@ public without sharing class PrometheionReasoningEngine {
 
     /**
      * Generate correlation ID for structured logging
+     * Uses only stable inputs (no time component) for deterministic hashing
      */
     private static String generateCorrelationId(String nodeHash) {
-        String input = nodeHash + '|' + UserInfo.getUserId() + '|' + System.now().getTime();
+        String input = nodeHash + '|' + UserInfo.getUserId();
         Blob hash = Crypto.generateDigest('MD5', Blob.valueOf(input));
         return EncodingUtil.base64Encode(hash).substring(0, 16);
     }

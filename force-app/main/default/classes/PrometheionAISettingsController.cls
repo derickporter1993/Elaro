@@ -117,12 +117,32 @@ public with sharing class PrometheionAISettingsController {
     
     /**
      * Log audit event for AI settings changes
+     * Implements proper audit logging with CRUD/FLS enforcement
      */
     private static void logAuditEvent(String action, String entityType, String entityId, String details) {
         try {
-            // Create audit log entry (will be created as custom object in P3)
-            System.debug(LoggingLevel.INFO, '[Audit] ' + action + ' - ' + entityType + ' (' + entityId + '): ' + details);
-            // TODO: Insert into Prometheion_Audit_Log__c when object is created
+            Prometheion_Audit_Log__c auditLog = new Prometheion_Audit_Log__c(
+                Action__c = action,
+                Entity_Type__c = entityType,
+                Entity_Id__c = entityId,
+                Details__c = details,
+                User__c = UserInfo.getUserId(),
+                Timestamp__c = System.now()
+            );
+            
+            // Strip inaccessible fields for security (CRUD/FLS enforcement)
+            SObjectAccessDecision decision = Security.stripInaccessible(
+                AccessType.CREATABLE,
+                new List<Prometheion_Audit_Log__c>{ auditLog }
+            );
+            
+            List<Prometheion_Audit_Log__c> sanitizedLogs = decision.getRecords();
+            if (!sanitizedLogs.isEmpty()) {
+                insert sanitizedLogs[0];
+                System.debug(LoggingLevel.INFO, '[Audit] Logged: ' + action + ' - ' + entityType + ' (' + entityId + ')');
+            } else {
+                System.debug(LoggingLevel.WARN, '[Audit] No accessible fields to create audit log for: ' + action);
+            }
         } catch (Exception e) {
             // Don't fail the main operation if audit logging fails
             System.debug(LoggingLevel.WARN, 'PrometheionAISettingsController: Failed to log audit event: ' + e.getMessage());

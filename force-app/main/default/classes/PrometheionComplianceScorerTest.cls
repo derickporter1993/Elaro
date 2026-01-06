@@ -17,8 +17,10 @@ private class PrometheionComplianceScorerTest {
         Test.stopTest();
 
         System.assertNotEquals(null, result, 'Should return a result');
-        System.assertNotEquals(null, result.totalScore, 'Should have a total score');
-        System.assert(result.totalScore >= 0 && result.totalScore <= 100, 'Score should be between 0 and 100');
+        System.assertNotEquals(null, result.overallScore, 'Should have an overall score');
+        System.assert(result.overallScore >= 0 && result.overallScore <= 100, 'Score should be between 0 and 100');
+        System.assertNotEquals(null, result.rating, 'Should have a rating');
+        System.assertNotEquals(null, result.frameworkScores, 'Should have framework scores');
     }
 
     @IsTest
@@ -38,6 +40,42 @@ private class PrometheionComplianceScorerTest {
         PrometheionComplianceScorer.ScoreResult result = PrometheionComplianceScorer.calculateReadinessScore();
         Test.stopTest();
 
-        System.assert(result.totalScore > 0, 'Should have positive score with documented permission sets');
+        System.assert(result.overallScore > 0, 'Should have positive score with documented permission sets');
+        System.assertNotEquals(null, result.factors, 'Should have score factors');
+        System.assert(result.factors.size() > 0, 'Should have at least one factor');
+    }
+    
+    @IsTest
+    static void testCalculateReadinessScore_BulkPermissionSets() {
+        // Test with 200+ permission sets to verify governor limit handling
+        List<PermissionSet> permSets = new List<PermissionSet>();
+        for (Integer i = 0; i < 250; i++) {
+            permSets.add(new PermissionSet(
+                Name='BulkTestPS' + i,
+                Label='Bulk Test PS ' + i,
+                Description='Bulk test description ' + i
+            ));
+        }
+        insert permSets;
+        
+        Test.startTest();
+        PrometheionComplianceScorer.ScoreResult result = PrometheionComplianceScorer.calculateReadinessScore();
+        Test.stopTest();
+        
+        System.assertNotEquals(null, result, 'Should return a result even with bulk data');
+        System.assert(result.overallScore >= 0 && result.overallScore <= 100, 'Score should be valid');
+    }
+    
+    @IsTest
+    static void testCalculateReadinessScore_ErrorHandling() {
+        // Test error handling - method should not throw exceptions
+        Test.startTest();
+        try {
+            PrometheionComplianceScorer.ScoreResult result = PrometheionComplianceScorer.calculateReadinessScore();
+            System.assertNotEquals(null, result, 'Should return a result even on error');
+        } catch (Exception e) {
+            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+        }
+        Test.stopTest();
     }
 }

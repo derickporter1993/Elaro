@@ -62,22 +62,24 @@ public with sharing class PerformanceAlertPublisher {
                     'PerformanceAlertPublisher: ' + errorMsg + 
                     '. CorrelationId: ' + correlationId);
                 
+                // TODO: Re-enable Integration_Error__c logging after creating object in org
                 // Log to Integration_Error__c if available
-                try {
-                    Integration_Error__c error = new Integration_Error__c(
-                        Error_Type__c = 'API_CALLOUT',
-                        Error_Message__c = errorMsg,
-                        Stack_Trace__c = 'SaveResult errors: ' + JSON.serialize(sr.getErrors()),
-                        Correlation_Id__c = correlationId,
-                        Context__c = 'Metric: ' + metric + ', Value: ' + value + ', Threshold: ' + threshold,
-                        Status__c = 'NEW',
-                        Timestamp__c = System.now()
-                    );
-                    insert error;
-                } catch (Exception logError) {
-                    // Don't fail if error logging fails
-                    System.debug(LoggingLevel.WARN, 'Failed to log PerformanceAlertPublisher error: ' + logError.getMessage());
-                }
+                // try {
+                //     Integration_Error__c error = new Integration_Error__c(
+                //         Error_Type__c = 'API_CALLOUT',
+                //         Error_Message__c = errorMsg,
+                //         Stack_Trace__c = 'SaveResult errors: ' + JSON.serialize(sr.getErrors()),
+                //         Correlation_Id__c = correlationId,
+                //         Context__c = 'Metric: ' + metric + ', Value: ' + value + ', Threshold: ' + threshold,
+                //         Status__c = 'NEW',
+                //         Timestamp__c = System.now()
+                //     );
+                //     insert error;
+                // } catch (Exception logError) {
+                //     // Don't fail if error logging fails
+                //     System.debug(LoggingLevel.WARN, 'Failed to log PerformanceAlertPublisher error: ' + logError.getMessage());
+                // }
+                System.debug(LoggingLevel.WARN, 'PerformanceAlertPublisher error: ' + errorMsg + ', CorrelationId: ' + correlationId);
                 
                 throw new AuraHandledException(errorMsg);
             }

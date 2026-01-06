@@ -33,15 +33,3 @@ public interface IRiskScoringService {
      */
     String getFrameworkName();
 }
-
-/**
- * Violation data structure
- */
-public class Violation {
-    @AuraEnabled public String title;
-    @AuraEnabled public String description;
-    @AuraEnabled public String severity;
-    @AuraEnabled public String remediation;
-    @AuraEnabled public String entityId;
-    @AuraEnabled public Decimal riskScore;
-}

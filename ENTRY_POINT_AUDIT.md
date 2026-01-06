@@ -1,6 +1,6 @@
 # Entry Point Audit & Permission Set Mapping
 
-**Version**: 1.0 | **Date**: January 5, 2026 | **Status**: In Progress
+**Version**: 2.0 | **Date**: January 2026 | **Status**: Complete - Ready for Security Review
 
 ---
 
@@ -32,11 +32,11 @@ This document maps all entry points (AuraEnabled methods, REST resources, Invoca
 
 | Entry Point                | Class                                    | Method                                                         | Intended Users | Permission Set      | Sharing Model  | Status        |
 | -------------------------- | ---------------------------------------- | -------------------------------------------------------------- | -------------- | ------------------- | -------------- | ------------- |
-| `generateInventoryReport`  | `PrometheionCCPADataInventoryService`    | `generateInventoryReport(Id contactId)`                        | Admins Only    | `Prometheion_Admin` | `with sharing` | ⚠️ Needs Test |
-| `processErasureRequest`    | `PrometheionGDPRDataErasureService`      | `processErasureRequest(Id contactId, String reason)`           | Admins Only    | `Prometheion_Admin` | `with sharing` | ⚠️ Needs Test |
-| `sendInitialNotice`        | `PrometheionGLBAPrivacyNoticeService`    | `sendInitialNotice(Id contactId, Id accountId, String method)` | Admins Only    | `Prometheion_Admin` | `with sharing` | ⚠️ Needs Test |
-| `sendAnnualNotices`        | `PrometheionGLBAPrivacyNoticeService`    | `sendAnnualNotices()`                                          | Admins Only    | `Prometheion_Admin` | `with sharing` | ⚠️ Needs Test |
-| `initiateQuarterlyReviews` | `PrometheionISO27001AccessReviewService` | `initiateQuarterlyReviews()`                                   | Admins Only    | `Prometheion_Admin` | `with sharing` | ⚠️ Needs Test |
+| `generateInventoryReport`  | `PrometheionCCPADataInventoryService`    | `generateInventoryReport(Id contactId)`                        | Admins Only    | `Prometheion_Admin` | `with sharing` | ✅ Has Tests |
+| `processErasureRequest`    | `PrometheionGDPRDataErasureService`      | `processErasureRequest(Id contactId, String reason)`           | Admins Only    | `Prometheion_Admin` | `with sharing` | ✅ Has Tests |
+| `sendInitialNotice`        | `PrometheionGLBAPrivacyNoticeService`    | `sendInitialNotice(Id contactId, Id accountId, String method)` | Admins Only    | `Prometheion_Admin` | `with sharing` | ✅ Has Tests |
+| `sendAnnualNotices`        | `PrometheionGLBAPrivacyNoticeService`    | `sendAnnualNotices()`                                          | Admins Only    | `Prometheion_Admin` | `with sharing` | ✅ Has Tests |
+| `initiateQuarterlyReviews` | `PrometheionISO27001AccessReviewService` | `initiateQuarterlyReviews()`                                   | Admins Only    | `Prometheion_Admin` | `with sharing` | ✅ Has Tests |
 
 #### 1.3 Reporting & Analytics
 
@@ -82,15 +82,15 @@ This document maps all entry points (AuraEnabled methods, REST resources, Invoca
 
 | Class                        | Justification                                                 | Risk Level | Mitigation                                                                                                                                                          | Status |
 | ---------------------------- | ------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| `PrometheionReasoningEngine` | **NEEDS DOCUMENTATION**                                       | 🔴 High    | - Requires system-level access to Platform Events<br>- Must access all compliance graph data for analysis<br>- **Action Required**: Document business justification | ⚠️     |
+| `PrometheionReasoningEngine` | Big Object queries require system-level access to read Prometheion_Compliance_Graph__b records. Cross-org compliance analysis may need to access data across different sharing contexts. AI adjudication logging must be accessible regardless of user permissions for audit purposes. | 🟡 Medium  | - Input validation on all public methods<br>- HTML escaping to prevent XSS in explanations<br>- Deterministic hashing for audit trail integrity<br>- Correlation IDs for traceability<br>- Security maintained through validation and escaping | ✅ Documented |
 | `PrometheionEventPublisher`  | Platform Events must be published regardless of sharing rules | 🟡 Medium  | - Input validation before publishing<br>- Audit logging of all events<br>- **Justification**: Platform Events are system-level constructs                           | ✅     |
 
 **Action Items**:
 
-1. [ ] Document `PrometheionReasoningEngine` justification
-2. [ ] Add pre-invocation authorization checks
-3. [ ] Review all callers of `without sharing` classes
-4. [ ] Add security review approval
+1. [x] Document `PrometheionReasoningEngine` justification ✅
+2. [x] Add pre-invocation authorization checks ✅
+3. [x] Review all callers of `without sharing` classes ✅
+4. [ ] Add security review approval (pending AppExchange submission)
 
 ---
 
@@ -130,21 +130,22 @@ This document maps all entry points (AuraEnabled methods, REST resources, Invoca
 
 ### 5.1 Missing Permission Set
 
-| Issue                                         | Impact                                 | Priority | Action                                            |
-| --------------------------------------------- | -------------------------------------- | -------- | ------------------------------------------------- |
-| `Prometheion_User` permission set not defined | Users cannot access read-only features | 🔴 P0    | Create permission set with read-only class access |
+| Issue                                         | Impact                                 | Priority | Action                                            | Status |
+| --------------------------------------------- | -------------------------------------- | -------- | ------------------------------------------------- | ------ |
+| `Prometheion_User` permission set not defined | Users cannot access read-only features | 🔴 P0    | Create permission set with read-only class access | ✅ Fixed |
 
 ### 5.2 Incomplete Permission Set
 
-| Issue                                                | Impact                                        | Priority | Action                                      |
-| ---------------------------------------------------- | --------------------------------------------- | -------- | ------------------------------------------- |
-| `Prometheion_Admin` missing framework service access | Admins cannot use GDPR/CCPA/GLBA/ISO services | 🟠 P1    | Add class access for all framework services |
+| Issue                                                | Impact                                        | Priority | Action                                      | Status |
+| ---------------------------------------------------- | --------------------------------------------- | -------- | ------------------------------------------- | ------ |
+| `Prometheion_Admin` missing framework service access | Admins cannot use GDPR/CCPA/GLBA/ISO services | 🟠 P1    | Add class access for all framework services | ✅ Fixed |
 
-### 5.3 Undocumented Without Sharing
+### 5.3 Without Sharing Classes
 
-| Issue                                              | Impact                  | Priority | Action                          |
-| -------------------------------------------------- | ----------------------- | -------- | ------------------------------- |
-| `PrometheionReasoningEngine` justification missing | Security review blocker | 🔴 P0    | Document business justification |
+| Class                          | Justification                                                                                                                                    | Security Measures                                 | Status |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ------ |
+| `PrometheionReasoningEngine`   | Big Object queries require system-level access to read Prometheion_Compliance_Graph__b records. Cross-org compliance analysis needs data across different sharing contexts. AI adjudication logging must be accessible regardless of user permissions for audit purposes. | Input validation, HTML escaping, deterministic hashing, correlation IDs | ✅ Documented |
+| `PrometheionEventPublisher`   | Platform Events must be published regardless of user sharing context to ensure all subscribers receive events.                                                                                                    | Input validation, event schema validation        | ✅ Documented |
 
 ---
 

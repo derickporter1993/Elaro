@@ -71,19 +71,19 @@ public with sharing class SlackNotifier {
         }
     }
 
-    public static void notifyPerformanceEvent(Performance_Alert__e evt) {
+    public static void notifyPerformanceEvent(Performance_Alert__e performanceEvent) {
         // Use rich formatting for performance alerts
-        String jsonPayload = buildPerformanceAlertBlocks(evt);
+        String jsonPayload = buildPerformanceAlertBlocks(performanceEvent);
         notifyRichAsyncQueueable(jsonPayload);
     }
 
     // Build Slack Block Kit JSON for performance alerts
-    private static String buildPerformanceAlertBlocks(Performance_Alert__e evt) {
+    private static String buildPerformanceAlertBlocks(Performance_Alert__e performanceEvent) {
         // Determine severity emoji and color
         String emoji = '⚠️';
         String color = '#ffb75d'; // Warning (orange)
 
-        Decimal percentOfLimit = (evt.Value__c / evt.Threshold__c) * 100;
+        Decimal percentOfLimit = (performanceEvent.Value__c / performanceEvent.Threshold__c) * 100;
 
         if (percentOfLimit >= 95) {
             emoji = '🔴';
@@ -101,7 +101,7 @@ public with sharing class SlackNotifier {
             'text',
             emoji +
             ' Prometheion Alert: ' +
-            evt.Metric__c +
+            performanceEvent.Metric__c +
             ' at ' +
             percentOfLimit.setScale(1) +
             '%'
@@ -119,7 +119,7 @@ public with sharing class SlackNotifier {
             'text',
             emoji +
             ' ' +
-            evt.Metric__c +
+            performanceEvent.Metric__c +
             ' Performance Alert'
         );
         headerBlock.put('text', headerText);
@@ -139,7 +139,7 @@ public with sharing class SlackNotifier {
         valueField.put(
             'text',
             '*Current Value:*\n' +
-            String.valueOf(evt.Value__c.setScale(0)) +
+            String.valueOf(performanceEvent.Value__c.setScale(0)) +
             ' (' +
             percentOfLimit.setScale(1) +
             '%)'
@@ -152,21 +152,21 @@ public with sharing class SlackNotifier {
         thresholdField.put(
             'text',
             '*Threshold:*\n' +
-            String.valueOf(evt.Threshold__c.setScale(0))
+            String.valueOf(performanceEvent.Threshold__c.setScale(0))
         );
         fields.add(thresholdField);
 
         // Metric Type
         Map<String, Object> metricField = new Map<String, Object>();
         metricField.put('type', 'mrkdwn');
-        metricField.put('text', '*Metric:*\n' + evt.Metric__c);
+        metricField.put('text', '*Metric:*\n' + performanceEvent.Metric__c);
         fields.add(metricField);
 
         // Context Record (if available)
-        if (!String.isBlank(evt.Context_Record__c)) {
+        if (!String.isBlank(performanceEvent.Context_Record__c)) {
             Map<String, Object> contextField = new Map<String, Object>();
             contextField.put('type', 'mrkdwn');
-            contextField.put('text', '*Context:*\n' + evt.Context_Record__c);
+            contextField.put('text', '*Context:*\n' + performanceEvent.Context_Record__c);
             fields.add(contextField);
         }
 
@@ -174,9 +174,9 @@ public with sharing class SlackNotifier {
         blocks.add(infoSection);
 
         // Stack trace context (if available) - truncate to prevent Slack limits
-        if (!String.isBlank(evt.Stack__c)) {
+        if (!String.isBlank(performanceEvent.Stack__c)) {
             // Slack has a 3000 character limit per block, truncate if needed
-            String stackTrace = evt.Stack__c;
+            String stackTrace = performanceEvent.Stack__c;
             Integer maxLength = 2500; // Leave room for markdown formatting
             if (stackTrace.length() > maxLength) {
                 stackTrace = stackTrace.substring(0, maxLength) + '\n... (truncated)';
@@ -318,20 +318,22 @@ public with sharing class SlackNotifier {
         if (String.isBlank(stackTrace)) {
             stackTrace = '';
         }
-        try {
-            Integration_Error__c error = new Integration_Error__c(
-                Error_Type__c = errorType,
-                Error_Message__c = errorMessage,
-                Stack_Trace__c = stackTrace,
-                Correlation_Id__c = correlationId,
-                Context__c = additionalContext != null ? context + '\n\nAdditional Context: ' + additionalContext : context,
-                Status__c = 'NEW',
-                Timestamp__c = System.now()
-            );
-            insert error;
-        } catch (Exception e) {
-            // Don't fail the main operation if error logging fails
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
-        }
+        // TODO: Re-enable Integration_Error__c logging after creating object in org
+        // try {
+        //     Integration_Error__c error = new Integration_Error__c(
+        //         Error_Type__c = errorType,
+        //         Error_Message__c = errorMessage,
+        //         Stack_Trace__c = stackTrace,
+        //         Correlation_Id__c = correlationId,
+        //         Context__c = additionalContext != null ? context + '\n\nAdditional Context: ' + additionalContext : context,
+        //         Status__c = 'NEW',
+        //         Timestamp__c = System.now()
+        //     );
+        //     insert error;
+        // } catch (Exception e) {
+        //     // Don't fail the main operation if error logging fails
+        //     System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
+        // }
+        System.debug(LoggingLevel.ERROR, 'SlackNotifier: Integration error logged. Type: ' + errorType + ', CorrelationId: ' + correlationId + ', Error: ' + errorMessage);
     }
 }

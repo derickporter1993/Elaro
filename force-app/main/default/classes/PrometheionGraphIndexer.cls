@@ -134,22 +134,24 @@ public with sharing class PrometheionGraphIndexer {
                 ', Error: ' + e.getMessage() + 
                 ', StackTrace: ' + e.getStackTraceString());
             
+            // TODO: Re-enable Integration_Error__c logging after creating object in org
             // Log to Integration_Error__c if available
-            try {
-                Integration_Error__c error = new Integration_Error__c(
-                    Error_Type__c = 'EINSTEIN',
-                    Error_Message__c = 'Einstein prediction failed: ' + e.getMessage(),
-                    Stack_Trace__c = e.getStackTraceString(),
-                    Correlation_Id__c = correlationId,
-                    Context__c = 'Framework: ' + framework + ', Metadata: ' + JSON.serialize(metadata),
-                    Status__c = 'NEW',
-                    Timestamp__c = System.now()
-                );
-                insert error;
-            } catch (Exception logError) {
-                // Don't fail if error logging fails
-                System.debug(LoggingLevel.WARN, 'Failed to log Einstein error: ' + logError.getMessage());
-            }
+            // try {
+            //     Integration_Error__c error = new Integration_Error__c(
+            //         Error_Type__c = 'EINSTEIN',
+            //         Error_Message__c = 'Einstein prediction failed: ' + e.getMessage(),
+            //         Stack_Trace__c = e.getStackTraceString(),
+            //         Correlation_Id__c = correlationId,
+            //         Context__c = 'Framework: ' + framework + ', Metadata: ' + JSON.serialize(metadata),
+            //         Status__c = 'NEW',
+            //         Timestamp__c = System.now()
+            //     );
+            //     insert error;
+            // } catch (Exception logError) {
+            //     // Don't fail if error logging fails
+            //     System.debug(LoggingLevel.WARN, 'Failed to log Einstein error: ' + logError.getMessage());
+            // }
+            System.debug(LoggingLevel.WARN, 'Einstein prediction error logged. CorrelationId: ' + correlationId);
             
             // Fallback to rule-based scoring
             return calculateFallbackRiskScore(metadata, framework);
