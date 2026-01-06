@@ -1,17 +1,17 @@
 import { createElement } from 'lwc';
 import ComplianceCopilot from 'c/complianceCopilot';
-import askCopilot from '@salesforce/apex/SentinelComplianceCopilot.askCopilot';
-import getQuickCommands from '@salesforce/apex/SentinelComplianceCopilot.getQuickCommands';
+import askCopilot from '@salesforce/apex/PrometheionComplianceCopilot.askCopilot';
+import getQuickCommands from '@salesforce/apex/PrometheionComplianceCopilot.getQuickCommands';
 
 // Mock Apex methods
 jest.mock(
-    '@salesforce/apex/SentinelComplianceCopilot.askCopilot',
+    '@salesforce/apex/PrometheionComplianceCopilot.askCopilot',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
 
 jest.mock(
-    '@salesforce/apex/SentinelComplianceCopilot.getQuickCommands',
+    '@salesforce/apex/PrometheionComplianceCopilot.getQuickCommands',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );

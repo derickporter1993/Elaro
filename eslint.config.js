@@ -21,7 +21,7 @@ const lwcRecommended = lwc.configs.recommended ?? {};
 
 export default [
   {
-    ignores: ["**/node_modules/**", "**/*.zip", "**/coverage/**"],
+    ignores: ["**/node_modules/**", "**/*.zip", "**/coverage/**", "**/__tests__/**", "**/*.test.js"],
   },
   {
     ...js.configs.recommended,
@@ -34,6 +34,7 @@ export default [
   {
     ...lwcRecommended,
     files: ["force-app/**/*.js"],
+    ignores: ["**/__tests__/**", "**/*.test.js"],
     languageOptions: {
       ...(lwcRecommended.languageOptions ?? {}),
       ...sharedLanguageOptions,

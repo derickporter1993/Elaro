@@ -16,7 +16,7 @@ export default class PrometheionExecutiveKPIDashboard extends LightningElement {
         ...metric,
         formattedValue: this.formatValue(metric),
         formattedTarget: this.formatTarget(metric),
-        statusBadgeClass: this.getStatusBadgeClass(metric),
+        statusBadgeVariant: this.getStatusBadgeVariant(metric),
       }));
       this.isLoading = false;
       this.hasError = false;
@@ -62,12 +62,12 @@ export default class PrometheionExecutiveKPIDashboard extends LightningElement {
     return value.toFixed(2);
   }
 
-  getStatusBadgeClass(metric) {
-    if (!metric) return "";
-    if (metric.status === "green") return "slds-badge_success";
-    if (metric.status === "yellow") return "slds-badge_warning";
-    if (metric.status === "red") return "slds-badge_error";
-    return "";
+  getStatusBadgeVariant(metric) {
+    if (!metric) return "default";
+    if (metric.status === "green") return "success";
+    if (metric.status === "yellow") return "warning";
+    if (metric.status === "red") return "error";
+    return "default";
   }
 
   showError(message) {
