@@ -6,6 +6,16 @@ public with sharing class PrometheionGraphIndexer {
         Map<String, Object> metadata = queryEntityMetadata(entityType, entityId);
         Decimal riskScore = calculateRiskScore(metadata, framework);
 
+        // Validate CRUD access before creating node
+        PrometheionSecurityUtils.validateCRUDAccess('Prometheion_Compliance_Graph__b', PrometheionSecurityUtils.DmlOperation.INSERT);
+        
+        // Validate FLS for required fields
+        List<String> requiredFields = new List<String>{
+            'Graph_Node_Id__c', 'Timestamp__c', 'Entity_Type__c', 
+            'Entity_Record_Id__c', 'Compliance_Framework__c', 'Risk_Score__c'
+        };
+        PrometheionSecurityUtils.validateFLSAccess('Prometheion_Compliance_Graph__b', requiredFields, true);
+
         Prometheion_Compliance_Graph__b node = new Prometheion_Compliance_Graph__b(
             Graph_Node_Id__c = nodeHash,
             Parent_Node_Id__c = parentNodeId,
@@ -22,7 +32,15 @@ public with sharing class PrometheionGraphIndexer {
         );
 
         try {
-            insert node;
+            // Strip inaccessible fields before insert
+            List<SObject> accessibleNodes = PrometheionSecurityUtils.stripInaccessibleFields(
+                AccessType.CREATABLE, 
+                new List<SObject>{node}
+            );
+            if (accessibleNodes.isEmpty()) {
+                throw new PrometheionException('Insufficient field-level security access');
+            }
+            insert accessibleNodes;
             return nodeHash;
         } catch (Exception e) {
             throw new PrometheionException('Graph indexing failed: ' + e.getMessage());
@@ -39,20 +57,30 @@ public with sharing class PrometheionGraphIndexer {
         Map<String, Object> metadata = new Map<String, Object>();
         switch on entityType {
             when 'PERMISSION_SET' {
+                // Validate read access
+                if (!PrometheionSecurityUtils.hasReadAccess('PermissionSet')) {
+                    throw new PrometheionException('Insufficient access to PermissionSet');
+                }
                 PermissionSet ps = [
                     SELECT Id, Name,
                         (SELECT SObjectType, PermissionsRead, PermissionsEdit FROM ObjectPerms),
                         (SELECT SObjectType, Field, PermissionsEdit FROM FieldPerms)
                     FROM PermissionSet WHERE Id = :entityId
+                    WITH SECURITY_ENFORCED
                 ];
                 metadata.put('name', ps.Name);
                 metadata.put('objectPermissions', ps.ObjectPerms);
                 metadata.put('fieldPermissions', ps.FieldPerms);
             }
             when 'FLOW' {
+                // Validate read access
+                if (!PrometheionSecurityUtils.hasReadAccess('FlowDefinitionView')) {
+                    throw new PrometheionException('Insufficient access to FlowDefinitionView');
+                }
                 FlowDefinitionView fd = [
                     SELECT ApiName, Label, TriggerType, ProcessType
                     FROM FlowDefinitionView WHERE DurableId = :entityId
+                    WITH SECURITY_ENFORCED
                 ];
                 metadata.put('apiName', fd.ApiName);
                 metadata.put('triggerType', fd.TriggerType);

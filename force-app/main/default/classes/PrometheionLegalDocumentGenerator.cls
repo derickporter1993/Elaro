@@ -5,16 +5,38 @@ public with sharing class PrometheionLegalDocumentGenerator {
             // Generate compliance evidence pack
             String documentContent = generateEvidencePackContent(framework, startDate, endDate);
 
+            // Validate CRUD access for ContentVersion
+            PrometheionSecurityUtils.validateCRUDAccess('ContentVersion', PrometheionSecurityUtils.DmlOperation.INSERT);
+            
+            // Validate FLS for ContentVersion fields
+            List<String> requiredFields = new List<String>{
+                'Title', 'PathOnClient', 'VersionData', 'IsMajorVersion'
+            };
+            PrometheionSecurityUtils.validateFLSAccess('ContentVersion', requiredFields, true);
+            
             // Create ContentVersion
             ContentVersion cv = new ContentVersion();
             cv.Title = framework + '_Evidence_Pack_' + System.today().format();
             cv.PathOnClient = cv.Title + '.txt';
             cv.VersionData = Blob.valueOf(documentContent);
             cv.IsMajorVersion = true;
-            insert cv;
+            
+            // Strip inaccessible fields before insert
+            List<SObject> accessibleContent = PrometheionSecurityUtils.stripInaccessibleFields(
+                AccessType.CREATABLE,
+                new List<SObject>{cv}
+            );
+            if (accessibleContent.isEmpty()) {
+                throw new AuraHandledException('Insufficient field-level security access for ContentVersion');
+            }
+            insert accessibleContent;
+            cv = (ContentVersion)accessibleContent[0];
 
             // Get ContentDocumentId
-            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id];
+            if (!PrometheionSecurityUtils.hasReadAccess('ContentVersion')) {
+                throw new AuraHandledException('Insufficient access to ContentVersion');
+            }
+            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
             return cv.ContentDocumentId;
         } catch (Exception e) {
             throw new AuraHandledException('Error generating evidence pack: ' + e.getMessage());
@@ -22,12 +44,17 @@ public with sharing class PrometheionLegalDocumentGenerator {
     }
 
     private static String generateEvidencePackContent(String framework, Date startDate, Date endDate) {
-        StringBuilder content = new StringBuilder();
-        content.append('COMPLIANCE EVIDENCE PACK\n');
-        content.append('========================\n\n');
-        content.append('Framework: ' + framework + '\n');
-        content.append('Generated: ' + System.now() + '\n');
-        content.append('Period: ' + startDate + ' to ' + endDate + '\n\n');
+        // Validate read access
+        if (!PrometheionSecurityUtils.hasReadAccess('Prometheion_Compliance_Graph__b')) {
+            throw new AuraHandledException('Insufficient access to Compliance Graph');
+        }
+        
+        // Build content using String concatenation (StringBuilder not available in Apex)
+        String content = 'COMPLIANCE EVIDENCE PACK\n';
+        content += '========================\n\n';
+        content += 'Framework: ' + framework + '\n';
+        content += 'Generated: ' + System.now() + '\n';
+        content += 'Period: ' + startDate + ' to ' + endDate + '\n\n';
 
         // Query compliance graph entries
         List<Prometheion_Compliance_Graph__b> entries = [
@@ -37,24 +64,25 @@ public with sharing class PrometheionLegalDocumentGenerator {
             WHERE Compliance_Framework__c = :framework
             AND Timestamp__c >= :startDate
             AND Timestamp__c <= :endDate
+            WITH SECURITY_ENFORCED
             ORDER BY Timestamp__c DESC
             LIMIT 1000
         ];
 
-        content.append('Total Events: ' + entries.size() + '\n\n');
-        content.append('DETAILED AUDIT LOG\n');
-        content.append('==================\n\n');
+        content += 'Total Events: ' + entries.size() + '\n\n';
+        content += 'DETAILED AUDIT LOG\n';
+        content += '==================\n\n';
 
         for (Prometheion_Compliance_Graph__b entry : entries) {
-            content.append('Node: ' + entry.Graph_Node_Id__c + '\n');
-            content.append('Type: ' + entry.Entity_Type__c + '\n');
-            content.append('Risk: ' + entry.Risk_Score__c + '/10\n');
-            content.append('Category: ' + entry.Drift_Category__c + '\n');
-            content.append('Timestamp: ' + entry.Timestamp__c + '\n');
-            content.append('Human Reviewed: ' + entry.Human_Adjudicated__c + '\n');
-            content.append('---\n\n');
+            content += 'Node: ' + entry.Graph_Node_Id__c + '\n';
+            content += 'Type: ' + entry.Entity_Type__c + '\n';
+            content += 'Risk: ' + entry.Risk_Score__c + '/10\n';
+            content += 'Category: ' + entry.Drift_Category__c + '\n';
+            content += 'Timestamp: ' + entry.Timestamp__c + '\n';
+            content += 'Human Reviewed: ' + entry.Human_Adjudicated__c + '\n';
+            content += '---\n\n';
         }
 
-        return content.toString();
+        return content;
     }
 }

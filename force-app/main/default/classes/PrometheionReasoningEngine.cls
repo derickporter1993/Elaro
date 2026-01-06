@@ -1,4 +1,4 @@
-public without sharing class PrometheionReasoningEngine {
+public with sharing class PrometheionReasoningEngine {
     private static final Decimal MIN_CONFIDENCE = 0.85;
 
     @TestVisible
@@ -35,10 +35,16 @@ public without sharing class PrometheionReasoningEngine {
     }
 
     private static Prometheion_Compliance_Graph__b queryGraphNode(String nodeHash) {
+        // Validate read access
+        if (!PrometheionSecurityUtils.hasReadAccess('Prometheion_Compliance_Graph__b')) {
+            throw new ReasoningException('Insufficient access to Compliance Graph');
+        }
+        
         List<Prometheion_Compliance_Graph__b> nodes = [
             SELECT Id, Entity_Type__c, Entity_Record_Id__c, Risk_Score__c, Node_Metadata__c
             FROM Prometheion_Compliance_Graph__b
             WHERE Graph_Node_Id__c = :nodeHash
+            WITH SECURITY_ENFORCED
             LIMIT 1
         ];
         if (nodes.isEmpty()) throw new ReasoningException('Node not found');
@@ -60,10 +66,12 @@ public without sharing class PrometheionReasoningEngine {
     }
 
     private static Compliance_Policy__mdt queryRelevantPolicy(String policyId, String framework) {
+        // Custom Metadata Types are always accessible, but validate framework field access
         List<Compliance_Policy__mdt> policies = [
             SELECT DeveloperName, Policy_Description__c, Legal_Citation__c, Remediation_Steps__c
             FROM Compliance_Policy__mdt
             WHERE Framework__c = :framework
+            WITH SECURITY_ENFORCED
             LIMIT 1
         ];
         return policies.isEmpty() ? createDefaultPolicy() : policies[0];
@@ -96,6 +104,9 @@ public without sharing class PrometheionReasoningEngine {
     }
 
     private static String logAdjudication(String nodeHash, String explanation, Decimal confidence) {
+        // Validate CRUD access before creating adjudication
+        PrometheionSecurityUtils.validateCRUDAccess('Prometheion_Compliance_Graph__b', PrometheionSecurityUtils.DmlOperation.INSERT);
+        
         String adjudicationHash = PrometheionGraphIndexer.generateDeterministicHash(nodeHash, UserInfo.getUserId(), 'ADJUDICATION');
         Prometheion_Compliance_Graph__b adjudication = new Prometheion_Compliance_Graph__b(
             Graph_Node_Id__c = adjudicationHash,
@@ -108,7 +119,16 @@ public without sharing class PrometheionReasoningEngine {
             Human_Adjudicated__c = true,
             Graph_Version__c = 'v3.0'
         );
-        insert adjudication;
+        
+        // Strip inaccessible fields before insert
+        List<SObject> accessibleAdjudications = PrometheionSecurityUtils.stripInaccessibleFields(
+            AccessType.CREATABLE,
+            new List<SObject>{adjudication}
+        );
+        if (accessibleAdjudications.isEmpty()) {
+            throw new ReasoningException('Insufficient field-level security access for adjudication');
+        }
+        insert accessibleAdjudications;
         return adjudicationHash;
     }
 
