@@ -220,6 +220,19 @@
     padding: 24px;
 }
 
+.framework-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.framework-filter {
+    min-width: 200px;
+}
+
 .section-title {
     display: flex;
     align-items: center;
@@ -246,6 +259,23 @@
     background: var(--sol-bg-elevated);
     border-radius: 10px;
     padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.framework-card:hover {
+    background: var(--sol-bg-hover);
+    border-color: var(--sol-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.framework-description-small {
+    font-size: 11px;
+    color: var(--sol-text-muted);
+    margin-top: 8px;
+    margin-bottom: 0;
 }
 
 .framework-header {
@@ -575,6 +605,84 @@
 .loading-overlay span {
     font-size: 14px;
     color: var(--sol-text-muted);
+}
+
+/* Drill-Down View */
+.drill-down-view {
+    margin-top: 20px;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--sol-accent);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 0;
+    margin-bottom: 20px;
+    transition: color 0.2s ease;
+}
+
+.back-button:hover {
+    color: var(--sol-primary-light);
+}
+
+.framework-detail-card {
+    background: var(--sol-bg-elevated);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid var(--sol-accent);
+}
+
+.framework-detail-card h4 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--sol-text-primary);
+}
+
+.framework-description {
+    font-size: 14px;
+    color: var(--sol-text-muted);
+    margin: 0 0 24px 0;
+}
+
+.framework-score-large {
+    text-align: center;
+    margin: 24px 0;
+}
+
+.score-value-large {
+    display: block;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--sol-accent);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.score-label-large {
+    display: block;
+    font-size: 14px;
+    color: var(--sol-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.progress-bar-large {
+    width: 100%;
+    height: 12px;
+    background: var(--sol-bg-subtle);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-top: 16px;
+}
+
+.progress-fill-large {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.3s ease;
 }
 
 /* Responsive */
