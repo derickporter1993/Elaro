@@ -77,12 +77,17 @@ private class FlowExecutionLoggerTest {
         // Test bulk processing with 200+ records (P1 requirement)
         List<FlowExecutionLogger.LogInput> inputs = new List<FlowExecutionLogger.LogInput>();
         for (Integer i = 0; i < 200; i++) {
+            Integer mod2 = Math.mod(i, 2);
+            Integer mod10 = Math.mod(i, 10);
+            Integer mod5 = Math.mod(i, 5);
+            Integer mod3 = Math.mod(i, 3);
+            
             FlowExecutionLogger.LogInput input = new FlowExecutionLogger.LogInput();
             input.flowName = 'Bulk200Flow' + i;
-            input.status = i % 2 == 0 ? 'SUCCESS' : 'Fault';
-            input.cpu = 100 * (i % 10);
-            input.soql = i % 5;
-            input.dml = i % 3;
+            input.status = mod2 == 0 ? 'SUCCESS' : 'Fault';
+            input.cpu = 100 * mod10;
+            input.soql = mod5;
+            input.dml = mod3;
             inputs.add(input);
         }
 

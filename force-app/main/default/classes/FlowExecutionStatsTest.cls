@@ -9,8 +9,10 @@ private class FlowExecutionStatsTest {
         // Create test flow execution records
         List<Flow_Execution__c> executions = new List<Flow_Execution__c>();
         for (Integer i = 0; i < 10; i++) {
+            Integer mod3 = Math.mod(i, 3);
+            
             executions.add(new Flow_Execution__c(
-                Flow_Name__c = 'TestFlow' + (i % 3), // 3 different flows
+                Flow_Name__c = 'TestFlow' + mod3, // 3 different flows
                 Status__c = (i < 2) ? 'Fault' : 'Success',
                 CPU__c = 100 + i,
                 SOQL__c = 5 + i,
