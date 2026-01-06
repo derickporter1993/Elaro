@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Permission Intelligence is a core component of Prometheion's Event Intelligence Engine that provides automated detection, analysis, and governance of Salesforce permission sets, profiles, and access controls. This feature addresses critical compliance requirements for HIPAA, SOC 2, NIST, and GDPR by detecting unauthorized permission escalations, permission sprawl, and access control anomalies.
+Permission Intelligence is a core Prometheion product that provides automated detection, analysis, and governance of Salesforce permission sets, profiles, and access controls. This feature addresses critical compliance requirements for HIPAA, SOC 2, NIST, and GDPR by detecting unauthorized permission escalations, permission sprawl, and access control anomalies.
 
 ### Business Value
 - **Compliance:** Automated detection of unauthorized permission set escalations (HIPAA 45 CFR §164.308(a)(3))
