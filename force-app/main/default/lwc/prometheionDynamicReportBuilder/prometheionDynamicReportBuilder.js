@@ -127,26 +127,32 @@ export default class PrometheionDynamicReportBuilder extends LightningElement {
 
     handleFilterFieldChange(event) {
         const filterId = event.currentTarget.dataset.filterId;
-        const filter = this.filters.find(f => f.id === filterId);
-        if (filter) {
-            filter.field = event.detail.value;
-        }
+        // Create new array with updated filter to trigger reactivity
+        this.filters = this.filters.map(f => 
+            f.id === filterId 
+                ? { ...f, field: event.detail.value }
+                : f
+        );
     }
 
     handleFilterOperatorChange(event) {
         const filterId = event.currentTarget.dataset.filterId;
-        const filter = this.filters.find(f => f.id === filterId);
-        if (filter) {
-            filter.operator = event.detail.value;
-        }
+        // Create new array with updated filter to trigger reactivity
+        this.filters = this.filters.map(f => 
+            f.id === filterId 
+                ? { ...f, operator: event.detail.value }
+                : f
+        );
     }
 
     handleFilterValueChange(event) {
         const filterId = event.currentTarget.dataset.filterId;
-        const filter = this.filters.find(f => f.id === filterId);
-        if (filter) {
-            filter.value = event.detail.value;
-        }
+        // Create new array with updated filter to trigger reactivity
+        this.filters = this.filters.map(f => 
+            f.id === filterId 
+                ? { ...f, value: event.detail.value }
+                : f
+        );
     }
 
     handleSortByChange(event) {
