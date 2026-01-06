@@ -623,8 +623,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 - **Documentation**: [docs/](docs/)
 - **Sample Reports**: [examples/](examples/)
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/sentinel/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/sentinel/discussions)
+- **Issues**: [GitHub Issues](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME/discussions)
 
 ---
 
