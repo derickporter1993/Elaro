@@ -41,7 +41,7 @@ export default class PrometheionAuditWizard extends NavigationMixin(LightningEle
     get frameworks() {
         return FRAMEWORKS.map(f => ({
             ...f,
-            cardClass: 'framework-card slds-box slds-p-around_medium slds-text-align_center' + 
+            cardClass: 'framework-card slds-box slds-var-p-around_medium slds-text-align_center' + 
                 (f.value === this.selectedFramework ? ' selected' : '')
         }));
     }

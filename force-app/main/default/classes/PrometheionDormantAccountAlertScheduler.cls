@@ -8,21 +8,37 @@
  * System.schedule('Dormant Account Check', '0 0 5 * * ?', new DormantAccountAlertScheduler());
  *
  * @author Prometheion
- * @version 1.0
+ * @version 1.1
  */
 public with sharing class PrometheionDormantAccountAlertScheduler implements Schedulable {
 
     private static final Integer DORMANT_THRESHOLD_DAYS = 90;
     private static final Integer WARNING_THRESHOLD_DAYS = 60;
+    private static final Integer DEFAULT_BATCH_LIMIT = 500;
+    private static final String SCHEDULER_NAME = 'PrometheionDormantAccountAlertScheduler';
 
     /**
      * Execute the scheduled job
      * @param sc - SchedulableContext
      */
     public void execute(SchedulableContext sc) {
-        detectDormantAccounts();
-        detectApproachingDormant();
-        generateSecurityReport();
+        Savepoint sp = SchedulerErrorHandler.setSavepoint();
+        
+        try {
+            detectDormantAccounts();
+            detectApproachingDormant();
+            generateSecurityReport();
+            
+            // Log successful execution
+            SchedulerErrorHandler.logSuccess(SCHEDULER_NAME, 'Dormant account detection completed successfully');
+            
+        } catch (Exception e) {
+            // Rollback all changes on error
+            SchedulerErrorHandler.rollbackAndLog(sp, SCHEDULER_NAME, e.getMessage());
+            
+            // Notify admins of failure
+            SchedulerErrorHandler.notifyOnFailure(SCHEDULER_NAME, e.getMessage(), e.getStackTraceString());
+        }
     }
 
     /**
@@ -30,6 +46,7 @@ public with sharing class PrometheionDormantAccountAlertScheduler implements Sch
      */
     private void detectDormantAccounts() {
         Date dormantThreshold = Date.today().addDays(-DORMANT_THRESHOLD_DAYS);
+        Integer batchLimit = getBatchLimit();
 
         List<User> dormantUsers = [
             SELECT Id, Name, Username, Email, Profile.Name, ManagerId, Manager.Email,
@@ -39,12 +56,12 @@ public with sharing class PrometheionDormantAccountAlertScheduler implements Sch
             AND UserType = 'Standard'
             AND (LastLoginDate < :dormantThreshold OR LastLoginDate = null)
             WITH USER_MODE
-            LIMIT 500
+            LIMIT :batchLimit
         ];
 
         if (dormantUsers.isEmpty()) {
             System.debug(LoggingLevel.INFO,
-                '[DormantAccountAlertScheduler] No dormant accounts detected');
+                '[' + SCHEDULER_NAME + '] No dormant accounts detected');
             return;
         }
 
@@ -70,14 +87,19 @@ public with sharing class PrometheionDormantAccountAlertScheduler implements Sch
         }
 
         if (!reviews.isEmpty()) {
-            Database.insert(reviews, AccessLevel.USER_MODE);
-
+            // Use SaveResult handling for graceful error management
+            List<Database.SaveResult> results = Database.insert(reviews, false);
+            Integer failures = SchedulerErrorHandler.handleSaveResults(results, SCHEDULER_NAME, 'INSERT');
+            
+            Integer successCount = reviews.size() - failures;
             System.debug(LoggingLevel.WARN,
-                '[DormantAccountAlertScheduler] Created ' + reviews.size() +
-                ' termination reviews for dormant accounts');
+                '[' + SCHEDULER_NAME + '] Created ' + successCount +
+                ' termination reviews for dormant accounts (' + failures + ' failures)');
 
             // Alert security team
-            sendDormantAccountAlert(dormantUsers);
+            if (successCount > 0) {
+                sendDormantAccountAlert(dormantUsers);
+            }
         }
     }
 
@@ -101,14 +123,14 @@ public with sharing class PrometheionDormantAccountAlertScheduler implements Sch
 
         if (!warningUsers.isEmpty()) {
             System.debug(LoggingLevel.INFO,
-                '[DormantAccountAlertScheduler] ' + warningUsers.size() +
+                '[' + SCHEDULER_NAME + '] ' + warningUsers.size() +
                 ' accounts approaching dormant threshold (60-90 days)');
 
             // Send warning notifications
             for (User u : warningUsers) {
                 Integer daysSinceLogin = Math.abs(Date.today().daysBetween(u.LastLoginDate.date()));
                 System.debug(LoggingLevel.INFO,
-                    '[DormantAccountAlertScheduler] Warning: ' + u.Username +
+                    '[' + SCHEDULER_NAME + '] Warning: ' + u.Username +
                     ' - ' + daysSinceLogin + ' days since last login');
             }
         }
@@ -149,7 +171,7 @@ public with sharing class PrometheionDormantAccountAlertScheduler implements Sch
         ];
 
         System.debug(LoggingLevel.INFO,
-            '[DormantAccountAlertScheduler] Security Report - ' +
+            '[' + SCHEDULER_NAME + '] Security Report - ' +
             'Total Active Users: ' + totalActive + ', ' +
             'Dormant Accounts: ' + dormantCount + ', ' +
             'Privileged Dormant: ' + privilegedDormant + ', ' +
@@ -169,10 +191,26 @@ public with sharing class PrometheionDormantAccountAlertScheduler implements Sch
         }
 
         System.debug(LoggingLevel.WARN,
-            '[DormantAccountAlertScheduler] SECURITY ALERT: ' + dormantUsers.size() +
+            '[' + SCHEDULER_NAME + '] SECURITY ALERT: ' + dormantUsers.size() +
             ' dormant accounts detected. Breakdown by profile: ' + JSON.serialize(byProfile));
 
         // In production, would send to security team via email/Slack/SIEM
+    }
+
+    /**
+     * Get batch limit from Custom Metadata or use default
+     * @return Batch limit
+     */
+    private Integer getBatchLimit() {
+        try {
+            Prometheion_Scheduler_Config__mdt config = Prometheion_Scheduler_Config__mdt.getInstance('DormantAccountAlert');
+            if (config != null && config.Batch_Size__c != null) {
+                return config.Batch_Size__c.intValue();
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.WARN, '[' + SCHEDULER_NAME + '] Could not load config: ' + e.getMessage());
+        }
+        return DEFAULT_BATCH_LIMIT;
     }
 
     /**

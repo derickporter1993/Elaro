@@ -5,7 +5,8 @@
  * Compliance_Score__c records. Also publishes Platform Events for real-time UI updates.
  */
 @RestResource(urlMapping='/prometheion/score/callback')
-global class PrometheionScoreCallback {
+global without sharing class PrometheionScoreCallback {
+    // External API callback runs in system context
     
     /**
      * POST endpoint for AWS Lambda to send score results

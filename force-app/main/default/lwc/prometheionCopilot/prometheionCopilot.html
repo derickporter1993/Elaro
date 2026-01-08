@@ -100,7 +100,8 @@
                             <template lwc:if={message.isUser}>
                                 <div class="user-message">
                                     <div class="message-content">
-                                        <lightning-formatted-rich-text value={message.content}></lightning-formatted-rich-text>
+                                        <!-- Using formatted-text for XSS prevention -->
+                                        <lightning-formatted-text value={message.content}></lightning-formatted-text>
                                     </div>
                                     <div class="user-avatar">
                                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -121,7 +122,8 @@
                                         </svg>
                                     </div>
                                     <div class="message-content">
-                                        <lightning-formatted-rich-text value={message.content} class="message-text"></lightning-formatted-rich-text>
+                                        <!-- Using formatted-text for XSS prevention -->
+                                        <lightning-formatted-text value={message.content} class="message-text"></lightning-formatted-text>
 
                                         <!-- Evidence Cards -->
                                         <template lwc:if={message.hasEvidence}>

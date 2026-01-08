@@ -9,9 +9,9 @@
             </lightning-button-icon>
         </div>
 
-        <div class="slds-p-around_medium">
+        <div class="slds-var-p-around_medium">
             <!-- Framework Selection -->
-            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+            <div class="slds-grid slds-gutters slds-var-m-bottom_medium">
                 <div class="slds-col slds-size_1-of-2">
                     <lightning-combobox
                         name="sourceFramework"
@@ -35,13 +35,13 @@
             </div>
 
             <!-- Legend -->
-            <div class="slds-m-bottom_medium">
+            <div class="slds-var-m-bottom_medium">
                 <div class="legend slds-grid slds-grid_align-center">
-                    <div class="legend-item slds-m-right_medium">
+                    <div class="legend-item slds-var-m-right_medium">
                         <span class="legend-dot direct"></span>
                         <span class="slds-text-body_small">Direct Mapping</span>
                     </div>
-                    <div class="legend-item slds-m-right_medium">
+                    <div class="legend-item slds-var-m-right_medium">
                         <span class="legend-dot partial"></span>
                         <span class="slds-text-body_small">Partial Mapping</span>
                     </div>
@@ -99,7 +99,7 @@
                                     </template>
                                     <td class="coverage-cell">
                                         <lightning-progress-ring value={row.coveragePercent} size="small" variant={row.coverageVariant}></lightning-progress-ring>
-                                        <span class="slds-m-left_x-small">{row.coveragePercent}%</span>
+                                        <span class="slds-var-m-left_x-small">{row.coveragePercent}%</span>
                                     </td>
                                 </tr>
                             </template>
@@ -108,7 +108,7 @@
                 </div>
 
                 <!-- Summary Statistics -->
-                <div class="slds-grid slds-gutters slds-m-top_medium">
+                <div class="slds-grid slds-gutters slds-var-m-top_medium">
                     <div class="slds-col slds-size_1-of-4">
                         <div class="stat-box">
                             <div class="stat-value">{totalControls}</div>
@@ -148,28 +148,28 @@
                     </button>
                     <h2 class="slds-modal__title">Control Mapping Details</h2>
                 </header>
-                <div class="slds-modal__content slds-p-around_medium">
+                <div class="slds-modal__content slds-var-p-around_medium">
                     <template if:true={selectedMapping}>
                         <div class="slds-grid slds-gutters">
                             <div class="slds-col slds-size_1-of-2">
                                 <div class="slds-box slds-theme_shade">
-                                    <h3 class="slds-text-title_caps slds-m-bottom_small">Source Control</h3>
+                                    <h3 class="slds-text-title_caps slds-var-m-bottom_small">Source Control</h3>
                                     <p><strong>{selectedMapping.sourceCode}</strong></p>
                                     <p class="slds-text-body_small">{selectedMapping.sourceName}</p>
-                                    <p class="slds-text-color_weak slds-m-top_small">{selectedMapping.sourceDescription}</p>
+                                    <p class="slds-text-color_weak slds-var-m-top_small">{selectedMapping.sourceDescription}</p>
                                 </div>
                             </div>
                             <div class="slds-col slds-size_1-of-2">
                                 <div class="slds-box slds-theme_shade">
-                                    <h3 class="slds-text-title_caps slds-m-bottom_small">Target Control</h3>
+                                    <h3 class="slds-text-title_caps slds-var-m-bottom_small">Target Control</h3>
                                     <p><strong>{selectedMapping.targetCode}</strong></p>
                                     <p class="slds-text-body_small">{selectedMapping.targetName}</p>
-                                    <p class="slds-text-color_weak slds-m-top_small">{selectedMapping.targetDescription}</p>
+                                    <p class="slds-text-color_weak slds-var-m-top_small">{selectedMapping.targetDescription}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="slds-m-top_medium">
-                            <h3 class="slds-text-title_caps slds-m-bottom_small">Mapping Analysis</h3>
+                        <div class="slds-var-m-top_medium">
+                            <h3 class="slds-text-title_caps slds-var-m-bottom_small">Mapping Analysis</h3>
                             <dl class="slds-dl_horizontal">
                                 <dt class="slds-dl_horizontal__label">Mapping Type:</dt>
                                 <dd class="slds-dl_horizontal__detail">

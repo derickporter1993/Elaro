@@ -199,6 +199,16 @@ export default class PrometheionDashboard extends NavigationMixin(LightningEleme
     return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   }
 
+  get formattedAuditPackages() {
+    if (!this.auditPackages || this.auditPackages.length === 0) return [];
+    return this.auditPackages.map((pkg) => ({
+      ...pkg,
+      formattedPeriodStart: this.formatDate(pkg.periodStart),
+      formattedPeriodEnd: this.formatDate(pkg.periodEnd),
+      formattedCreatedDate: this.formatDate(pkg.createdDate),
+    }));
+  }
+
   get showFrameworkGrid() {
     return !this.showDrillDown;
   }
