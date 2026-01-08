@@ -8,7 +8,7 @@
  * @author Prometheion
  * @version 1.0
  */
-public class TriggerRecursionGuard {
+public with sharing class TriggerRecursionGuard {
 
     private static Set<String> runningTriggers = new Set<String>();
 
