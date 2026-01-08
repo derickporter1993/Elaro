@@ -5,7 +5,6 @@
  * 
  * @see https://developer.salesforce.com/docs/component-library/documentation/en/lwc/lwc.testing
  */
-// eslint-disable-next-line @lwc/lwc/no-invalid-import
 // @ts-ignore - LWC1702 false positive for Jest test files
 import { createElement } from 'lwc';
 import ComplianceCopilot from 'c/complianceCopilot';
@@ -186,14 +185,13 @@ describe('c-compliance-copilot', () => {
         
         const quickCommandButtons = element.shadowRoot.querySelectorAll('lightning-button[data-command]');
         
-        if (quickCommandButtons.length > 0) {
-            quickCommandButtons[0].click();
-            
-            await Promise.resolve();
-            
-            // Verify askCopilot was called
-            expect(askCopilot).toHaveBeenCalled();
-        }
+        expect(quickCommandButtons.length).toBeGreaterThan(0);
+        quickCommandButtons[0].click();
+        
+        await Promise.resolve();
+        
+        // Verify askCopilot was called
+        expect(askCopilot).toHaveBeenCalled();
     });
 
     /**
@@ -208,15 +206,14 @@ describe('c-compliance-copilot', () => {
         // Trigger a query
         const quickCommandButtons = element.shadowRoot.querySelectorAll('lightning-button[data-command]');
         
-        if (quickCommandButtons.length > 0) {
-            quickCommandButtons[0].click();
-            
-            await Promise.resolve();
-            
-            // Check for spinner
-            const spinner = element.shadowRoot.querySelector('lightning-spinner');
-            expect(spinner).not.toBeNull();
-        }
+        expect(quickCommandButtons.length).toBeGreaterThan(0);
+        quickCommandButtons[0].click();
+        
+        await Promise.resolve();
+        
+        // Check for spinner
+        const spinner = element.shadowRoot.querySelector('lightning-spinner');
+        expect(spinner).not.toBeNull();
     });
 
     /**
@@ -230,14 +227,12 @@ describe('c-compliance-copilot', () => {
         
         // Trigger a query
         const quickCommandButtons = element.shadowRoot.querySelectorAll('lightning-button[data-command]');
+        expect(quickCommandButtons.length).toBeGreaterThan(0);
+        quickCommandButtons[0].click();
         
-        if (quickCommandButtons.length > 0) {
-            quickCommandButtons[0].click();
-            
-            // Wait for error handling
-            await Promise.resolve();
-            await Promise.resolve();
-        }
+        // Wait for error handling
+        await Promise.resolve();
+        await Promise.resolve();
         
         // Component should still be functional
         expect(element.shadowRoot.querySelector('lightning-card')).not.toBeNull();
@@ -256,4 +251,3 @@ describe('c-compliance-copilot', () => {
         expect(true).toBe(true);
     });
 });
-
