@@ -8,18 +8,16 @@
 // @ts-ignore - LWC1702 false positive for Jest test files
 import { createElement } from 'lwc';
 import ComplianceCopilot from 'c/complianceCopilot';
+import { registerApexTestWireAdapter } from '@salesforce/sfdx-lwc-jest';
 import askCopilot from '@salesforce/apex/PrometheionComplianceCopilot.askCopilot';
 import getQuickCommands from '@salesforce/apex/PrometheionComplianceCopilot.getQuickCommands';
 
-// Mock Apex methods
+// Register the wire adapter for testing - this allows us to emit data to @wire decorated methods
+const getQuickCommandsAdapter = registerApexTestWireAdapter(getQuickCommands);
+
+// Mock only the imperative Apex method (not the wire adapter)
 jest.mock(
     '@salesforce/apex/PrometheionComplianceCopilot.askCopilot',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-
-jest.mock(
-    '@salesforce/apex/PrometheionComplianceCopilot.getQuickCommands',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
@@ -65,9 +63,11 @@ describe('c-compliance-copilot', () => {
         // Reset mocks
         jest.clearAllMocks();
         
-        // Setup default mock returns
-        getQuickCommands.mockResolvedValue(MOCK_QUICK_COMMANDS);
+        // Setup default mock return for imperative Apex call
         askCopilot.mockResolvedValue(MOCK_COPILOT_RESPONSE);
+        
+        // Note: getQuickCommands uses @wire, so we use the adapter.emit() pattern
+        // in createComponent() instead of mockResolvedValue
     });
 
     afterEach(() => {
@@ -96,54 +96,11 @@ describe('c-compliance-copilot', () => {
         // Wait for initial render
         await flushPromises();
         
-        // Manually trigger wire adapter with mock data
-        // In Jest, @wire adapters need to be manually triggered
-        // Try multiple approaches to set the quickCommands property
-        let success = false;
+        // Emit data to the wire adapter - this triggers the @wire decorated method
+        // with the mock data, simulating Salesforce returning data
+        getQuickCommandsAdapter.emit(MOCK_QUICK_COMMANDS);
         
-        // Approach 1: Try calling wired method directly
-        try {
-            const wiredMethod = element['wiredQuickCommands'];
-            if (wiredMethod && typeof wiredMethod === 'function') {
-                wiredMethod.call(element, { data: MOCK_QUICK_COMMANDS, error: null });
-                success = true;
-            }
-        } catch (e) {
-            // Continue to fallback
-        }
-        
-        // Approach 2: Set property directly (works in test context despite warnings)
-        if (!success) {
-            try {
-                element['quickCommands'] = MOCK_QUICK_COMMANDS;
-                success = true;
-            } catch (e) {
-                // Continue to last resort
-            }
-        }
-        
-        // Approach 3: Use defineProperty as last resort
-        if (!success) {
-            Object.defineProperty(element, 'quickCommands', {
-                value: MOCK_QUICK_COMMANDS,
-                writable: true,
-                configurable: true,
-                enumerable: true
-            });
-        }
-        
-        // Also ensure showQuickCommands is true (required for template to render buttons)
-        try {
-            element['showQuickCommands'] = true;
-        } catch (e) {
-            Object.defineProperty(element, 'showQuickCommands', {
-                value: true,
-                writable: true,
-                configurable: true
-            });
-        }
-        
-        // Wait for component to update after setting property
+        // Wait for component to update after wire adapter emits data
         await flushPromises();
         await Promise.resolve(); // Extra tick for LWC reactivity
         
