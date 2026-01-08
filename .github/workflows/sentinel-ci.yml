@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -38,7 +38,7 @@ jobs:
     needs: code-quality
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -57,7 +57,7 @@ jobs:
 
       - name: Validate Metadata Structure
         run: |
-          echo "✅ Validating Sentinel metadata structure..."
+          echo "✅ Validating Prometheion metadata structure..."
           test -d force-app/main/default/classes && echo "✅ Classes directory found"
           test -d force-app/main/default/lwc && echo "✅ LWC directory found"
           test -d force-app/main/default/objects && echo "✅ Objects directory found"
@@ -69,6 +69,6 @@ jobs:
     steps:
       - name: Build Summary
         run: |
-          echo "✅ Sentinel CI/CD Pipeline Complete"
+          echo "✅ Prometheion CI/CD Pipeline Complete"
           echo "🎉 All quality checks passed!"
           echo "📦 Ready for deployment"
