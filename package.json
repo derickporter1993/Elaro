@@ -9,7 +9,7 @@
     "fmt:check": "prettier --check \"force-app/**/*.{js,ts,html,md,json,yml,yaml,xml}\" \"./*.{js,json,yml,yaml,md}\"",
     "lint": "eslint \"force-app/**/*.js\" --max-warnings=3",
     "lint:fix": "eslint \"force-app/**/*.js\" --fix",
-    "test": "jest --passWithNoTests",
+    "test": "jest --config jest.config.js --passWithNoTests",
     "test:unit": "jest --config jest.config.js",
     "test:unit:watch": "jest --watch",
     "security-scan": "echo '⚠️  SFDX Scanner not installed, skipping...'",
@@ -18,9 +18,7 @@
     "build": "echo '✅ Prometheion build validation complete'",
     "deploy": "echo '📦 Ready for deployment'"
   },
-  "dependencies": {
-    "prometheion": "git+https://github.com/derickporter1993/prometheion.git"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/eslint-parser": "^7.28.5",
