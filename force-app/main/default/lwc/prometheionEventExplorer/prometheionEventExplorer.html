@@ -7,7 +7,7 @@
                 alternative-text="Refresh"
                 title="Refresh"
                 onclick={handleRefresh}
-                class="slds-m-right_x-small">
+                class="slds-var-m-right_x-small">
             </lightning-button-icon>
             <lightning-button
                 label="Export CSV"
@@ -17,9 +17,9 @@
             </lightning-button>
         </div>
 
-        <div class="slds-p-around_medium">
+        <div class="slds-var-p-around_medium">
             <!-- Filter Controls -->
-            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+            <div class="slds-grid slds-gutters slds-wrap slds-var-m-bottom_medium">
                 <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
                     <lightning-combobox
                         name="eventType"
@@ -61,7 +61,7 @@
             </div>
 
             <!-- Search Bar -->
-            <div class="slds-m-bottom_medium">
+            <div class="slds-var-m-bottom_medium">
                 <lightning-input
                     type="search"
                     label="Search Events"
@@ -72,7 +72,7 @@
             </div>
 
             <!-- Statistics Cards -->
-            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+            <div class="slds-grid slds-gutters slds-wrap slds-var-m-bottom_medium">
                 <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
                     <div class="stat-card total">
                         <div class="stat-value">{totalEvents}</div>
@@ -142,7 +142,7 @@
                     </button>
                     <h2 class="slds-modal__title">Event Details</h2>
                 </header>
-                <div class="slds-modal__content slds-p-around_medium">
+                <div class="slds-modal__content slds-var-p-around_medium">
                     <template if:true={selectedEvent}>
                         <dl class="slds-dl_horizontal">
                             <dt class="slds-dl_horizontal__label">Event ID:</dt>

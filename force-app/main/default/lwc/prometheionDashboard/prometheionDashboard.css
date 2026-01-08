@@ -696,21 +696,249 @@
   transition: width 0.3s ease;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================================
+   RESPONSIVE DESIGN - Mobile First Approach
+   ============================================ */
+
+/* Mobile: Stack everything (< 768px) */
+@media (max-width: 767px) {
+  .prometheion-dashboard {
+    padding: 16px;
+    border-radius: 12px;
+    min-height: auto;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .header-left {
+    justify-content: center;
+  }
+
+  .header-titles h1 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .last-updated {
+    text-align: center;
+  }
+
+  .refresh-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .main-score-section {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .score-ring-container {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+  }
+
+  .score-ring {
+    width: 160px;
+    height: 160px;
+  }
+
+  .score-inner {
+    width: 128px;
+    height: 128px;
+  }
+
+  .score-value {
+    font-size: 36px;
+  }
+
+  .framework-scores {
+    padding: 16px;
+  }
+
+  .framework-header-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .framework-filter {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .section-title {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .factors-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .factor-card {
+    padding: 16px;
+  }
+
+  .factor-value {
+    font-size: 28px;
+  }
+
+  .risk-card {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .risk-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .actions-section {
     flex-direction: column;
+    gap: 10px;
   }
 
   .action-btn {
     justify-content: center;
+    width: 100%;
+    padding: 12px 20px;
+  }
+
+  .framework-detail-card h4 {
+    font-size: 20px;
+  }
+
+  .score-value-large {
+    font-size: 36px;
+  }
+}
+
+/* Tablet: 2 columns (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .prometheion-dashboard {
+    padding: 20px;
+  }
+
+  .main-score-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .score-ring-container {
+    flex-direction: row;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .factors-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .actions-section {
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    flex: 1 1 200px;
+    justify-content: center;
+  }
+}
+
+/* Desktop: 3+ columns (>= 1024px) */
+@media (min-width: 1024px) {
+  .factors-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Large Desktop (>= 1280px) */
+@media (min-width: 1280px) {
+  .prometheion-dashboard {
+    padding: 32px;
+  }
+
+  .factors-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .main-score-section {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .framework-card,
+  .factor-card,
+  .risk-card,
+  .action-btn {
+    /* Larger touch targets */
+    min-height: 44px;
+  }
+
+  .framework-card:hover,
+  .factor-card:hover,
+  .risk-card:hover {
+    /* Disable hover effects on touch devices */
+    transform: none;
+    border-color: inherit;
+  }
+
+  .action-btn:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .prometheion-dashboard {
+    border: 2px solid var(--prometheion-text);
+  }
+
+  .framework-card,
+  .factor-card,
+  .risk-card {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .refresh-btn svg.spinning {
+    animation: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+  }
+
+  .framework-card,
+  .factor-card,
+  .risk-card,
+  .action-btn,
+  .progress-fill,
+  .factor-fill {
+    transition: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .prometheion-dashboard {
+    background: white;
+    color: black;
+    box-shadow: none;
+  }
+
+  .refresh-btn,
+  .action-btn,
+  .loading-overlay {
+    display: none;
   }
 }

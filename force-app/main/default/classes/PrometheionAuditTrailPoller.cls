@@ -4,7 +4,8 @@
  * Scheduled job that polls Setup Audit Trail every 5 minutes and publishes
  * changes to AWS via Platform Events for processing.
  */
-public with sharing class PrometheionAuditTrailPoller implements Schedulable {
+public without sharing class PrometheionAuditTrailPoller implements Schedulable {
+    // Runs in system context to poll audit trail regardless of user permissions
     
     private static final String JOB_NAME = 'Prometheion Audit Trail Poller';
     private static final Integer BATCH_SIZE = 200;

@@ -1,6 +1,6 @@
 <template>
     <lightning-card title="Audit Package Wizard" icon-name="standard:work_order">
-        <div class="slds-p-around_medium">
+        <div class="slds-var-p-around_medium">
             <!-- Progress Indicator -->
             <lightning-progress-indicator current-step={currentStep} type="path" variant="base">
                 <lightning-progress-step label="Framework" value="1"></lightning-progress-step>
@@ -11,22 +11,22 @@
             </lightning-progress-indicator>
 
             <!-- Step Content -->
-            <div class="slds-m-top_large step-content">
+            <div class="slds-var-m-top_large step-content">
                 <!-- Step 1: Framework Selection -->
                 <template if:true={isStep1}>
                     <div class="step-panel">
-                        <h2 class="slds-text-heading_medium slds-m-bottom_medium">Select Compliance Framework</h2>
-                        <p class="slds-text-body_regular slds-m-bottom_large slds-text-color_weak">
+                        <h2 class="slds-text-heading_medium slds-var-m-bottom_medium">Select Compliance Framework</h2>
+                        <p class="slds-text-body_regular slds-var-m-bottom_large slds-text-color_weak">
                             Choose the compliance framework for your audit package.
                         </p>
                         
                         <div class="slds-grid slds-wrap slds-gutters">
                             <template for:each={frameworks} for:item="framework">
-                                <div key={framework.value} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-m-bottom_medium">
+                                <div key={framework.value} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-var-m-bottom_medium">
                                     <div class={framework.cardClass} onclick={handleFrameworkSelect} data-value={framework.value}>
-                                        <lightning-icon icon-name={framework.icon} size="large" class="slds-m-bottom_small"></lightning-icon>
+                                        <lightning-icon icon-name={framework.icon} size="large" class="slds-var-m-bottom_small"></lightning-icon>
                                         <h3 class="slds-text-heading_small">{framework.label}</h3>
-                                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">{framework.description}</p>
+                                        <p class="slds-text-body_small slds-text-color_weak slds-var-m-top_x-small">{framework.description}</p>
                                     </div>
                                 </div>
                             </template>
@@ -37,8 +37,8 @@
                 <!-- Step 2: Date Range -->
                 <template if:true={isStep2}>
                     <div class="step-panel">
-                        <h2 class="slds-text-heading_medium slds-m-bottom_medium">Select Audit Period</h2>
-                        <p class="slds-text-body_regular slds-m-bottom_large slds-text-color_weak">
+                        <h2 class="slds-text-heading_medium slds-var-m-bottom_medium">Select Audit Period</h2>
+                        <p class="slds-text-body_regular slds-var-m-bottom_large slds-text-color_weak">
                             Define the date range for the audit evidence collection.
                         </p>
                         
@@ -63,8 +63,8 @@
                             </div>
                         </div>
 
-                        <div class="slds-m-top_medium">
-                            <h3 class="slds-text-title_caps slds-m-bottom_small">Quick Select</h3>
+                        <div class="slds-var-m-top_medium">
+                            <h3 class="slds-text-title_caps slds-var-m-bottom_small">Quick Select</h3>
                             <lightning-button-group>
                                 <lightning-button label="Last Month" onclick={handleLastMonth}></lightning-button>
                                 <lightning-button label="Last Quarter" onclick={handleLastQuarter}></lightning-button>
@@ -78,12 +78,12 @@
                 <!-- Step 3: Control Selection -->
                 <template if:true={isStep3}>
                     <div class="step-panel">
-                        <h2 class="slds-text-heading_medium slds-m-bottom_medium">Select Controls</h2>
-                        <p class="slds-text-body_regular slds-m-bottom_large slds-text-color_weak">
+                        <h2 class="slds-text-heading_medium slds-var-m-bottom_medium">Select Controls</h2>
+                        <p class="slds-text-body_regular slds-var-m-bottom_large slds-text-color_weak">
                             Choose which controls to include in the audit package.
                         </p>
 
-                        <div class="slds-m-bottom_medium">
+                        <div class="slds-var-m-bottom_medium">
                             <lightning-button-group>
                                 <lightning-button label="Select All" onclick={handleSelectAll}></lightning-button>
                                 <lightning-button label="Clear All" onclick={handleClearAll}></lightning-button>
@@ -93,7 +93,7 @@
 
                         <div class="control-list">
                             <template for:each={controls} for:item="control">
-                                <div key={control.id} class="control-item slds-p-around_small slds-m-bottom_x-small">
+                                <div key={control.id} class="control-item slds-var-p-around_small slds-var-m-bottom_x-small">
                                     <lightning-input
                                         type="checkbox"
                                         label={control.name}
@@ -101,15 +101,15 @@
                                         data-id={control.id}
                                         onchange={handleControlToggle}>
                                     </lightning-input>
-                                    <div class="control-meta slds-m-left_large">
+                                    <div class="control-meta slds-var-m-left_large">
                                         <span class={control.statusClass}>{control.status}</span>
-                                        <span class="slds-text-body_small slds-text-color_weak slds-m-left_small">{control.code}</span>
+                                        <span class="slds-text-body_small slds-text-color_weak slds-var-m-left_small">{control.code}</span>
                                     </div>
                                 </div>
                             </template>
                         </div>
 
-                        <div class="slds-m-top_medium slds-text-align_right">
+                        <div class="slds-var-m-top_medium slds-text-align_right">
                             <span class="slds-text-body_small">{selectedControlsCount} of {totalControlsCount} controls selected</span>
                         </div>
                     </div>
@@ -118,13 +118,13 @@
                 <!-- Step 4: Preview -->
                 <template if:true={isStep4}>
                     <div class="step-panel">
-                        <h2 class="slds-text-heading_medium slds-m-bottom_medium">Preview Audit Package</h2>
-                        <p class="slds-text-body_regular slds-m-bottom_large slds-text-color_weak">
+                        <h2 class="slds-text-heading_medium slds-var-m-bottom_medium">Preview Audit Package</h2>
+                        <p class="slds-text-body_regular slds-var-m-bottom_large slds-text-color_weak">
                             Review the audit package configuration before generating.
                         </p>
 
                         <div class="preview-box slds-box slds-theme_shade">
-                            <dl class="slds-dl_horizontal slds-m-bottom_medium">
+                            <dl class="slds-dl_horizontal slds-var-m-bottom_medium">
                                 <dt class="slds-dl_horizontal__label">Framework:</dt>
                                 <dd class="slds-dl_horizontal__detail"><strong>{selectedFrameworkLabel}</strong></dd>
                                 
@@ -146,7 +146,7 @@
                                 </dd>
                             </dl>
 
-                            <h3 class="slds-text-title_caps slds-m-bottom_small">Output Options</h3>
+                            <h3 class="slds-text-title_caps slds-var-m-bottom_small">Output Options</h3>
                             <lightning-checkbox-group
                                 name="outputOptions"
                                 label="Include in Package"
@@ -163,35 +163,35 @@
                     <div class="step-panel slds-text-align_center">
                         <template if:true={isGenerating}>
                             <lightning-spinner alternative-text="Generating" size="large"></lightning-spinner>
-                            <h2 class="slds-text-heading_medium slds-m-top_large">Generating Audit Package...</h2>
-                            <p class="slds-text-body_regular slds-text-color_weak slds-m-top_small">{generationStatus}</p>
-                            <lightning-progress-bar value={generationProgress} size="large" class="slds-m-top_medium"></lightning-progress-bar>
+                            <h2 class="slds-text-heading_medium slds-var-m-top_large">Generating Audit Package...</h2>
+                            <p class="slds-text-body_regular slds-text-color_weak slds-var-m-top_small">{generationStatus}</p>
+                            <lightning-progress-bar value={generationProgress} size="large" class="slds-var-m-top_medium"></lightning-progress-bar>
                         </template>
 
                         <template if:false={isGenerating}>
                             <template if:true={generationComplete}>
                                 <lightning-icon icon-name="utility:success" size="xx-large" variant="success"></lightning-icon>
-                                <h2 class="slds-text-heading_medium slds-m-top_medium">Audit Package Generated!</h2>
-                                <p class="slds-text-body_regular slds-text-color_weak slds-m-top_small">
+                                <h2 class="slds-text-heading_medium slds-var-m-top_medium">Audit Package Generated!</h2>
+                                <p class="slds-text-body_regular slds-text-color_weak slds-var-m-top_small">
                                     Your audit package has been created successfully.
                                 </p>
-                                <div class="slds-m-top_large">
-                                    <lightning-button variant="brand" label="Download PDF" onclick={handleDownloadPDF} class="slds-m-right_small"></lightning-button>
-                                    <lightning-button label="View Package" onclick={handleViewPackage} class="slds-m-right_small"></lightning-button>
+                                <div class="slds-var-m-top_large">
+                                    <lightning-button variant="brand" label="Download PDF" onclick={handleDownloadPDF} class="slds-var-m-right_small"></lightning-button>
+                                    <lightning-button label="View Package" onclick={handleViewPackage} class="slds-var-m-right_small"></lightning-button>
                                     <lightning-button label="Create New Package" onclick={handleReset}></lightning-button>
                                 </div>
                             </template>
                             <template if:false={generationComplete}>
                                 <lightning-icon icon-name="utility:file" size="xx-large" class="icon-muted"></lightning-icon>
-                                <h2 class="slds-text-heading_medium slds-m-top_medium">Ready to Generate</h2>
-                                <p class="slds-text-body_regular slds-text-color_weak slds-m-top_small">
+                                <h2 class="slds-text-heading_medium slds-var-m-top_medium">Ready to Generate</h2>
+                                <p class="slds-text-body_regular slds-text-color_weak slds-var-m-top_small">
                                     Click the button below to generate your audit package.
                                 </p>
                                 <lightning-button
                                     variant="brand"
                                     label="Generate Audit Package"
                                     onclick={handleGenerate}
-                                    class="slds-m-top_large">
+                                    class="slds-var-m-top_large">
                                 </lightning-button>
                             </template>
                         </template>
@@ -200,7 +200,7 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="slds-m-top_large slds-grid slds-grid_align-spread">
+            <div class="slds-var-m-top_large slds-grid slds-grid_align-spread">
                 <lightning-button
                     label="Previous"
                     onclick={handlePrevious}
