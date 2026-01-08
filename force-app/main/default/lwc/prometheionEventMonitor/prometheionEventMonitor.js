@@ -1,4 +1,4 @@
-import { LightningElement, track, wire } from "lwc";
+import { LightningElement, track } from "lwc";
 import { subscribe, unsubscribe, onError } from "lightning/empApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
@@ -41,7 +41,7 @@ export default class PrometheionEventMonitor extends LightningElement {
   }
 
   handleUnsubscribe() {
-    unsubscribe(this.subscription, (response) => {
+    unsubscribe(this.subscription, () => {
       this.showToast("Info", "Unsubscribed from Prometheion Events", "info");
     });
   }

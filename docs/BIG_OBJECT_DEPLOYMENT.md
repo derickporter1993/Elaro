@@ -9,6 +9,7 @@
 ### 1. Setup UI (Recommended for Initial Creation)
 
 **Steps:**
+
 1. Navigate to **Setup → Big Objects → New**
 2. Enter object details:
    - **Label:** Prometheion Compliance Graph
@@ -17,42 +18,49 @@
 3. Add all required fields (see field list below)
 4. Create indexes:
    - **Index Name:** `PrometheionGraphIndex`
-   - **Fields:** 
+   - **Fields:**
      - `Graph_Node_Id__c` (DESC)
      - `Timestamp__c` (DESC)
 5. Save and activate
 
 **Pros:**
+
 - Visual interface for field and index configuration
 - Immediate validation
 - No API version dependencies
 
 **Cons:**
+
 - Manual process
 - Not suitable for CI/CD automation
 
 ### 2. Metadata API (API 47.0+)
 
 **Command:**
+
 ```bash
 sf project deploy start --metadata BigObject:Prometheion_Compliance_Graph__b
 ```
 
 **Requirements:**
+
 - Salesforce CLI (`sf`) version 1.60.0 or later
 - API version 47.0 or later
 - Big Object metadata file must be valid
 
 **Pros:**
+
 - Automated deployment
 - Version controlled
 - CI/CD compatible
 
 **Cons:**
+
 - Index changes may require object recreation
 - Some field types have restrictions
 
 **Limitations:**
+
 - Index modifications require deleting and recreating the Big Object
 - Cannot modify indexed fields after creation
 - Field deletions are not supported
@@ -60,19 +68,23 @@ sf project deploy start --metadata BigObject:Prometheion_Compliance_Graph__b
 ### 3. SFDX Source Push (Scratch Orgs Only)
 
 **Command:**
+
 ```bash
 sf project deploy start --source-dir force-app/main/default/objects/Prometheion_Compliance_Graph__b
 ```
 
 **Requirements:**
+
 - Scratch org (not available in sandbox/production)
 - API version 47.0 or later
 
 **Pros:**
+
 - Simple deployment
 - Works with source tracking
 
 **Cons:**
+
 - Scratch orgs only
 - Same limitations as Metadata API
 
@@ -80,32 +92,34 @@ sf project deploy start --source-dir force-app/main/default/objects/Prometheion_
 
 ### Required Fields
 
-| Field API Name | Type | Length | Required | Indexed |
-|----------------|------|--------|----------|---------|
-| `Graph_Node_Id__c` | Text | 255 | Yes | Yes (Primary) |
-| `Timestamp__c` | DateTime | - | Yes | Yes (Secondary) |
-| `Entity_Type__c` | Text | 50 | No | No |
-| `Entity_Record_Id__c` | Text | 18 | No | No |
-| `Compliance_Framework__c` | Text | 50 | No | No |
-| `Risk_Score__c` | Number | 3,1 | No | No |
-| `Drift_Category__c` | Text | 50 | No | No |
-| `Node_Metadata__c` | LongTextArea | 131072 | No | No |
-| `AI_Confidence__c` | Number | 5,2 | No | No |
-| `AI_Explanation__c` | LongTextArea | 32768 | No | No |
-| `Human_Adjudicator__c` | Text | 18 | No | No |
-| `Human_Adjudicated__c` | Checkbox | - | No | No |
-| `Parent_Node_Id__c` | Text | 255 | No | No |
-| `Graph_Version__c` | Text | 50 | No | No |
+| Field API Name            | Type         | Length | Required | Indexed         |
+| ------------------------- | ------------ | ------ | -------- | --------------- |
+| `Graph_Node_Id__c`        | Text         | 255    | Yes      | Yes (Primary)   |
+| `Timestamp__c`            | DateTime     | -      | Yes      | Yes (Secondary) |
+| `Entity_Type__c`          | Text         | 50     | No       | No              |
+| `Entity_Record_Id__c`     | Text         | 18     | No       | No              |
+| `Compliance_Framework__c` | Text         | 50     | No       | No              |
+| `Risk_Score__c`           | Number       | 3,1    | No       | No              |
+| `Drift_Category__c`       | Text         | 50     | No       | No              |
+| `Node_Metadata__c`        | LongTextArea | 131072 | No       | No              |
+| `AI_Confidence__c`        | Number       | 5,2    | No       | No              |
+| `AI_Explanation__c`       | LongTextArea | 32768  | No       | No              |
+| `Human_Adjudicator__c`    | Text         | 18     | No       | No              |
+| `Human_Adjudicated__c`    | Checkbox     | -      | No       | No              |
+| `Parent_Node_Id__c`       | Text         | 255    | No       | No              |
+| `Graph_Version__c`        | Text         | 50     | No       | No              |
 
 ### Index Configuration
 
 **Index Name:** `PrometheionGraphIndex`
 
 **Fields:**
+
 1. `Graph_Node_Id__c` (DESC) - Primary indexed field
 2. `Timestamp__c` (DESC) - Secondary indexed field
 
 **Important Notes:**
+
 - Indexes must be created before data insertion
 - Only indexed fields can be used in SOQL WHERE clauses
 - Index changes require object recreation (data loss)
@@ -115,21 +129,24 @@ sf project deploy start --source-dir force-app/main/default/objects/Prometheion_
 ### 1. Verify Index Creation
 
 **Via Setup UI:**
+
 1. Navigate to **Setup → Big Objects → Prometheion Compliance Graph**
 2. Click **Indexes** tab
 3. Verify `PrometheionGraphIndex` exists with both fields
 
 **Via SOQL:**
+
 ```sql
-SELECT Graph_Node_Id__c, Timestamp__c 
-FROM Prometheion_Compliance_Graph__b 
-WHERE Graph_Node_Id__c != null 
+SELECT Graph_Node_Id__c, Timestamp__c
+FROM Prometheion_Compliance_Graph__b
+WHERE Graph_Node_Id__c != null
 LIMIT 1
 ```
 
 ### 2. Test Data Insertion
 
 **Apex Test:**
+
 ```apex
 String nodeId = PrometheionGraphIndexer.indexChange(
     'PERMISSION_SET',
@@ -143,6 +160,7 @@ System.assertNotEquals(null, nodeId, 'Node ID should be returned');
 ### 3. Verify Queries Work
 
 **Test Query:**
+
 ```apex
 List<Prometheion_Compliance_Graph__b> nodes = [
     SELECT Graph_Node_Id__c, Timestamp__c, Entity_Type__c
@@ -156,23 +174,27 @@ List<Prometheion_Compliance_Graph__b> nodes = [
 ## Important Limitations
 
 ### 1. Field Modifications
+
 - **Cannot modify indexed fields** after creation
 - Field type changes are not supported
 - Field deletions are not supported
 - New fields can be added (but not indexed if index already exists)
 
 ### 2. Index Modifications
+
 - **Index changes require object recreation**
 - All data will be lost during recreation
 - Plan indexes carefully before initial deployment
 
 ### 3. SOQL Restrictions
+
 - **Only indexed fields** can be used in WHERE clauses
 - No ORDER BY on non-indexed fields
 - No GROUP BY or aggregate functions
 - LIMIT is required (default: 2000, max: 10,000)
 
 ### 4. DML Restrictions
+
 - **Insert only** - No UPDATE or DELETE operations
 - Batch insert recommended for large volumes
 - Maximum 200 records per transaction
@@ -209,12 +231,14 @@ List<Prometheion_Compliance_Graph__b> nodes = [
 ### Issue: "Field is not indexed" Error
 
 **Solution:**
+
 - Add the field to an index (requires object recreation)
 - Or modify query to only use indexed fields
 
 ### Issue: "Cannot modify indexed field"
 
 **Solution:**
+
 - Recreate Big Object with new field configuration
 - Migrate data before deletion (if possible)
 - Update all code references
@@ -222,6 +246,7 @@ List<Prometheion_Compliance_Graph__b> nodes = [
 ### Issue: Deployment Fails
 
 **Solution:**
+
 - Verify API version is 47.0 or later
 - Check field types are supported (no Formula, Roll-up Summary)
 - Ensure indexes reference valid fields

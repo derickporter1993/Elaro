@@ -1,8 +1,9 @@
-import { LightningElement, track, wire } from "lwc";
+import { LightningElement, track } from "lwc";
 import generateAuditPackage from "@salesforce/apex/PrometheionAuditPackageGenerator.generateAuditPackage";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { NavigationMixin } from "lightning/navigation";
 
-export default class PrometheionAuditPackageBuilder extends LightningElement {
+export default class PrometheionAuditPackageBuilder extends NavigationMixin(LightningElement) {
   @track framework = "SOC2";
   @track packageName = "";
   @track startDate;

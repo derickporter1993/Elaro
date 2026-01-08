@@ -18,9 +18,7 @@
     "build": "echo '✅ Prometheion build validation complete'",
     "deploy": "echo '📦 Ready for deployment'"
   },
-  "dependencies": {
-    "prometheion": "git+https://github.com/derickporter1993/prometheion.git"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/eslint-parser": "^7.28.5",
