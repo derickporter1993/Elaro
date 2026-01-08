@@ -7,7 +7,7 @@
  * @author Prometheion
  * @version 1.0
  */
-public class SchedulerErrorHandler {
+public with sharing class SchedulerErrorHandler {
 
     /**
      * Log a scheduler error to Integration_Error__c
