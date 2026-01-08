@@ -9,7 +9,7 @@
     "fmt:check": "prettier --check \"force-app/**/*.{js,ts,html,md,json,yml,yaml,xml}\" \"./*.{js,json,yml,yaml,md}\"",
     "lint": "eslint \"force-app/**/*.js\" --max-warnings=3",
     "lint:fix": "eslint \"force-app/**/*.js\" --fix",
-    "test": "jest --passWithNoTests",
+    "test": "jest --config jest.config.js --passWithNoTests",
     "test:unit": "jest --config jest.config.js",
     "test:unit:watch": "jest --watch",
     "security-scan": "echo '⚠️  SFDX Scanner not installed, skipping...'",
