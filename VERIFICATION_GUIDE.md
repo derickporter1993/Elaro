@@ -3,12 +3,14 @@
 ## ✅ Step 1: Verify Compliance Policies (30 Total)
 
 ### Via Salesforce UI:
+
 1. Navigate to **Setup** → **Custom Metadata Types**
 2. Click **Compliance Policy**
 3. Click **Manage Compliance Policies**
 4. Verify you see **30 active policies** organized by framework:
 
 **Expected Policy Count by Framework:**
+
 - **HIPAA**: 3 policies
   - HIPAA_Audit_Controls
   - HIPAA_Encryption_Required
@@ -60,6 +62,7 @@
   - ISO27001_Risk_Management
 
 ### Via Salesforce CLI:
+
 ```bash
 # Count active policies
 sf data query --query "SELECT COUNT() FROM Compliance_Policy__mdt WHERE Is_Active__c = true" --target-org prod-org
@@ -75,17 +78,20 @@ sf data query --query "SELECT DeveloperName, Framework__c FROM Compliance_Policy
 ### Access Methods:
 
 **Option 1: Via App Launcher**
+
 1. Click the **App Launcher** (9-dot menu) in the top-left
 2. Search for **"Prometheion"**
 3. Click **Prometheion** app
 4. You should see the **Compliance Hub** tab
 
 **Option 2: Via Direct URL**
+
 ```
 https://[your-instance].salesforce.com/lightning/n/Prometheion_Compliance_Hub
 ```
 
 **Option 3: Via Setup**
+
 1. Setup → **Lightning App Builder**
 2. Search for **"Prometheion Compliance Hub"**
 3. Click **Edit** to view the page
@@ -95,6 +101,7 @@ https://[your-instance].salesforce.com/lightning/n/Prometheion_Compliance_Hub
 ## ✅ Step 3: Test Framework Filtering
 
 ### Test the Filter Dropdown:
+
 1. On the Compliance Hub page, locate the **"Framework Compliance"** section
 2. You should see a **"Filter by Framework"** dropdown above the framework cards
 3. Test each filter option:
@@ -104,6 +111,7 @@ https://[your-instance].salesforce.com/lightning/n/Prometheion_Compliance_Hub
    - Test each of the 10 frameworks individually
 
 ### Expected Frameworks in Dropdown:
+
 - All Frameworks
 - HIPAA
 - SOC 2
@@ -121,6 +129,7 @@ https://[your-instance].salesforce.com/lightning/n/Prometheion_Compliance_Hub
 ## ✅ Step 4: Test Framework Drill-Down Views
 
 ### Test Clicking Framework Cards:
+
 1. With **"All Frameworks"** selected, you should see 10 framework cards in a grid
 2. **Click any framework card** (e.g., HIPAA)
 3. You should see:
@@ -133,6 +142,7 @@ https://[your-instance].salesforce.com/lightning/n/Prometheion_Compliance_Hub
 4. Click **"← Back to All Frameworks"** to return to the grid view
 
 ### Test Framework-Specific Risk Filtering:
+
 1. Click on a framework (e.g., **SOX**)
 2. Scroll down to the **"Top Risks"** section
 3. The risks shown should be **filtered to only show SOX-related risks**
@@ -143,6 +153,7 @@ https://[your-instance].salesforce.com/lightning/n/Prometheion_Compliance_Hub
 ## ✅ Step 5: Verify All 10 Frameworks Display
 
 ### Visual Verification:
+
 On the Compliance Hub with "All Frameworks" selected, you should see **10 framework cards**:
 
 1. **HIPAA** - Purple/Indigo color (#6366f1)
@@ -157,6 +168,7 @@ On the Compliance Hub with "All Frameworks" selected, you should see **10 framew
 10. **ISO 27001** - Purple color (#8b5cf6)
 
 ### Each Card Should Show:
+
 - Framework name
 - Compliance score percentage (0-100%)
 - Progress bar with framework-specific color
@@ -167,6 +179,7 @@ On the Compliance Hub with "All Frameworks" selected, you should see **10 framew
 ## ✅ Step 6: Verify Framework Scores
 
 ### Check Score Calculation:
+
 1. The dashboard should display an **overall compliance score** (ring chart at top)
 2. Each framework should have an **individual score** (0-100%)
 3. Scores are calculated based on:
@@ -176,6 +189,7 @@ On the Compliance Hub with "All Frameworks" selected, you should see **10 framew
    - Policy violations
 
 ### Framework-Specific Score Weights:
+
 - HIPAA: 95% (access control focus)
 - SOC 2: 100% (balanced)
 - NIST: 98% (policy focus)
@@ -192,16 +206,19 @@ On the Compliance Hub with "All Frameworks" selected, you should see **10 framew
 ## Troubleshooting
 
 ### If Framework Filter Doesn't Work:
+
 - Check browser console for JavaScript errors
 - Verify `prometheionDashboard` component is deployed
 - Check that `PrometheionComplianceScorer.calculateReadinessScore` is returning framework scores
 
 ### If Policies Don't Show:
+
 - Verify Custom Metadata Type is deployed: `Compliance_Policy__mdt`
 - Check Framework picklist includes all 10 values
 - Verify policies have `Is_Active__c = true`
 
 ### If Dashboard Doesn't Load:
+
 - Check that `Prometheion_Compliance_Hub` FlexiPage is deployed
 - Verify `prometheionDashboard` LWC component is in the page
 - Check for Apex errors in Setup → Apex Debug Logs
@@ -231,6 +248,6 @@ sf org open --target-org prod-org
 ✅ **Framework cards are clickable** and show drill-down views  
 ✅ **Framework-specific risk filtering** works  
 ✅ **All framework scores** display correctly  
-✅ **"Back to All Frameworks"** navigation works  
+✅ **"Back to All Frameworks"** navigation works
 
 If all criteria are met, the framework integration is **fully functional**! 🎉

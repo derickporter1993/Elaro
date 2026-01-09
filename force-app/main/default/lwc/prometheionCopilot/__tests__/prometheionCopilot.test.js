@@ -86,9 +86,7 @@ const MOCK_COPILOT_RESPONSE = {
       riskScore: 8.5,
     },
   ],
-  actions: [
-    { actionType: "AUTO_FIX", label: "Auto-Fix", canAutoFix: true, nodeId: "node1" },
-  ],
+  actions: [{ actionType: "AUTO_FIX", label: "Auto-Fix", canAutoFix: true, nodeId: "node1" }],
   queryType: "SCORE_CHANGE",
   confidence: 0.95,
 };
@@ -203,7 +201,7 @@ describe("c-prometheion-copilot", () => {
       // Click the send button to trigger submit
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -218,31 +216,28 @@ describe("c-prometheion-copilot", () => {
 
       const quickCard = element.shadowRoot.querySelector(".quick-action-card");
       expect(quickCard).not.toBeNull();
-      
+
       // Get the command from mock data (since dataset isn't accessible in Jest)
       const command = MOCK_QUICK_COMMANDS[0].command;
-      
+
       // Workaround: Set query via input change to ensure handleQueryChange is called
       const input = element.shadowRoot.querySelector("#copilot-input");
-      input.value = command;
-      // Create event with target properly set
-      const changeEvent = Object.assign(new Event("change", { bubbles: true }), {
-        target: input
-      });
-      input.dispatchEvent(changeEvent);
+      element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+      await Promise.resolve();
+      await flushPromises();
+
       // Verify query is set via the input's value binding
       expect(input.value).toBe(command);
-      
+
       // Trigger submit by clicking send button
       const sendButton = element.shadowRoot.querySelector(".send-button");
       expect(sendButton).not.toBeNull();
       expect(sendButton.disabled).toBe(false); // Should be enabled
-      
+
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
       await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for async
@@ -255,18 +250,18 @@ describe("c-prometheion-copilot", () => {
 
       const quickCard = element.shadowRoot.querySelector(".quick-action-card");
       expect(quickCard).not.toBeNull();
-      
+
       // Get command from mock data
       const command = MOCK_QUICK_COMMANDS[0].command;
-      
+
       // Workaround: Set query directly and trigger submit
       element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -279,18 +274,18 @@ describe("c-prometheion-copilot", () => {
 
       const quickCard = element.shadowRoot.querySelector(".quick-action-card");
       expect(quickCard).not.toBeNull();
-      
+
       // Get command from mock data
       const command = MOCK_QUICK_COMMANDS[1].command;
-      
+
       // Workaround: Set query directly and trigger submit
       element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -352,10 +347,10 @@ describe("c-prometheion-copilot", () => {
       element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
       await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for loading state
@@ -374,11 +369,11 @@ describe("c-prometheion-copilot", () => {
       element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+
       const input = element.shadowRoot.querySelector("#copilot-input");
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
       await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for loading state
@@ -488,13 +483,13 @@ describe("c-prometheion-copilot", () => {
       element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
-      
+
       // Wait for async response to complete
       await new Promise((resolve) => setTimeout(resolve, 300));
       await flushPromises();
@@ -519,13 +514,13 @@ describe("c-prometheion-copilot", () => {
       element.query = command;
       await Promise.resolve();
       await flushPromises();
-      
+
       const sendButton = element.shadowRoot.querySelector(".send-button");
       sendButton.click();
-      
+
       await flushPromises();
       await Promise.resolve();
-      
+
       // Wait for async response to complete
       await new Promise((resolve) => setTimeout(resolve, 300));
       await flushPromises();

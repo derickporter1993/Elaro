@@ -2,6 +2,9 @@
 **/*.xml
 **/*-meta.xml
 
+# LWC HTML templates - Prettier breaks LWC syntax (event handlers, bindings)
+force-app/**/lwc/**/*.html
+
 # Dependencies
 node_modules/
 package-lock.json

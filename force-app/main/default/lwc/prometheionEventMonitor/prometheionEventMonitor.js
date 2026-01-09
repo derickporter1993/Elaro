@@ -28,9 +28,9 @@ export default class PrometheionEventMonitor extends LightningElement {
           entityId: event.Entity_Id__c,
           framework: event.Framework__c,
           timestamp: event.Timestamp__c,
-          correlationId: event.Correlation_Id__c
+          correlationId: event.Correlation_Id__c,
         },
-        ...this.events
+        ...this.events,
       ].slice(0, 100); // Keep last 100 events
     };
 
@@ -57,7 +57,7 @@ export default class PrometheionEventMonitor extends LightningElement {
       new ShowToastEvent({
         title,
         message,
-        variant
+        variant,
       })
     );
   }

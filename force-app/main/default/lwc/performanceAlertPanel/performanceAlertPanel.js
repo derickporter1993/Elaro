@@ -28,6 +28,7 @@ export default class PerformanceAlertPanel extends LightningElement {
       onError(() => {
         // EMP API error handled silently - alerts will continue via polling
       });
+      // eslint-disable-next-line no-unused-vars
     } catch (_error) {
       // Set empty array to prevent UI errors
       this.rows = [];

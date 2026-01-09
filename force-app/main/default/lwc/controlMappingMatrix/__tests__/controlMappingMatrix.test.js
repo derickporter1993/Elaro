@@ -68,9 +68,7 @@ describe("c-control-mapping-matrix", () => {
     it("displays target frameworks dual listbox", async () => {
       const element = await createComponent();
 
-      const dualListbox = element.shadowRoot.querySelector(
-        "lightning-dual-listbox"
-      );
+      const dualListbox = element.shadowRoot.querySelector("lightning-dual-listbox");
       expect(dualListbox).not.toBeNull();
     });
 
@@ -112,9 +110,7 @@ describe("c-control-mapping-matrix", () => {
     it("has column headers for target frameworks", async () => {
       const element = await createComponent();
 
-      const headers = element.shadowRoot.querySelectorAll(
-        "th[scope='col']"
-      );
+      const headers = element.shadowRoot.querySelectorAll("th[scope='col']");
       expect(headers.length).toBeGreaterThan(1); // Source + targets + coverage
     });
 
@@ -136,9 +132,7 @@ describe("c-control-mapping-matrix", () => {
     it("cells are focusable with tabindex", async () => {
       const element = await createComponent();
 
-      const cells = element.shadowRoot.querySelectorAll(
-        ".mapping-cell[tabindex='0']"
-      );
+      const cells = element.shadowRoot.querySelectorAll(".mapping-cell[tabindex='0']");
       expect(cells.length).toBeGreaterThan(0);
     });
   });
@@ -150,9 +144,7 @@ describe("c-control-mapping-matrix", () => {
 
       const sourceCombo = element.shadowRoot.querySelector("lightning-combobox");
       if (sourceCombo) {
-        sourceCombo.dispatchEvent(
-          new CustomEvent("change", { detail: { value: "HIPAA" } })
-        );
+        sourceCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "HIPAA" } }));
         await flushPromises();
       }
 
@@ -163,9 +155,7 @@ describe("c-control-mapping-matrix", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const dualListbox = element.shadowRoot.querySelector(
-        "lightning-dual-listbox"
-      );
+      const dualListbox = element.shadowRoot.querySelector("lightning-dual-listbox");
       if (dualListbox) {
         dualListbox.dispatchEvent(
           new CustomEvent("change", { detail: { value: ["HIPAA", "SOC2"] } })
@@ -266,12 +256,8 @@ describe("c-control-mapping-matrix", () => {
       const element = await createComponent();
       await openModal(element);
 
-      const sourceSection = element.shadowRoot.querySelector(
-        "#source-control-heading"
-      );
-      const targetSection = element.shadowRoot.querySelector(
-        "#target-control-heading"
-      );
+      const sourceSection = element.shadowRoot.querySelector("#source-control-heading");
+      const targetSection = element.shadowRoot.querySelector("#target-control-heading");
 
       if (sourceSection) {
         expect(sourceSection).not.toBeNull();
@@ -366,9 +352,7 @@ describe("c-control-mapping-matrix", () => {
     it("displays coverage progress ring for each row", async () => {
       const element = await createComponent();
 
-      const progressRings = element.shadowRoot.querySelectorAll(
-        "lightning-progress-ring"
-      );
+      const progressRings = element.shadowRoot.querySelectorAll("lightning-progress-ring");
       expect(progressRings.length).toBeGreaterThan(0);
     });
 
@@ -401,9 +385,7 @@ describe("c-control-mapping-matrix", () => {
     it("legend region has aria-label", async () => {
       const element = await createComponent();
 
-      const legendRegion = element.shadowRoot.querySelector(
-        '[aria-label="Mapping legend"]'
-      );
+      const legendRegion = element.shadowRoot.querySelector('[aria-label="Mapping legend"]');
       expect(legendRegion).not.toBeNull();
     });
 
@@ -419,9 +401,7 @@ describe("c-control-mapping-matrix", () => {
     it("statistics region has aria-label and live updates", async () => {
       const element = await createComponent();
 
-      const statsRegion = element.shadowRoot.querySelector(
-        '[aria-label="Mapping statistics"]'
-      );
+      const statsRegion = element.shadowRoot.querySelector('[aria-label="Mapping statistics"]');
       expect(statsRegion).not.toBeNull();
       expect(statsRegion.getAttribute("aria-live")).toBe("polite");
     });
@@ -446,18 +426,14 @@ describe("c-control-mapping-matrix", () => {
         await new Promise((resolve) => setTimeout(resolve, 150));
 
         const closeBtn = element.shadowRoot.querySelector(".slds-modal__close");
-        expect(closeBtn.getAttribute("aria-label")).toBe(
-          "Close mapping details modal"
-        );
+        expect(closeBtn.getAttribute("aria-label")).toBe("Close mapping details modal");
       }
     });
 
     it("mapping icons have alternative text", async () => {
       const element = await createComponent();
 
-      const icons = element.shadowRoot.querySelectorAll(
-        ".mapping-content lightning-icon"
-      );
+      const icons = element.shadowRoot.querySelectorAll(".mapping-content lightning-icon");
       icons.forEach((icon) => {
         expect(icon.alternativeText).not.toBeNull();
       });

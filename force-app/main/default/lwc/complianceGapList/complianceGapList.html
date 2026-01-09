@@ -1,27 +1,34 @@
 <template>
-    <lightning-card title="Compliance Gaps">
-        <template if:true={hasGaps}>
-            <div role="list" aria-label="Compliance gaps list">
-                <template for:each={gaps} for:item="gap">
-                    <div key={gap.Id} class="slds-var-p-around_small slds-border_bottom" role="listitem" aria-label="Compliance gap: {gap.Policy_Reference__c}">
-                        <div class="slds-grid slds-gutters">
-                            <div class="slds-col slds-size_2-of-3">
-                                <div class="slds-text-heading_small">{gap.Policy_Reference__c}</div>
-                                <div class="slds-text-body_small" aria-label="Severity: {gap.Severity__c}">{gap.Severity__c}</div>
-                            </div>
-                            <div class="slds-col slds-size_1-of-3">
-                                <div class="slds-text-body_small">Status: {gap.Status__c}</div>
-                                <div class="slds-text-body_small">Risk: {gap.Risk_Score__c}</div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+  <lightning-card title="Compliance Gaps">
+    <template if:true={hasGaps}>
+      <div role="list" aria-label="Compliance gaps list">
+        <template for:each={gaps} for:item="gap">
+          <div
+            key={gap.Id}
+            class="slds-var-p-around_small slds-border_bottom"
+            role="listitem"
+            aria-label="Compliance gap: {gap.Policy_Reference__c}"
+          >
+            <div class="slds-grid slds-gutters">
+              <div class="slds-col slds-size_2-of-3">
+                <div class="slds-text-heading_small">{gap.Policy_Reference__c}</div>
+                <div class="slds-text-body_small" aria-label="Severity: {gap.Severity__c}">
+                  {gap.Severity__c}
+                </div>
+              </div>
+              <div class="slds-col slds-size_1-of-3">
+                <div class="slds-text-body_small">Status: {gap.Status__c}</div>
+                <div class="slds-text-body_small">Risk: {gap.Risk_Score__c}</div>
+              </div>
             </div>
+          </div>
         </template>
-        <template if:false={hasGaps}>
-            <div class="slds-var-p-around_medium" role="status" aria-live="polite">
-                <p>No compliance gaps found.</p>
-            </div>
-        </template>
-    </lightning-card>
+      </div>
+    </template>
+    <template if:false={hasGaps}>
+      <div class="slds-var-p-around_medium" role="status" aria-live="polite">
+        <p>No compliance gaps found.</p>
+      </div>
+    </template>
+  </lightning-card>
 </template>

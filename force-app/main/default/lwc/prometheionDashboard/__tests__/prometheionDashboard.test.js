@@ -240,8 +240,7 @@ describe("c-prometheion-dashboard", () => {
     it("renders framework cards", async () => {
       const element = await createComponent();
 
-      const frameworkCards =
-        element.shadowRoot.querySelectorAll(".framework-card");
+      const frameworkCards = element.shadowRoot.querySelectorAll(".framework-card");
       expect(frameworkCards.length).toBeGreaterThan(0);
     });
 
@@ -275,8 +274,7 @@ describe("c-prometheion-dashboard", () => {
       await flushPromises();
 
       // Should show drill-down view for HIPAA
-      const drillDownView =
-        element.shadowRoot.querySelector(".drill-down-view");
+      const drillDownView = element.shadowRoot.querySelector(".drill-down-view");
       expect(drillDownView).not.toBeNull();
     });
   });
@@ -285,15 +283,13 @@ describe("c-prometheion-dashboard", () => {
     it("navigates to drill-down view when framework card is clicked", async () => {
       const element = await createComponent();
 
-      const frameworkCard =
-        element.shadowRoot.querySelector(".framework-card");
+      const frameworkCard = element.shadowRoot.querySelector(".framework-card");
       expect(frameworkCard).not.toBeNull();
 
       frameworkCard.click();
       await flushPromises();
 
-      const drillDownView =
-        element.shadowRoot.querySelector(".drill-down-view");
+      const drillDownView = element.shadowRoot.querySelector(".drill-down-view");
       expect(drillDownView).not.toBeNull();
     });
 
@@ -301,8 +297,7 @@ describe("c-prometheion-dashboard", () => {
       const element = await createComponent();
 
       // First click a framework card
-      const frameworkCard =
-        element.shadowRoot.querySelector(".framework-card");
+      const frameworkCard = element.shadowRoot.querySelector(".framework-card");
       frameworkCard.click();
       await flushPromises();
 
@@ -312,8 +307,7 @@ describe("c-prometheion-dashboard", () => {
       backButton.click();
       await flushPromises();
 
-      const frameworkGrid =
-        element.shadowRoot.querySelector(".framework-grid");
+      const frameworkGrid = element.shadowRoot.querySelector(".framework-grid");
       expect(frameworkGrid).not.toBeNull();
     });
   });
@@ -329,8 +323,7 @@ describe("c-prometheion-dashboard", () => {
     it("shows severity badge for each risk", async () => {
       const element = await createComponent();
 
-      const severityBadges =
-        element.shadowRoot.querySelectorAll(".severity-badge");
+      const severityBadges = element.shadowRoot.querySelectorAll(".severity-badge");
       expect(severityBadges.length).toBeGreaterThan(0);
     });
 
@@ -364,8 +357,7 @@ describe("c-prometheion-dashboard", () => {
     it("hides loading overlay after data loads", async () => {
       const element = await createComponent();
 
-      const loadingOverlay =
-        element.shadowRoot.querySelector(".loading-overlay");
+      const loadingOverlay = element.shadowRoot.querySelector(".loading-overlay");
       expect(loadingOverlay).toBeNull();
     });
   });
@@ -403,8 +395,7 @@ describe("c-prometheion-dashboard", () => {
     it("has ARIA labels on framework cards", async () => {
       const element = await createComponent();
 
-      const frameworkCard =
-        element.shadowRoot.querySelector(".framework-card");
+      const frameworkCard = element.shadowRoot.querySelector(".framework-card");
       expect(frameworkCard).not.toBeNull();
       expect(frameworkCard.getAttribute("aria-label")).not.toBeNull();
     });
@@ -422,8 +413,7 @@ describe("c-prometheion-dashboard", () => {
     it("framework cards are keyboard accessible", async () => {
       const element = await createComponent();
 
-      const frameworkCard =
-        element.shadowRoot.querySelector(".framework-card");
+      const frameworkCard = element.shadowRoot.querySelector(".framework-card");
       expect(frameworkCard.tagName.toLowerCase()).toBe("button");
       expect(frameworkCard.getAttribute("type")).toBe("button");
     });
@@ -431,8 +421,7 @@ describe("c-prometheion-dashboard", () => {
     it("progress bars have proper ARIA attributes", async () => {
       const element = await createComponent();
 
-      const progressBars =
-        element.shadowRoot.querySelectorAll('[role="progressbar"]');
+      const progressBars = element.shadowRoot.querySelectorAll('[role="progressbar"]');
       progressBars.forEach((bar) => {
         expect(bar.getAttribute("aria-valuemin")).toBe("0");
         expect(bar.getAttribute("aria-valuemax")).toBe("100");
@@ -445,9 +434,7 @@ describe("c-prometheion-dashboard", () => {
       const element = await createComponent();
 
       const buttons = element.shadowRoot.querySelectorAll(".action-btn");
-      const soc2Button = Array.from(buttons).find((btn) =>
-        btn.textContent.includes("SOC2")
-      );
+      const soc2Button = Array.from(buttons).find((btn) => btn.textContent.includes("SOC2"));
       expect(soc2Button).not.toBeNull();
     });
 
@@ -455,9 +442,7 @@ describe("c-prometheion-dashboard", () => {
       const element = await createComponent();
 
       const buttons = element.shadowRoot.querySelectorAll(".action-btn");
-      const hipaaButton = Array.from(buttons).find((btn) =>
-        btn.textContent.includes("HIPAA")
-      );
+      const hipaaButton = Array.from(buttons).find((btn) => btn.textContent.includes("HIPAA"));
       expect(hipaaButton).not.toBeNull();
     });
   });
@@ -477,9 +462,7 @@ describe("c-prometheion-dashboard", () => {
       await flushPromises();
 
       // Component should still be functional
-      expect(
-        element.shadowRoot.querySelector(".prometheion-dashboard")
-      ).not.toBeNull();
+      expect(element.shadowRoot.querySelector(".prometheion-dashboard")).not.toBeNull();
     });
   });
 });

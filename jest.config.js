@@ -11,7 +11,5 @@ export default {
     "<rootDir>/force-app/main/default/lwc/__tests__/a11yTestUtils.js",
     "<rootDir>/force-app/main/default/lwc/__tests__/wireAdapterTestUtils.js",
   ],
-  setupFilesAfterEnv: [
-    "<rootDir>/force-app/main/default/lwc/__tests__/setupTests.js",
-  ],
+  setupFilesAfterEnv: ["<rootDir>/force-app/main/default/lwc/__tests__/setupTests.js"],
 };

@@ -2,7 +2,11 @@
   <lightning-card title="Prometheion Event Monitor" icon-name="standard:event">
     <div class="slds-var-p-around_medium">
       <template if:true={hasEvents}>
-        <table class="slds-table slds-table_cell-buffer slds-table_bordered" role="table" aria-label="Prometheion event monitor table">
+        <table
+          class="slds-table slds-table_cell-buffer slds-table_bordered"
+          role="table"
+          aria-label="Prometheion event monitor table"
+        >
           <thead>
             <tr>
               <th scope="col">Event Type</th>
@@ -26,7 +30,9 @@
         </table>
       </template>
       <template if:false={hasEvents}>
-        <p class="slds-text-align_center slds-var-p-around_medium">No events received yet. Waiting for events...</p>
+        <p class="slds-text-align_center slds-var-p-around_medium">
+          No events received yet. Waiting for events...
+        </p>
       </template>
     </div>
   </lightning-card>

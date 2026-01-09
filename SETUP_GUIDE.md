@@ -82,6 +82,7 @@ The weekly email digest is automatically scheduled. To customize:
    - Find "Prometheion Weekly Compliance Digest"
 
 2. **Modify Schedule** (if needed)
+
    ```apex
    // In Developer Console or VS Code
    PrometheionEmailDigestScheduler.scheduleWeeklyJob();
@@ -113,7 +114,7 @@ The weekly email digest is automatically scheduled. To customize:
 
 1. **Apex Classes**
    - Setup > Apex Classes
-   - Verify all Prometheion* classes are present
+   - Verify all Prometheion\* classes are present
 
 2. **Custom Metadata**
    - Setup > Custom Metadata Types
@@ -140,6 +141,7 @@ sf apex run test --class-names PrometheionConstantsTest -o prod-org
 ### Issue: AI Copilot returns "API key not configured"
 
 **Solution:**
+
 1. Verify Custom Metadata record exists with Developer Name = "Default"
 2. Check API key field is not empty
 3. Verify API key is valid (not expired)
@@ -148,6 +150,7 @@ sf apex run test --class-names PrometheionConstantsTest -o prod-org
 ### Issue: Permission denied errors
 
 **Solution:**
+
 1. Verify user has "Prometheion Admin" permission set assigned
 2. Check user profile has necessary object permissions
 3. Verify sharing settings allow access
@@ -155,6 +158,7 @@ sf apex run test --class-names PrometheionConstantsTest -o prod-org
 ### Issue: Compliance score shows 0 or null
 
 **Solution:**
+
 1. Check Platform Cache is enabled: Setup > Platform Cache
 2. Verify partition exists: `local.PrometheionCompliance`
 3. Clear cache and recalculate:
@@ -166,6 +170,7 @@ sf apex run test --class-names PrometheionConstantsTest -o prod-org
 ### Issue: Email digest not sending
 
 **Solution:**
+
 1. Verify scheduled job is active
 2. Check email deliverability: Setup > Email Deliverability
 3. Verify admin users have valid email addresses
@@ -205,7 +210,7 @@ sf apex run test --class-names PrometheionConstantsTest -o prod-org
 ## Support
 
 For additional help:
+
 - Review debug logs: Setup > Debug Logs
 - Check Apex test results: Setup > Apex Test Execution
 - Review component errors in browser console
-

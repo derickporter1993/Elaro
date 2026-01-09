@@ -134,12 +134,10 @@ export function getFocusableElements(container) {
     "lightning-textarea",
   ];
 
-  return Array.from(container.querySelectorAll(selectors.join(", "))).filter(
-    (el) => {
-      const style = window.getComputedStyle(el);
-      return style.display !== "none" && style.visibility !== "hidden";
-    }
-  );
+  return Array.from(container.querySelectorAll(selectors.join(", "))).filter((el) => {
+    const style = window.getComputedStyle(el);
+    return style.display !== "none" && style.visibility !== "hidden";
+  });
 }
 
 /**
@@ -199,9 +197,7 @@ export function verifyAriaAttributes(element, expectedAttrs) {
  * @returns {Object} Object with isValid, headings list, and errors
  */
 export function checkHeadingHierarchy(container) {
-  const headings = Array.from(
-    container.querySelectorAll("h1, h2, h3, h4, h5, h6")
-  );
+  const headings = Array.from(container.querySelectorAll("h1, h2, h3, h4, h5, h6"));
   const levels = headings.map((h) => parseInt(h.tagName[1], 10));
   const errors = [];
 
@@ -229,11 +225,7 @@ export function checkHeadingHierarchy(container) {
  * @param {string} textSize - 'normal' or 'large'
  * @returns {Object} Object with ratio, passes, and required ratio
  */
-export function checkColorContrast(
-  foreground,
-  background,
-  textSize = "normal"
-) {
+export function checkColorContrast(foreground, background, textSize = "normal") {
   const getLuminance = (hex) => {
     const rgb = hex
       .replace("#", "")

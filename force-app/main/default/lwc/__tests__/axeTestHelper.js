@@ -21,7 +21,7 @@ const defaultAxeConfig = {
     "color-contrast": { enabled: true },
     "image-alt": { enabled: true },
     "input-image-alt": { enabled: true },
-    "label": { enabled: true },
+    label: { enabled: true },
     "link-name": { enabled: true },
     "button-name": { enabled: true },
     "aria-required-attr": { enabled: true },
@@ -39,11 +39,11 @@ const defaultAxeConfig = {
     "html-has-lang": { enabled: true },
     "meta-viewport": { enabled: true },
     "focus-order-semantics": { enabled: true },
-    "tabindex": { enabled: true },
+    tabindex: { enabled: true },
     // Disable rules that don't apply to components
     "page-has-heading-one": { enabled: false },
     "landmark-one-main": { enabled: false },
-    "region": { enabled: false },
+    region: { enabled: false },
   },
   // Run against WCAG 2.1 AA standard
   runOnly: {
@@ -68,8 +68,7 @@ export async function runAccessibilityAudit(element, options = {}) {
   const config = { ...defaultAxeConfig, ...options };
 
   // If it's a shadow root, we need to use the host's container
-  const targetElement =
-    element instanceof ShadowRoot ? element.host : element;
+  const targetElement = element instanceof ShadowRoot ? element.host : element;
 
   // Create a container for testing if needed
   const container = document.createElement("div");
@@ -146,13 +145,7 @@ export function hasAriaAttribute(element, attribute, expectedValue = null) {
 export function isKeyboardFocusable(element) {
   const tabIndex = element.getAttribute("tabindex");
   const tagName = element.tagName.toLowerCase();
-  const nativelyFocusable = [
-    "a",
-    "button",
-    "input",
-    "select",
-    "textarea",
-  ];
+  const nativelyFocusable = ["a", "button", "input", "select", "textarea"];
 
   // Check if natively focusable and not disabled
   if (nativelyFocusable.includes(tagName)) {
@@ -229,8 +222,7 @@ export function checkColorContrast(foreground, background, size = "normal") {
   const l1 = getLuminance(foreground);
   const l2 = getLuminance(background);
 
-  const ratio =
-    (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
 
   // WCAG 2.1 AA requirements
   const requiredRatio = size === "large" ? 3 : 4.5;
@@ -291,9 +283,7 @@ export function getFocusableElements(container) {
     "lightning-radio-group",
   ];
 
-  return Array.from(
-    container.querySelectorAll(focusableSelectors.join(", "))
-  ).filter((el) => {
+  return Array.from(container.querySelectorAll(focusableSelectors.join(", "))).filter((el) => {
     // Verify the element is visible
     const style = window.getComputedStyle(el);
     return style.display !== "none" && style.visibility !== "hidden";

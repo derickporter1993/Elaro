@@ -160,7 +160,12 @@
       </h2>
       <div class="factors-grid" role="list" aria-label="Score breakdown factors">
         <template for:each={factors} for:item="factor">
-          <article key={factor.name} class="factor-card" role="listitem" aria-label={factor.ariaLabel}>
+          <article
+            key={factor.name}
+            class="factor-card"
+            role="listitem"
+            aria-label={factor.ariaLabel}
+          >
             <div class="factor-header">
               <h3 class="factor-name">{factor.name}</h3>
               <span class={factor.statusClass} role="status">{factor.status}</span>
@@ -211,13 +216,20 @@
           <template for:each={filteredTopRisks} for:item="risk">
             <li key={risk.nodeId} class="risk-card" role="listitem">
               <div class="risk-severity" data-severity={risk.severity}>
-                <span class={risk.severityClass} role="status" aria-label={risk.severityAriaLabel}>{risk.severity}</span>
+                <span
+                  class={risk.severityClass}
+                  role="status"
+                  aria-label={risk.severityAriaLabel}
+                  >{risk.severity}</span
+                >
               </div>
               <div class="risk-content">
                 <h3 class="risk-title">{risk.title}</h3>
                 <p class="risk-description">{risk.description}</p>
                 <div class="risk-meta">
-                  <span class="risk-framework" aria-label={risk.frameworkAriaLabel}>{risk.framework}</span>
+                  <span class="risk-framework" aria-label={risk.frameworkAriaLabel}
+                    >{risk.framework}</span
+                  >
                   <button
                     class="risk-action"
                     data-node-id={risk.nodeId}

@@ -5,6 +5,7 @@
 This document provides a comprehensive technical analysis of Prometheion's current codebase alignment with the business plan, identifying critical gaps, implementation strategies, and architectural recommendations for achieving the vision outlined in the business plan.
 
 **Key Findings:**
+
 - ✅ **Strong Foundation**: Core compliance scoring, AI copilot, and basic monitoring are implemented
 - ⚠️ **Critical Gaps**: Missing event intelligence engine, configuration drift guard, evidence engine, and off-platform compute
 - 🎯 **Strategic Priority**: Focus on architectural defensibility layers to differentiate from competitors
@@ -14,16 +15,19 @@ This document provides a comprehensive technical analysis of Prometheion's curre
 ## 1. Event Intelligence Engine (CRITICAL GAP)
 
 ### Business Plan Requirement
+
 > "Event Intelligence Engine: Real-time analysis of Salesforce Platform Events, Setup Audit Trail, and Event Monitoring data to detect compliance violations as they happen."
 
 ### Current State Analysis
 
 **What Exists:**
+
 - `PrometheionComplianceScorer.calculateConfigDriftScore()` queries `SetupAuditTrail` (lines 254-298)
 - Basic polling of `SetupAuditTrail` for last 30 days
 - Simple pattern matching on `Action` field (permission, profile, delete keywords)
 
 **What's Missing:**
+
 1. **Real-time event processing** - No Platform Event subscribers
 2. **Event Monitoring integration** - No Shield Event Monitoring API calls
 3. **Intelligent pattern detection** - No ML/AI-based anomaly detection
@@ -60,7 +64,7 @@ public class PrometheionEventPublisher {
         );
         EventBus.publish(event);
     }
-    
+
     /**
      * Correlate multiple events to detect complex attack patterns
      */
@@ -68,7 +72,7 @@ public class PrometheionEventPublisher {
         // Detect: Permission escalation + Data export + Login from new location
         // Pattern: User gets Modify All Data → Exports Account data → Logs in from new IP
         Map<String, List<Compliance_Event__e>> userEvents = groupByUser(events);
-        
+
         for (String userId : userEvents.keySet()) {
             List<Compliance_Event__e> userEventList = userEvents.get(userId);
             if (detectEscalationPattern(userEventList)) {
@@ -86,19 +90,19 @@ public class PrometheionEventPublisher {
 ```apex
 public class PrometheionEventMonitoringService {
     private static final String EVENT_MONITORING_API = '/services/data/v62.0/eventMonitoring/';
-    
+
     /**
      * Query Event Monitoring logs via REST API
      * Requires: Shield Event Monitoring license
      */
     @AuraEnabled(cacheable=false)
     public static List<EventMonitoringLog> queryEventLogs(
-        String eventType, 
-        Datetime startTime, 
+        String eventType,
+        Datetime startTime,
         Datetime endTime
     ) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint('callout:EventMonitoring/v1/query?q=' + 
+        req.setEndpoint('callout:EventMonitoring/v1/query?q=' +
             EncodingUtil.urlEncode(
                 'SELECT Id, EventType, LogFile, LogDate FROM EventLogFile ' +
                 'WHERE EventType = \'' + eventType + '\' ' +
@@ -109,16 +113,16 @@ public class PrometheionEventMonitoringService {
         );
         req.setMethod('GET');
         req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
-        
+
         Http http = new Http();
         HttpResponse res = http.send(req);
-        
+
         if (res.getStatusCode() == 200) {
             return parseEventLogFiles((List<Object>) JSON.deserializeUntyped(res.getBody()));
         }
         throw new EventMonitoringException('Failed to query Event Monitoring: ' + res.getBody());
     }
-    
+
     /**
      * Analyze Event Monitoring logs for compliance violations
      */
@@ -131,6 +135,7 @@ public class PrometheionEventMonitoringService {
 ```
 
 **Supported Event Types:**
+
 - `ApiEvent` - API call patterns
 - `LoginEvent` - Authentication anomalies
 - `ReportEvent` - Unusual report executions
@@ -149,7 +154,7 @@ public class PrometheionAnomalyDetector {
     public static AnomalyResult detectAnomalies(List<Compliance_Event__e> events) {
         // Serialize events to JSON
         String eventsJson = JSON.serializePretty(events);
-        
+
         // Build prompt for Claude
         String prompt = 'Analyze these Salesforce compliance events and identify anomalies:\n\n' +
             eventsJson + '\n\n' +
@@ -160,11 +165,11 @@ public class PrometheionAnomalyDetector {
             '4. Rapid-fire permission assignments\n' +
             '5. Cross-framework violations (e.g., HIPAA + SOC2)\n\n' +
             'Return JSON: { "anomalies": [...], "riskScore": 0-100, "recommendation": "..." }';
-        
+
         // Call Claude
-        PrometheionClaudeService.ClaudeResponse response = 
+        PrometheionClaudeService.ClaudeResponse response =
             PrometheionClaudeService.askCompliance(prompt, getOrgContext());
-        
+
         return parseAnomalyResponse(response.content);
     }
 }
@@ -190,18 +195,18 @@ public class PrometheionEventProcessor {
         for (Compliance_Event__e event : events) {
             Decimal riskScore = calculateRiskScore(event);
             event.Risk_Score__c = riskScore;
-            
+
             // 2. Critical threshold check
             if (riskScore >= 80) {
                 sendImmediateAlert(event);
             }
         }
-        
+
         // 3. Batch correlation analysis
         if (events.size() >= 5) {
             PrometheionEventPublisher.correlateEvents(events);
         }
-        
+
         // 4. Update compliance graph
         PrometheionGraphIndexer.indexEvents(events);
     }
@@ -212,7 +217,7 @@ public class PrometheionEventProcessor {
 
 **Custom Objects Needed:**
 
-1. **Compliance_Event__e** (Platform Event)
+1. **Compliance_Event\_\_e** (Platform Event)
    - `Action__c` (Text)
    - `User__c` (Lookup to User)
    - `Timestamp__c` (DateTime)
@@ -221,7 +226,7 @@ public class PrometheionEventProcessor {
    - `Entity_Id__c` (Text)
    - `Framework_Impact__c` (Text, multi-select: HIPAA, SOC2, etc.)
 
-2. **Event_Correlation__c** (Custom Object)
+2. **Event_Correlation\_\_c** (Custom Object)
    - `User__c` (Lookup)
    - `Event_Sequence__c` (Long Text Area - JSON)
    - `Pattern_Type__c` (Picklist: Escalation, Data_Exfiltration, etc.)
@@ -256,16 +261,19 @@ public class PrometheionEventProcessor {
 ## 2. Configuration Drift Guard (CRITICAL GAP)
 
 ### Business Plan Requirement
+
 > "Configuration Drift Guard: Tracks every configuration change, compares against approved baselines, and flags unauthorized modifications."
 
 ### Current State Analysis
 
 **What Exists:**
+
 - `PrometheionComplianceScorer.calculateConfigDriftScore()` (lines 254-298)
 - Basic `SetupAuditTrail` querying
 - Simple keyword matching for "high-risk" changes
 
 **What's Missing:**
+
 1. **Baseline snapshots** - No mechanism to store approved configurations
 2. **Change approval workflow** - No integration with change management
 3. **Drift detection** - No comparison against baselines
@@ -292,29 +300,29 @@ public class PrometheionBaselineManager {
             Status__c = 'Active'
         );
         insert baseline;
-        
+
         // Snapshot current configuration
         snapshotPermissions(baseline.Id);
         snapshotSharingRules(baseline.Id);
         snapshotOWDSettings(baseline.Id);
         snapshotCustomMetadata(baseline.Id);
-        
+
         return baseline.Id;
     }
-    
+
     /**
      * Snapshot all permission sets and profiles
      */
     private static void snapshotPermissions(Id baselineId) {
         List<Permission_Set_Snapshot__c> snapshots = new List<Permission_Set_Snapshot__c>();
-        
+
         // Query all permission sets
         for (PermissionSet ps : [
             SELECT Id, Name, PermissionsModifyAllData, PermissionsViewAllData,
-                   (SELECT SobjectType, PermissionsRead, PermissionsCreate, 
-                           PermissionsEdit, PermissionsDelete 
+                   (SELECT SobjectType, PermissionsRead, PermissionsCreate,
+                           PermissionsEdit, PermissionsDelete
                     FROM ObjectPerms),
-                   (SELECT Field, PermissionsRead, PermissionsEdit 
+                   (SELECT Field, PermissionsRead, PermissionsEdit
                     FROM FieldPerms)
             FROM PermissionSet
             WHERE IsCustom = true
@@ -330,7 +338,7 @@ public class PrometheionBaselineManager {
             );
             snapshots.add(snapshot);
         }
-        
+
         insert snapshots;
     }
 }
@@ -348,59 +356,59 @@ public class PrometheionDriftDetector {
     @AuraEnabled
     public static List<DriftFinding> detectDrift(Id baselineId) {
         Compliance_Baseline__c baseline = [
-            SELECT Id, Snapshot_Date__c 
-            FROM Compliance_Baseline__c 
+            SELECT Id, Snapshot_Date__c
+            FROM Compliance_Baseline__c
             WHERE Id = :baselineId
         ];
-        
+
         List<DriftFinding> findings = new List<DriftFinding>();
-        
+
         // Compare permission sets
         findings.addAll(comparePermissionSets(baselineId));
-        
+
         // Compare sharing rules
         findings.addAll(compareSharingRules(baselineId));
-        
+
         // Compare OWD settings
         findings.addAll(compareOWDSettings(baselineId));
-        
+
         return findings;
     }
-    
+
     /**
      * Compare current permission sets against baseline
      */
     private static List<DriftFinding> comparePermissionSets(Id baselineId) {
         List<DriftFinding> findings = new List<DriftFinding>();
-        
+
         // Get baseline snapshots
         Map<Id, Permission_Set_Snapshot__c> baselineSnapshots = new Map<Id, Permission_Set_Snapshot__c>();
         for (Permission_Set_Snapshot__c snap : [
-            SELECT Permission_Set_Id__c, Modify_All_Data__c, 
+            SELECT Permission_Set_Id__c, Modify_All_Data__c,
                    Object_Permissions_JSON__c, Field_Permissions_JSON__c
             FROM Permission_Set_Snapshot__c
             WHERE Baseline__c = :baselineId
         ]) {
             baselineSnapshots.put(snap.Permission_Set_Id__c, snap);
         }
-        
+
         // Get current permission sets
         Map<Id, PermissionSet> currentPS = new Map<Id, PermissionSet>([
             SELECT Id, PermissionsModifyAllData, PermissionsViewAllData,
-                   (SELECT SobjectType, PermissionsRead, PermissionsCreate, 
-                           PermissionsEdit, PermissionsDelete 
+                   (SELECT SobjectType, PermissionsRead, PermissionsCreate,
+                           PermissionsEdit, PermissionsDelete
                     FROM ObjectPerms),
-                   (SELECT Field, PermissionsRead, PermissionsEdit 
+                   (SELECT Field, PermissionsRead, PermissionsEdit
                     FROM FieldPerms)
             FROM PermissionSet
             WHERE IsCustom = true
         ]);
-        
+
         // Compare
         for (Id psId : currentPS.keySet()) {
             PermissionSet current = currentPS.get(psId);
             Permission_Set_Snapshot__c baseline = baselineSnapshots.get(psId);
-            
+
             if (baseline == null) {
                 // New permission set added
                 findings.add(new DriftFinding(
@@ -416,18 +424,18 @@ public class PrometheionDriftDetector {
                         type = 'PERMISSION_ESCALATION',
                         entityId = psId,
                         severity = 'CRITICAL',
-                        message = 'Permission set "' + current.Name + '" now has Modify All Data (was ' + 
+                        message = 'Permission set "' + current.Name + '" now has Modify All Data (was ' +
                                  baseline.Modify_All_Data__c + ')'
                     ));
                 }
-                
+
                 // Compare object permissions (simplified - full comparison would be more complex)
-                Map<String, Object> baselineObjPerms = (Map<String, Object>) 
+                Map<String, Object> baselineObjPerms = (Map<String, Object>)
                     JSON.deserializeUntyped(baseline.Object_Permissions_JSON__c);
                 // ... detailed comparison logic ...
             }
         }
-        
+
         return findings;
     }
 }
@@ -453,10 +461,10 @@ public class PrometheionChangeApprovalService {
             AND Status__c = 'Approved'
             LIMIT 1
         ];
-        
+
         return !changeRequests.isEmpty();
     }
-    
+
     /**
      * Create change request via Jira API
      */
@@ -466,7 +474,7 @@ public class PrometheionChangeApprovalService {
         req.setEndpoint('callout:Jira_API/rest/api/3/issue');
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
-        
+
         Map<String, Object> issue = new Map<String, Object>{
             'fields' => new Map<String, Object>{
                 'project' => new Map<String, String>{ 'key' => 'COMP' },
@@ -475,15 +483,15 @@ public class PrometheionChangeApprovalService {
                 'issuetype' => new Map<String, String>{ 'name' => 'Change Request' }
             }
         };
-        
+
         req.setBody(JSON.serialize(issue));
         Http http = new Http();
         HttpResponse res = http.send(req);
-        
+
         if (res.getStatusCode() == 201) {
             Map<String, Object> response = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
             String ticketKey = (String) response.get('key');
-            
+
             // Store in Salesforce
             Change_Request__c cr = new Change_Request__c(
                 Ticket_ID__c = ticketKey,
@@ -513,26 +521,26 @@ public class PrometheionRollbackEngine {
             FROM Drift_Finding__c
             WHERE Id = :driftFindingId
         ];
-        
+
         // Get baseline snapshot
         Permission_Set_Snapshot__c baseline = [
-            SELECT Modify_All_Data__c, View_All_Data__c, 
+            SELECT Modify_All_Data__c, View_All_Data__c,
                    Object_Permissions_JSON__c, Field_Permissions_JSON__c
             FROM Permission_Set_Snapshot__c
             WHERE Baseline__c = :finding.Baseline__c
             AND Permission_Set_Id__c = :finding.Entity_Id__c
             LIMIT 1
         ];
-        
+
         // Restore permission set
         PermissionSet ps = [
-            SELECT Id FROM PermissionSet 
+            SELECT Id FROM PermissionSet
             WHERE Id = :finding.Entity_Id__c
         ];
-        
+
         // Use Metadata API to update permission set
         // Note: This requires Metadata API callout or Tooling API
-        
+
         return new RollbackResult(
             success = true,
             message = 'Permission set rolled back to baseline state'
@@ -543,15 +551,15 @@ public class PrometheionRollbackEngine {
 
 ### Data Model Requirements
 
-1. **Compliance_Baseline__c** (Custom Object)
+1. **Compliance_Baseline\_\_c** (Custom Object)
    - `Name` (Text)
    - `Description__c` (Long Text Area)
    - `Snapshot_Date__c` (DateTime)
    - `Status__c` (Picklist: Active, Archived)
    - `Created_By__c` (Lookup to User)
 
-2. **Permission_Set_Snapshot__c** (Custom Object)
-   - `Baseline__c` (Lookup to Compliance_Baseline__c)
+2. **Permission_Set_Snapshot\_\_c** (Custom Object)
+   - `Baseline__c` (Lookup to Compliance_Baseline\_\_c)
    - `Permission_Set_Id__c` (Text)
    - `Permission_Set_Name__c` (Text)
    - `Modify_All_Data__c` (Checkbox)
@@ -559,16 +567,16 @@ public class PrometheionRollbackEngine {
    - `Object_Permissions_JSON__c` (Long Text Area)
    - `Field_Permissions_JSON__c` (Long Text Area)
 
-3. **Drift_Finding__c** (Custom Object)
+3. **Drift_Finding\_\_c** (Custom Object)
    - `Baseline__c` (Lookup)
    - `Entity_Type__c` (Picklist)
    - `Entity_Id__c` (Text)
    - `Severity__c` (Picklist: CRITICAL, HIGH, MEDIUM, LOW)
    - `Change_Description__c` (Long Text Area)
    - `Detected_At__c` (DateTime)
-   - `Change_Request__c` (Lookup to Change_Request__c)
+   - `Change_Request__c` (Lookup to Change_Request\_\_c)
 
-4. **Change_Request__c** (Custom Object)
+4. **Change_Request\_\_c** (Custom Object)
    - `Ticket_ID__c` (Text) - Jira/ServiceNow ticket
    - `Entity_Type__c` (Picklist)
    - `Entity_Id__c` (Text)
@@ -597,15 +605,18 @@ public class PrometheionRollbackEngine {
 ## 3. Evidence Engine (CRITICAL GAP)
 
 ### Business Plan Requirement
+
 > "Evidence Engine: Automatically collects, organizes, and exports audit evidence required by external auditors (SOC2, HIPAA, ISO 27001)."
 
 ### Current State Analysis
 
 **What Exists:**
+
 - `PrometheionComplianceScorer` calculates scores
 - Basic risk identification in `getTopRisks()` (lines 380-418)
 
 **What's Missing:**
+
 1. **Evidence collection** - No automated gathering of audit artifacts
 2. **Evidence organization** - No structured storage by framework/control
 3. **Evidence export** - No PDF/Excel export functionality
@@ -630,7 +641,7 @@ public class PrometheionEvidenceCollector {
         collection.startDate = startDate;
         collection.endDate = endDate;
         collection.collectedAt = Datetime.now();
-        
+
         // Collect different evidence types
         collection.setupAuditTrail = collectSetupAuditTrail(startDate, endDate);
         collection.fieldHistoryTracking = collectFieldHistory(startDate, endDate);
@@ -638,16 +649,16 @@ public class PrometheionEvidenceCollector {
         collection.sharingRuleEvidence = collectSharingRules();
         collection.encryptionEvidence = collectEncryptionStatus();
         collection.accessReviewEvidence = collectAccessReviews(startDate, endDate);
-        
+
         return collection;
     }
-    
+
     /**
      * Collect Setup Audit Trail entries
      */
     private static List<SetupAuditTrailEvidence> collectSetupAuditTrail(Date startDate, Date endDate) {
         List<SetupAuditTrailEvidence> evidence = new List<SetupAuditTrailEvidence>();
-        
+
         for (SetupAuditTrail trail : [
             SELECT Action, CreatedBy.Name, CreatedDate, Display, Section, DelegateUser
             FROM SetupAuditTrail
@@ -663,16 +674,16 @@ public class PrometheionEvidenceCollector {
                 details = trail.Display
             ));
         }
-        
+
         return evidence;
     }
-    
+
     /**
      * Collect Field History Tracking evidence
      */
     private static List<FieldHistoryEvidence> collectFieldHistory(Date startDate, Date endDate) {
         List<FieldHistoryEvidence> evidence = new List<FieldHistoryEvidence>();
-        
+
         // Query FieldHistoryTrackedField to see what's being tracked
         List<FieldDefinition> trackedFields = [
             SELECT QualifiedApiName, EntityDefinition.QualifiedApiName
@@ -681,7 +692,7 @@ public class PrometheionEvidenceCollector {
             AND EntityDefinition.QualifiedApiName IN ('Account', 'Contact', 'Opportunity', 'Case')
             LIMIT 100
         ];
-        
+
         for (FieldDefinition field : trackedFields) {
             evidence.add(new FieldHistoryEvidence(
                 objectName = field.EntityDefinition.QualifiedApiName,
@@ -689,16 +700,16 @@ public class PrometheionEvidenceCollector {
                 isTracked = true
             ));
         }
-        
+
         return evidence;
     }
-    
+
     /**
      * Collect permission assignment evidence
      */
     private static PermissionAssignmentEvidence collectPermissionAssignments() {
         PermissionAssignmentEvidence evidence = new PermissionAssignmentEvidence();
-        
+
         // Count users with elevated permissions
         evidence.usersWithModifyAll = [
             SELECT COUNT()
@@ -706,14 +717,14 @@ public class PrometheionEvidenceCollector {
             WHERE PermissionSet.PermissionsModifyAllData = true
             AND Assignee.IsActive = true
         ];
-        
+
         evidence.usersWithViewAll = [
             SELECT COUNT()
             FROM PermissionSetAssignment
             WHERE PermissionSet.PermissionsViewAllData = true
             AND Assignee.IsActive = true
         ];
-        
+
         // List all permission sets
         evidence.permissionSets = [
             SELECT Id, Name, Label, Description
@@ -721,7 +732,7 @@ public class PrometheionEvidenceCollector {
             WHERE IsCustom = true
             ORDER BY Name
         ];
-        
+
         return evidence;
     }
 }
@@ -737,11 +748,11 @@ public class PrometheionEvidenceMapper {
      * Map evidence to specific compliance controls
      */
     public static Map<String, List<EvidenceItem>> mapEvidenceToControls(
-        String framework, 
+        String framework,
         EvidenceCollection collection
     ) {
         Map<String, List<EvidenceItem>> controlEvidence = new Map<String, List<EvidenceItem>>();
-        
+
         if (framework == 'SOC2') {
             // SOC2 CC6.1 - Logical Access Security
             controlEvidence.put('CC6.1', new List<EvidenceItem>{
@@ -756,7 +767,7 @@ public class PrometheionEvidenceMapper {
                     data = collection.accessReviewEvidence
                 )
             });
-            
+
             // SOC2 CC6.2 - Access Removal
             controlEvidence.put('CC6.2', new List<EvidenceItem>{
                 new EvidenceItem(
@@ -774,7 +785,7 @@ public class PrometheionEvidenceMapper {
                     data = PrometheionComplianceScorer.calculateReadinessScore()
                 )
             });
-            
+
             // HIPAA §164.312(a)(1) - Access Control
             controlEvidence.put('164.312(a)(1)', new List<EvidenceItem>{
                 new EvidenceItem(
@@ -784,7 +795,7 @@ public class PrometheionEvidenceMapper {
                 )
             });
         }
-        
+
         return controlEvidence;
     }
 }
@@ -805,19 +816,19 @@ public class PrometheionEvidenceExporter {
         EvidenceCollection collection = PrometheionEvidenceCollector.collectEvidence(
             framework, startDate, endDate
         );
-        
+
         // Map to controls
-        Map<String, List<EvidenceItem>> controlEvidence = 
+        Map<String, List<EvidenceItem>> controlEvidence =
             PrometheionEvidenceMapper.mapEvidenceToControls(framework, collection);
-        
+
         // Generate PDF using Visualforce or external service
         PageReference pdfPage = Page.PrometheionAuditReport;
         pdfPage.getParameters().put('framework', framework);
         pdfPage.getParameters().put('startDate', String.valueOf(startDate));
         pdfPage.getParameters().put('endDate', String.valueOf(endDate));
-        
+
         Blob pdfBlob = pdfPage.getContentAsPDF();
-        
+
         // Save as ContentVersion
         ContentVersion cv = new ContentVersion(
             Title = framework + ' Audit Report - ' + Date.today().format(),
@@ -826,10 +837,10 @@ public class PrometheionEvidenceExporter {
             FirstPublishLocationId = UserInfo.getUserId()
         );
         insert cv;
-        
+
         return cv.Id;
     }
-    
+
     /**
      * Generate Excel evidence export
      */
@@ -838,20 +849,20 @@ public class PrometheionEvidenceExporter {
         EvidenceCollection collection = PrometheionEvidenceCollector.collectEvidence(
             framework, startDate, endDate
         );
-        
+
         // Create Excel using simple CSV format or external library
         String csvContent = 'Framework,Control,Evidence Type,Description,Timestamp\n';
-        
-        Map<String, List<EvidenceItem>> controlEvidence = 
+
+        Map<String, List<EvidenceItem>> controlEvidence =
             PrometheionEvidenceMapper.mapEvidenceToControls(framework, collection);
-        
+
         for (String control : controlEvidence.keySet()) {
             for (EvidenceItem item : controlEvidence.get(control)) {
-                csvContent += framework + ',' + control + ',' + item.type + ',' + 
+                csvContent += framework + ',' + control + ',' + item.type + ',' +
                              item.description + ',' + item.timestamp + '\n';
             }
         }
-        
+
         // Save as ContentVersion
         ContentVersion cv = new ContentVersion(
             Title = framework + ' Evidence Export - ' + Date.today().format(),
@@ -860,7 +871,7 @@ public class PrometheionEvidenceExporter {
             FirstPublishLocationId = UserInfo.getUserId()
         );
         insert cv;
-        
+
         return cv.Id;
     }
 }
@@ -887,7 +898,7 @@ public class PrometheionEvidenceExporter {
                 <p>Framework: {!framework}</p>
                 <p>Period: {!startDate} to {!endDate}</p>
             </div>
-            
+
             <apex:repeat value="{!controlEvidence}" var="control">
                 <div class="section">
                     <h2>Control: {!control}</h2>
@@ -923,7 +934,7 @@ public class PrometheionEvidenceLinker {
      */
     public static void linkEvidenceToFinding(Id findingId, List<Id> evidenceIds) {
         List<Finding_Evidence__c> links = new List<Finding_Evidence__c>();
-        
+
         for (Id evidenceId : evidenceIds) {
             links.add(new Finding_Evidence__c(
                 Finding__c = findingId,
@@ -931,10 +942,10 @@ public class PrometheionEvidenceLinker {
                 Linked_At__c = Datetime.now()
             ));
         }
-        
+
         insert links;
     }
-    
+
     /**
      * Auto-link evidence based on framework and control
      */
@@ -945,14 +956,14 @@ public class PrometheionEvidenceLinker {
             WHERE Framework__c = :framework
             AND Control__c = :control
         ];
-        
+
         // Find relevant evidence
         List<Evidence__c> evidence = [
             SELECT Id FROM Evidence__c
             WHERE Framework__c = :framework
             AND Control__c = :control
         ];
-        
+
         // Create links
         for (Compliance_Finding__c finding : findings) {
             for (Evidence__c ev : evidence) {
@@ -965,7 +976,7 @@ public class PrometheionEvidenceLinker {
 
 ### Data Model Requirements
 
-1. **Evidence__c** (Custom Object)
+1. **Evidence\_\_c** (Custom Object)
    - `Framework__c` (Picklist)
    - `Control__c` (Text) - e.g., "SOC2 CC6.1"
    - `Evidence_Type__c` (Picklist: Setup_Audit_Trail, Field_History, Permission_Assignment, etc.)
@@ -974,12 +985,12 @@ public class PrometheionEvidenceLinker {
    - `Collected_At__c` (DateTime)
    - `Content_Version__c` (Lookup to ContentVersion) - For PDF/Excel exports
 
-2. **Finding_Evidence__c** (Junction Object)
-   - `Finding__c` (Lookup to Compliance_Finding__c)
-   - `Evidence__c` (Lookup to Evidence__c)
+2. **Finding_Evidence\_\_c** (Junction Object)
+   - `Finding__c` (Lookup to Compliance_Finding\_\_c)
+   - `Evidence__c` (Lookup to Evidence\_\_c)
    - `Linked_At__c` (DateTime)
 
-3. **Compliance_Finding__c** (Custom Object)
+3. **Compliance_Finding\_\_c** (Custom Object)
    - `Framework__c` (Picklist)
    - `Control__c` (Text)
    - `Severity__c` (Picklist)
@@ -1013,15 +1024,18 @@ public class PrometheionEvidenceLinker {
 The business plan identifies "Gross Margin Risk" from Salesforce governor limits. Building features 1, 2, or 3 in Apex first would require a complete rewrite when limits are hit. **Section 4 must be implemented FIRST** to establish the "Hub-and-Spoke" architecture that all future features will build upon.
 
 **Achievability Assessment: 4/10 (Dangerous Execution Plan)**
+
 - Without off-platform compute: Features 1-3 will hit governor limits and require rewrite
 - With off-platform compute: Features 1-3 can be built on AWS from day one
 
 ### Business Plan Requirement
+
 > "Off-Platform Compute: Heavy AI analysis runs on external infrastructure to avoid Salesforce governor limits and reduce costs. This architecture enables the Agentforce Control Plane and protects the 70% Gross Margin target."
 
 ### Current State Analysis
 
 **What Exists:**
+
 - `PrometheionClaudeService` calls Claude API directly from Apex (synchronous, burns CPU time)
 - `ApiUsageSnapshot.cls` polls Salesforce REST API (consumes API calls)
 - `PrometheionGraphIndexer.cls` is a stub (no heavy processing yet, but would be built in Apex)
@@ -1029,6 +1043,7 @@ The business plan identifies "Gross Margin Risk" from Salesforce governor limits
 - Risk of hitting governor limits on large orgs (10,000+ users, 100+ permission sets)
 
 **What's Missing:**
+
 1. **Push-based event architecture** - Currently polling-based (ApiUsageSnapshot)
 2. **Change Data Capture (CDC) integration** - No CDC subscription
 3. **Event Relay to AWS** - No connection to external compute
@@ -1163,16 +1178,17 @@ The business plan identifies "Gross Margin Risk" from Salesforce governor limits
 
 **Why Event Relays over Custom HTTP Callouts:**
 
-| Feature | Event Relays | Custom HTTP Callout |
-|---------|--------------|-------------------|
-| **Apex Code Required** | Zero | ~50 lines per event type |
-| **Retry Logic** | Automatic (exponential backoff) | Manual implementation |
-| **Rate Limiting** | Handled by Salesforce | Must implement circuit breaker |
-| **Monitoring** | Native in Setup | Custom logging required |
-| **Change Data Capture** | Native integration | Must poll SetupAuditTrail |
-| **Maintenance** | Zero (Salesforce managed) | Ongoing (code updates) |
+| Feature                 | Event Relays                    | Custom HTTP Callout            |
+| ----------------------- | ------------------------------- | ------------------------------ |
+| **Apex Code Required**  | Zero                            | ~50 lines per event type       |
+| **Retry Logic**         | Automatic (exponential backoff) | Manual implementation          |
+| **Rate Limiting**       | Handled by Salesforce           | Must implement circuit breaker |
+| **Monitoring**          | Native in Setup                 | Custom logging required        |
+| **Change Data Capture** | Native integration              | Must poll SetupAuditTrail      |
+| **Maintenance**         | Zero (Salesforce managed)       | Ongoing (code updates)         |
 
 **Event Relay Configuration:**
+
 - Setup → Integrations → Event Relays
 - Create Event Relay: `Prometheion_AWS_Relay`
 - Source: Platform Event `Prometheion_Raw_Event__e`
@@ -1181,11 +1197,13 @@ The business plan identifies "Gross Margin Risk" from Salesforce governor limits
 #### 4.2 Compute: AWS Lambda (Python 3.11)
 
 **Why Python:**
+
 - Required for AI/ML libraries (scikit-learn, pandas) for future "Agentforce" features
 - Better ecosystem for data processing (vs Node.js)
 - Native support for Anthropic SDK
 
 **Lambda Configuration:**
+
 - Runtime: Python 3.11
 - Memory: 512 MB (sufficient for Claude API calls)
 - Timeout: 5 minutes (300 seconds)
@@ -1194,11 +1212,13 @@ The business plan identifies "Gross Margin Risk" from Salesforce governor limits
 #### 4.3 Storage: S3 + DynamoDB
 
 **S3 (Data Lake):**
+
 - Purpose: Immutable evidence retention (SOC2 requires 7-year retention)
 - Partitioning: `s3://prometheion-events/org-id/YYYY/MM/DD/events.json`
 - Lifecycle Policy: Move to Glacier after 90 days, delete after 7 years
 
 **DynamoDB (Fast State):**
+
 - Purpose: Real-time risk scores, last known good configuration
 - Partition Key: `org-id`
 - Sort Key: `entity-type#entity-id`
@@ -1215,10 +1235,10 @@ The business plan identifies "Gross Margin Risk" from Salesforce governor limits
 public static String indexChange(String entityType, String entityId, String framework) {
     // This query burns SOQL limits
     Map<String, Object> metadata = queryEntityMetadata(entityType, entityId);
-    
+
     // This calculation burns CPU time (could be 5-10 seconds for complex orgs)
     Decimal riskScore = calculateRiskScore(metadata, framework);
-    
+
     // This insert burns DML limits
     Sentinel_Compliance_Graph__b node = new Sentinel_Compliance_Graph__b(
         Entity_Type__c = entityType,
@@ -1227,12 +1247,13 @@ public static String indexChange(String entityType, String entityId, String fram
         Node_Metadata__c = JSON.serialize(metadata) // Could be 100KB+
     );
     insert node;
-    
+
     return node.Id;
 }
 ```
 
 **Issues:**
+
 - Blocks user transaction (synchronous)
 - Burns CPU time (governor limit: 10,000ms)
 - Burns SOQL queries (governor limit: 100)
@@ -1246,17 +1267,17 @@ public static String indexChange(String entityType, String entityId, String fram
 ```apex
 /**
  * PrometheionEventPublisher - Lightweight Event Publisher
- * 
+ *
  * This class publishes events to AWS via Event Relay.
  * All heavy processing (risk scoring, AI analysis) happens off-platform.
- * 
+ *
  * @author Prometheion
  * @version 2.0
  */
 public with sharing class PrometheionEventPublisher {
-    
+
     private static final String LOG_PREFIX = '[PrometheionEventPublisher] ';
-    
+
     /**
      * Publish a configuration change event
      * This is called from triggers or scheduled jobs
@@ -1277,7 +1298,7 @@ public with sharing class PrometheionEventPublisher {
                 'timestamp' => Datetime.now().formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\''),
                 'orgId' => UserInfo.getOrganizationId() // Critical for multi-tenant
             };
-            
+
             // Publish Platform Event (zero CPU cost, async)
             Prometheion_Raw_Event__e event = new Prometheion_Raw_Event__e(
                 Payload__c = JSON.serialize(eventPayload),
@@ -1288,25 +1309,25 @@ public with sharing class PrometheionEventPublisher {
                 Timestamp__c = Datetime.now(),
                 Org_ID__c = UserInfo.getOrganizationId()
             );
-            
+
             Database.SaveResult result = EventBus.publish(event);
-            
+
             if (!result.isSuccess()) {
-                System.debug(LoggingLevel.ERROR, LOG_PREFIX + 
+                System.debug(LoggingLevel.ERROR, LOG_PREFIX +
                     'Failed to publish event: ' + result.getErrors());
             } else {
-                System.debug(LoggingLevel.DEBUG, LOG_PREFIX + 
+                System.debug(LoggingLevel.DEBUG, LOG_PREFIX +
                     'Published event for ' + entityType + ':' + entityId);
             }
-            
+
         } catch (Exception e) {
             // Don't throw - event publishing failures should not break user transactions
-            System.debug(LoggingLevel.ERROR, LOG_PREFIX + 
-                'Exception publishing event: ' + e.getMessage() + 
+            System.debug(LoggingLevel.ERROR, LOG_PREFIX +
+                'Exception publishing event: ' + e.getMessage() +
                 ' at line ' + e.getLineNumber());
         }
     }
-    
+
     /**
      * Publish Setup Audit Trail change
      * Called from scheduled job that polls SetupAuditTrail
@@ -1319,7 +1340,7 @@ public with sharing class PrometheionEventPublisher {
             trail.CreatedBy.Name
         );
     }
-    
+
     /**
      * Publish permission set assignment change
      * Called from trigger on PermissionSetAssignment
@@ -1336,6 +1357,7 @@ public with sharing class PrometheionEventPublisher {
 ```
 
 **Benefits:**
+
 - ✅ Zero CPU time (EventBus.publish is async)
 - ✅ Zero SOQL queries (no metadata fetching)
 - ✅ Zero DML statements (Platform Events are not DML)
@@ -1366,7 +1388,7 @@ public class PrometheionAuditTrailPoller implements Schedulable {
     public void execute(SchedulableContext ctx) {
         // Query last 5 minutes of changes
         Datetime fiveMinutesAgo = Datetime.now().addMinutes(-5);
-        
+
         List<SetupAuditTrail> recentChanges = [
             SELECT Id, Action, CreatedBy.Name, CreatedDate
             FROM SetupAuditTrail
@@ -1374,7 +1396,7 @@ public class PrometheionAuditTrailPoller implements Schedulable {
             ORDER BY CreatedDate DESC
             LIMIT 1000
         ];
-        
+
         for (SetupAuditTrail trail : recentChanges) {
             PrometheionEventPublisher.publishAuditTrailChange(trail);
         }
@@ -1419,19 +1441,19 @@ def lambda_handler(event, context):
     """
     processed_count = 0
     errors = []
-    
+
     # EventBridge can send multiple events in one invocation
     for record in event.get('Records', []):
         try:
             # Parse EventBridge record
             event_detail = record['detail']
             payload = json.loads(event_detail['Payload__c'])
-            
+
             # Deduplicate (check DynamoDB for recent event)
             event_key = f"{payload['orgId']}#{payload['entityType']}#{payload['entityId']}"
             if is_duplicate(event_key, payload['timestamp']):
                 continue
-            
+
             # Route to appropriate analyzer
             if payload['entityType'] == 'PermissionSet':
                 route_to_permission_analyzer(payload)
@@ -1439,18 +1461,18 @@ def lambda_handler(event, context):
                 route_to_audit_analyzer(payload)
             else:
                 route_to_generic_analyzer(payload)
-            
+
             # Store in DynamoDB for deduplication
             store_event(event_key, payload)
             processed_count += 1
-            
+
         except Exception as e:
             errors.append({
                 'record': record,
                 'error': str(e)
             })
             print(f"Error processing record: {e}")
-    
+
     return {
         'statusCode': 200,
         'body': json.dumps({
@@ -1535,24 +1557,24 @@ def lambda_handler(event, context):
     Calls Claude API for AI-powered analysis
     """
     payload = json.loads(event['Payload']) if isinstance(event, str) else event
-    
+
     entity_type = payload['entityType']
     entity_id = payload['entityId']
     org_id = payload['orgId']
-    
+
     # Call Claude API for risk analysis
     claude_response = call_claude_risk_analysis(payload)
-    
+
     # Extract risk score from Claude response
     risk_score = extract_risk_score(claude_response)
     framework_scores = extract_framework_scores(claude_response)
-    
+
     # Store in DynamoDB
     store_score(org_id, entity_type, entity_id, risk_score, framework_scores)
-    
+
     # Callback to Salesforce
     callback_salesforce(org_id, entity_type, entity_id, risk_score, framework_scores)
-    
+
     return {
         'statusCode': 200,
         'body': json.dumps({
@@ -1569,9 +1591,9 @@ def call_claude_risk_analysis(payload: Dict) -> Dict:
         'anthropic-version': '2023-06-01',
         'content-type': 'application/json'
     }
-    
+
     prompt = build_risk_analysis_prompt(payload)
-    
+
     request_payload = {
         'model': 'claude-sonnet-4-20250514',  # Use Sonnet for speed
         'max_tokens': 4096,
@@ -1580,7 +1602,7 @@ def call_claude_risk_analysis(payload: Dict) -> Dict:
             'content': prompt
         }]
     }
-    
+
     response = requests.post(url, headers=headers, json=request_payload, timeout=60)
     response.raise_for_status()
     return response.json()
@@ -1633,7 +1655,7 @@ def extract_framework_scores(claude_response: Dict) -> Dict:
     parsed = json.loads(content)
     return parsed.get('frameworkScores', {})
 
-def store_score(org_id: str, entity_type: str, entity_id: str, 
+def store_score(org_id: str, entity_type: str, entity_id: str,
                 risk_score: float, framework_scores: Dict):
     """Store score in DynamoDB"""
     scores_table.put_item(
@@ -1652,14 +1674,14 @@ def callback_salesforce(org_id: str, entity_type: str, entity_id: str,
     """Send results back to Salesforce via REST API"""
     sf_url = os.environ['SALESFORCE_INSTANCE_URL']
     sf_token = get_salesforce_token(org_id)
-    
+
     # Create or update Compliance_Score__c record
     rest_url = f"{sf_url}/services/data/v62.0/sobjects/Compliance_Score__c"
     headers = {
         'Authorization': f'Bearer {sf_token}',
         'Content-Type': 'application/json'
     }
-    
+
     payload = {
         'Org_ID__c': org_id,
         'Entity_Type__c': entity_type,
@@ -1668,12 +1690,12 @@ def callback_salesforce(org_id: str, entity_type: str, entity_id: str,
         'Framework_Scores_JSON__c': json.dumps(framework_scores),
         'Calculated_At__c': datetime.utcnow().isoformat()
     }
-    
+
     # Upsert by external ID
     upsert_url = f"{rest_url}/Org_ID__c/{org_id}/Entity_Type__c/{entity_type}/Entity_Id__c/{entity_id}"
     response = requests.patch(upsert_url, headers=headers, json=payload)
     response.raise_for_status()
-    
+
     # Publish Platform Event to notify UI
     publish_score_event(org_id, entity_type, entity_id, risk_score)
 
@@ -1683,7 +1705,7 @@ def get_salesforce_token(org_id: str) -> str:
     secrets_client = boto3.client('secretsmanager')
     secret = secrets_client.get_secret_value(SecretId=f'prometheion/sf-oauth/{org_id}')
     credentials = json.loads(secret['SecretString'])
-    
+
     # Exchange JWT for access token (standard OAuth 2.0 flow)
     # ... (implementation details)
     return credentials['access_token']
@@ -1699,7 +1721,7 @@ def publish_score_event(org_id: str, entity_type: str, entity_id: str, risk_scor
 
 #### 4.9 Platform Event for Results
 
-**Prometheion_Score_Result__e (Platform Event):**
+**Prometheion_Score_Result\_\_e (Platform Event):**
 
 ```xml
 <!-- force-app/main/default/objects/Prometheion_Score_Result__e/Prometheion_Score_Result__e.object-meta.xml -->
@@ -1748,128 +1770,127 @@ def publish_score_event(org_id: str, entity_type: str, entity_id: str, risk_scor
 **prometheionScoreListener.js:**
 
 ```javascript
-import { LightningElement, wire } from 'lwc';
-import { subscribe, unsubscribe, onError, setDebugFlag } from 'lightning/empApi';
+import { LightningElement, wire } from "lwc";
+import { subscribe, unsubscribe, onError, setDebugFlag } from "lightning/empApi";
 
 export default class PrometheionScoreListener extends LightningElement {
-    subscription = {};
-    isListening = false;
-    
-    connectedCallback() {
-        this.registerErrorListener();
-        this.subscribeToScoreEvents();
-    }
-    
-    disconnectedCallback() {
-        this.unsubscribeFromScoreEvents();
-    }
-    
-    registerErrorListener() {
-        onError((error) => {
-            console.error('Subscription error: ', JSON.stringify(error));
-        });
-    }
-    
-    subscribeToScoreEvents() {
-        const messageCallback = (response) => {
-            console.log('Score result received: ', JSON.stringify(response));
-            
-            const eventPayload = response.data.payload;
-            this.handleScoreResult(eventPayload);
-        };
-        
-        subscribe('/event/Prometheion_Score_Result__e', -1, messageCallback)
-            .then((response) => {
-                console.log('Subscription request sent: ', JSON.stringify(response));
-                this.subscription = response;
-                this.isListening = true;
-            });
-    }
-    
-    unsubscribeFromScoreEvents() {
-        unsubscribe(this.subscription, (response) => {
-            console.log('Unsubscribed: ', JSON.stringify(response));
-            this.isListening = false;
-        });
-    }
-    
-    handleScoreResult(payload) {
-        // Show toast notification
-        this.dispatchEvent(
-            new CustomEvent('scoreresult', {
-                detail: {
-                    entityType: payload.Entity_Type__c,
-                    entityId: payload.Entity_Id__c,
-                    riskScore: payload.Risk_Score__c,
-                    frameworkScores: JSON.parse(payload.Framework_Scores_JSON__c)
-                },
-                bubbles: true,
-                composed: true
-            })
-        );
-    }
+  subscription = {};
+  isListening = false;
+
+  connectedCallback() {
+    this.registerErrorListener();
+    this.subscribeToScoreEvents();
+  }
+
+  disconnectedCallback() {
+    this.unsubscribeFromScoreEvents();
+  }
+
+  registerErrorListener() {
+    onError((error) => {
+      console.error("Subscription error: ", JSON.stringify(error));
+    });
+  }
+
+  subscribeToScoreEvents() {
+    const messageCallback = (response) => {
+      console.log("Score result received: ", JSON.stringify(response));
+
+      const eventPayload = response.data.payload;
+      this.handleScoreResult(eventPayload);
+    };
+
+    subscribe("/event/Prometheion_Score_Result__e", -1, messageCallback).then((response) => {
+      console.log("Subscription request sent: ", JSON.stringify(response));
+      this.subscription = response;
+      this.isListening = true;
+    });
+  }
+
+  unsubscribeFromScoreEvents() {
+    unsubscribe(this.subscription, (response) => {
+      console.log("Unsubscribed: ", JSON.stringify(response));
+      this.isListening = false;
+    });
+  }
+
+  handleScoreResult(payload) {
+    // Show toast notification
+    this.dispatchEvent(
+      new CustomEvent("scoreresult", {
+        detail: {
+          entityType: payload.Entity_Type__c,
+          entityId: payload.Entity_Id__c,
+          riskScore: payload.Risk_Score__c,
+          frameworkScores: JSON.parse(payload.Framework_Scores_JSON__c),
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
 }
 ```
 
 **prometheionDashboard.js (Updated):**
 
 ```javascript
-import { LightningElement, wire, track } from 'lwc';
-import getComplianceScore from '@salesforce/apex/PrometheionComplianceScorer.calculateReadinessScore';
-import PrometheionScoreListener from 'c/prometheionScoreListener';
+import { LightningElement, wire, track } from "lwc";
+import getComplianceScore from "@salesforce/apex/PrometheionComplianceScorer.calculateReadinessScore";
+import PrometheionScoreListener from "c/prometheionScoreListener";
 
 export default class PrometheionDashboard extends LightningElement {
-    @track score = null;
-    @track loading = true;
-    scoreListener;
-    
-    connectedCallback() {
-        // Load initial score
-        this.loadScore();
-        
-        // Subscribe to real-time score updates
-        this.scoreListener = this.template.querySelector('c-prometheion-score-listener');
-        this.template.addEventListener('scoreresult', this.handleScoreUpdate.bind(this));
+  @track score = null;
+  @track loading = true;
+  scoreListener;
+
+  connectedCallback() {
+    // Load initial score
+    this.loadScore();
+
+    // Subscribe to real-time score updates
+    this.scoreListener = this.template.querySelector("c-prometheion-score-listener");
+    this.template.addEventListener("scoreresult", this.handleScoreUpdate.bind(this));
+  }
+
+  @wire(getComplianceScore)
+  wiredScore({ data, error }) {
+    if (data) {
+      this.score = data;
+      this.loading = false;
+    } else if (error) {
+      console.error("Error loading score: ", error);
+      this.loading = false;
     }
-    
-    @wire(getComplianceScore)
-    wiredScore({ data, error }) {
-        if (data) {
-            this.score = data;
-            this.loading = false;
-        } else if (error) {
-            console.error('Error loading score: ', error);
-            this.loading = false;
-        }
-    }
-    
-    handleScoreUpdate(event) {
-        const result = event.detail;
-        
-        // Show toast notification
-        this.showToast(
-            'Compliance Score Updated',
-            `Risk Score: ${result.riskScore} for ${result.entityType}`,
-            result.riskScore >= 70 ? 'warning' : 'success'
-        );
-        
-        // Refresh score card
-        this.loadScore();
-    }
-    
-    loadScore() {
-        // Trigger wire adapter refresh
-        refreshApex(this.wiredScore);
-    }
-    
-    showToast(title, message, variant) {
-        const evt = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: variant
-        });
-        this.dispatchEvent(evt);
-    }
+  }
+
+  handleScoreUpdate(event) {
+    const result = event.detail;
+
+    // Show toast notification
+    this.showToast(
+      "Compliance Score Updated",
+      `Risk Score: ${result.riskScore} for ${result.entityType}`,
+      result.riskScore >= 70 ? "warning" : "success"
+    );
+
+    // Refresh score card
+    this.loadScore();
+  }
+
+  loadScore() {
+    // Trigger wire adapter refresh
+    refreshApex(this.wiredScore);
+  }
+
+  showToast(title, message, variant) {
+    const evt = new ShowToastEvent({
+      title: title,
+      message: message,
+      variant: variant,
+    });
+    this.dispatchEvent(evt);
+  }
 }
 ```
 
@@ -1879,33 +1900,35 @@ export default class PrometheionDashboard extends LightningElement {
 
 **Current Architecture (100% Apex):**
 
-| Component | Cost per 1M Events | Notes |
-|-----------|-------------------|-------|
-| **Salesforce CPU Time** | $0 (included in license) | But hits governor limits |
-| **Claude API Calls** | $15 | From Salesforce (synchronous) |
-| **API Callouts** | $0 (included) | But counts toward daily limits |
-| **Total** | **$15** | **Limited by governor limits** |
+| Component               | Cost per 1M Events       | Notes                          |
+| ----------------------- | ------------------------ | ------------------------------ |
+| **Salesforce CPU Time** | $0 (included in license) | But hits governor limits       |
+| **Claude API Calls**    | $15                      | From Salesforce (synchronous)  |
+| **API Callouts**        | $0 (included)            | But counts toward daily limits |
+| **Total**               | **$15**                  | **Limited by governor limits** |
 
 **Off-Platform Architecture (Hub-and-Spoke):**
 
-| Component | Cost per 1M Events | Notes |
-|-----------|-------------------|-------|
-| **Salesforce Event Relay** | $0 | Native feature, no code |
-| **Amazon EventBridge** | $1.00 | First 1M events free, then $1/M |
-| **Kinesis Firehose** | $0.029 | $0.029 per GB ingested |
-| **S3 Storage** | $0.023 | $0.023 per GB/month |
-| **Lambda Compute** | $0.20 | 512 MB, 1 second avg, $0.0000166667/GB-second |
-| **DynamoDB** | $0.25 | On-demand pricing |
-| **Claude API Calls** | $15 | From Lambda (same cost) |
-| **Total** | **$16.50** | **Unlimited scalability** |
+| Component                  | Cost per 1M Events | Notes                                         |
+| -------------------------- | ------------------ | --------------------------------------------- |
+| **Salesforce Event Relay** | $0                 | Native feature, no code                       |
+| **Amazon EventBridge**     | $1.00              | First 1M events free, then $1/M               |
+| **Kinesis Firehose**       | $0.029             | $0.029 per GB ingested                        |
+| **S3 Storage**             | $0.023             | $0.023 per GB/month                           |
+| **Lambda Compute**         | $0.20              | 512 MB, 1 second avg, $0.0000166667/GB-second |
+| **DynamoDB**               | $0.25              | On-demand pricing                             |
+| **Claude API Calls**       | $15                | From Lambda (same cost)                       |
+| **Total**                  | **$16.50**         | **Unlimited scalability**                     |
 
 **Margin Impact:**
+
 - **Current**: Hits governor limits → Customer churn → Lost revenue
 - **Off-Platform**: Scales infinitely → Retains enterprise customers → Protects 70% Gross Margin
 
 #### 4.12 Governor Limit Protection
 
 **Before (Apex):**
+
 ```
 User changes Permission Set
   → Trigger fires
@@ -1918,6 +1941,7 @@ User changes Permission Set
 ```
 
 **After (Off-Platform):**
+
 ```
 User changes Permission Set
   → Trigger fires
@@ -1933,6 +1957,7 @@ User changes Permission Set
 #### 4.13 Week 1-2: Foundation Setup
 
 **Day 1-3: AWS Infrastructure**
+
 - [ ] Create AWS account (if needed)
 - [ ] Set up Terraform for infrastructure as code
 - [ ] Deploy EventBridge, Kinesis Firehose, S3 bucket
@@ -1940,17 +1965,20 @@ User changes Permission Set
 - [ ] Set up DynamoDB tables
 
 **Day 4-5: Salesforce Event Relay**
+
 - [ ] Create Platform Event: `Prometheion_Raw_Event__e`
 - [ ] Configure Event Relay in Salesforce Setup
 - [ ] Test event publishing (manual test)
 
 **Day 6-7: Lambda Stub**
+
 - [ ] Create Python Lambda function (stub)
 - [ ] Deploy to AWS
 - [ ] Test EventBridge → Lambda connection
 - [ ] Verify events are received
 
 **Day 8-10: Basic Callback**
+
 - [ ] Create `Compliance_Score__c` custom object
 - [ ] Create REST endpoint: `PrometheionScoreCallback`
 - [ ] Implement OAuth 2.0 JWT Bearer flow
@@ -1959,18 +1987,21 @@ User changes Permission Set
 #### 4.14 Week 3-4: Event Publisher Refactoring
 
 **Day 11-14: Refactor Apex Code**
+
 - [ ] Create `PrometheionEventPublisher.cls`
 - [ ] Update triggers to use publisher
 - [ ] Create scheduled job for SetupAuditTrail polling
 - [ ] Remove heavy processing from existing classes
 
 **Day 15-17: Lambda Implementation**
+
 - [ ] Implement event processor Lambda
 - [ ] Implement compliance scorer Lambda
 - [ ] Add Claude API integration
 - [ ] Add error handling and retries
 
 **Day 18-20: Testing & Documentation**
+
 - [ ] End-to-end testing
 - [ ] Load testing (1000+ events)
 - [ ] Document architecture
@@ -1978,7 +2009,7 @@ User changes Permission Set
 
 ### Data Model Requirements
 
-1. **Prometheion_Raw_Event__e** (Platform Event)
+1. **Prometheion_Raw_Event\_\_e** (Platform Event)
    - `Payload__c` (Long Text Area) - JSON event data
    - `Entity_Type__c` (Text)
    - `Entity_Id__c` (Text)
@@ -1987,14 +2018,14 @@ User changes Permission Set
    - `Timestamp__c` (DateTime)
    - `Org_ID__c` (Text) - Critical for multi-tenant
 
-2. **Prometheion_Score_Result__e** (Platform Event)
+2. **Prometheion_Score_Result\_\_e** (Platform Event)
    - `Org_ID__c` (Text)
    - `Entity_Type__c` (Text)
    - `Entity_Id__c` (Text)
    - `Risk_Score__c` (Number)
    - `Framework_Scores_JSON__c` (Long Text Area)
 
-3. **Compliance_Score__c** (Custom Object)
+3. **Compliance_Score\_\_c** (Custom Object)
    - `Org_ID__c` (Text, External ID)
    - `Entity_Type__c` (Text, External ID)
    - `Entity_Id__c` (Text, External ID)
@@ -2025,6 +2056,7 @@ User changes Permission Set
 ### Success Criteria
 
 **Phase 1 Complete When:**
+
 1. ✅ Events flow from Salesforce → AWS S3 (verified in S3 console)
 2. ✅ Lambda processes events and calls Claude API
 3. ✅ Results callback to Salesforce and update `Compliance_Score__c`
@@ -2035,6 +2067,7 @@ User changes Permission Set
 ### Next Steps After Phase 1
 
 Once the EventBridge connection is established:
+
 1. **Build Event Intelligence Engine** (Section 1) on AWS Lambda
 2. **Build Configuration Drift Guard** (Section 2) using S3 data lake
 3. **Build Evidence Engine** (Section 3) using DynamoDB + S3
@@ -2045,16 +2078,19 @@ Once the EventBridge connection is established:
 ## 5. Partner Edition & Audit Authority (STRATEGIC GAPS)
 
 ### Business Plan Requirement
+
 > "Partner Edition: White-label compliance monitoring for Salesforce implementation partners. Audit Authority: Third-party audit firm integration for automated audit evidence submission."
 
 ### Current State Analysis
 
 **What Exists:**
+
 - Single-org focused implementation
 - No multi-tenant architecture
 - No partner/reseller capabilities
 
 **What's Missing:**
+
 1. **Multi-tenant architecture** - No org isolation
 2. **White-labeling** - No branding customization
 3. **Partner portal** - No reseller dashboard
@@ -2077,7 +2113,7 @@ public class PrometheionTenantManager {
         // For managed package, tenant = Subscriber Org ID
         return UserInfo.getOrganizationId();
     }
-    
+
     /**
      * Ensure data isolation between tenants
      */
@@ -2113,16 +2149,16 @@ public class PrometheionBrandingService {
     @AuraEnabled(cacheable=true)
     public static BrandingConfig getBranding() {
         String tenantId = PrometheionTenantManager.getCurrentTenant();
-        
+
         // Query tenant branding settings
         Tenant_Branding__c branding = [
-            SELECT Logo_URL__c, Primary_Color__c, Secondary_Color__c, 
+            SELECT Logo_URL__c, Primary_Color__c, Secondary_Color__c,
                    Product_Name__c, Support_Email__c
             FROM Tenant_Branding__c
             WHERE Tenant__c = :tenantId
             LIMIT 1
         ];
-        
+
         if (branding != null) {
             return new BrandingConfig(
                 logoUrl = branding.Logo_URL__c,
@@ -2132,7 +2168,7 @@ public class PrometheionBrandingService {
                 supportEmail = branding.Support_Email__c
             );
         }
-        
+
         // Default Prometheion branding
         return new BrandingConfig(
             logoUrl = '/resource/PrometheionLogo',
@@ -2149,19 +2185,19 @@ public class PrometheionBrandingService {
 
 ```javascript
 // prometheionDashboard.js
-import { LightningElement, wire } from 'lwc';
-import getBranding from '@salesforce/apex/PrometheionBrandingService.getBranding';
+import { LightningElement, wire } from "lwc";
+import getBranding from "@salesforce/apex/PrometheionBrandingService.getBranding";
 
 export default class PrometheionDashboard extends LightningElement {
-    @wire(getBranding) branding;
-    
-    get logoUrl() {
-        return this.branding?.data?.logoUrl || '/resource/PrometheionLogo';
-    }
-    
-    get primaryColor() {
-        return this.branding?.data?.primaryColor || '#16325c';
-    }
+  @wire(getBranding) branding;
+
+  get logoUrl() {
+    return this.branding?.data?.logoUrl || "/resource/PrometheionLogo";
+  }
+
+  get primaryColor() {
+    return this.branding?.data?.primaryColor || "#16325c";
+  }
 }
 ```
 
@@ -2177,7 +2213,7 @@ public class PrometheionPartnerPortal {
     @AuraEnabled(cacheable=true)
     public static List<PartnerOrg> getPartnerOrgs() {
         String partnerId = UserInfo.getUserId(); // Or from custom field
-        
+
         List<Partner_Org__c> orgs = [
             SELECT Id, Name, Org_Id__c, Status__c, Last_Scan_Date__c,
                    Compliance_Score__c, Framework__c
@@ -2185,7 +2221,7 @@ public class PrometheionPartnerPortal {
             WHERE Partner__c = :partnerId
             ORDER BY Last_Scan_Date__c DESC
         ];
-        
+
         List<PartnerOrg> result = new List<PartnerOrg>();
         for (Partner_Org__c org : orgs) {
             result.add(new PartnerOrg(
@@ -2198,7 +2234,7 @@ public class PrometheionPartnerPortal {
                 framework = org.Framework__c
             ));
         }
-        
+
         return result;
     }
 }
@@ -2220,26 +2256,26 @@ global class PrometheionAuditAPI {
         String framework = req.params.get('framework');
         String orgId = req.params.get('orgId');
         String apiKey = req.headers.get('X-API-Key');
-        
+
         // Authenticate audit firm
         if (!authenticateAuditFirm(apiKey)) {
             RestContext.response.statusCode = 401;
             RestContext.response.responseBody = Blob.valueOf('Unauthorized');
             return;
         }
-        
+
         // Collect evidence
         EvidenceCollection evidence = PrometheionEvidenceCollector.collectEvidence(
-            framework, 
-            Date.today().addDays(-180), 
+            framework,
+            Date.today().addDays(-180),
             Date.today()
         );
-        
+
         // Return JSON
         RestContext.response.statusCode = 200;
         RestContext.response.responseBody = Blob.valueOf(JSON.serialize(evidence));
     }
-    
+
     private static Boolean authenticateAuditFirm(String apiKey) {
         // Check against Audit_Firm__c custom object
         List<Audit_Firm__c> firms = [
@@ -2248,7 +2284,7 @@ global class PrometheionAuditAPI {
             AND Status__c = 'Active'
             LIMIT 1
         ];
-        
+
         return !firms.isEmpty();
     }
 }
@@ -2256,7 +2292,7 @@ global class PrometheionAuditAPI {
 
 ### Data Model Requirements
 
-1. **Tenant_Branding__c** (Custom Object)
+1. **Tenant_Branding\_\_c** (Custom Object)
    - `Tenant__c` (Text)
    - `Logo_URL__c` (URL)
    - `Primary_Color__c` (Text)
@@ -2264,14 +2300,14 @@ global class PrometheionAuditAPI {
    - `Product_Name__c` (Text)
    - `Support_Email__c` (Email)
 
-2. **Partner_Org__c** (Custom Object)
+2. **Partner_Org\_\_c** (Custom Object)
    - `Partner__c` (Lookup to User)
    - `Org_Id__c` (Text)
    - `Status__c` (Picklist: Active, Inactive, Suspended)
    - `Last_Scan_Date__c` (DateTime)
    - `Compliance_Score__c` (Number)
 
-3. **Audit_Firm__c** (Custom Object)
+3. **Audit_Firm\_\_c** (Custom Object)
    - `Name` (Text)
    - `API_Key__c` (Text, encrypted)
    - `Status__c` (Picklist: Active, Inactive)
@@ -2293,6 +2329,7 @@ global class PrometheionAuditAPI {
 ### Phase 1: Critical Gaps (Months 1-3)
 
 **Priority: Event Intelligence Engine**
+
 - Week 1-2: Platform Events setup
 - Week 3-4: Event Monitoring integration
 - Week 5-6: Anomaly detection (Claude)
@@ -2300,6 +2337,7 @@ global class PrometheionAuditAPI {
 - Week 9-10: Testing & documentation
 
 **Priority: Configuration Drift Guard**
+
 - Week 11-12: Baseline snapshot system
 - Week 13-14: Drift detection engine
 - Week 15-16: Change approval integration
@@ -2309,6 +2347,7 @@ global class PrometheionAuditAPI {
 ### Phase 2: Evidence & Compute (Months 4-5)
 
 **Priority: Evidence Engine**
+
 - Week 21-22: Evidence collection service
 - Week 23-24: Evidence organization/mapping
 - Week 25-26: PDF/Excel export
@@ -2316,6 +2355,7 @@ global class PrometheionAuditAPI {
 - Week 29-30: Testing & documentation
 
 **Priority: Off-Platform Compute**
+
 - Week 31-32: AWS Lambda setup
 - Week 33-34: Salesforce integration
 - Week 35-36: Callback handler
@@ -2324,6 +2364,7 @@ global class PrometheionAuditAPI {
 ### Phase 3: Strategic Features (Months 6-8)
 
 **Priority: Partner Edition & Audit Authority**
+
 - Week 39-40: Multi-tenant architecture
 - Week 41-42: White-labeling
 - Week 43-44: Partner portal
@@ -2337,6 +2378,7 @@ global class PrometheionAuditAPI {
 ### Risk 1: Governor Limits on Large Orgs
 
 **Mitigation:**
+
 - Implement off-platform compute (AWS Lambda)
 - Use Platform Cache aggressively
 - Batch processing for large datasets
@@ -2345,6 +2387,7 @@ global class PrometheionAuditAPI {
 ### Risk 2: Event Monitoring API Rate Limits
 
 **Mitigation:**
+
 - Implement exponential backoff
 - Cache event log queries
 - Batch event processing
@@ -2353,6 +2396,7 @@ global class PrometheionAuditAPI {
 ### Risk 3: Claude API Costs
 
 **Mitigation:**
+
 - Cache AI responses in Platform Cache
 - Use Sonnet for simple queries, Opus only for deep analysis
 - Batch multiple queries into single API call
@@ -2361,6 +2405,7 @@ global class PrometheionAuditAPI {
 ### Risk 4: Data Privacy (Multi-Tenant)
 
 **Mitigation:**
+
 - Enforce tenant isolation at database level
 - Use `WITH SECURITY_ENFORCED` on all queries
 - Encrypt sensitive data (Shield Platform Encryption)
@@ -2369,6 +2414,7 @@ global class PrometheionAuditAPI {
 ### Risk 5: Rollback Complexity
 
 **Mitigation:**
+
 - Start with read-only drift detection
 - Implement rollback for simple changes first (permission sets)
 - Use Metadata API for complex rollbacks
@@ -2407,6 +2453,7 @@ This technical deep-dive identifies the critical gaps between Prometheion's curr
 Implementing these features will transform Prometheion from a compliance scoring tool into a comprehensive compliance platform that differentiates through architectural defensibility and automation.
 
 **Next Steps:**
+
 1. Review and prioritize gaps with stakeholders
 2. Create detailed user stories for Phase 1
 3. Set up development environment (AWS, Salesforce DX)
@@ -2417,9 +2464,9 @@ Implementing these features will transform Prometheion from a compliance scoring
 ## Appendix: Code Examples Repository
 
 All code examples in this document are available in:
+
 - `force-app/main/default/classes/PrometheionEventIntelligence/`
 - `force-app/main/default/classes/PrometheionDriftGuard/`
 - `force-app/main/default/classes/PrometheionEvidenceEngine/`
 - `force-app/main/default/classes/PrometheionOffPlatform/`
 - `aws-lambda/prometheion-analyzer/`
-

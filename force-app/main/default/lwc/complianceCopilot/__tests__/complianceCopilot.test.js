@@ -289,15 +289,15 @@ describe("c-compliance-copilot", () => {
     );
 
     expect(quickCommandButtons.length).toBeGreaterThan(0);
-    
+
     // Get command from mock data (workaround for dataset issue in Jest)
     const command = MOCK_QUICK_COMMANDS[0].command;
-    
+
     // Set query directly on component and trigger submit
     element.query = command;
     await Promise.resolve();
     await flushPromises();
-    
+
     const buttons = element.shadowRoot.querySelectorAll("lightning-button");
     const sendButton = Array.from(buttons).find(
       (btn) => btn.label === "Send" || btn.getAttribute("label") === "Send"
@@ -331,7 +331,7 @@ describe("c-compliance-copilot", () => {
     element.query = command;
     await Promise.resolve();
     await flushPromises();
-    
+
     const buttons = element.shadowRoot.querySelectorAll("lightning-button");
     const sendButton = Array.from(buttons).find(
       (btn) => btn.label === "Send" || btn.getAttribute("label") === "Send"

@@ -28,6 +28,7 @@ export default class FlowExecutionMonitor extends LightningElement {
   async load() {
     try {
       this.rows = await getTopFlows({ limitSize: 20 });
+      // eslint-disable-next-line no-unused-vars
     } catch (_e) {
       // Set empty array to prevent UI errors
       this.rows = [];

@@ -90,10 +90,7 @@ export function safeCleanupDom() {
     } catch (e) {
       // Ignore wire adapter disconnect errors - these happen when
       // the component is removed from DOM while wire adapters are still connected
-      if (
-        e.message &&
-        (e.message.includes("disconnect") || e.message.includes("connect"))
-      ) {
+      if (e.message && (e.message.includes("disconnect") || e.message.includes("connect"))) {
         // Force remove the child
         try {
           document.body.firstChild.remove();

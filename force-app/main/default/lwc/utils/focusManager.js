@@ -35,17 +35,13 @@ const FOCUSABLE_SELECTORS = [
 export function getFocusableElements(container) {
   if (!container) return [];
 
-  return Array.from(container.querySelectorAll(FOCUSABLE_SELECTORS)).filter(
-    (element) => {
-      // Verify element is visible
-      const style = window.getComputedStyle(element);
-      return (
-        style.display !== "none" &&
-        style.visibility !== "hidden" &&
-        element.offsetParent !== null
-      );
-    }
-  );
+  return Array.from(container.querySelectorAll(FOCUSABLE_SELECTORS)).filter((element) => {
+    // Verify element is visible
+    const style = window.getComputedStyle(element);
+    return (
+      style.display !== "none" && style.visibility !== "hidden" && element.offsetParent !== null
+    );
+  });
 }
 
 /**
