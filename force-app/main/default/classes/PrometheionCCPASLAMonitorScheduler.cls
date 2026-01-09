@@ -8,35 +8,28 @@
  * System.schedule('CCPA SLA Monitor', '0 0 8 * * ?', new CCPASLAMonitorScheduler());
  *
  * @author Prometheion
- * @version 1.1
+ * @version 1.0
  */
 public with sharing class PrometheionCCPASLAMonitorScheduler implements Schedulable {
 
     private static final Integer WARNING_THRESHOLD_DAYS = 7;
     private static final Integer CRITICAL_THRESHOLD_DAYS = 3;
-    private static final String SCHEDULER_NAME = 'PrometheionCCPASLAMonitorScheduler';
 
     /**
      * Execute the scheduled job
      * @param sc - SchedulableContext
      */
     public void execute(SchedulableContext sc) {
-        Savepoint sp = SchedulerErrorHandler.setSavepoint();
-        
+        Savepoint sp = Database.setSavepoint();
         try {
             checkApproachingDeadlines();
             markOverdueRequests();
             generateDailyReport();
-            
-            // Log successful execution
-            SchedulerErrorHandler.logSuccess(SCHEDULER_NAME, 'CCPA SLA monitoring completed successfully');
-            
+            SchedulerErrorHandler.logSuccess('PrometheionCCPASLAMonitorScheduler', 'CCPA SLA Monitor completed successfully');
         } catch (Exception e) {
-            // Rollback all changes on error
-            SchedulerErrorHandler.rollbackAndLog(sp, SCHEDULER_NAME, e.getMessage());
-            
-            // Notify admins of failure
-            SchedulerErrorHandler.notifyOnFailure(SCHEDULER_NAME, e.getMessage(), e.getStackTraceString());
+            Database.rollback(sp);
+            SchedulerErrorHandler.logError('PrometheionCCPASLAMonitorScheduler', e);
+            SchedulerErrorHandler.notifyOnFailure('PrometheionCCPASLAMonitorScheduler', e);
         }
     }
 
@@ -101,18 +94,20 @@ public with sharing class PrometheionCCPASLAMonitorScheduler implements Schedula
             request.Status__c = 'Overdue';
         }
 
-        // Use SaveResult handling for graceful error management
         List<Database.SaveResult> results = Database.update(overdueRequests, false);
-        Integer failures = SchedulerErrorHandler.handleSaveResults(results, SCHEDULER_NAME, 'UPDATE');
-        
-        Integer successCount = overdueRequests.size() - failures;
+        for (Database.SaveResult sr : results) {
+            if (!sr.isSuccess()) {
+                for (Database.Error err : sr.getErrors()) {
+                    System.debug(LoggingLevel.ERROR, '[CCPASLAMonitorScheduler] Update failed: ' + err.getMessage());
+                }
+            }
+        }
+
         System.debug(LoggingLevel.WARN,
-            '[' + SCHEDULER_NAME + '] Marked ' + successCount + ' requests as overdue (' + failures + ' failures)');
+            '[CCPASLAMonitorScheduler] Marked ' + overdueRequests.size() + ' requests as overdue');
 
         // Send overdue notification to compliance team
-        if (successCount > 0) {
-            sendOverdueNotification(overdueRequests);
-        }
+        sendOverdueNotification(overdueRequests);
     }
 
     /**
@@ -139,7 +134,7 @@ public with sharing class PrometheionCCPASLAMonitorScheduler implements Schedula
             0 : (Decimal)avgResults[0].get('avgDays');
 
         System.debug(LoggingLevel.INFO,
-            '[' + SCHEDULER_NAME + '] Daily Report - ' +
+            '[CCPASLAMonitorScheduler] Daily Report - ' +
             'Pending: ' + pending + ', ' +
             'In Progress: ' + inProgress + ', ' +
             'Completed Today: ' + completed + ', ' +
@@ -155,7 +150,7 @@ public with sharing class PrometheionCCPASLAMonitorScheduler implements Schedula
         for (CCPA_Request__c request : requests) {
             Integer daysRemaining = Date.today().daysBetween(request.Response_Deadline__c);
             System.debug(LoggingLevel.ERROR,
-                '[' + SCHEDULER_NAME + '] CRITICAL: Request ' + request.Name +
+                '[CCPASLAMonitorScheduler] CRITICAL: Request ' + request.Name +
                 ' due in ' + daysRemaining + ' days');
         }
         // In production, would send email/Slack/Teams notification
@@ -169,7 +164,7 @@ public with sharing class PrometheionCCPASLAMonitorScheduler implements Schedula
         for (CCPA_Request__c request : requests) {
             Integer daysRemaining = Date.today().daysBetween(request.Response_Deadline__c);
             System.debug(LoggingLevel.WARN,
-                '[' + SCHEDULER_NAME + '] WARNING: Request ' + request.Name +
+                '[CCPASLAMonitorScheduler] WARNING: Request ' + request.Name +
                 ' due in ' + daysRemaining + ' days');
         }
     }
@@ -180,7 +175,7 @@ public with sharing class PrometheionCCPASLAMonitorScheduler implements Schedula
      */
     private void sendOverdueNotification(List<CCPA_Request__c> requests) {
         System.debug(LoggingLevel.ERROR,
-            '[' + SCHEDULER_NAME + '] ALERT: ' + requests.size() +
+            '[CCPASLAMonitorScheduler] ALERT: ' + requests.size() +
             ' CCPA requests are now OVERDUE. Immediate action required.');
     }
 

@@ -3,5 +3,13 @@ import { jestConfig } from "@salesforce/sfdx-lwc-jest/config.js";
 export default {
   ...jestConfig,
   modulePathIgnorePatterns: ["<rootDir>/.localdevserver"],
-  testPathIgnorePatterns: ["<rootDir>/node_modules/"],
+  testPathIgnorePatterns: [
+    "<rootDir>/node_modules/",
+    "<rootDir>/force-app/main/default/lwc/__tests__/setupTests.js",
+    "<rootDir>/force-app/main/default/lwc/__tests__/axeTestHelper.js",
+    "<rootDir>/force-app/main/default/lwc/__tests__/a11yTestUtils.js",
+  ],
+  setupFilesAfterEnv: [
+    "<rootDir>/force-app/main/default/lwc/__tests__/setupTests.js",
+  ],
 };

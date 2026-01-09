@@ -8,62 +8,70 @@
  * System.schedule('GLBA Annual Notice Check', '0 0 6 * * ?', new GLBAAnnualNoticeScheduler());
  *
  * @author Prometheion
- * @version 1.1
+ * @version 1.0
  */
 public with sharing class PrometheionGLBAAnnualNoticeScheduler implements Schedulable {
-
-    private static final String SCHEDULER_NAME = 'PrometheionGLBAAnnualNoticeScheduler';
-    private static final Integer DEFAULT_BATCH_SIZE = 200;
 
     /**
      * Execute the scheduled job
      * @param sc - SchedulableContext
      */
     public void execute(SchedulableContext sc) {
-        System.debug(LoggingLevel.INFO, '[' + SCHEDULER_NAME + '] Starting execution');
-        
+        System.debug(LoggingLevel.INFO, 'GLBA Annual Notice Scheduler started');
+
         try {
-            // Check if it's a business day
-            if (!SchedulerErrorHandler.isBusinessDay()) {
-                System.debug(LoggingLevel.INFO, '[' + SCHEDULER_NAME + '] Skipping - not a business day');
+            // Check if today is a business day
+            if (!isBusinessDay()) {
+                System.debug(LoggingLevel.INFO, 'Skipping - not a business day');
                 return;
             }
+
+            // Get batch size from Custom Metadata, default to 200
+            Integer batchSize = 200;
+            try {
+                Prometheion_Scheduler_Config__mdt config = Prometheion_Scheduler_Config__mdt.getInstance('GLBAAnnualNotice');
+                if (config != null && config.Batch_Size__c != null) {
+                    batchSize = config.Batch_Size__c.intValue();
+                }
+            } catch (Exception e) {
+                System.debug(LoggingLevel.WARN, 'Could not load Custom Metadata, using default batch size: ' + e.getMessage());
+            }
             
-            // Queue the batch job to send annual notices
-            Integer batchSize = getBatchSize();
             Id batchId = Database.executeBatch(new PrometheionGLBAAnnualNoticeBatch(), batchSize);
-            
-            System.debug(LoggingLevel.INFO, '[' + SCHEDULER_NAME + '] Batch job queued with ID: ' + batchId);
-            
+            System.debug(LoggingLevel.INFO, 'Batch job queued with ID: ' + batchId);
+
             // Log successful scheduling
-            SchedulerErrorHandler.logSuccess(SCHEDULER_NAME, 'GLBA batch scheduled successfully. BatchId: ' + batchId);
-            
+            SchedulerErrorHandler.logSuccess('PrometheionGLBAAnnualNoticeScheduler', 'GLBA batch scheduled successfully. BatchId: ' + batchId);
+
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, '[' + SCHEDULER_NAME + '] Failed: ' + e.getMessage());
-            System.debug(LoggingLevel.ERROR, '[' + SCHEDULER_NAME + '] Stack trace: ' + e.getStackTraceString());
-            
-            // Log the error
-            SchedulerErrorHandler.logError(SCHEDULER_NAME, e);
-            
-            // Notify admins of failure
-            SchedulerErrorHandler.notifyOnFailure(SCHEDULER_NAME, e.getMessage(), e.getStackTraceString());
+            System.debug(LoggingLevel.ERROR, 'GLBA Scheduler failed: ' + e.getMessage());
+            System.debug(LoggingLevel.ERROR, 'Stack trace: ' + e.getStackTraceString());
+
+            SchedulerErrorHandler.logError('PrometheionGLBAAnnualNoticeScheduler', e);
+            SchedulerErrorHandler.notifyOnFailure('PrometheionGLBAAnnualNoticeScheduler', e);
         }
     }
 
     /**
-     * Get batch size from Custom Metadata or use default
-     * @return Batch size
+     * Check if today is a business day (Mon-Fri)
+     * @return true if business day
      */
-    private Integer getBatchSize() {
-        try {
-            Prometheion_Scheduler_Config__mdt config = Prometheion_Scheduler_Config__mdt.getInstance('GLBAAnnualNotice');
-            if (config != null && config.Batch_Size__c != null) {
-                return config.Batch_Size__c.intValue();
-            }
-        } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, '[' + SCHEDULER_NAME + '] Could not load config: ' + e.getMessage());
-        }
-        return DEFAULT_BATCH_SIZE;
+    private Boolean isBusinessDay() {
+        Date today = Date.today();
+        DateTime dt = DateTime.newInstance(today, Time.newInstance(0, 0, 0, 0));
+        String dayOfWeek = dt.format('EEEE');
+        return dayOfWeek != 'Saturday' && dayOfWeek != 'Sunday';
+    }
+
+    /**
+     * Check if a specific date is a business day
+     * @param checkDate Date to check
+     * @return true if business day
+     */
+    private Boolean isBusinessDay(Date checkDate) {
+        DateTime dt = DateTime.newInstance(checkDate, Time.newInstance(0, 0, 0, 0));
+        String dayOfWeek = dt.format('EEEE');
+        return dayOfWeek != 'Saturday' && dayOfWeek != 'Sunday';
     }
 
     /**

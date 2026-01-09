@@ -14,11 +14,23 @@
     transition: all 0.2s ease;
     border: 2px solid transparent;
     min-height: 150px;
+    width: 100%;
+    background: white;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
 }
 
-.framework-card:hover {
+.framework-card:hover,
+.framework-card:focus {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
+    outline: none;
+}
+
+.framework-card:focus-visible {
+    outline: 2px solid #0176d3;
+    outline-offset: 2px;
 }
 
 .framework-card.selected {

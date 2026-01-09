@@ -72,28 +72,28 @@
             </div>
 
             <!-- Statistics Cards -->
-            <div class="slds-grid slds-gutters slds-wrap slds-var-m-bottom_medium">
+            <div class="slds-grid slds-gutters slds-wrap slds-var-m-bottom_medium" role="region" aria-label="Event statistics" aria-live="polite" aria-atomic="true">
                 <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
-                    <div class="stat-card total">
-                        <div class="stat-value">{totalEvents}</div>
+                    <div class="stat-card total" role="status" aria-label={totalEventsAriaLabel}>
+                        <div class="stat-value" aria-hidden="true">{totalEvents}</div>
                         <div class="stat-label">Total Events</div>
                     </div>
                 </div>
                 <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
-                    <div class="stat-card critical">
-                        <div class="stat-value">{criticalCount}</div>
+                    <div class="stat-card critical" role="status" aria-label={criticalAriaLabel}>
+                        <div class="stat-value" aria-hidden="true">{criticalCount}</div>
                         <div class="stat-label">Critical</div>
                     </div>
                 </div>
                 <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
-                    <div class="stat-card high">
-                        <div class="stat-value">{highRiskCount}</div>
+                    <div class="stat-card high" role="status" aria-label={highRiskAriaLabel}>
+                        <div class="stat-value" aria-hidden="true">{highRiskCount}</div>
                         <div class="stat-label">High Risk</div>
                     </div>
                 </div>
                 <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
-                    <div class="stat-card medium">
-                        <div class="stat-value">{mediumRiskCount}</div>
+                    <div class="stat-card medium" role="status" aria-label={mediumRiskAriaLabel}>
+                        <div class="stat-value" aria-hidden="true">{mediumRiskCount}</div>
                         <div class="stat-label">Medium Risk</div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                 </template>
 
                 <template if:false={hasEvents}>
-                    <div class="slds-illustration slds-illustration_small">
+                    <div class="slds-illustration slds-illustration_small" role="status" aria-live="polite">
                         <div class="slds-text-align_center">
                             <p class="slds-text-body_regular slds-text-color_weak">
                                 No events found matching your criteria.
@@ -134,17 +134,31 @@
 
     <!-- Event Detail Modal -->
     <template if:true={showModal}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <section
+            role="dialog"
+            tabindex="-1"
+            class="slds-modal slds-fade-in-open"
+            aria-modal="true"
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            onkeydown={handleModalKeydown}
+        >
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
-                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal}>
-                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    <button
+                        class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        onclick={closeModal}
+                        aria-label="Close event details modal"
+                        title="Close"
+                        type="button"
+                    >
+                        <lightning-icon icon-name="utility:close" size="small" alternative-text="Close"></lightning-icon>
                     </button>
-                    <h2 class="slds-modal__title">Event Details</h2>
+                    <h2 id="modal-heading" class="slds-modal__title">Event Details</h2>
                 </header>
-                <div class="slds-modal__content slds-var-p-around_medium">
+                <div id="modal-content" class="slds-modal__content slds-var-p-around_medium">
                     <template if:true={selectedEvent}>
-                        <dl class="slds-dl_horizontal">
+                        <dl class="slds-dl_horizontal" role="list" aria-label="Event details">
                             <dt class="slds-dl_horizontal__label">Event ID:</dt>
                             <dd class="slds-dl_horizontal__detail">{selectedEvent.id}</dd>
                             
@@ -179,6 +193,13 @@
                 </footer>
             </div>
         </section>
-        <div class="slds-backdrop slds-backdrop_open"></div>
+        <div
+            class="slds-backdrop slds-backdrop_open"
+            onclick={closeModal}
+            onkeydown={handleBackdropKeydown}
+            tabindex="-1"
+            role="presentation"
+            aria-hidden="true"
+        ></div>
     </template>
 </template>

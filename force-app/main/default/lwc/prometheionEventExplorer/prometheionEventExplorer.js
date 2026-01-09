@@ -107,12 +107,31 @@ export default class PrometheionEventExplorer extends LightningElement {
         return this.filteredEvents && this.filteredEvents.length > 0;
     }
 
+    get totalEventsAriaLabel() {
+        return `Total events: ${this.totalEvents}`;
+    }
+
+    get criticalAriaLabel() {
+        return `Critical events: ${this.criticalCount}`;
+    }
+
+    get highRiskAriaLabel() {
+        return `High risk events: ${this.highRiskCount}`;
+    }
+
+    get mediumRiskAriaLabel() {
+        return `Medium risk events: ${this.mediumRiskCount}`;
+    }
+
+    // Store the element that opened the modal for focus restoration
+    _previousActiveElement = null;
+
     @wire(getEventRiskLevels)
     wiredRiskLevels({ error, data }) {
         if (data) {
             this.eventRiskLevels = data;
         } else if (error) {
-            console.error('Error loading risk levels:', error);
+            // Risk levels failed to load, will use defaults
         }
     }
 
@@ -304,14 +323,58 @@ export default class PrometheionEventExplorer extends LightningElement {
         
         switch (action.name) {
             case 'view':
+                this._previousActiveElement = document.activeElement;
                 this.selectedEvent = row;
                 this.showModal = true;
+                // Focus the modal after it renders
+                setTimeout(() => {
+                    this.focusModalCloseButton();
+                }, 100);
                 break;
             case 'analyze':
                 this.handleAnalyzeEvent(row);
                 break;
             default:
                 break;
+        }
+    }
+
+    focusModalCloseButton() {
+        const closeButton = this.template.querySelector('.slds-modal__close');
+        if (closeButton) {
+            closeButton.focus();
+        }
+    }
+
+    handleBackdropKeydown(event) {
+        if (event.key === 'Escape') {
+            this.closeModal();
+        }
+    }
+
+    handleModalKeydown(event) {
+        if (event.key === 'Escape') {
+            this.closeModal();
+        }
+        
+        // Trap focus within modal
+        if (event.key === 'Tab') {
+            const modal = this.template.querySelector('.slds-modal');
+            if (!modal) return;
+            
+            const focusableElements = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), lightning-button, lightning-input'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            if (event.shiftKey && document.activeElement === firstElement) {
+                event.preventDefault();
+                lastElement.focus();
+            } else if (!event.shiftKey && document.activeElement === lastElement) {
+                event.preventDefault();
+                firstElement.focus();
+            }
         }
     }
 
@@ -377,6 +440,14 @@ export default class PrometheionEventExplorer extends LightningElement {
     closeModal() {
         this.showModal = false;
         this.selectedEvent = null;
+        
+        // Restore focus to the element that opened the modal
+        if (this._previousActiveElement) {
+            setTimeout(() => {
+                this._previousActiveElement.focus();
+                this._previousActiveElement = null;
+            }, 0);
+        }
     }
 
     showToast(title, message, variant) {
