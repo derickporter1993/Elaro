@@ -37,6 +37,12 @@ public with sharing class PrometheionGDPRDataErasureService {
         Contact subject = contacts[0];
         String subjectEmail = subject.Email;
 
+        // Validate first
+        ValidationResult validation = validateForErasure(contactId);
+        if (!validation.canErase) {
+            throw new GDPRException('Erasure blocked: ' + String.join(validation.blockers, ', '));
+        }
+
         // Create audit log BEFORE deletion (survives record deletion)
         GDPR_Erasure_Request__c auditLog = new GDPR_Erasure_Request__c(
             Contact_Email__c = subjectEmail,
@@ -48,10 +54,9 @@ public with sharing class PrometheionGDPRDataErasureService {
         );
         Database.insert(auditLog, AccessLevel.USER_MODE);
 
-        // Create savepoint for transaction rollback on any failure
+        // Add savepoint for rollback
         Savepoint sp = Database.setSavepoint();
-        Integer totalDeleted = 0;
-        
+
         // Cascade delete related records
         try {
             // Delete Cases
@@ -62,7 +67,6 @@ public with sharing class PrometheionGDPRDataErasureService {
             ];
             if (!cases.isEmpty()) {
                 Database.delete(cases, AccessLevel.USER_MODE);
-                totalDeleted += cases.size();
             }
 
             // Delete Tasks
@@ -73,7 +77,6 @@ public with sharing class PrometheionGDPRDataErasureService {
             ];
             if (!tasks.isEmpty()) {
                 Database.delete(tasks, AccessLevel.USER_MODE);
-                totalDeleted += tasks.size();
             }
 
             // Delete Events
@@ -84,7 +87,6 @@ public with sharing class PrometheionGDPRDataErasureService {
             ];
             if (!events.isEmpty()) {
                 Database.delete(events, AccessLevel.USER_MODE);
-                totalDeleted += events.size();
             }
 
             // Delete ContentDocumentLinks (files)
@@ -95,7 +97,6 @@ public with sharing class PrometheionGDPRDataErasureService {
             ];
             if (!docLinks.isEmpty()) {
                 Database.delete(docLinks, AccessLevel.USER_MODE);
-                totalDeleted += docLinks.size();
             }
 
             // Delete Consents
@@ -106,17 +107,16 @@ public with sharing class PrometheionGDPRDataErasureService {
             ];
             if (!consents.isEmpty()) {
                 Database.delete(consents, AccessLevel.USER_MODE);
-                totalDeleted += consents.size();
             }
 
             // Finally, delete the Contact
             Database.delete(subject, AccessLevel.USER_MODE);
-            totalDeleted += 1;
 
             // Update audit log to completed
             auditLog.Status__c = 'Completed';
             auditLog.Completion_Date__c = System.now();
-            auditLog.Records_Deleted__c = totalDeleted;
+            auditLog.Records_Deleted__c = 1 + cases.size() + tasks.size() +
+                events.size() + docLinks.size() + consents.size();
             Database.update(auditLog, AccessLevel.USER_MODE);
 
             // Publish Platform Event (immutable audit trail)
@@ -124,30 +124,34 @@ public with sharing class PrometheionGDPRDataErasureService {
                 Contact_Email__c = subjectEmail,
                 Deletion_Date__c = System.now(),
                 Audit_Log_Id__c = auditLog.Id,
-                Records_Deleted__c = String.valueOf(totalDeleted)
+                Records_Deleted__c = String.valueOf(auditLog.Records_Deleted__c)
             ));
 
             return new ErasureResult(true, auditLog.Id, 'Data successfully erased');
 
         } catch (Exception e) {
-            // Rollback ALL changes on any failure to ensure data consistency
+            // Rollback all changes
             Database.rollback(sp);
-            
-            // Log the error for auditing
-            SchedulerErrorHandler.logError('PrometheionGDPRDataErasureService', e, 
-                JSON.serialize(new Map<String, Object>{
-                    'contactId' => contactId,
-                    'contactEmail' => subjectEmail,
-                    'auditLogId' => auditLog.Id,
-                    'recordsDeletedBeforeFailure' => totalDeleted
-                }));
-            
-            // Update audit log to failed (this is a new transaction after rollback)
+
+            // Log error
+            insert new Integration_Error__c(
+                Error_Type__c = 'GDPR_ERASURE_FAILURE',
+                Error_Message__c = e.getMessage() != null ? e.getMessage().left(255) : 'Unknown error',
+                Stack_Trace__c = e.getStackTraceString() != null ? e.getStackTraceString().left(32000) : '',
+                Context__c = 'ContactId: ' + contactId,
+                Timestamp__c = System.now()
+            );
+
+            // Update audit log to failed
             auditLog.Status__c = 'Failed';
-            auditLog.Error_Message__c = e.getMessage().left(255);
-            Database.update(auditLog, AccessLevel.USER_MODE);
-            
-            throw new GDPRException('Erasure failed: ' + e.getMessage());
+            auditLog.Error_Message__c = e.getMessage();
+            try {
+                Database.update(auditLog, AccessLevel.USER_MODE);
+            } catch (Exception updateError) {
+                System.debug(LoggingLevel.ERROR, 'Failed to update audit log: ' + updateError.getMessage());
+            }
+
+            throw new GDPRException('Failed to complete erasure: ' + e.getMessage(), e);
         }
     }
 

@@ -85,6 +85,29 @@ export default class ControlMappingMatrix extends LightningElement {
         return FRAMEWORK_OPTIONS.filter(f => f.value !== this.sourceFramework);
     }
 
+    get tableAriaLabel() {
+        return `Control mapping matrix from ${this.sourceFramework} to ${this.targetFrameworks.join(', ')}`;
+    }
+
+    get totalControlsAriaLabel() {
+        return `Total controls: ${this.totalControls}`;
+    }
+
+    get directMappingsAriaLabel() {
+        return `Direct mappings: ${this.directMappings}`;
+    }
+
+    get partialMappingsAriaLabel() {
+        return `Partial mappings: ${this.partialMappings}`;
+    }
+
+    get unmappedAriaLabel() {
+        return `Gaps: ${this.unmappedControls}`;
+    }
+
+    // Store element that triggered modal for focus restoration
+    _previousActiveElement = null;
+
     connectedCallback() {
         this.loadMappings();
     }
@@ -129,6 +152,7 @@ export default class ControlMappingMatrix extends LightningElement {
                         gapCount++;
                     }
 
+                    const typeLabel = mapping?.type === 'direct' ? 'Direct' : mapping?.type === 'partial' ? 'Partial' : 'None';
                     return {
                         framework: framework,
                         hasMapping: !!mapping,
@@ -136,7 +160,9 @@ export default class ControlMappingMatrix extends LightningElement {
                         type: mapping?.type || 'none',
                         confidence: mapping?.confidence || 0,
                         icon: this.getMappingIcon(mapping?.type),
-                        cellClass: 'mapping-cell ' + (mapping?.type || 'none')
+                        cellClass: 'mapping-cell ' + (mapping?.type || 'none'),
+                        ariaLabel: mapping ? `${framework} mapping: ${mapping.code}, ${typeLabel} mapping. Click for details.` : `No ${framework} mapping. Click for details.`,
+                        mappingTypeAlt: typeLabel + ' mapping'
                     };
                 });
 
@@ -153,7 +179,8 @@ export default class ControlMappingMatrix extends LightningElement {
                     controlDescription: control.description,
                     mappings: mappings,
                     coveragePercent: coveragePercent,
-                    coverageVariant: this.getCoverageVariant(coveragePercent)
+                    coverageVariant: this.getCoverageVariant(coveragePercent),
+                    coverageAriaLabel: `Coverage: ${coveragePercent}%`
                 };
             });
 
@@ -189,6 +216,7 @@ export default class ControlMappingMatrix extends LightningElement {
         const mapping = row?.mappings.find(m => m.framework === framework);
 
         if (row && mapping && mapping.hasMapping) {
+            this._previousActiveElement = event.currentTarget;
             const sourceData = CONTROL_MAPPINGS[this.sourceFramework];
             const sourceControl = sourceData.controls.find(c => c.id === rowId);
             const frameworkMappings = sourceData.mappings[framework];
@@ -207,6 +235,56 @@ export default class ControlMappingMatrix extends LightningElement {
             };
 
             this.showMappingModal = true;
+            // Focus modal after it renders
+            setTimeout(() => {
+                this.focusModalCloseButton();
+            }, 100);
+        }
+    }
+
+    handleCellKeydown(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.handleCellClick(event);
+        }
+    }
+
+    focusModalCloseButton() {
+        const closeButton = this.template.querySelector('.slds-modal__close');
+        if (closeButton) {
+            closeButton.focus();
+        }
+    }
+
+    handleBackdropKeydown(event) {
+        if (event.key === 'Escape') {
+            this.closeMappingModal();
+        }
+    }
+
+    handleModalKeydown(event) {
+        if (event.key === 'Escape') {
+            this.closeMappingModal();
+        }
+
+        // Trap focus within modal
+        if (event.key === 'Tab') {
+            const modal = this.template.querySelector('.slds-modal');
+            if (!modal) return;
+
+            const focusableElements = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), lightning-button'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (event.shiftKey && document.activeElement === firstElement) {
+                event.preventDefault();
+                lastElement.focus();
+            } else if (!event.shiftKey && document.activeElement === lastElement) {
+                event.preventDefault();
+                firstElement.focus();
+            }
         }
     }
 
@@ -254,6 +332,14 @@ export default class ControlMappingMatrix extends LightningElement {
     closeMappingModal() {
         this.showMappingModal = false;
         this.selectedMapping = null;
+        
+        // Restore focus to the element that opened the modal
+        if (this._previousActiveElement) {
+            setTimeout(() => {
+                this._previousActiveElement.focus();
+                this._previousActiveElement = null;
+            }, 0);
+        }
     }
 
     handleExport() {

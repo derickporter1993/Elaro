@@ -1,7 +1,8 @@
 import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { NavigationMixin } from 'lightning/navigation';
-import generateAuditPackagePDF from '@salesforce/apex/PrometheionPDFExporter.generateAuditPackagePDF';
+// PDF export will be implemented in future release
+// import generateAuditPackagePDF from '@salesforce/apex/PrometheionPDFExporter.generateAuditPackagePDF';
 
 const FRAMEWORKS = [
     { value: 'HIPAA', label: 'HIPAA', icon: 'custom:custom50', description: 'Health Insurance Portability and Accountability Act' },
@@ -42,8 +43,14 @@ export default class PrometheionAuditWizard extends NavigationMixin(LightningEle
         return FRAMEWORKS.map(f => ({
             ...f,
             cardClass: 'framework-card slds-box slds-var-p-around_medium slds-text-align_center' + 
-                (f.value === this.selectedFramework ? ' selected' : '')
+                (f.value === this.selectedFramework ? ' selected' : ''),
+            isSelected: f.value === this.selectedFramework ? 'true' : 'false',
+            ariaLabel: `${f.label}: ${f.description}${f.value === this.selectedFramework ? ' (selected)' : ''}`
         }));
+    }
+
+    get progressAriaLabel() {
+        return `Generation progress: ${this.generationProgress}%`;
     }
 
     get isStep1() { return this.currentStep === '1'; }
@@ -98,6 +105,13 @@ export default class PrometheionAuditWizard extends NavigationMixin(LightningEle
         this.loadControlsForFramework();
     }
 
+    handleFrameworkKeydown(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.handleFrameworkSelect(event);
+        }
+    }
+
     loadControlsForFramework() {
         // Load controls based on selected framework
         const controlsByFramework = {
@@ -132,7 +146,9 @@ export default class PrometheionAuditWizard extends NavigationMixin(LightningEle
 
         this.controls = (controlsByFramework[this.selectedFramework] || []).map(c => ({
             ...c,
-            statusClass: c.status === 'Compliant' ? 'slds-text-color_success' : 'slds-text-color_error'
+            statusClass: c.status === 'Compliant' ? 'slds-text-color_success' : 'slds-text-color_error',
+            statusAriaLabel: `Status: ${c.status}`,
+            codeAriaLabel: `Control code: ${c.code}`
         }));
 
         this.packageName = this.selectedFrameworkLabel + ' Audit Package - ' + 

@@ -304,60 +304,53 @@ public with sharing class PrometheionISO27001AccessReviewService {
 
     /**
      * Get compliance dashboard metrics
-     * Optimized to reduce SOQL queries by combining counts where possible
      * @return Map of metric name to value
      */
     @AuraEnabled(cacheable=true)
     public static Map<String, Object> getComplianceMetrics() {
         Map<String, Object> metrics = new Map<String, Object>();
 
-        // Combine Access_Review counts using GROUP BY to reduce from 4 queries to 2
-        // Query 1: Get reviews this quarter count
-        metrics.put('reviewsThisQuarter', [
+        // Optimized: Use separate queries (SOQL doesn't support CASE WHEN)
+        // Total reviews due
+        Integer total = [
+            SELECT COUNT()
+            FROM Access_Review__c
+            WHERE Due_Date__c < TODAY
+            WITH USER_MODE
+        ];
+
+        // Completed reviews
+        Integer completed = [
+            SELECT COUNT()
+            FROM Access_Review__c
+            WHERE Due_Date__c < TODAY
+            AND Review_Status__c IN ('Approved', 'Revoked', 'Modified')
+            WITH USER_MODE
+        ];
+
+        // Overdue reviews
+        Integer overdue = [
+            SELECT COUNT()
+            FROM Access_Review__c
+            WHERE Due_Date__c < TODAY
+            AND Review_Status__c IN ('Pending', 'In Progress')
+            WITH USER_MODE
+        ];
+
+        // Reviews this quarter
+        Integer thisQuarter = [
             SELECT COUNT()
             FROM Access_Review__c
             WHERE CreatedDate = THIS_QUARTER
             WITH USER_MODE
-        ]);
+        ];
 
-        // Query 2: Get counts by status for past-due reviews (combines total, completed, overdue)
-        Map<String, Integer> statusCounts = new Map<String, Integer>();
-        Integer totalPastDue = 0;
-        
-        for (AggregateResult ar : [
-            SELECT Review_Status__c status, COUNT(Id) cnt
-            FROM Access_Review__c
-            WHERE Due_Date__c < TODAY
-            WITH USER_MODE
-            GROUP BY Review_Status__c
-        ]) {
-            String status = (String)ar.get('status');
-            Integer count = (Integer)ar.get('cnt');
-            statusCounts.put(status, count);
-            totalPastDue += count;
-        }
-
-        // Calculate completed (Approved, Revoked, Modified)
-        Integer completed = 0;
-        for (String status : new String[]{'Approved', 'Revoked', 'Modified'}) {
-            if (statusCounts.containsKey(status)) {
-                completed += statusCounts.get(status);
-            }
-        }
-
-        // Calculate overdue (Pending, In Progress)
-        Integer overdue = 0;
-        for (String status : new String[]{'Pending', 'In Progress'}) {
-            if (statusCounts.containsKey(status)) {
-                overdue += statusCounts.get(status);
-            }
-        }
-
-        metrics.put('completionRate', totalPastDue > 0 ?
-            (Decimal.valueOf(completed) / totalPastDue * 100).setScale(2) : 100);
+        metrics.put('reviewsThisQuarter', thisQuarter);
         metrics.put('overdueCount', overdue);
+        metrics.put('completionRate', total > 0 ?
+            (Decimal.valueOf(completed) / total * 100).setScale(2) : 100);
 
-        // Query 3: Get privileged user IDs
+        // Privileged users count
         Set<Id> privUserIds = new Set<Id>();
         for (PermissionSetAssignment psa : [
             SELECT AssigneeId FROM PermissionSetAssignment
@@ -366,28 +359,31 @@ public with sharing class PrometheionISO27001AccessReviewService {
         ]) {
             privUserIds.add(psa.AssigneeId);
         }
-        
-        // Query 4: Get user counts (privileged + dormant) in single query with aggregate
+
+        // Optimized: Use separate queries for User counts (SOQL doesn't support CASE WHEN)
         Date dormantThreshold = Date.today().addDays(-DORMANT_ACCOUNT_DAYS);
         
-        // Count privileged users
-        metrics.put('privilegedUsersCount', [
+        // Privileged users
+        Integer privileged = [
             SELECT COUNT()
             FROM User
             WHERE IsActive = true
             AND (Profile.Name = 'System Administrator' OR Id IN :privUserIds)
             WITH USER_MODE
-        ]);
+        ];
 
-        // Query 5: Count dormant accounts
-        metrics.put('dormantAccountsCount', [
+        // Dormant accounts
+        Integer dormant = [
             SELECT COUNT()
             FROM User
             WHERE IsActive = true
-            AND (LastLoginDate < :dormantThreshold OR LastLoginDate = null)
             AND UserType = 'Standard'
+            AND (LastLoginDate < :dormantThreshold OR LastLoginDate = null)
             WITH USER_MODE
-        ]);
+        ];
+
+        metrics.put('privilegedUsersCount', privileged);
+        metrics.put('dormantAccountsCount', dormant);
 
         return metrics;
     }
