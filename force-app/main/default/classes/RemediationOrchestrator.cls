@@ -218,7 +218,7 @@ public with sharing class RemediationOrchestrator {
     
     private static RemediationResult executeLockUser(String targetId, Map<String, Object> context, RemediationResult result) {
         try {
-            User u = [SELECT Id, IsActive FROM User WHERE Id = :targetId LIMIT 1];
+            User u = [SELECT Id, IsActive FROM User WHERE Id = :targetId WITH USER_MODE LIMIT 1];
             u.IsActive = false;
             update u;
             
@@ -234,7 +234,7 @@ public with sharing class RemediationOrchestrator {
     
     private static RemediationResult executeNotifyManager(String targetId, Map<String, Object> context, RemediationResult result) {
         try {
-            User u = [SELECT Id, Name, Email, ManagerId, Manager.Email, Manager.Name FROM User WHERE Id = :targetId LIMIT 1];
+            User u = [SELECT Id, Name, Email, ManagerId, Manager.Email, Manager.Name FROM User WHERE Id = :targetId WITH USER_MODE LIMIT 1];
             
             if (u.ManagerId != null && String.isNotBlank(u.Manager.Email)) {
                 String eventDescription = (String)context.get('eventDescription');

@@ -138,7 +138,7 @@ public with sharing class SOC2Module implements IComplianceModule {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = 'CC6.1';
         
-        Integer psaCount = [SELECT COUNT() FROM PermissionSetAssignment LIMIT 1000];
+        Integer psaCount = [SELECT COUNT() FROM PermissionSetAssignment WITH USER_MODE LIMIT 1000];
         r.passed = psaCount > 0;
         r.score = r.passed ? 85 : 40;
         r.status = r.passed ? 'COMPLIANT' : 'PARTIAL';
@@ -150,7 +150,7 @@ public with sharing class SOC2Module implements IComplianceModule {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = 'CC7.2';
         
-        Integer auditCount = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:7 LIMIT 1000];
+        Integer auditCount = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:7 WITH USER_MODE LIMIT 1000];
         r.passed = auditCount > 100;
         r.score = Math.min(auditCount / 10, 100);
         r.status = r.passed ? 'COMPLIANT' : 'PARTIAL';
@@ -172,7 +172,7 @@ public with sharing class SOC2Module implements IComplianceModule {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = 'CC8.1';
         
-        Integer deployCount = [SELECT COUNT() FROM SetupAuditTrail WHERE Action LIKE '%deploy%' AND CreatedDate >= LAST_N_DAYS:30 LIMIT 100];
+        Integer deployCount = [SELECT COUNT() FROM SetupAuditTrail WHERE Action LIKE '%deploy%' AND CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE LIMIT 100];
         r.passed = true;
         r.score = 90;
         r.status = 'COMPLIANT';

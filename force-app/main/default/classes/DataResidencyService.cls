@@ -35,7 +35,7 @@ public with sharing class DataResidencyService {
         ResidencyConfig config = new ResidencyConfig();
         
         // Get org instance info
-        Organization org = [SELECT InstanceName, IsSandbox, Country FROM Organization LIMIT 1];
+        Organization org = [SELECT InstanceName, IsSandbox, Country FROM Organization WITH USER_MODE LIMIT 1];
         
         config.orgInstance = org.InstanceName;
         config.isSandbox = org.IsSandbox;
@@ -100,7 +100,7 @@ public with sharing class DataResidencyService {
         summary.primaryRegion = String.valueOf(config.primaryRegion);
         
         // Count records by object
-        summary.totalRecords = [SELECT COUNT() FROM Prometheion_Evidence_Item__c];
+        summary.totalRecords = [SELECT COUNT() FROM Prometheion_Evidence_Item__c WITH USER_MODE];
         
         // In production, this would analyze actual data distribution
         summary.recordsByRegion.put(summary.primaryRegion, summary.totalRecords);
