@@ -144,13 +144,14 @@ public with sharing class MultiOrgManager {
         metrics.avgComplianceScore = (Decimal)currentScore.get('overallScore');
         
         // Count events
-        metrics.totalEvents = [SELECT COUNT() FROM Prometheion_Evidence_Item__c WHERE CreatedDate >= LAST_N_DAYS:30];
+        metrics.totalEvents = [SELECT COUNT() FROM Prometheion_Evidence_Item__c WHERE CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE];
         
         // Get connected org metrics
         List<Prometheion_Connected_Org__c> orgs = [
             SELECT Compliance_Score__c, Event_Count__c, Alert_Count__c
             FROM Prometheion_Connected_Org__c
             WHERE Is_Active__c = true
+            WITH USER_MODE
         ];
         
         Decimal scoreSum = metrics.avgComplianceScore;
@@ -192,7 +193,7 @@ public with sharing class MultiOrgManager {
         status.orgId = UserInfo.getOrganizationId();
         status.name = UserInfo.getOrganizationName();
         status.instanceUrl = URL.getOrgDomainUrl().toExternalForm();
-        status.environmentType = [SELECT IsSandbox FROM Organization LIMIT 1].IsSandbox ? 'Sandbox' : 'Production';
+        status.environmentType = [SELECT IsSandbox FROM Organization WITH USER_MODE LIMIT 1].IsSandbox ? 'Sandbox' : 'Production';
         status.region = 'Current';
         status.connectionStatus = 'Connected';
         status.lastSync = Datetime.now();
@@ -207,6 +208,7 @@ public with sharing class MultiOrgManager {
     private static void testOrgConnection(Id orgRecordId) {
         Prometheion_Connected_Org__c org = [
             SELECT Id, Instance_URL__c FROM Prometheion_Connected_Org__c WHERE Id = :orgRecordId
+            WITH USER_MODE
         ];
         
         try {

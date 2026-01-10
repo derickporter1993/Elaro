@@ -114,20 +114,20 @@ export default class PrometheionReadinessScore extends NavigationMixin(Lightning
         dataSubjectRequests: 0,
         breachesReported: 0,
         consentsRecorded: 0,
-        recommendation: "Ensure all data processing activities are documented in ROPA"
+        recommendation: "Ensure all data processing activities are documented in ROPA",
       },
       CCPA: {
         consumerRequests: 0,
         optOutsProcessed: 0,
         dataSalesIdentified: 0,
-        recommendation: "Maintain accurate data inventory and honor opt-out requests"
+        recommendation: "Maintain accurate data inventory and honor opt-out requests",
       },
       "PCI-DSS": {
         accessReviews: 0,
         securityEvents: 0,
         encryptionValidated: 0,
-        recommendation: "Ensure all cardholder data is encrypted and access is restricted"
-      }
+        recommendation: "Ensure all cardholder data is encrypted and access is restricted",
+      },
     };
 
     const metrics = this.frameworkMetrics[this.selectedFramework];

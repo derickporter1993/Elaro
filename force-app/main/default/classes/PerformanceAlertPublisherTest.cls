@@ -68,4 +68,48 @@ private class PerformanceAlertPublisherTest {
         System.assertEquals(1, alerts.size(), 'Expected one alert to be saved');
         System.assert(alerts[0].Stack__c.length() <= 32768, 'Stack should be truncated');
     }
+    
+    @isTest
+    static void testPublishBulk_MultipleMetrics() {
+        // Test publishing 200+ alerts to verify governor limit handling
+        List<String> metrics = new List<String>{'CPU', 'HEAP', 'SOQL', 'DML'};
+        
+        Test.startTest();
+        for (Integer i = 0; i < 200; i++) {
+            String metric = metrics[Math.mod(i, metrics.size())] + '_BULK';
+            PerformanceAlertPublisher.publish(
+                metric, 
+                Math.mod(i, 100) * 100, 
+                10000, 
+                null, 
+                'Bulk test ' + i
+            );
+        }
+        Test.stopTest();
+        
+        // Verify alerts were saved
+        List<Performance_Alert_History__c> alerts = [
+            SELECT Metric__c FROM Performance_Alert_History__c
+            WHERE Metric__c LIKE '%_BULK'
+        ];
+        System.assertEquals(200, alerts.size(), 'Should save all 200 alerts');
+    }
+    
+    @isTest
+    static void testPublishWithXSSCharacters() {
+        // Test XSS prevention in stack trace
+        String xssStack = '<script>alert("xss")</script><img src=x onerror=alert(1)>';
+        
+        Test.startTest();
+        PerformanceAlertPublisher.publish('XSS_TEST', 1000, 2000, null, xssStack);
+        Test.stopTest();
+        
+        List<Performance_Alert_History__c> alerts = [
+            SELECT Stack__c FROM Performance_Alert_History__c
+            WHERE Metric__c = 'XSS_TEST'
+        ];
+        System.assertEquals(1, alerts.size(), 'Alert should be saved');
+        System.assert(!alerts[0].Stack__c.contains('<script>'), 'XSS should be escaped');
+        System.assert(alerts[0].Stack__c.contains('&lt;script&gt;'), 'HTML should be escaped');
+    }
 }
