@@ -5,6 +5,17 @@
 
 ---
 
+## ⚠️ Task Auditor Instructions
+
+**IMPORTANT:** Before starting work, you MUST:
+1. Read `docs/TASK_AUDITOR.md`
+2. Add your task to the **Active Tasks** table with status `🔄 IN_PROGRESS`
+3. When done, update status to `✅ COMPLETED` and commit the auditor file
+
+This ensures cross-session visibility of all active work.
+
+---
+
 ## Active Branches
 
 | Branch | Purpose | Owner |
