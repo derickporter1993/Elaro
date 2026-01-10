@@ -7,7 +7,7 @@ _Current: v3.0 — Unified Enterprise Platform_
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Salesforce API](https://img.shields.io/badge/Salesforce-v62.0+-blue.svg)](https://developer.salesforce.com)
+[![Salesforce API](https://img.shields.io/badge/Salesforce-v65.0-blue.svg)](https://developer.salesforce.com)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-success.svg)](.github/workflows)
 
 [Quick Start](#quick-start) • [Sample Report](examples/compliance-baseline-report-sample.md) • [Who It's For](#who-its-for) • [Roadmap](#roadmap) • [Permission Intelligence PRD](docs/permission-intelligence-engine-prd.md)
@@ -34,15 +34,15 @@ Prometheion makes your Salesforce org **audit-ready and protected from configura
 
 ### Recent Improvements (January 2026)
 - ✅ **Security**: Integrated PrometheionSecurityUtils across all classes
-- ✅ **Deployment**: 123/123 Apex classes deployed (100% - up from 55%)
+- ✅ **Deployment**: 207/207 Apex classes deployed (100% - up from 55%)
 - ✅ **Git**: Main branch synced, cleaned up abandoned branches
 - ✅ **Tests**: Added critical test coverage for security utilities
 - ✅ **Code Quality**: Removed dead code, fixed all compilation errors
 
 ### Component Status
-- ✅ **100% of LWC components** deployed (25 active)
-- ✅ **100% of custom objects** deployed (with documented workaround)
-- ✅ **100% of Apex classes** deployed (123/123)
+- ✅ **100% of LWC components** deployed (34 active)
+- ✅ **100% of custom objects** deployed (46 objects)
+- ✅ **100% of Apex classes** deployed (207/207)
 - ✅ **100% of UI components** deployed
 - ✅ **All SOQL queries secured** (WITH SECURITY_ENFORCED)
 
