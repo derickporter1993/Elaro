@@ -8,6 +8,11 @@
         onchange={handleFrameworkChange}
       >
       </lightning-combobox>
+      <template if:true={selectedFrameworkDescription}>
+        <div class="slds-var-m-top_small slds-text-body_small slds-text-color_weak">
+          {selectedFrameworkDescription}
+        </div>
+      </template>
     </div>
   </lightning-card>
 </template>

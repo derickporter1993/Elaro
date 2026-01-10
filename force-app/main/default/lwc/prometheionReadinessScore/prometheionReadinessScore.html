@@ -61,10 +61,47 @@
             label="Generate HIPAA Pack"
             variant="neutral"
             onclick={handleGenerateHipaa}
+            class="slds-var-m-right_small"
+          >
+          </lightning-button>
+          <lightning-button
+            label="Generate GDPR Pack"
+            variant="neutral"
+            onclick={handleGenerateGDPR}
+            class="slds-var-m-right_small"
+          >
+          </lightning-button>
+          <lightning-button
+            label="Generate CCPA Pack"
+            variant="neutral"
+            onclick={handleGenerateCCPA}
+            class="slds-var-m-right_small"
+          >
+          </lightning-button>
+          <lightning-button
+            label="Generate PCI-DSS Pack"
+            variant="neutral"
+            onclick={handleGeneratePCI}
           >
           </lightning-button>
         </lightning-button-group>
       </div>
+
+      <template if:true={selectedFramework}>
+        <div class="slds-var-m-top_large slds-border_top">
+          <h3 class="slds-text-heading_small slds-var-m-top_medium">Framework-Specific Metrics</h3>
+          <template if:true={frameworkMetrics}>
+            <div class="slds-grid slds-gutters slds-var-m-top_small">
+              <template for:each={frameworkRecommendations} for:item="recommendation">
+                <div key={recommendation} class="slds-col slds-text-body_small">
+                  <lightning-icon icon-name="utility:info" size="x-small" class="slds-var-m-right_x-small"></lightning-icon>
+                  {recommendation}
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
     </div>
   </lightning-card>
 </template>
