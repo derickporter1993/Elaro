@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Remember to update docs/SESSION_CONTEXT.md if tasks were completed'"
+          }
+        ]
+      }
+    ]
+  }
+}
