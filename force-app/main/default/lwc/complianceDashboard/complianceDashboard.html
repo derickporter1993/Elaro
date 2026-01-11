@@ -1,15 +1,15 @@
 <template>
   <lightning-card title="Compliance Dashboard" icon-name="standard:audit">
     <div class="slds-p-around_medium">
-      <template if:true="{loading}">
+      <template lwc:if={loading}>
         <lightning-spinner alternative-text="Loading"></lightning-spinner>
       </template>
 
-      <template if:true="{error}">
+      <template lwc:if={error}>
         <div class="slds-text-color_error">Error loading dashboard: {error.body.message}</div>
       </template>
 
-      <template if:true="{hasData}">
+      <template lwc:if={hasData}>
         <div class="slds-grid slds-gutters">
           <div class="slds-col slds-size_1-of-1">
             <c-framework-selector frameworks="{frameworks}"></c-framework-selector>

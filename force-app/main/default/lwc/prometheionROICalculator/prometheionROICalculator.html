@@ -79,7 +79,7 @@
       </div>
     </div>
 
-    <template if:true="{showResults}">
+    <template lwc:if={showResults}>
       <div class="roi-results">
         <div class="results-header">
           <h3>Your ROI Analysis</h3>
@@ -122,7 +122,7 @@
         </div>
 
         <div class="roi-summary">
-          <template if:true="{hasPositiveROI}">
+          <template lwc:if={hasPositiveROI}>
             <div class="summary-positive">
               <strong>Prometheion pays for itself in {roiResults.paybackWeeks} weeks</strong>
               <p>You'll save ${formattedNetBenefit} in the first year alone.</p>

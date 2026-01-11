@@ -1,7 +1,7 @@
 <template>
   <lightning-card title="Governor Limits">
     <div class="slds-p-around_medium">
-      <template if:true={stats}>
+      <template lwc:if={stats}>
         <div class="slds-grid slds-wrap slds-gutters">
           <div class="slds-col slds-size_1-of-2">
             <lightning-progress-ring

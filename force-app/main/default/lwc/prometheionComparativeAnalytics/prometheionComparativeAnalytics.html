@@ -70,7 +70,7 @@
       </lightning-button>
 
       <!-- Results Matrix -->
-      <template if:true="{hasResults}">
+      <template lwc:if={hasResults}>
         <div class="slds-m-top_large">
           <h3 class="slds-text-heading_small">Matrix Results</h3>
           <table class="slds-table slds-table_bordered slds-table_cell-buffer">
@@ -98,11 +98,11 @@
         </div>
       </template>
 
-      <template if:true="{isLoading}">
+      <template lwc:if={isLoading}>
         <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
       </template>
 
-      <template if:true="{hasError}">
+      <template lwc:if={hasError}>
         <lightning-alert variant="error" message="{errorMessage}"></lightning-alert>
       </template>
     </div>

@@ -16,7 +16,7 @@
       </lightning-combobox>
 
       <!-- Field Selection -->
-      <template if:true="{fieldsLoaded}">
+      <template lwc:if={fieldsLoaded}>
         <div class="slds-m-top_medium">
           <lightning-dual-listbox
             label="Select Fields"
@@ -37,7 +37,7 @@
       </template>
 
       <!-- Filters Section -->
-      <template if:true="{showFilters}">
+      <template lwc:if={showFilters}>
         <div class="slds-m-top_medium">
           <h3 class="slds-text-heading_small">Filters</h3>
           <template for:each="{filters}" for:item="filter">
@@ -113,7 +113,7 @@
       </template>
 
       <!-- Sort Options -->
-      <template if:true="{showSortOptions}">
+      <template lwc:if={showSortOptions}>
         <div class="slds-m-top_medium">
           <div class="slds-grid slds-gutters">
             <div class="slds-col slds-size_1-of-2">
@@ -191,7 +191,7 @@
       </div>
 
       <!-- Results Section -->
-      <template if:true="{hasResults}">
+      <template lwc:if={hasResults}>
         <div class="slds-m-top_large">
           <h3 class="slds-text-heading_small">Results ({recordCount} records)</h3>
           <lightning-datatable
@@ -206,12 +206,12 @@
       </template>
 
       <!-- Loading Spinner -->
-      <template if:true="{isLoading}">
+      <template lwc:if={isLoading}>
         <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
       </template>
 
       <!-- Error Message -->
-      <template if:true="{hasError}">
+      <template lwc:if={hasError}>
         <div class="slds-m-top_medium">
           <lightning-alert variant="error" message="{errorMessage}"> </lightning-alert>
         </div>

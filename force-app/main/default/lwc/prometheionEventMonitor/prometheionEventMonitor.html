@@ -1,7 +1,7 @@
 <template>
   <lightning-card title="Prometheion Event Monitor" icon-name="standard:event">
     <div class="slds-p-around_medium">
-      <template if:true="{hasEvents}">
+      <template lwc:if={hasEvents}>
         <table class="slds-table slds-table_cell-buffer slds-table_bordered">
           <thead>
             <tr>

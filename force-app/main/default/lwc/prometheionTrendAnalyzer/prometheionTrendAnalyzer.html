@@ -86,7 +86,7 @@
       </lightning-button>
 
       <!-- Trend Chart Data -->
-      <template if:true="{hasResults}">
+      <template lwc:if={hasResults}>
         <div class="slds-m-top_large">
           <h3 class="slds-text-heading_small">Trend Analysis</h3>
           <div class="slds-text-body_regular">
@@ -120,11 +120,11 @@
         </div>
       </template>
 
-      <template if:true="{isLoading}">
+      <template lwc:if={isLoading}>
         <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
       </template>
 
-      <template if:true="{hasError}">
+      <template lwc:if={hasError}>
         <lightning-alert variant="error" message="{errorMessage}"></lightning-alert>
       </template>
     </div>
