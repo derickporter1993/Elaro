@@ -63,8 +63,17 @@ public with sharing class NaturalLanguageQueryService {
                 return result;
             }
             
-            // Execute query
-            result.results = Database.query(generatedSOQL);
+            // Add WITH SECURITY_ENFORCED to ensure FLS/CRUD enforcement
+            String secureSOQL = addSecurityEnforced(generatedSOQL);
+            
+            // Execute query with security enforcement
+            List&lt;SObject&gt; rawResults = Database.query(secureSOQL);
+            
+            // Strip inaccessible fields before returning to UI
+            result.results = PrometheionSecurityUtils.stripInaccessibleFields(
+                AccessType.READABLE,
+                rawResults
+            );
             result.confidence = 85;
             
             // Generate summary
@@ -314,10 +323,38 @@ public with sharing class NaturalLanguageQueryService {
             countQuery = countQuery.replaceFirst('(?i)LIMIT\\s+\\d+', '');
             countQuery = countQuery.replaceFirst('(?i)ORDER BY.*', '');
             
+            // Add WITH SECURITY_ENFORCED for security
+            countQuery = addSecurityEnforced(countQuery);
+            
             return Database.countQuery(countQuery);
         } catch (Exception e) {
             return -1;
         }
+    }
+    
+    /**
+     * @description Add WITH SECURITY_ENFORCED to SOQL query if not present
+     */
+    private static String addSecurityEnforced(String soql) {
+        if (String.isBlank(soql)) {
+            return soql;
+        }
+        
+        String upperSOQL = soql.toUpperCase();
+        
+        // Remove existing WITH SECURITY_ENFORCED if present (case-insensitive)
+        String cleaned = soql.replaceAll('(?i)\\s+WITH\\s+SECURITY_ENFORCED', '');
+        
+        // Add WITH SECURITY_ENFORCED before any ORDER BY, LIMIT, or at end
+        if (cleaned.toUpperCase().contains('ORDER BY')) {
+            cleaned = cleaned.replaceFirst('(?i)(\\s+ORDER\\s+BY[^\\s]+(?:\\s+ASC|\\s+DESC)?(?:\\s*,\\s*[^\\s]+(?:\\s+ASC|\\s+DESC)?)*)', ' WITH SECURITY_ENFORCED$1');
+        } else if (cleaned.toUpperCase().contains('LIMIT')) {
+            cleaned = cleaned.replaceFirst('(?i)(\\s+LIMIT\\s+\\d+)', ' WITH SECURITY_ENFORCED$1');
+        } else {
+            cleaned = cleaned + ' WITH SECURITY_ENFORCED';
+        }
+        
+        return cleaned;
     }
     
     /**
