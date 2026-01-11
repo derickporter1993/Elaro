@@ -373,6 +373,62 @@ Types: feat, fix, test, docs, refactor, style
 
 ---
 
+## Code Quality Checks (MANDATORY)
+
+### Before Coding
+
+1. **Check LWC Template Syntax Violations:**
+   - Search for quoted bindings: `grep -r '="{[^"]+}"' force-app/main/default/lwc --include="*.html"`
+   - Verify no quoted property bindings (e.g., `data="{rows}"` should be `data={rows}`)
+   - Verify no quoted event handlers (e.g., `onclick="{handler}"` should be `onclick={handler}`)
+   - Check for `lwc:if` usage (preferred over `if:true`)
+
+2. **Check Apex Security Patterns:**
+   - Verify `with sharing` keyword on all classes
+   - Check for `WITH SECURITY_ENFORCED` on all SOQL queries
+   - Verify CRUD/FLS checks before DML operations
+   - Check for proper error handling (try-catch with specific exceptions)
+
+3. **Check Bulkification:**
+   - Verify no SOQL queries inside loops
+   - Verify no DML operations inside loops
+   - Check for proper batch/queueable patterns for large datasets
+
+### After Coding
+
+1. **Verify LWC Template Syntax:**
+   - Run: `grep -r '="{[^"]+}"' force-app/main/default/lwc --include="*.html" | grep -v 'data-' | grep -v 'class='`
+   - Fix any quoted bindings found (except `data-*` and `class` attributes which are valid)
+   - Verify no LWC1034 compilation errors
+
+2. **Run Code Quality Checks:**
+   - Format code: `npm run fmt`
+   - Check formatting: `npm run fmt:check`
+   - Run linter: `npm run lint`
+   - Fix lint issues: `npm run lint:fix`
+   - Run unit tests: `npm run test:unit`
+
+3. **Verify Apex Code Quality:**
+   - Check for governor limit violations
+   - Verify test coverage (75%+ for AppExchange)
+   - Check for null pointer exceptions
+   - Verify input validation on all user inputs
+   - Check for XSS prevention in LWC templates
+
+4. **Verify Deployment Readiness:**
+   - Run dry-run deployment: `sf project deploy start --dry-run --target-org <org>`
+   - Check for compilation errors
+   - Verify all dependencies are available
+   - Check for missing metadata types
+
+5. **Commit and Sync:**
+   - Stage changes: `git add -A`
+   - Commit with descriptive message: `git commit -m "type: Description"`
+   - Push to remote: `git push origin <branch>`
+   - Deploy to Salesforce: `sf project deploy start --target-org <org>`
+
+---
+
 ## Workflow
 
 1. Always read existing files before modifying
