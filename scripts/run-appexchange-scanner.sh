@@ -42,8 +42,8 @@ echo ""
 echo "📊 Running AppExchange scan (HTML)..."
 sf scanner run \
   --target "force-app/" \
-  --rule-selector "AppExchange" \
-  --rule-selector "Recommended:Security" \
+  --engine "pmd-appexchange,eslint-lwc" \
+  --category "Security" \
   --format "html" \
   --outfile "scanner-reports/code-analyzer-appexchange.html" \
   --severity-threshold 2 || echo "⚠️  AppExchange scan found issues (see HTML report)"
@@ -54,8 +54,8 @@ echo ""
 echo "📊 Running AppExchange scan (JSON)..."
 sf scanner run \
   --target "force-app/" \
-  --rule-selector "AppExchange" \
-  --rule-selector "Recommended:Security" \
+  --engine "pmd-appexchange,eslint-lwc" \
+  --category "Security" \
   --format "json" \
   --outfile "scanner-reports/code-analyzer-appexchange.json" || true
 
@@ -65,8 +65,8 @@ echo ""
 echo "📊 Running AppExchange scan (Table)..."
 sf scanner run \
   --target "force-app/" \
-  --rule-selector "AppExchange" \
-  --rule-selector "Recommended:Security" \
+  --engine "pmd-appexchange,eslint-lwc" \
+  --category "Security" \
   --format "table" \
   --severity-threshold 2 || echo "⚠️  Review scanner reports for details"
 
