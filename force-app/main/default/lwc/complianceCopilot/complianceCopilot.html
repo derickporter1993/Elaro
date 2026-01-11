@@ -15,7 +15,7 @@
         "
       >
         <!-- Welcome Message -->
-        <template lwc:if="{showQuickCommands}">
+        <template lwc:if={showQuickCommands}>
           <div class="slds-text-align_center slds-m-vertical_large">
             <lightning-icon
               icon-name="utility:bot"
@@ -28,11 +28,11 @@
         </template>
 
         <!-- Messages -->
-        <template lwc:if="{hasMessages}">
-          <template for:each="{messageList}" for:item="message">
-            <div key="{message.id}" class="slds-m-bottom_medium">
+        <template lwc:if={hasMessages}>
+          <template for:each={messageList} for:item="message">
+            <div key={message.id} class="slds-m-bottom_medium">
               <!-- User Message -->
-              <template lwc:if="{message.isUser}">
+              <template lwc:if={message.isUser}>
                 <div class="slds-chat-message">
                   <div class="slds-chat-message__body" style="text-align: right">
                     <div
@@ -52,7 +52,7 @@
               </template>
 
               <!-- Assistant Message -->
-              <template lwc:if="{message.isAssistant}">
+              <template lwc:if={message.isAssistant}>
                 <div class="slds-chat-message">
                   <div
                     class="slds-chat-message__body"
@@ -74,22 +74,22 @@
                         "
                       >
                         <lightning-formatted-rich-text
-                          value="{message.content}"
+                          value={message.content}
                           class="slds-text-longform"
                         ></lightning-formatted-rich-text>
 
                         <!-- Evidence List -->
-                        <template lwc:if="{message.hasEvidence}">
+                        <template lwc:if={message.hasEvidence}>
                           <div class="slds-m-top_small">
                             <h3 class="slds-text-heading_small slds-m-bottom_x-small">
                               {labels.evidence}
                             </h3>
                             <ul class="slds-list_dotted">
-                              <template for:each="{message.evidenceList}" for:item="evidence">
-                                <li key="{evidence.nodeId}" class="slds-m-bottom_x-small">
+                              <template for:each={message.evidenceList} for:item="evidence">
+                                <li key={evidence.nodeId} class="slds-m-bottom_x-small">
                                   <strong>{evidence.entityType}</strong>
                                   - {evidence.description}
-                                  <template lwc:if="{evidence.formattedRiskScore}">
+                                  <template lwc:if={evidence.formattedRiskScore}>
                                     <span class="slds-badge slds-m-left_x-small"
                                       >{evidence.formattedRiskScore}</span
                                     >
@@ -101,14 +101,14 @@
                         </template>
 
                         <!-- Action Buttons -->
-                        <template lwc:if="{message.hasActions}">
+                        <template lwc:if={message.hasActions}>
                           <div class="slds-m-top_small">
                             <template
-                              for:each="{message.copilotResponse.actions}"
+                              for:each={message.copilotResponse.actions}
                               for:item="action"
                             >
                               <lightning-button
-                                key="{action.actionType}"
+                                key={action.actionType}
                                 label="{action.label}"
                                 variant="brand"
                                 class="slds-m-right_x-small slds-m-bottom_x-small"
@@ -134,7 +134,7 @@
         </template>
 
         <!-- Loading Indicator -->
-        <template lwc:if="{isLoading}">
+        <template lwc:if={isLoading}>
           <div class="slds-chat-message">
             <div
               class="slds-chat-message__body"
@@ -156,12 +156,12 @@
       </div>
 
       <!-- Quick Commands -->
-      <template lwc:if="{showQuickCommands}">
+      <template lwc:if={showQuickCommands}>
         <div class="slds-m-bottom_medium">
           <h3 class="slds-text-heading_small slds-m-bottom_small">{labels.quickCommands}</h3>
           <div class="slds-grid slds-gutters slds-wrap">
-            <template for:each="{quickCommands}" for:item="command">
-              <div key="{command.command}" class="slds-col slds-size_1-of-2">
+            <template for:each={quickCommands} for:item="command">
+              <div key={command.command} class="slds-col slds-size_1-of-2">
                 <lightning-button
                   label="{command.command}"
                   icon-name="{command.icon}"
@@ -187,7 +187,7 @@
           <lightning-input
             type="text"
             label="{labels.askQuestion}"
-            value="{query}"
+            value={query}
             onchange="
               {
                 handleQueryChange;
@@ -200,7 +200,7 @@
             "
             placeholder="{labels.inputPlaceholder}"
             class="slds-m-bottom_small"
-            disabled="{isLoading}"
+            disabled={isLoading}
           >
           </lightning-input>
         </div>
@@ -215,7 +215,7 @@
                 handleSubmit;
               }
             "
-            disabled="{isLoading}"
+            disabled={isLoading}
           >
           </lightning-button>
           <lightning-button
