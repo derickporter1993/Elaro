@@ -55,7 +55,7 @@
           disabled="{loading}"
         >
         </lightning-button>
-        <template if:true="{reportData}">
+        <template lwc:if={reportData}>
           <lightning-button
             label="Export PDF"
             variant="neutral"
@@ -71,15 +71,15 @@
         </template>
       </div>
 
-      <template if:true="{loading}">
+      <template lwc:if={loading}>
         <lightning-spinner alternative-text="Loading"></lightning-spinner>
       </template>
 
-      <template if:true="{error}">
+      <template lwc:if={error}>
         <div class="slds-text-color_error slds-m-top_medium">{error}</div>
       </template>
 
-      <template if:true="{reportData}">
+      <template lwc:if={reportData}>
         <div class="slds-m-top_medium">
           <div class="slds-text-heading_medium">Report Summary</div>
           <div>Overall Score: {reportData.evaluation.overallScore}%</div>

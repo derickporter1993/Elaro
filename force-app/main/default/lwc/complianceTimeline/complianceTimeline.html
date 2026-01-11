@@ -1,7 +1,7 @@
 <template>
   <lightning-card title="Compliance Timeline" icon-name="standard:event">
     <div class="slds-p-around_medium">
-      <template if:true="{hasEvents}">
+      <template lwc:if={hasEvents}>
         <ul class="slds-timeline">
           <template for:each="{sortedEvents}" for:item="event">
             <li key="{event.id}" class="slds-timeline__item">

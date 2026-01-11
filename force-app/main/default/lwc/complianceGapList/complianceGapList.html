@@ -1,6 +1,6 @@
 <template>
   <lightning-card title="Compliance Gaps">
-    <template if:true="{hasGaps}">
+    <template lwc:if={hasGaps}>
       <template for:each="{gaps}" for:item="gap">
         <div key="{gap.Id}" class="slds-p-around_small slds-border_bottom">
           <div class="slds-grid slds-gutters">
