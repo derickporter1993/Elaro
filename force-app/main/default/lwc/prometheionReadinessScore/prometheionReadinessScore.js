@@ -110,7 +110,7 @@ export default class PrometheionReadinessScore extends NavigationMixin(Lightning
         this.navigateToContent(contentDocId);
       })
       .catch((error) => {
-        const errorMsg = error?.body?.message || error?.message || 'An unexpected error occurred';
+        const errorMsg = error?.body?.message || error?.message || "An unexpected error occurred";
         this.showToast("Error", errorMsg, "error");
       });
   }

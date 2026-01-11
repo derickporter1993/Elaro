@@ -51,14 +51,22 @@
           <lightning-button
             label="Generate SOC2 Pack"
             variant="brand"
-            onclick={handleGenerateSoc2}
+            onclick="
+              {
+                handleGenerateSoc2;
+              }
+            "
             class="slds-m-right_small"
           >
           </lightning-button>
           <lightning-button
             label="Generate HIPAA Pack"
             variant="neutral"
-            onclick={handleGenerateHipaa}
+            onclick="
+              {
+                handleGenerateHipaa;
+              }
+            "
           >
           </lightning-button>
         </lightning-button-group>

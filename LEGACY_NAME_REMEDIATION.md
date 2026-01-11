@@ -9,29 +9,34 @@
 ## Executive Summary
 
 ### Findings Overview
-| Legacy Name | Total References | Critical | Documentation | Node Modules |
-|-------------|-----------------|----------|---------------|--------------|
-| **Sentinel** | 263 | 3 | 258 | 2 |
-| **Solentra** | 391 | 5 | 366 | 20 |
-| **OpsGuardian** | 20 | 0 | 18 | 2 |
-| **TOTAL** | 674 | 8 | 642 | 24 |
+
+| Legacy Name     | Total References | Critical | Documentation | Node Modules |
+| --------------- | ---------------- | -------- | ------------- | ------------ |
+| **Sentinel**    | 263              | 3        | 258           | 2            |
+| **Solentra**    | 391              | 5        | 366           | 20           |
+| **OpsGuardian** | 20               | 0        | 18            | 2            |
+| **TOTAL**       | 674              | 8        | 642           | 24           |
 
 ### 🔴 CRITICAL ISSUES (Require Immediate Action)
 
 #### 1. GitHub Repository Name
+
 - **Current:** `Solentra---Prometheion` ❌
 - **Should Be:** `Prometheion` or `prometheion-salesforce-compliance`
 - **Impact:** HIGH - Repository branding, all documentation links
 - **Action Required:** Rename repository in GitHub settings
 
 #### 2. Local Directory Name
+
 - **Current:** `/Users/derickporter/sentinel-code` ❌
 - **Should Be:** `/Users/derickporter/prometheion-code`
 - **Impact:** MEDIUM - Local development only
 - **Action Required:** Rename directory after git operations complete
 
 #### 3. Package Metadata
+
 **File:** `package.json`
+
 - Line 3: `"name": "sentinel-enterprise"` in package-lock.json ❌
 - Line 22: `"prometheion": "git+https://github.com/derickporter1993/Solentra---Prometheion.git"` ❌
 - Line 47: `"url": "git+https://github.com/derickporter1993/Solentra---Prometheion.git"` ❌
@@ -39,14 +44,18 @@
 **Action Required:** Update after repository is renamed
 
 #### 4. Package Lock File
+
 **File:** `package-lock.json`
+
 - Contains 100+ merge conflict markers: `>>>>>>> solentra/main` ❌
 - Contains resolved git URL: `git+ssh://git@github.com/derickporter1993/Solentra.git` ❌
 
 **Action Required:** Regenerate package-lock.json after fixing package.json
 
 #### 5. README.md
+
 **Critical References:**
+
 - Line 281: `git clone https://github.com/derickporter1993/Solentra---Prometheion.git` ❌
 - Line 282: `cd sentinel-code` ❌
 - Line 682-683: GitHub links with old repo name ❌
@@ -56,6 +65,7 @@
 ## 🟡 DOCUMENTATION REFERENCES (Historical - Consider Keeping)
 
 ### History Documentation (Intentional Archives)
+
 These files document the migration history and should likely be **PRESERVED AS-IS**:
 
 1. `docs/history/SOLENTRA_SENTINEL_MERGE_SUMMARY.md` - Migration documentation ✅ Keep
@@ -74,12 +84,14 @@ These files document the migration history and should likely be **PRESERVED AS-I
 **Rationale:** These documents provide valuable historical context for the migration from Sentinel/Solentra to Prometheion.
 
 ### Comparison Documents (Historical Reference)
+
 1. `SOLENTRA_SENTINEL_COMPARISON.md` - Repository comparison ✅ Keep
 2. `SOLENTRA_DIFF_SUMMARY.md` - Diff analysis ✅ Keep
 3. `SOLENTRA_COMPARISON.md` - Component comparison ✅ Keep
 4. `REPO_ANALYSIS_COMPLIANCE_SERVICES.md` - Analysis includes Sentinel references ✅ Keep
 
 ### Active Documentation (Needs Updates)
+
 1. **`docs/SETUP_GUIDE.md`** - 19 references to "Sentinel" ❌ UPDATE
    - References "Sentinel Setup Guide" in title
    - References `Sentinel_Admin` permission set
@@ -126,17 +138,20 @@ These scripts are **designed** to reference legacy names for migration purposes:
 **Issue:** The `node_modules/prometheion/` directory contains old code with legacy names.
 
 **Files Found (Sample):**
+
 - `node_modules/prometheion/force-app/main/default/lwc/solentraDashboard/*`
 - `node_modules/prometheion/force-app/main/default/lwc/sentinelReadinessScore/*`
 - `node_modules/prometheion/force-app/main/default/lwc/sentinelAiSettings/*`
 - `node_modules/prometheion/force-app/main/default/classes/SolentraComplianceCopilot.cls`
 - `node_modules/prometheion/force-app/main/default/classes/SentinelAISettingsController.cls`
 
-**Root Cause:** 
+**Root Cause:**
+
 - `package.json` dependency points to old repository: `git+https://github.com/derickporter1993/Solentra---Prometheion.git`
 - Cached old version before rebranding was complete
 
 **Action Required:**
+
 1. Delete `node_modules/` directory
 2. Delete `package-lock.json`
 3. Update repository name in GitHub
@@ -151,7 +166,6 @@ These XML files document **components to be deleted** and intentionally list leg
 
 1. **`destructiveChanges/destructiveChanges.xml`** ✅ Keep
    - Lists: `SentinelGraphIndexer`, `SentinelGraphIndexerTest`, `SentinelReasoningEngine`, etc.
-   
 2. **`destructiveChanges/destructiveChanges-lwc.xml`** ✅ Keep
    - Lists: `sentinelReadinessScore`, `solentraCopilot`, `solentraDashboard`
 
@@ -182,6 +196,7 @@ These documents track work progress and contain contextual references:
 ## 📋 REMEDIATION PLAN
 
 ### Phase 1: GitHub Repository Rename (BLOCKER)
+
 **Must be completed FIRST before other changes**
 
 1. **Rename GitHub Repository:**
@@ -197,6 +212,7 @@ These documents track work progress and contain contextual references:
    ```
 
 ### Phase 2: Update Package Configuration
+
 1. **Update `package.json`:**
    - Line 22: Update dependency URL to new repository name
    - Line 47: Update repository URL to new name
@@ -208,6 +224,7 @@ These documents track work progress and contain contextual references:
    ```
 
 ### Phase 3: Update Active Documentation
+
 1. **`README.md`:**
    - Line 281: Update git clone URL
    - Line 282: Change `cd sentinel-code` to `cd prometheion-code`
@@ -226,6 +243,7 @@ These documents track work progress and contain contextual references:
    - Change `SolentraConstants` to `PrometheionConstants`
 
 ### Phase 4: Update Scripts
+
 1. **`scripts/close-prs.sh`:**
    - Change `REPO="derickporter1993/Sentinel"` to correct repo name
 
@@ -236,12 +254,14 @@ These documents track work progress and contain contextual references:
    - Update debug messages from "Sentinel" to "Prometheion"
 
 ### Phase 5: Update Status/Tracking Documents
+
 1. **`SYNC_STATUS.md`:** Update directory paths
 2. **`MCP_SETUP_COMPLETE.md`:** Update directory paths
 3. **`MCP_FULL_SETUP_COMPLETE.md`:** Update directory paths
 4. **`TESTING_CHECKLIST.md`:** Update directory path
 
 ### Phase 6: Rename Local Directory (LAST)
+
 ```bash
 cd /Users/derickporter
 mv sentinel-code prometheion-code
@@ -249,7 +269,9 @@ cd prometheion-code
 ```
 
 ### Phase 7: Update `.gitignore` (If Needed)
+
 Add to ensure node_modules don't get committed:
+
 ```
 node_modules/
 package-lock.json

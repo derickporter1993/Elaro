@@ -25,6 +25,7 @@ Calculates comprehensive compliance scores across multiple frameworks.
 Calculates overall compliance readiness score with framework-specific breakdowns.
 
 **Signature:**
+
 ```apex
 @AuraEnabled(cacheable=true)
 public static ScoreResult calculateReadinessScore()
@@ -33,6 +34,7 @@ public static ScoreResult calculateReadinessScore()
 **Returns:** `ScoreResult` object
 
 **ScoreResult Properties:**
+
 - `overallScore` (Decimal): Overall score 0-100
 - `rating` (String): CRITICAL, HIGH, MEDIUM, LOW, or EXCELLENT
 - `frameworkScores` (Map<String, Decimal>): Framework-specific scores
@@ -40,8 +42,9 @@ public static ScoreResult calculateReadinessScore()
 - `factors` (Map<String, Decimal>): Scoring factors breakdown
 
 **Example:**
+
 ```apex
-PrometheionComplianceScorer.ScoreResult result = 
+PrometheionComplianceScorer.ScoreResult result =
     PrometheionComplianceScorer.calculateReadinessScore();
 System.debug('Overall Score: ' + result.overallScore);
 System.debug('Rating: ' + result.rating);
@@ -62,25 +65,29 @@ Natural language AI interface for compliance queries.
 Processes natural language compliance queries using Claude AI.
 
 **Signature:**
+
 ```apex
 @AuraEnabled
 public static CopilotResponse askCopilot(String query)
 ```
 
 **Parameters:**
+
 - `query` (String): Natural language question about compliance
 
 **Returns:** `CopilotResponse` object
 
 **CopilotResponse Properties:**
+
 - `answer` (String): AI-generated response
 - `confidence` (Decimal): Confidence score 0.0-1.0
 - `queryType` (String): Classification (SCORE, RISK, USER_ACCESS, etc.)
 - `suggestedActions` (List<String>): Recommended actions
 
 **Example:**
+
 ```apex
-PrometheionComplianceCopilot.CopilotResponse response = 
+PrometheionComplianceCopilot.CopilotResponse response =
     PrometheionComplianceCopilot.askCopilot('What are our top compliance risks?');
 System.debug('Answer: ' + response.answer);
 System.debug('Confidence: ' + response.confidence);
@@ -91,19 +98,22 @@ System.debug('Confidence: ' + response.confidence);
 Performs deep compliance analysis on a specific topic.
 
 **Signature:**
+
 ```apex
 @AuraEnabled
 public static CopilotResponse deepAnalysis(String topic)
 ```
 
 **Parameters:**
+
 - `topic` (String): Topic to analyze (e.g., "HIPAA compliance", "permission sprawl")
 
 **Returns:** `CopilotResponse` with detailed analysis
 
 **Example:**
+
 ```apex
-PrometheionComplianceCopilot.CopilotResponse analysis = 
+PrometheionComplianceCopilot.CopilotResponse analysis =
     PrometheionComplianceCopilot.deepAnalysis('HIPAA compliance');
 ```
 
@@ -112,6 +122,7 @@ PrometheionComplianceCopilot.CopilotResponse analysis =
 Returns list of available quick commands for the copilot.
 
 **Signature:**
+
 ```apex
 @AuraEnabled(cacheable=true)
 public static List<String> getQuickCommands()
@@ -132,17 +143,20 @@ Integration service for Anthropic Claude API.
 Sends compliance query to Claude API.
 
 **Signature:**
+
 ```apex
 public static ClaudeResponse askCompliance(String query, String orgContext)
 ```
 
 **Parameters:**
+
 - `query` (String): User's question
 - `orgContext` (String): Organization context information
 
 **Returns:** `ClaudeResponse` object
 
 **ClaudeResponse Properties:**
+
 - `success` (Boolean): Whether request succeeded
 - `content` (String): Claude's response text
 - `errorMessage` (String): Error message if failed
@@ -162,17 +176,20 @@ One-click remediation actions for compliance violations.
 Revokes Modify All Data permission from specified users.
 
 **Signature:**
+
 ```apex
 @AuraEnabled
 public static void revokeModifyAllData(List<Id> userIds)
 ```
 
 **Parameters:**
+
 - `userIds` (List<Id>): List of User IDs
 
 **Throws:** `AuraHandledException` if operation fails
 
 **Example:**
+
 ```apex
 List<Id> userIds = new List<Id>{'005xx000000abc', '005xx000000def'};
 PrometheionQuickActionsService.revokeModifyAllData(userIds);
@@ -183,17 +200,20 @@ PrometheionQuickActionsService.revokeModifyAllData(userIds);
 Deactivates users inactive for specified number of days.
 
 **Signature:**
+
 ```apex
 @AuraEnabled
 public static Integer deactivateInactiveUsers(Integer daysInactive)
 ```
 
 **Parameters:**
+
 - `daysInactive` (Integer): Number of days of inactivity threshold
 
 **Returns:** Number of users deactivated
 
 **Example:**
+
 ```apex
 Integer deactivated = PrometheionQuickActionsService.deactivateInactiveUsers(90);
 System.debug('Deactivated ' + deactivated + ' users');
@@ -204,12 +224,14 @@ System.debug('Deactivated ' + deactivated + ' users');
 Removes a specific permission set assignment.
 
 **Signature:**
+
 ```apex
 @AuraEnabled
 public static void removePermissionSetAssignment(Id assignmentId)
 ```
 
 **Parameters:**
+
 - `assignmentId` (Id): PermissionSetAssignment ID
 
 **Throws:** `AuraHandledException` if operation fails
@@ -227,22 +249,25 @@ Service for sending weekly compliance summary emails.
 Sends weekly compliance digest to all Prometheion Admin users.
 
 **Signature:**
+
 ```apex
-@InvocableMethod(label='Send Weekly Compliance Digest' 
+@InvocableMethod(label='Send Weekly Compliance Digest'
                  description='Sends a weekly compliance summary email to Prometheion administrators.')
 public static void sendWeeklyDigest()
 ```
 
 **Usage:** Can be called from:
+
 - Flow Builder (Invocable Method)
 - Apex Scheduler
 - Anonymous Apex
 
 **Example (Scheduled):**
+
 ```apex
 // Schedule weekly digest (every Monday at 9 AM)
 String cronExp = '0 0 9 ? * MON';
-System.schedule('Prometheion Weekly Digest', cronExp, 
+System.schedule('Prometheion Weekly Digest', cronExp,
     new PrometheionEmailDigestScheduler());
 ```
 
@@ -259,17 +284,20 @@ Provides compliance checklist items for each framework.
 Returns checklist items for specified framework.
 
 **Signature:**
+
 ```apex
 @AuraEnabled(cacheable=true)
 public static List<ChecklistItem> getComplianceChecklist(String framework)
 ```
 
 **Parameters:**
+
 - `framework` (String): Framework name (HIPAA, SOC2, NIST, FedRAMP, GDPR)
 
 **Returns:** List of `ChecklistItem` objects
 
 **ChecklistItem Properties:**
+
 - `id` (String): Unique identifier
 - `title` (String): Checklist item title
 - `description` (String): Detailed description
@@ -278,8 +306,9 @@ public static List<ChecklistItem> getComplianceChecklist(String framework)
 - `remediation` (String): Remediation steps
 
 **Example:**
+
 ```apex
-List<PrometheionComplianceChecklistService.ChecklistItem> items = 
+List<PrometheionComplianceChecklistService.ChecklistItem> items =
     PrometheionComplianceChecklistService.getComplianceChecklist('HIPAA');
 for (PrometheionComplianceChecklistService.ChecklistItem item : items) {
     System.debug(item.title + ': ' + (item.completed ? 'Complete' : 'Incomplete'));
@@ -340,6 +369,7 @@ PrometheionConstants.LIMIT_ELEVATED_USERS    // 100
 Converts numeric score to rating string.
 
 **Signature:**
+
 ```apex
 public static String getRatingFromScore(Decimal score)
 ```
@@ -353,9 +383,10 @@ public static String getRatingFromScore(Decimal score)
 All methods throw `AuraHandledException` for user-facing errors. Check debug logs for detailed error information.
 
 **Example Error Handling:**
+
 ```apex
 try {
-    PrometheionComplianceScorer.ScoreResult result = 
+    PrometheionComplianceScorer.ScoreResult result =
         PrometheionComplianceScorer.calculateReadinessScore();
 } catch (AuraHandledException e) {
     System.debug('Error: ' + e.getMessage());
@@ -379,4 +410,3 @@ try {
 
 API Version: 64.0  
 Prometheion Version: 1.5.0
-

@@ -19,7 +19,7 @@ export default class PrometheionAuditPackageBuilder extends NavigationMixin(Ligh
     { label: "GLBA", value: "GLBA" },
     { label: "NIST 800-53", value: "NIST" },
     { label: "ISO 27001", value: "ISO27001" },
-    { label: "PCI-DSS", value: "PCI_DSS" }
+    { label: "PCI-DSS", value: "PCI_DSS" },
   ];
 
   handleFrameworkChange(event) {
@@ -50,7 +50,7 @@ export default class PrometheionAuditPackageBuilder extends NavigationMixin(Ligh
         framework: this.framework,
         packageName: this.packageName,
         startDate: this.startDate,
-        endDate: this.endDate
+        endDate: this.endDate,
       });
       this.showToast("Success", "Audit package generated successfully", "success");
       // Navigate to package record
@@ -58,8 +58,8 @@ export default class PrometheionAuditPackageBuilder extends NavigationMixin(Ligh
         type: "standard__recordPage",
         attributes: {
           recordId: packageId,
-          actionName: "view"
-        }
+          actionName: "view",
+        },
       });
     } catch (error) {
       this.showToast("Error", error.body?.message || "Failed to generate audit package", "error");
@@ -73,7 +73,7 @@ export default class PrometheionAuditPackageBuilder extends NavigationMixin(Ligh
       new ShowToastEvent({
         title,
         message,
-        variant
+        variant,
       })
     );
   }

@@ -16,16 +16,16 @@ This document provides guidance for AI assistants working with the Prometheion c
 
 ## Technology Stack
 
-| Layer | Technology |
-|-------|------------|
-| Backend | Apex (Salesforce), API v63.0 |
-| Frontend | Lightning Web Components (LWC) |
+| Layer        | Technology                                |
+| ------------ | ----------------------------------------- |
+| Backend      | Apex (Salesforce), API v63.0              |
+| Frontend     | Lightning Web Components (LWC)            |
 | UI Framework | SLDS (Salesforce Lightning Design System) |
-| Testing | Jest (LWC), Apex Test Classes |
-| Linting | ESLint v9 with LWC plugin |
-| Formatting | Prettier |
-| CI/CD | GitHub Actions |
-| Node.js | v20.0.0+ required |
+| Testing      | Jest (LWC), Apex Test Classes             |
+| Linting      | ESLint v9 with LWC plugin                 |
+| Formatting   | Prettier                                  |
+| CI/CD        | GitHub Actions                            |
+| Node.js      | v20.0.0+ required                         |
 
 ## Directory Structure
 
@@ -58,14 +58,14 @@ prometheion/
 
 ## Key Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `sfdx-project.json` | Salesforce project config (API v63.0) |
-| `package.json` | NPM dependencies & scripts |
-| `jest.config.js` | Jest test framework configuration |
-| `eslint.config.js` | ESLint rules (ES2021, LWC plugin) |
-| `.prettierrc` | Code formatting (semicolons, double quotes, 100 char width) |
-| `.forceignore` | Deployment exclusions |
+| File                | Purpose                                                     |
+| ------------------- | ----------------------------------------------------------- |
+| `sfdx-project.json` | Salesforce project config (API v63.0)                       |
+| `package.json`      | NPM dependencies & scripts                                  |
+| `jest.config.js`    | Jest test framework configuration                           |
+| `eslint.config.js`  | ESLint rules (ES2021, LWC plugin)                           |
+| `.prettierrc`       | Code formatting (semicolons, double quotes, 100 char width) |
+| `.forceignore`      | Deployment exclusions                                       |
 
 ## Development Commands
 
@@ -117,6 +117,7 @@ sf org assign permset --name Prometheion_Admin --target-org <org>
 ### Pre-commit Validation
 
 The pre-commit hook runs automatically via Husky:
+
 1. `npm run fmt:check` - Prettier format check
 2. `npm run lint` - ESLint validation
 3. `npm run test:unit` - Jest unit tests
@@ -126,6 +127,7 @@ The pre-commit hook runs automatically via Husky:
 ### Apex Classes
 
 **Naming Conventions:**
+
 - Production classes: `PascalCase` (e.g., `ComplianceBaselineScanner`, `PrometheionSecurityUtils`)
 - Test classes: `<ClassName>Test` (e.g., `ComplianceDashboardControllerTest`)
 - Controller classes: `<Feature>Controller` (e.g., `ComplianceDashboardController`)
@@ -133,6 +135,7 @@ The pre-commit hook runs automatically via Husky:
 - Queueable classes: `<Feature>Queueable` (e.g., `PrometheionSlackNotifierQueueable`)
 
 **Security Requirements (CRITICAL):**
+
 - Always use `WITH SECURITY_ENFORCED` on SOQL queries
 - Use `PrometheionSecurityUtils` for CRUD/FLS checks
 - All classes must use `with sharing` keyword
@@ -150,6 +153,7 @@ PrometheionSecurityUtils.validateCRUDAccess('Account', DmlOperation.DML_UPDATE);
 ```
 
 **Documentation Pattern:**
+
 ```apex
 /**
  * ClassName
@@ -167,10 +171,12 @@ public with sharing class ClassName {
 ### Lightning Web Components
 
 **Naming:**
+
 - Component folders: `camelCase` (e.g., `complianceDashboard`, `prometheionCopilot`)
 - Test files: `__tests__/<componentName>.test.js`
 
 **Controller Integration:**
+
 ```javascript
 import getMethod from "@salesforce/apex/ControllerName.methodName";
 
@@ -204,6 +210,7 @@ wiredResult;
 | `Prometheion_Compliance_Graph__b` | Big Object for graph data |
 
 **Platform Events:**
+
 - `Performance_Alert__e` - Performance threshold alerts
 - `Prometheion_Alert_Event__e` - General alerts
 - `GDPR_Erasure_Event__e` - GDPR data erasure events
@@ -236,6 +243,7 @@ public class MyClassTest {
 ```
 
 **Test Requirements:**
+
 - Target 95%+ code coverage
 - Each production class has corresponding `*Test.cls` file
 - Use `@TestSetup` for shared test data
@@ -255,24 +263,24 @@ import getMethod from "@salesforce/apex/Controller.getMethod";
 const getMethodAdapter = createLdsTestWireAdapter(getMethod);
 
 describe("c-my-component", () => {
-    afterEach(() => {
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
-    });
+  afterEach(() => {
+    while (document.body.firstChild) {
+      document.body.removeChild(document.body.firstChild);
+    }
+  });
 
-    it("should render correctly", async () => {
-        const element = createElement("c-my-component", { is: MyComponent });
-        document.body.appendChild(element);
+  it("should render correctly", async () => {
+    const element = createElement("c-my-component", { is: MyComponent });
+    document.body.appendChild(element);
 
-        // Emit mock data
-        getMethodAdapter.emit({ data: mockData });
+    // Emit mock data
+    getMethodAdapter.emit({ data: mockData });
 
-        await Promise.resolve();
+    await Promise.resolve();
 
-        // Assert
-        expect(element.shadowRoot.querySelector("div")).toBeTruthy();
-    });
+    // Assert
+    expect(element.shadowRoot.querySelector("div")).toBeTruthy();
+  });
 });
 ```
 
@@ -289,11 +297,11 @@ GitHub Actions workflow (`.github/workflows/prometheion-ci.yml`):
 
 ## Permission Sets
 
-| Permission Set | Purpose |
-|----------------|---------|
-| `Prometheion_Admin` | Full admin access |
-| `Prometheion_Auditor` | Read-only audit access |
-| `Prometheion_User` | Standard user access |
+| Permission Set         | Purpose                |
+| ---------------------- | ---------------------- |
+| `Prometheion_Admin`    | Full admin access      |
+| `Prometheion_Auditor`  | Read-only audit access |
+| `Prometheion_User`     | Standard user access   |
 | `Prometheion_API_User` | API integration access |
 
 ## Common Tasks
