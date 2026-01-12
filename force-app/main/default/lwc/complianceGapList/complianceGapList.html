@@ -23,8 +23,8 @@
     <template lwc:if={!isLoading}>
       <template lwc:if={!hasError}>
         <template lwc:if={hasGaps}>
-          <template for:each{gaps} for:item="gap">
-            <div key{gap.Id} class="slds-p-around_small slds-border_bottom">
+          <template for:each={gaps} for:item="gap">
+            <div key={gap.Id} class="slds-p-around_small slds-border_bottom">
               <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_2-of-3">
                   <div class="slds-text-heading_small">{gap.Policy_Reference__c}</div>

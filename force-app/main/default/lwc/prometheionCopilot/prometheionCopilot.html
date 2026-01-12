@@ -75,6 +75,8 @@
                 class="quick-action-card"
                 data-command={cmd.command}
                 onclick={handleQuickCommand}
+                type="button"
+                aria-label={cmd.ariaLabel}
               >
                 <div class="action-icon" data-icon={cmd.iconType}>
                   <template lwc:if={cmd.isTrendDown}>
