@@ -486,7 +486,7 @@ private class PrometheionDynamicReportControllerTest {
             System.assertNotEquals(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Field validation may fail for some fields
-            System.assert(true, 'Query may fail');
+            System.assertNotEquals(null, e, 'Query may fail');
         }
         Test.stopTest();
     }

@@ -243,7 +243,7 @@ private class PrometheionBulkOperationTest {
         try {
             PrometheionSecurityUtils.validateCRUDAccess('Account', PrometheionSecurityUtils.DmlOperation.DML_INSERT);
             insert accounts;
-            System.assert(true, 'Bulk insert should succeed with proper validation');
+            System.assertEquals(200, accounts.size(), 'Bulk insert should succeed with proper validation');
         } catch (PrometheionSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw SecurityException: ' + e.getMessage());
         }

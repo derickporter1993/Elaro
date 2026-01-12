@@ -32,7 +32,7 @@ private class PrometheionAIRiskPredictorTest {
             PrometheionAIRiskPredictor.predictRisk('', '001000000000001AAA', 'SOX');
             System.assert(false, 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank parameters');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for blank parameters');
         }
         Test.stopTest();
     }
@@ -44,7 +44,7 @@ private class PrometheionAIRiskPredictorTest {
             PrometheionAIRiskPredictor.predictRisk(null, null, null);
             System.assert(false, 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null parameters');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for null parameters');
         }
         Test.stopTest();
     }

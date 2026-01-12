@@ -37,7 +37,7 @@ private class ComplianceFrameworkServiceTest {
             ComplianceFrameworkService.evaluateFramework('');
             System.assert(false, 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank framework');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for blank framework');
         }
         Test.stopTest();
     }
@@ -49,7 +49,7 @@ private class ComplianceFrameworkServiceTest {
             ComplianceFrameworkService.evaluateFramework(null);
             System.assert(false, 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null framework');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for null framework');
         }
         Test.stopTest();
     }

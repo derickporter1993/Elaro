@@ -254,7 +254,7 @@ private class PrometheionShieldServiceTest {
             System.assert(false, 'Should have thrown exception');
         } catch (AuraHandledException e) {
             // Expected
-            System.assert(true, 'Should throw exception for invalid ID');
+            System.assertNotEquals(null, e.getMessage(), 'Should throw exception for invalid ID');
         }
         Test.stopTest();
     }

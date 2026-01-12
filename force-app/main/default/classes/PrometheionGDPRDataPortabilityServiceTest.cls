@@ -131,7 +131,7 @@ private class PrometheionGDPRDataPortabilityServiceTest {
             String jsonData = PrometheionGDPRDataPortabilityService.exportContactData(null);
             System.assert(false, 'Should throw exception');
         } catch (Exception e) {
-            System.assert(true, 'Expected exception for null contact');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for null contact');
         }
         Test.stopTest();
     }

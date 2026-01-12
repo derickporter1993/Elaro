@@ -47,7 +47,7 @@ private class SegregationOfDutiesServiceTest {
             SegregationOfDutiesService.detectViolations(null);
             System.assert(false, 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null user ID');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for null user ID');
         }
         Test.stopTest();
     }

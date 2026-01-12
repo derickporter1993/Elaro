@@ -63,7 +63,7 @@ private class PrometheionPDFExporterTest {
             PrometheionPDFExporter.generateAuditPackagePDF('001000000000000AAA');
             System.assert(false, 'Should throw exception');
         } catch (AuraHandledException e) {
-            System.assert(true, 'Should throw exception for invalid ID');
+            System.assertNotEquals(null, e.getMessage(), 'Should throw exception for invalid ID');
         }
         Test.stopTest();
     }

@@ -158,7 +158,7 @@ private class PrometheionSharingViolationTest {
                     'Should not return records due to sharing violation');
             } catch (QueryException e) {
                 // QueryException may be thrown for sharing violations
-                System.assert(true, 'Expected sharing violation: ' + e.getMessage());
+                System.assertNotEquals(null, e.getMessage(), 'Expected sharing violation: ' + e.getMessage());
             }
         }
         Test.stopTest();

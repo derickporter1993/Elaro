@@ -38,7 +38,7 @@ private class PrometheionGraphIndexerTest {
             PrometheionGraphIndexer.indexChange('INVALID', 'badid', null, 'SOC2');
             System.assert(false, 'Should have thrown exception');
         } catch (Exception e) {
-            System.assert(true, 'Expected exception for invalid entity');
+            System.assertNotEquals(null, e.getMessage(), 'Expected exception for invalid entity');
         }
         Test.stopTest();
     }
