@@ -39,7 +39,8 @@ export default class PrometheionTrendAnalyzer extends LightningElement {
       }));
     } else if (error) {
       this.showError(
-        "Error loading date fields: " + (error?.body?.message || error?.message || 'An unknown error occurred')
+        "Error loading date fields: " +
+          (error?.body?.message || error?.message || "An unknown error occurred")
       );
     }
   }
@@ -53,7 +54,8 @@ export default class PrometheionTrendAnalyzer extends LightningElement {
       }));
     } else if (error) {
       this.showError(
-        "Error loading metric fields: " + (error?.body?.message || error?.message || 'An unknown error occurred')
+        "Error loading metric fields: " +
+          (error?.body?.message || error?.message || "An unknown error occurred")
       );
     }
   }
@@ -105,7 +107,8 @@ export default class PrometheionTrendAnalyzer extends LightningElement {
       .catch((error) => {
         this.hasError = true;
         this.errorMessage =
-          "Error analyzing trend: " + (error?.body?.message || error?.message || 'An unknown error occurred');
+          "Error analyzing trend: " +
+          (error?.body?.message || error?.message || "An unknown error occurred");
         this.isLoading = false;
         this.showError(this.errorMessage);
       });
