@@ -17,7 +17,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@platform/types": "workspace:*",
     "jsonwebtoken": "^9.0.0"
   },
   "devDependencies": {
