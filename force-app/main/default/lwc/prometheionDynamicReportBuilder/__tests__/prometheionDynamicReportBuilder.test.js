@@ -21,19 +21,19 @@ let mockObjectsCallbacks = new Set();
 jest.mock(
   "@salesforce/apex/PrometheionDynamicReportController.getAvailableObjects",
   () => ({
-    default: jest.fn((config, callback) => {
-      if (callback) {
+    default: function MockObjectsAdapter(callback) {
+      if (new.target) {
+        this.callback = callback;
         mockObjectsCallbacks.add(callback);
-        return {
-          connect: () => {},
-          disconnect: () => {
-            mockObjectsCallbacks.delete(callback);
-          },
-          update: () => {},
+        this.connect = () => {};
+        this.disconnect = () => {
+          mockObjectsCallbacks.delete(this.callback);
         };
+        this.update = () => {};
+        return this;
       }
       return Promise.resolve([]);
-    }),
+    },
   }),
   { virtual: true }
 );
@@ -64,6 +64,10 @@ const emitObjects = (data) => {
   mockObjectsCallbacks.forEach((cb) => cb({ data, error: undefined }));
 };
 
+const emitObjectsError = (error) => {
+  mockObjectsCallbacks.forEach((cb) => cb({ data: undefined, error }));
+};
+
 describe("c-prometheion-dynamic-report-builder", () => {
   afterEach(() => {
     while (document.body.firstChild) {
@@ -88,6 +92,16 @@ describe("c-prometheion-dynamic-report-builder", () => {
       await Promise.resolve();
 
       expect(element).not.toBeNull();
+      const card = element.shadowRoot.querySelector("lightning-card");
+      expect(card).not.toBeNull();
+    });
+
+    it("renders object selection combobox", async () => {
+      const element = await createComponent();
+      await Promise.resolve();
+
+      const combobox = element.shadowRoot.querySelector("lightning-combobox");
+      expect(combobox).not.toBeNull();
     });
   });
 
@@ -105,15 +119,37 @@ describe("c-prometheion-dynamic-report-builder", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.objectOptions.length).toBeGreaterThan(0);
+      // Check that the combobox has the expected options via DOM inspection
+      const combobox = element.shadowRoot.querySelector("lightning-combobox");
+      expect(combobox).not.toBeNull();
+      // The options attribute should be populated
+      expect(combobox.options).toBeDefined();
+      expect(combobox.options.length).toBeGreaterThan(0);
+    });
+
+    it("handles wire adapter error", async () => {
+      const element = await createComponent();
+      await Promise.resolve();
+
+      const error = {
+        body: { message: "Failed to load objects" },
+        message: "Failed to load objects",
+      };
+
+      emitObjectsError(error);
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // ShowToastEvent should have been dispatched
+      expect(ShowToastEvent).toHaveBeenCalled();
     });
   });
 
   describe("Field Loading", () => {
     it("loads field metadata when object is selected", async () => {
       const mockFields = [
-        { label: "Name", apiName: "Name", type: "string" },
-        { label: "Industry", apiName: "Industry", type: "picklist" },
+        { label: "Name", apiName: "Name", type: "string", isFilterable: true, isSortable: true },
+        { label: "Industry", apiName: "Industry", type: "picklist", isFilterable: true, isSortable: true },
       ];
 
       getFieldMetadata.mockResolvedValue(mockFields);
@@ -121,16 +157,66 @@ describe("c-prometheion-dynamic-report-builder", () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      const event = new CustomEvent("change", {
-        detail: { value: "Account" },
-      });
-
-      element.handleObjectChange(event);
+      // Simulate selecting an object through the combobox
+      const combobox = element.shadowRoot.querySelector("lightning-combobox");
+      combobox.dispatchEvent(
+        new CustomEvent("change", {
+          detail: { value: "Account" },
+        })
+      );
+      await Promise.resolve();
       await Promise.resolve();
 
       expect(getFieldMetadata).toHaveBeenCalledWith({
         objectApiName: "Account",
       });
+    });
+
+    it("shows dual listbox after fields are loaded", async () => {
+      const mockFields = [
+        { label: "Name", apiName: "Name", type: "string", isFilterable: true, isSortable: true },
+        { label: "Industry", apiName: "Industry", type: "picklist", isFilterable: true, isSortable: true },
+      ];
+
+      getFieldMetadata.mockResolvedValue(mockFields);
+
+      const element = await createComponent();
+      await Promise.resolve();
+
+      // Simulate selecting an object through the combobox
+      const combobox = element.shadowRoot.querySelector("lightning-combobox");
+      combobox.dispatchEvent(
+        new CustomEvent("change", {
+          detail: { value: "Account" },
+        })
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // Dual listbox should appear for field selection
+      const dualListbox = element.shadowRoot.querySelector("lightning-dual-listbox");
+      expect(dualListbox).not.toBeNull();
+    });
+  });
+
+  describe("Run Report Button", () => {
+    it("renders run report button", async () => {
+      const element = await createComponent();
+      await Promise.resolve();
+
+      const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+      const runButton = Array.from(buttons).find((b) => b.label === "Run Report");
+      expect(runButton).toBeDefined();
+    });
+
+    it("run report button is disabled initially", async () => {
+      const element = await createComponent();
+      await Promise.resolve();
+
+      const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+      const runButton = Array.from(buttons).find((b) => b.label === "Run Report");
+      expect(runButton.disabled).toBe(true);
     });
   });
 });

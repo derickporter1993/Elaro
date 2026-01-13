@@ -4,11 +4,14 @@
  * Tests cover:
  * - Gap list display
  * - Severity class assignment
- * - State management
+ * - State management via DOM
  */
 
 import { createElement } from "lwc";
 import ComplianceGapList from "c/complianceGapList";
+
+// Helper to wait for multiple microtasks
+const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe("c-compliance-gap-list", () => {
   afterEach(() => {
@@ -23,96 +26,166 @@ describe("c-compliance-gap-list", () => {
     });
     Object.assign(element, props);
     document.body.appendChild(element);
-    await Promise.resolve();
+    await flushPromises();
     return element;
   }
 
   describe("Rendering", () => {
     it("renders the component", async () => {
       const element = await createComponent({ gaps: [] });
-      await Promise.resolve();
+      await flushPromises();
 
       expect(element).not.toBeNull();
+      const card = element.shadowRoot.querySelector("lightning-card");
+      expect(card).not.toBeNull();
     });
   });
 
-  describe("State Management", () => {
-    it("hasGaps returns true when gaps exist", async () => {
+  describe("State Management via DOM", () => {
+    it("shows gap items when gaps exist", async () => {
       const gaps = [
-        { Id: "gap1", Severity__c: "HIGH", Title__c: "Test Gap" },
+        {
+          Id: "gap1",
+          Severity__c: "HIGH",
+          Policy_Reference__c: "Test Policy",
+          Status__c: "Open",
+          Risk_Score__c: 75,
+        },
       ];
 
       const element = await createComponent({ gaps });
-      await Promise.resolve();
+      await flushPromises();
 
-      expect(element.hasGaps).toBe(true);
+      // Check that gap items are rendered
+      const gapItems = element.shadowRoot.querySelectorAll(".slds-border_bottom");
+      expect(gapItems.length).toBe(1);
+
+      // Verify the policy reference is displayed
+      const policyText = element.shadowRoot.querySelector(".slds-text-heading_small");
+      expect(policyText).not.toBeNull();
+      expect(policyText.textContent).toBe("Test Policy");
     });
 
-    it("hasGaps returns false when gaps empty", async () => {
-      const element = await createComponent({ gaps: [] });
-      await Promise.resolve();
-
-      expect(element.hasGaps).toBe(false);
-    });
-
-    it("isEmpty returns true when no gaps and not loading", async () => {
+    it("shows empty message when gaps array is empty and not loading", async () => {
       const element = await createComponent({
         gaps: [],
         isLoading: false,
         hasError: false,
       });
-      await Promise.resolve();
+      await flushPromises();
 
-      expect(element.isEmpty).toBe(true);
+      // Check for empty state message
+      const emptyMessage = element.shadowRoot.querySelector(".slds-text-color_weak");
+      expect(emptyMessage).not.toBeNull();
+      expect(emptyMessage.textContent).toContain("No compliance gaps found");
     });
 
-    it("notLoading returns true when not loading", async () => {
-      const element = await createComponent({ isLoading: false });
-      await Promise.resolve();
+    it("does not show loading spinner in default state", async () => {
+      // Note: isLoading is @track (private), defaults to false
+      const element = await createComponent({
+        gaps: [],
+      });
+      await flushPromises();
 
-      expect(element.notLoading).toBe(true);
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).toBeNull();
     });
 
-    it("notError returns true when no error", async () => {
-      const element = await createComponent({ hasError: false });
-      await Promise.resolve();
+    it("does not show error message in default state", async () => {
+      // Note: hasError is @track (private), defaults to false
+      const element = await createComponent({
+        gaps: [],
+      });
+      await flushPromises();
 
-      expect(element.notError).toBe(true);
+      // Error messages should not appear in default state
+      const errorIcon = element.shadowRoot.querySelector("lightning-icon[icon-name='utility:error']");
+      expect(errorIcon).toBeNull();
     });
   });
 
-  describe("Severity Classes", () => {
-    it("returns error class for CRITICAL severity", async () => {
-      const element = await createComponent({ gaps: [] });
-      await Promise.resolve();
+  describe("Gap List Display", () => {
+    it("displays multiple gaps correctly", async () => {
+      const gaps = [
+        {
+          Id: "gap1",
+          Severity__c: "CRITICAL",
+          Policy_Reference__c: "Policy 1",
+          Status__c: "Open",
+          Risk_Score__c: 95,
+        },
+        {
+          Id: "gap2",
+          Severity__c: "HIGH",
+          Policy_Reference__c: "Policy 2",
+          Status__c: "In Progress",
+          Risk_Score__c: 75,
+        },
+        {
+          Id: "gap3",
+          Severity__c: "MEDIUM",
+          Policy_Reference__c: "Policy 3",
+          Status__c: "Closed",
+          Risk_Score__c: 50,
+        },
+      ];
 
-      const gap = { Severity__c: "CRITICAL" };
-      const severityClassFn = element.severityClass;
-      const severityClass = severityClassFn(gap);
+      const element = await createComponent({ gaps });
+      await flushPromises();
 
-      expect(severityClass).toContain("slds-text-color_error");
+      const gapItems = element.shadowRoot.querySelectorAll(".slds-border_bottom");
+      expect(gapItems.length).toBe(3);
+
+      // Check policy references
+      const policyTexts = element.shadowRoot.querySelectorAll(".slds-text-heading_small");
+      expect(policyTexts.length).toBe(3);
+      expect(policyTexts[0].textContent).toBe("Policy 1");
+      expect(policyTexts[1].textContent).toBe("Policy 2");
+      expect(policyTexts[2].textContent).toBe("Policy 3");
     });
 
-    it("returns warning class for HIGH severity", async () => {
-      const element = await createComponent({ gaps: [] });
-      await Promise.resolve();
+    it("displays gap severity", async () => {
+      const gaps = [
+        {
+          Id: "gap1",
+          Severity__c: "CRITICAL",
+          Policy_Reference__c: "Critical Policy",
+          Status__c: "Open",
+          Risk_Score__c: 95,
+        },
+      ];
 
-      const gap = { Severity__c: "HIGH" };
-      const severityClassFn = element.severityClass;
-      const severityClass = severityClassFn(gap);
+      const element = await createComponent({ gaps });
+      await flushPromises();
 
-      expect(severityClass).toContain("slds-text-color_warning");
+      // Check severity text is displayed
+      const severityText = element.shadowRoot.querySelector(".slds-text-body_small");
+      expect(severityText).not.toBeNull();
+      expect(severityText.textContent).toBe("CRITICAL");
     });
 
-    it("returns default class for other severities", async () => {
-      const element = await createComponent({ gaps: [] });
-      await Promise.resolve();
+    it("displays gap status and risk score", async () => {
+      const gaps = [
+        {
+          Id: "gap1",
+          Severity__c: "HIGH",
+          Policy_Reference__c: "Test Policy",
+          Status__c: "In Progress",
+          Risk_Score__c: 80,
+        },
+      ];
 
-      const gap = { Severity__c: "MEDIUM" };
-      const severityClassFn = element.severityClass;
-      const severityClass = severityClassFn(gap);
+      const element = await createComponent({ gaps });
+      await flushPromises();
 
-      expect(severityClass).toContain("slds-text-color_default");
+      // Find status and risk elements in the right column
+      const rightCol = element.shadowRoot.querySelector(".slds-size_1-of-3");
+      expect(rightCol).not.toBeNull();
+
+      const bodySmallTexts = rightCol.querySelectorAll(".slds-text-body_small");
+      expect(bodySmallTexts.length).toBe(2);
+      expect(bodySmallTexts[0].textContent).toContain("Status:");
+      expect(bodySmallTexts[1].textContent).toContain("Risk:");
     });
   });
 });

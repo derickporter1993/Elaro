@@ -14,7 +14,6 @@ import { createElement } from "lwc";
 import PrometheionAiSettings from "c/prometheionAiSettings";
 import getAISettings from "@salesforce/apex/PrometheionAISettingsController.getSettings";
 import saveAISettings from "@salesforce/apex/PrometheionAISettingsController.saveSettings";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 // Mock Apex methods
 jest.mock(
@@ -57,8 +56,29 @@ describe("c-prometheion-ai-settings", () => {
     return element;
   }
 
+  // Helper to flush all pending promises
+  async function flushPromises() {
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+  }
+
+  // Helper to find input by label
+  function findInputByLabel(element, labelText) {
+    const inputs = element.shadowRoot.querySelectorAll("lightning-input");
+    return Array.from(inputs).find(
+      (input) => input.label && input.label.includes(labelText)
+    );
+  }
+
+  // Helper to find button by label
+  function findButtonByLabel(element, labelText) {
+    const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+    return Array.from(buttons).find((btn) => btn.label === labelText);
+  }
+
   describe("Initial Rendering", () => {
-    it("renders the component", async () => {
+    it("renders the component with lightning-card", async () => {
       getAISettings.mockResolvedValue({
         Enable_AI_Reasoning__c: true,
         Require_Human_Approval__c: true,
@@ -68,12 +88,11 @@ describe("c-prometheion-ai-settings", () => {
       });
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      expect(element).not.toBeNull();
       const card = element.shadowRoot.querySelector("lightning-card");
       expect(card).not.toBeNull();
+      expect(card.title).toBe("AI Governance Settings");
     });
 
     it("shows loading spinner initially", async () => {
@@ -100,8 +119,7 @@ describe("c-prometheion-ai-settings", () => {
       getAISettings.mockResolvedValue(mockSettings);
 
       await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       expect(getAISettings).toHaveBeenCalled();
     });
@@ -120,18 +138,34 @@ describe("c-prometheion-ai-settings", () => {
       getAISettings.mockResolvedValue(mockSettings);
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      // Check that toggles are rendered (component should have updated state)
-      expect(element.enableAI).toBe(true);
-      expect(element.requireApproval).toBe(false);
-      expect(element.autoRemediate).toBe(true);
-      expect(element.confidenceThreshold).toBe(0.92);
-      expect(element.blacklistedUsers).toBe("test@example.com");
-
+      // Check spinner is gone
       const spinner = element.shadowRoot.querySelector("lightning-spinner");
-      expect(spinner).toBeNull(); // Loading should be complete
+      expect(spinner).toBeNull();
+
+      // Check inputs are rendered
+      const enableAICheckbox = findInputByLabel(element, "Enable AI Reasoning");
+      const approvalCheckbox = findInputByLabel(element, "Require Human Approval");
+      const remediationCheckbox = findInputByLabel(element, "Auto-Remediation");
+      const thresholdInput = findInputByLabel(element, "AI Confidence Threshold");
+
+      expect(enableAICheckbox).not.toBeNull();
+      expect(enableAICheckbox.checked).toBe(true);
+
+      expect(approvalCheckbox).not.toBeNull();
+      expect(approvalCheckbox.checked).toBe(false);
+
+      expect(remediationCheckbox).not.toBeNull();
+      expect(remediationCheckbox.checked).toBe(true);
+
+      expect(thresholdInput).not.toBeNull();
+      expect(thresholdInput.value).toBe(0.92);
+
+      // Check blacklist textarea
+      const textarea = element.shadowRoot.querySelector("lightning-textarea");
+      expect(textarea).not.toBeNull();
+      expect(textarea.value).toBe("test@example.com");
     });
   });
 
@@ -146,20 +180,25 @@ describe("c-prometheion-ai-settings", () => {
       });
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      const checkbox = element.shadowRoot.querySelector(
-        'lightning-input[data-field="enableAI"]'
+      const enableAICheckbox = findInputByLabel(element, "Enable AI Reasoning");
+
+      expect(enableAICheckbox).not.toBeNull();
+      expect(enableAICheckbox.checked).toBe(false);
+
+      // Simulate toggle
+      enableAICheckbox.checked = true;
+      enableAICheckbox.dispatchEvent(
+        new CustomEvent("change", {
+          target: { checked: true },
+        })
       );
-      if (checkbox) {
-        checkbox.checked = true;
-        checkbox.dispatchEvent(new CustomEvent("change"));
 
-        await Promise.resolve();
+      await flushPromises();
 
-        expect(element.enableAI).toBe(true);
-      }
+      // The checkbox should now be checked
+      expect(enableAICheckbox.checked).toBe(true);
     });
 
     it("handles approval toggle change", async () => {
@@ -172,20 +211,24 @@ describe("c-prometheion-ai-settings", () => {
       });
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      const checkbox = element.shadowRoot.querySelector(
-        'lightning-input[data-field="requireApproval"]'
+      const approvalCheckbox = findInputByLabel(element, "Require Human Approval");
+
+      expect(approvalCheckbox).not.toBeNull();
+      expect(approvalCheckbox.checked).toBe(false);
+
+      // Simulate toggle
+      approvalCheckbox.checked = true;
+      approvalCheckbox.dispatchEvent(
+        new CustomEvent("change", {
+          target: { checked: true },
+        })
       );
-      if (checkbox) {
-        checkbox.checked = true;
-        checkbox.dispatchEvent(new CustomEvent("change"));
 
-        await Promise.resolve();
+      await flushPromises();
 
-        expect(element.requireApproval).toBe(true);
-      }
+      expect(approvalCheckbox.checked).toBe(true);
     });
 
     it("handles remediation toggle change", async () => {
@@ -198,20 +241,24 @@ describe("c-prometheion-ai-settings", () => {
       });
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      const checkbox = element.shadowRoot.querySelector(
-        'lightning-input[data-field="autoRemediate"]'
+      const remediationCheckbox = findInputByLabel(element, "Auto-Remediation");
+
+      expect(remediationCheckbox).not.toBeNull();
+      expect(remediationCheckbox.checked).toBe(false);
+
+      // Simulate toggle
+      remediationCheckbox.checked = true;
+      remediationCheckbox.dispatchEvent(
+        new CustomEvent("change", {
+          target: { checked: true },
+        })
       );
-      if (checkbox) {
-        checkbox.checked = true;
-        checkbox.dispatchEvent(new CustomEvent("change"));
 
-        await Promise.resolve();
+      await flushPromises();
 
-        expect(element.autoRemediate).toBe(true);
-      }
+      expect(remediationCheckbox.checked).toBe(true);
     });
   });
 
@@ -226,20 +273,23 @@ describe("c-prometheion-ai-settings", () => {
       });
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      const input = element.shadowRoot.querySelector(
-        'lightning-input[data-field="confidenceThreshold"]'
+      const thresholdInput = findInputByLabel(element, "AI Confidence Threshold");
+      expect(thresholdInput).not.toBeNull();
+      expect(thresholdInput.value).toBe(0.85);
+
+      // Simulate value change
+      thresholdInput.value = 0.95;
+      thresholdInput.dispatchEvent(
+        new CustomEvent("change", {
+          target: { value: "0.95" },
+        })
       );
-      if (input) {
-        input.value = "0.95";
-        input.dispatchEvent(new CustomEvent("change"));
 
-        await Promise.resolve();
+      await flushPromises();
 
-        expect(element.confidenceThreshold).toBe(0.95);
-      }
+      expect(thresholdInput.value).toBe(0.95);
     });
 
     it("handles blacklist change", async () => {
@@ -252,25 +302,28 @@ describe("c-prometheion-ai-settings", () => {
       });
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      const textarea = element.shadowRoot.querySelector(
-        'lightning-textarea[data-field="blacklistedUsers"]'
+      const textarea = element.shadowRoot.querySelector("lightning-textarea");
+      expect(textarea).not.toBeNull();
+      expect(textarea.value).toBe("");
+
+      // Simulate value change
+      textarea.value = "user1,user2,user3";
+      textarea.dispatchEvent(
+        new CustomEvent("change", {
+          target: { value: "user1,user2,user3" },
+        })
       );
-      if (textarea) {
-        textarea.value = "user1,user2,user3";
-        textarea.dispatchEvent(new CustomEvent("change"));
 
-        await Promise.resolve();
+      await flushPromises();
 
-        expect(element.blacklistedUsers).toBe("user1,user2,user3");
-      }
+      expect(textarea.value).toBe("user1,user2,user3");
     });
   });
 
   describe("Save Functionality", () => {
-    it("saves settings successfully", async () => {
+    it("saves settings successfully and shows success toast", async () => {
       getAISettings.mockResolvedValue({
         Enable_AI_Reasoning__c: true,
         Require_Human_Approval__c: true,
@@ -282,72 +335,66 @@ describe("c-prometheion-ai-settings", () => {
       saveAISettings.mockResolvedValue();
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      // Set up event listener for toast
       const dispatchEventSpy = jest.spyOn(element, "dispatchEvent");
 
-      const saveButton = element.shadowRoot.querySelector(
-        'lightning-button[data-action="save"]'
-      );
-      if (saveButton) {
-        saveButton.click();
-        await Promise.resolve();
+      // Find and click save button
+      const saveButton = findButtonByLabel(element, "Save Settings");
+      expect(saveButton).not.toBeNull();
 
-        expect(saveAISettings).toHaveBeenCalledWith({
-          settings: {
-            Enable_AI_Reasoning__c: true,
-            Require_Human_Approval__c: true,
-            Auto_Remediation_Enabled__c: false,
-            Confidence_Threshold__c: 0.85,
-            Blacklisted_Users__c: "",
-          },
-        });
+      saveButton.click();
+      await flushPromises();
 
-        expect(dispatchEventSpy).toHaveBeenCalled();
-      }
+      expect(saveAISettings).toHaveBeenCalledWith({
+        settings: {
+          Enable_AI_Reasoning__c: true,
+          Require_Human_Approval__c: true,
+          Auto_Remediation_Enabled__c: false,
+          Confidence_Threshold__c: 0.85,
+          Blacklisted_Users__c: "",
+        },
+      });
+
+      // Should dispatch success toast
+      expect(dispatchEventSpy).toHaveBeenCalled();
 
       dispatchEventSpy.mockRestore();
     });
 
-    it("sends correct payload on save", async () => {
+    it("sends correct payload on save with updated values", async () => {
       getAISettings.mockResolvedValue({
         Enable_AI_Reasoning__c: false,
         Require_Human_Approval__c: false,
         Auto_Remediation_Enabled__c: true,
-        Confidence_Threshold__c: 0.90,
+        Confidence_Threshold__c: 0.9,
         Blacklisted_Users__c: "user@test.com",
       });
 
       saveAISettings.mockResolvedValue();
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      const saveButton = element.shadowRoot.querySelector(
-        'lightning-button[data-action="save"]'
-      );
-      if (saveButton) {
-        saveButton.click();
-        await Promise.resolve();
+      // Find and click save button
+      const saveButton = findButtonByLabel(element, "Save Settings");
+      saveButton.click();
+      await flushPromises();
 
-        expect(saveAISettings).toHaveBeenCalledWith({
-          settings: expect.objectContaining({
-            Enable_AI_Reasoning__c: false,
-            Require_Human_Approval__c: false,
-            Auto_Remediation_Enabled__c: true,
-            Confidence_Threshold__c: 0.90,
-            Blacklisted_Users__c: "user@test.com",
-          }),
-        });
-      }
+      expect(saveAISettings).toHaveBeenCalledWith({
+        settings: expect.objectContaining({
+          Enable_AI_Reasoning__c: false,
+          Require_Human_Approval__c: false,
+          Auto_Remediation_Enabled__c: true,
+          Confidence_Threshold__c: 0.9,
+          Blacklisted_Users__c: "user@test.com",
+        }),
+      });
     });
   });
 
   describe("Error Handling", () => {
-    it("handles load error gracefully", async () => {
+    it("handles load error gracefully and shows error in DOM", async () => {
       const error = {
         body: { message: "Failed to load settings" },
         message: "Failed to load settings",
@@ -356,17 +403,15 @@ describe("c-prometheion-ai-settings", () => {
       getAISettings.mockRejectedValue(error);
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      expect(element.hasError).toBe(true);
-      expect(element.errorMessage).toContain("Failed to load");
-
+      // Check for error message in DOM
       const errorDiv = element.shadowRoot.querySelector(".slds-text-color_error");
       expect(errorDiv).not.toBeNull();
+      expect(errorDiv.textContent).toContain("Failed to load");
     });
 
-    it("handles save error and shows toast", async () => {
+    it("handles save error and shows error toast", async () => {
       getAISettings.mockResolvedValue({
         Enable_AI_Reasoning__c: true,
         Require_Human_Approval__c: true,
@@ -383,26 +428,21 @@ describe("c-prometheion-ai-settings", () => {
       saveAISettings.mockRejectedValue(error);
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
       const dispatchEventSpy = jest.spyOn(element, "dispatchEvent");
 
-      const saveButton = element.shadowRoot.querySelector(
-        'lightning-button[data-action="save"]'
-      );
-      if (saveButton) {
-        saveButton.click();
-        await Promise.resolve();
+      // Find and click save button
+      const saveButton = findButtonByLabel(element, "Save Settings");
+      saveButton.click();
+      await flushPromises();
 
-        expect(dispatchEventSpy).toHaveBeenCalled();
-        const toastEvent = dispatchEventSpy.mock.calls.find(
-          (call) => call[0].type === "showtoast"
-        );
-        if (toastEvent) {
-          expect(toastEvent[0].detail.variant).toBe("error");
-        }
-      }
+      // Should dispatch error toast
+      expect(dispatchEventSpy).toHaveBeenCalled();
+      const toastEvent = dispatchEventSpy.mock.calls.find(
+        (call) => call[0].type === "showtoast"
+      );
+      expect(toastEvent).toBeDefined();
 
       dispatchEventSpy.mockRestore();
     });
@@ -412,11 +452,54 @@ describe("c-prometheion-ai-settings", () => {
       getAISettings.mockRejectedValue(error);
 
       const element = await createComponent();
-      await Promise.resolve();
-      await Promise.resolve();
+      await flushPromises();
 
-      expect(element.hasError).toBe(true);
-      expect(element.errorMessage).toBe("Network error");
+      // Check for error message in DOM
+      const errorDiv = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(errorDiv).not.toBeNull();
+      expect(errorDiv.textContent).toContain("Network error");
+    });
+
+    it("shows generic error message when error has no message", async () => {
+      const error = {};
+      getAISettings.mockRejectedValue(error);
+
+      const element = await createComponent();
+      await flushPromises();
+
+      // Check for error message in DOM
+      const errorDiv = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(errorDiv).not.toBeNull();
+      // Should show fallback error message
+      expect(errorDiv.textContent).toContain("Failed to load AI settings");
+    });
+  });
+
+  describe("UI State Transitions", () => {
+    it("hides spinner after successful load", async () => {
+      getAISettings.mockResolvedValue({
+        Enable_AI_Reasoning__c: true,
+        Require_Human_Approval__c: true,
+        Auto_Remediation_Enabled__c: false,
+        Confidence_Threshold__c: 0.85,
+        Blacklisted_Users__c: "",
+      });
+
+      const element = await createComponent();
+      await flushPromises();
+
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).toBeNull();
+    });
+
+    it("hides spinner after load error", async () => {
+      getAISettings.mockRejectedValue({ message: "Error" });
+
+      const element = await createComponent();
+      await flushPromises();
+
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).toBeNull();
     });
   });
 });

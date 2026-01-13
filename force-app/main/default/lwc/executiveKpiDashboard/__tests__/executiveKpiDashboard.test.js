@@ -65,13 +65,17 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
 
       expect(element).not.toBeNull();
+      const card = element.shadowRoot.querySelector("lightning-card");
+      expect(card).not.toBeNull();
     });
 
     it("shows loading state initially", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      expect(element.loading).toBe(true);
+      // Check DOM for spinner (loading indicator)
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).not.toBeNull();
     });
   });
 
@@ -92,8 +96,12 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.loading).toBe(false);
-      expect(element.dashboardData).toEqual(mockData);
+      // After data loads, spinner should be gone and dashboard grid should show
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).toBeNull();
+
+      const grid = element.shadowRoot.querySelector(".slds-grid");
+      expect(grid).not.toBeNull();
     });
   });
 
@@ -116,7 +124,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
 
       // Average: (80 + 90 + 70) / 3 = 80.0
-      expect(element.overallScore).toBe("80.0");
+      // Check that the overall score displays in the DOM
+      const headings = element.shadowRoot.querySelectorAll(".slds-text-heading_large");
+      expect(headings.length).toBeGreaterThan(0);
+      expect(headings[0].textContent).toBe("80.0%");
     });
 
     it("returns 0 when no frameworks", async () => {
@@ -132,7 +143,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.overallScore).toBe("0");
+      // Check that overall score shows "0" or "0%"
+      const headings = element.shadowRoot.querySelectorAll(".slds-text-heading_large");
+      expect(headings.length).toBeGreaterThan(0);
+      expect(headings[0].textContent).toBe("0%");
     });
 
     it("handles frameworks with null scores", async () => {
@@ -152,7 +166,9 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
 
       // Average: (80 + 0) / 2 = 40.0
-      expect(element.overallScore).toBe("40.0");
+      const headings = element.shadowRoot.querySelectorAll(".slds-text-heading_large");
+      expect(headings.length).toBeGreaterThan(0);
+      expect(headings[0].textContent).toBe("40.0%");
     });
 
     it("calculates total gaps correctly", async () => {
@@ -172,7 +188,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.totalGaps).toBe(3);
+      // Total gaps is second KPI - index 1
+      const headings = element.shadowRoot.querySelectorAll(".slds-text-heading_large");
+      expect(headings.length).toBeGreaterThan(1);
+      expect(headings[1].textContent).toBe("3");
     });
 
     it("returns 0 when no gaps", async () => {
@@ -188,7 +207,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.totalGaps).toBe(0);
+      // Total gaps should show 0
+      const headings = element.shadowRoot.querySelectorAll(".slds-text-heading_large");
+      expect(headings.length).toBeGreaterThan(1);
+      expect(headings[1].textContent).toBe("0");
     });
 
     it("calculates critical gaps correctly", async () => {
@@ -208,7 +230,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.criticalGaps).toBe(2);
+      // Critical gaps is third KPI - index 2
+      const criticalGapsElement = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(criticalGapsElement).not.toBeNull();
+      expect(criticalGapsElement.textContent).toBe("2");
     });
 
     it("returns 0 critical gaps when none exist", async () => {
@@ -227,7 +252,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.criticalGaps).toBe(0);
+      // Critical gaps should show 0
+      const criticalGapsElement = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(criticalGapsElement).not.toBeNull();
+      expect(criticalGapsElement.textContent).toBe("0");
     });
 
     it("calculates compliant frameworks correctly", async () => {
@@ -247,7 +275,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.compliantFrameworks).toBe(2);
+      // Compliant frameworks is fourth KPI - index 3
+      const headings = element.shadowRoot.querySelectorAll(".slds-text-heading_large");
+      expect(headings.length).toBeGreaterThan(3);
+      expect(headings[3].textContent).toBe("2");
     });
   });
 
@@ -265,9 +296,13 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.loading).toBe(false);
-      expect(element.error).toBeDefined();
-      expect(element.errorMessage).toContain("Failed to load");
+      // Check that error message is displayed in the DOM
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).toBeNull();
+
+      const errorDiv = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(errorDiv).not.toBeNull();
+      expect(errorDiv.textContent).toContain("Failed to load");
     });
 
     it("handles error without body property", async () => {
@@ -279,7 +314,10 @@ describe("c-executive-kpi-dashboard", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.errorMessage).toBe("Network error");
+      // Check error message in DOM
+      const errorDiv = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(errorDiv).not.toBeNull();
+      expect(errorDiv.textContent).toContain("Network error");
     });
   });
 });

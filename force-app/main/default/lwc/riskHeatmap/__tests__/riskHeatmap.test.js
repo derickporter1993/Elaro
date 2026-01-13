@@ -33,131 +33,152 @@ describe("c-risk-heatmap", () => {
       await Promise.resolve();
 
       expect(element).not.toBeNull();
+      const card = element.shadowRoot.querySelector("lightning-card");
+      expect(card).not.toBeNull();
     });
   });
 
-  describe("Risk Matrix", () => {
-    it("generates risk matrix correctly", async () => {
+  describe("Risk Display", () => {
+    it("displays risk items when risks are provided", async () => {
       const risks = [
-        { framework: "SOC2", severity: "CRITICAL", score: 9 },
-        { framework: "SOC2", severity: "HIGH", score: 7 },
-        { framework: "HIPAA", severity: "CRITICAL", score: 8 },
+        { id: "r1", framework: "SOC2", severity: "CRITICAL", score: 9 },
+        { id: "r2", framework: "SOC2", severity: "HIGH", score: 7 },
+        { id: "r3", framework: "HIPAA", severity: "CRITICAL", score: 8 },
       ];
 
       const element = await createComponent({ risks });
       await Promise.resolve();
 
-      const matrix = element.riskMatrix;
-      expect(matrix["SOC2_CRITICAL"]).toBe(1);
-      expect(matrix["SOC2_HIGH"]).toBe(1);
-      expect(matrix["HIPAA_CRITICAL"]).toBe(1);
+      // Check that risk items are rendered in the DOM
+      const riskItems = element.shadowRoot.querySelectorAll('[role="listitem"]');
+      expect(riskItems.length).toBe(3);
     });
 
     it("handles empty risks array", async () => {
       const element = await createComponent({ risks: [] });
       await Promise.resolve();
 
-      const matrix = element.riskMatrix;
-      expect(Object.keys(matrix).length).toBe(0);
+      // No risk items should be rendered
+      const riskItems = element.shadowRoot.querySelectorAll('[role="listitem"]');
+      expect(riskItems.length).toBe(0);
     });
 
-    it("counts multiple risks with same key", async () => {
+    it("displays multiple risks with same framework and severity", async () => {
       const risks = [
-        { framework: "SOC2", severity: "CRITICAL", score: 9 },
-        { framework: "SOC2", severity: "CRITICAL", score: 8 },
-        { framework: "SOC2", severity: "CRITICAL", score: 9.5 },
+        { id: "r1", framework: "SOC2", severity: "CRITICAL", score: 9 },
+        { id: "r2", framework: "SOC2", severity: "CRITICAL", score: 8 },
+        { id: "r3", framework: "SOC2", severity: "CRITICAL", score: 9.5 },
       ];
 
       const element = await createComponent({ risks });
       await Promise.resolve();
 
-      const matrix = element.riskMatrix;
-      expect(matrix["SOC2_CRITICAL"]).toBe(3);
+      // All 3 risks should be rendered
+      const riskItems = element.shadowRoot.querySelectorAll('[role="listitem"]');
+      expect(riskItems.length).toBe(3);
     });
   });
 
   describe("Risk Classes", () => {
     it("assigns risk-critical class for CRITICAL severity", async () => {
       const risks = [
-        { framework: "SOC2", severity: "CRITICAL", score: 9 },
+        { id: "r1", framework: "SOC2", severity: "CRITICAL", score: 9 },
       ];
 
       const element = await createComponent({ risks });
       await Promise.resolve();
 
-      const risksWithClasses = element.risksWithClasses;
-      expect(risksWithClasses[0].combinedClass).toContain("risk-critical");
+      // Check that risk-critical class is applied
+      const criticalBox = element.shadowRoot.querySelector(".risk-critical");
+      expect(criticalBox).not.toBeNull();
     });
 
     it("assigns risk-high class for HIGH severity", async () => {
-      const risks = [{ framework: "SOC2", severity: "HIGH", score: 7 }];
+      const risks = [{ id: "r1", framework: "SOC2", severity: "HIGH", score: 7 }];
 
       const element = await createComponent({ risks });
       await Promise.resolve();
 
-      const risksWithClasses = element.risksWithClasses;
-      expect(risksWithClasses[0].combinedClass).toContain("risk-high");
+      // Check that risk-high class is applied
+      const highBox = element.shadowRoot.querySelector(".risk-high");
+      expect(highBox).not.toBeNull();
     });
 
     it("assigns risk-medium class for MEDIUM severity", async () => {
-      const risks = [{ framework: "SOC2", severity: "MEDIUM", score: 5 }];
+      const risks = [{ id: "r1", framework: "SOC2", severity: "MEDIUM", score: 5 }];
 
       const element = await createComponent({ risks });
       await Promise.resolve();
 
-      const risksWithClasses = element.risksWithClasses;
-      expect(risksWithClasses[0].combinedClass).toContain("risk-medium");
+      // Check that risk-medium class is applied
+      const mediumBox = element.shadowRoot.querySelector(".risk-medium");
+      expect(mediumBox).not.toBeNull();
     });
 
     it("assigns risk-low class for LOW severity", async () => {
-      const risks = [{ framework: "SOC2", severity: "LOW", score: 2 }];
+      const risks = [{ id: "r1", framework: "SOC2", severity: "LOW", score: 2 }];
 
       const element = await createComponent({ risks });
       await Promise.resolve();
 
-      const risksWithClasses = element.risksWithClasses;
-      expect(risksWithClasses[0].combinedClass).toContain("risk-low");
+      // Check that risk-low class is applied
+      const lowBox = element.shadowRoot.querySelector(".risk-low");
+      expect(lowBox).not.toBeNull();
     });
 
-    it("handles empty risks array", async () => {
+    it("handles empty risks array with no classes", async () => {
       const element = await createComponent({ risks: [] });
       await Promise.resolve();
 
-      expect(element.risksWithClasses).toEqual([]);
+      // No risk boxes should be rendered
+      const sldcBoxes = element.shadowRoot.querySelectorAll(".slds-box");
+      expect(sldcBoxes.length).toBe(0);
     });
   });
 
   describe("State Management", () => {
-    it("hasRisks returns true when risks exist", async () => {
+    it("shows risk grid when risks exist", async () => {
       const element = await createComponent({
-        risks: [{ framework: "SOC2", severity: "HIGH", score: 7 }],
+        risks: [{ id: "r1", framework: "SOC2", severity: "HIGH", score: 7 }],
       });
       await Promise.resolve();
 
-      expect(element.hasRisks).toBe(true);
+      // Grid should be visible
+      const grid = element.shadowRoot.querySelector('[role="list"]');
+      expect(grid).not.toBeNull();
     });
 
-    it("hasRisks returns false when risks are empty", async () => {
+    it("shows no risks message when risks are empty", async () => {
       const element = await createComponent({ risks: [] });
       await Promise.resolve();
 
-      expect(element.hasRisks).toBe(false);
+      // "No risk data available" message should be shown
+      const noRisksMessage = element.shadowRoot.querySelector('[role="status"]');
+      expect(noRisksMessage).not.toBeNull();
+      expect(noRisksMessage.textContent).toContain("No risk data available");
     });
 
-    it("noRisks returns true when no risks", async () => {
-      const element = await createComponent({ risks: [] });
-      await Promise.resolve();
-
-      expect(element.noRisks).toBe(true);
-    });
-
-    it("noRisks returns false when risks exist", async () => {
+    it("hides no risks message when risks exist", async () => {
       const element = await createComponent({
-        risks: [{ framework: "SOC2", severity: "HIGH", score: 7 }],
+        risks: [{ id: "r1", framework: "SOC2", severity: "HIGH", score: 7 }],
       });
       await Promise.resolve();
 
-      expect(element.noRisks).toBe(false);
+      // "No risk data available" status should not be rendered
+      const noRisksMessage = element.shadowRoot.querySelector('[role="status"]');
+      expect(noRisksMessage).toBeNull();
+    });
+
+    it("displays framework name in risk box", async () => {
+      const element = await createComponent({
+        risks: [{ id: "r1", framework: "SOC2", severity: "HIGH", score: 7 }],
+      });
+      await Promise.resolve();
+
+      // Check framework name is displayed
+      const frameworkText = element.shadowRoot.querySelector(".slds-text-heading_small");
+      expect(frameworkText).not.toBeNull();
+      expect(frameworkText.textContent).toBe("SOC2");
     });
   });
 });

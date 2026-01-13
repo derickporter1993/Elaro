@@ -22,19 +22,19 @@ let mockMetricFieldsCallbacks = new Set();
 jest.mock(
   "@salesforce/apex/PrometheionTrendController.getDateFields",
   () => ({
-    default: jest.fn((config, callback) => {
-      if (callback) {
+    default: function MockDateFieldsAdapter(callback) {
+      if (new.target) {
+        this.callback = callback;
         mockDateFieldsCallbacks.add(callback);
-        return {
-          connect: () => {},
-          disconnect: () => {
-            mockDateFieldsCallbacks.delete(callback);
-          },
-          update: () => {},
+        this.connect = () => {};
+        this.disconnect = () => {
+          mockDateFieldsCallbacks.delete(this.callback);
         };
+        this.update = () => {};
+        return this;
       }
       return Promise.resolve([]);
-    }),
+    },
   }),
   { virtual: true }
 );
@@ -42,19 +42,19 @@ jest.mock(
 jest.mock(
   "@salesforce/apex/PrometheionTrendController.getMetricFields",
   () => ({
-    default: jest.fn((config, callback) => {
-      if (callback) {
+    default: function MockMetricFieldsAdapter(callback) {
+      if (new.target) {
+        this.callback = callback;
         mockMetricFieldsCallbacks.add(callback);
-        return {
-          connect: () => {},
-          disconnect: () => {
-            mockMetricFieldsCallbacks.delete(callback);
-          },
-          update: () => {},
+        this.connect = () => {};
+        this.disconnect = () => {
+          mockMetricFieldsCallbacks.delete(this.callback);
         };
+        this.update = () => {};
+        return this;
       }
       return Promise.resolve([]);
-    }),
+    },
   }),
   { virtual: true }
 );
@@ -111,10 +111,27 @@ describe("c-prometheion-trend-analyzer", () => {
       const card = element.shadowRoot.querySelector("lightning-card");
       expect(card).not.toBeNull();
     });
+
+    it("renders object selection combobox", async () => {
+      const element = await createComponent();
+      await Promise.resolve();
+
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+      expect(comboboxes.length).toBeGreaterThan(0);
+    });
+
+    it("renders analyze button", async () => {
+      const element = await createComponent();
+      await Promise.resolve();
+
+      const button = element.shadowRoot.querySelector("lightning-button");
+      expect(button).not.toBeNull();
+      expect(button.label).toBe("Analyze Trend");
+    });
   });
 
   describe("Wire Adapter Data Handling", () => {
-    it("loads date fields when object is selected", async () => {
+    it("populates date fields combobox when data is received", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
@@ -123,18 +140,20 @@ describe("c-prometheion-trend-analyzer", () => {
         { label: "Last Modified Date", apiName: "LastModifiedDate" },
       ];
 
-      element.selectedObject = "Account";
-      await Promise.resolve();
-
       emitDateFields(mockDateFields);
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.dateFields.length).toBe(2);
-      expect(element.dateFields[0].label).toBe("Created Date");
+      // Date field combobox should have options
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+      const dateFieldCombobox = Array.from(comboboxes).find(
+        (cb) => cb.label === "Date Field"
+      );
+      expect(dateFieldCombobox).toBeDefined();
+      expect(dateFieldCombobox.options.length).toBe(2);
     });
 
-    it("loads metric fields when object is selected", async () => {
+    it("populates metric fields combobox when data is received", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
@@ -143,89 +162,101 @@ describe("c-prometheion-trend-analyzer", () => {
         { label: "Number of Employees", apiName: "NumberOfEmployees" },
       ];
 
-      element.selectedObject = "Account";
-      await Promise.resolve();
-
       emitMetricFields(mockMetricFields);
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(element.metricFields.length).toBe(2);
+      // Metric field combobox should have options
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+      const metricFieldCombobox = Array.from(comboboxes).find(
+        (cb) => cb.label === "Metric Field"
+      );
+      expect(metricFieldCombobox).toBeDefined();
+      expect(metricFieldCombobox.options.length).toBe(2);
     });
   });
 
   describe("Input Handlers", () => {
-    it("handles object change", async () => {
+    it("handles object change via combobox", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      const event = new CustomEvent("change", {
-        detail: { value: "Account" },
-      });
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+      const objectCombobox = Array.from(comboboxes).find(
+        (cb) => cb.label === "Object"
+      );
 
-      element.handleObjectChange(event);
+      objectCombobox.dispatchEvent(
+        new CustomEvent("change", {
+          detail: { value: "Account" },
+        })
+      );
+      await Promise.resolve();
 
-      expect(element.selectedObject).toBe("Account");
-      expect(element.dateField).toBe("");
-      expect(element.metricField).toBe("");
-      expect(element.trendData).toBeNull();
+      // Verify the combobox value changed
+      expect(objectCombobox.value).toBe("Account");
     });
 
-    it("handles date field change", async () => {
+    it("handles date field change via combobox", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      const event = new CustomEvent("change", {
-        detail: { value: "CreatedDate" },
-      });
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+      const dateFieldCombobox = Array.from(comboboxes).find(
+        (cb) => cb.label === "Date Field"
+      );
 
-      element.handleDateFieldChange(event);
+      dateFieldCombobox.dispatchEvent(
+        new CustomEvent("change", {
+          detail: { value: "CreatedDate" },
+        })
+      );
+      await Promise.resolve();
 
-      expect(element.dateField).toBe("CreatedDate");
+      expect(dateFieldCombobox.value).toBe("CreatedDate");
     });
 
-    it("handles metric field change", async () => {
+    it("handles granularity change via combobox", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      const event = new CustomEvent("change", {
-        detail: { value: "AnnualRevenue" },
-      });
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+      const granularityCombobox = Array.from(comboboxes).find(
+        (cb) => cb.label === "Granularity"
+      );
 
-      element.handleMetricFieldChange(event);
+      granularityCombobox.dispatchEvent(
+        new CustomEvent("change", {
+          detail: { value: "week" },
+        })
+      );
+      await Promise.resolve();
 
-      expect(element.metricField).toBe("AnnualRevenue");
+      expect(granularityCombobox.value).toBe("week");
     });
 
-    it("handles granularity change", async () => {
+    it("handles months back change via input", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      const event = new CustomEvent("change", {
-        detail: { value: "week" },
-      });
+      // Find input by label property since attribute selectors don't work for LWC properties
+      const inputs = element.shadowRoot.querySelectorAll("lightning-input");
+      const monthsBackInput = Array.from(inputs).find((inp) => inp.label === "Months Back");
+      expect(monthsBackInput).not.toBeNull();
 
-      element.handleGranularityChange(event);
-
-      expect(element.granularity).toBe("week");
-    });
-
-    it("handles months back change", async () => {
-      const element = await createComponent();
+      monthsBackInput.dispatchEvent(
+        new CustomEvent("change", {
+          detail: { value: "24" },
+        })
+      );
       await Promise.resolve();
 
-      const event = new CustomEvent("change", {
-        detail: { value: "24" },
-      });
-
-      element.handleMonthsBackChange(event);
-
-      expect(element.monthsBack).toBe(24);
+      expect(monthsBackInput.value).toBe(24);
     });
   });
 
   describe("Analysis Execution", () => {
-    it("executes trend analysis when canAnalyze is true", async () => {
+    it("calls getTimeSeries when analyze button is clicked with valid inputs", async () => {
       getTimeSeries.mockResolvedValue({
         buckets: [],
         total: 1000,
@@ -236,38 +267,44 @@ describe("c-prometheion-trend-analyzer", () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      element.selectedObject = "Account";
-      element.dateField = "CreatedDate";
-      element.metricField = "AnnualRevenue";
-      element.granularity = "month";
+      // Set up required inputs
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
 
-      const dispatchEventSpy = jest.spyOn(element, "dispatchEvent");
+      const objectCombobox = Array.from(comboboxes).find((cb) => cb.label === "Object");
+      objectCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
 
-      element.handleAnalyze();
+      const dateFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Date Field");
+      dateFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "CreatedDate" } }));
+
+      const metricFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Metric Field");
+      metricFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "AnnualRevenue" } }));
+
+      await Promise.resolve();
+
+      // Click analyze button
+      const analyzeButton = element.shadowRoot.querySelector("lightning-button");
+      analyzeButton.click();
+      await Promise.resolve();
       await Promise.resolve();
 
       expect(getTimeSeries).toHaveBeenCalled();
-      expect(element.isLoading).toBe(false);
-
-      dispatchEventSpy.mockRestore();
     });
 
-    it("does not execute when canAnalyze is false", async () => {
+    it("does not call getTimeSeries when required fields are missing", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      element.selectedObject = "";
-      element.dateField = "";
-      element.metricField = "";
-
-      element.handleAnalyze();
+      // Do not set up required inputs - leave them empty
+      const analyzeButton = element.shadowRoot.querySelector("lightning-button");
+      analyzeButton.click();
+      await Promise.resolve();
 
       expect(getTimeSeries).not.toHaveBeenCalled();
     });
   });
 
   describe("Results Display", () => {
-    it("displays trend results correctly", async () => {
+    it("displays trend results after successful analysis", async () => {
       const mockResults = {
         buckets: [
           { bucketDate: "2025-01", metricValue: 100, changeFromPrevious: 10, percentChange: 10 },
@@ -283,25 +320,83 @@ describe("c-prometheion-trend-analyzer", () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      element.selectedObject = "Account";
-      element.dateField = "CreatedDate";
-      element.metricField = "AnnualRevenue";
-      element.granularity = "month";
+      // Set up required inputs
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
 
-      element.handleAnalyze();
+      const objectCombobox = Array.from(comboboxes).find((cb) => cb.label === "Object");
+      objectCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
+
+      const dateFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Date Field");
+      dateFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "CreatedDate" } }));
+
+      const metricFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Metric Field");
+      metricFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "AnnualRevenue" } }));
+
+      await Promise.resolve();
+
+      // Click analyze button
+      const analyzeButton = element.shadowRoot.querySelector("lightning-button");
+      analyzeButton.click();
       await Promise.resolve();
       await Promise.resolve();
+      await Promise.resolve();
 
-      expect(element.hasResults).toBe(true);
-      expect(element.trendBuckets.length).toBe(2);
-      expect(element.trendTotal).toBe("210.00");
-      expect(element.trendAverage).toBe("105.00");
-      expect(element.trendDirection).toBe("up");
+      // Check that results region is displayed
+      const resultsRegion = element.shadowRoot.querySelector('[role="region"]');
+      expect(resultsRegion).not.toBeNull();
+
+      // Check that trend data table is rendered
+      const table = element.shadowRoot.querySelector('table[role="table"]');
+      expect(table).not.toBeNull();
+    });
+
+    it("displays trend summary values", async () => {
+      const mockResults = {
+        buckets: [
+          { bucketDate: "2025-01", metricValue: 100, changeFromPrevious: 10, percentChange: 10 },
+        ],
+        total: 210,
+        average: 105,
+        trendDirection: "up",
+      };
+
+      getTimeSeries.mockResolvedValue(mockResults);
+
+      const element = await createComponent();
+      await Promise.resolve();
+
+      // Set up required inputs
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
+
+      const objectCombobox = Array.from(comboboxes).find((cb) => cb.label === "Object");
+      objectCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
+
+      const dateFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Date Field");
+      dateFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "CreatedDate" } }));
+
+      const metricFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Metric Field");
+      metricFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "AnnualRevenue" } }));
+
+      await Promise.resolve();
+
+      // Click analyze button
+      const analyzeButton = element.shadowRoot.querySelector("lightning-button");
+      analyzeButton.click();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // Check that summary values are displayed
+      const summaryText = element.shadowRoot.querySelector(".slds-text-body_regular");
+      expect(summaryText).not.toBeNull();
+      expect(summaryText.textContent).toContain("210.00");
+      expect(summaryText.textContent).toContain("105.00");
+      expect(summaryText.textContent).toContain("up");
     });
   });
 
   describe("Error Handling", () => {
-    it("handles analysis error gracefully", async () => {
+    it("shows error message when analysis fails", async () => {
       const error = {
         body: { message: "Analysis failed" },
         message: "Analysis failed",
@@ -312,21 +407,34 @@ describe("c-prometheion-trend-analyzer", () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      element.selectedObject = "Account";
-      element.dateField = "CreatedDate";
-      element.metricField = "AnnualRevenue";
-      element.granularity = "month";
+      // Set up required inputs
+      const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
 
-      const dispatchEventSpy = jest.spyOn(element, "dispatchEvent");
+      const objectCombobox = Array.from(comboboxes).find((cb) => cb.label === "Object");
+      objectCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
 
-      element.handleAnalyze();
+      const dateFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Date Field");
+      dateFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "CreatedDate" } }));
+
+      const metricFieldCombobox = Array.from(comboboxes).find((cb) => cb.label === "Metric Field");
+      metricFieldCombobox.dispatchEvent(new CustomEvent("change", { detail: { value: "AnnualRevenue" } }));
+
       await Promise.resolve();
 
-      expect(element.hasError).toBe(true);
-      expect(element.errorMessage).toContain("Error analyzing trend");
-      expect(dispatchEventSpy).toHaveBeenCalled();
+      // Click analyze button
+      const analyzeButton = element.shadowRoot.querySelector("lightning-button");
+      analyzeButton.click();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
 
-      dispatchEventSpy.mockRestore();
+      // Check that error is displayed in DOM
+      const errorDiv = element.shadowRoot.querySelector(".slds-text-color_error");
+      expect(errorDiv).not.toBeNull();
+      expect(errorDiv.textContent).toContain("Error analyzing trend");
+
+      // ShowToastEvent should have been dispatched
+      expect(ShowToastEvent).toHaveBeenCalled();
     });
   });
 });

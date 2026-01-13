@@ -13,33 +13,14 @@ import PrometheionEventMonitor from "c/prometheionEventMonitor";
 import { subscribe, unsubscribe, onError } from "lightning/empApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
-const mockSubscribe = jest.fn();
-const mockUnsubscribe = jest.fn();
-const mockOnError = jest.fn();
-
 jest.mock(
   "lightning/empApi",
   () => ({
-    subscribe: jest.fn((channel, replayId, callback) => {
-      mockSubscribe.mockImplementation((ch, rid, cb) => {
-        return Promise.resolve({ id: "mock-subscription-id" });
-      });
-      return Promise.resolve({ id: "mock-subscription-id" });
-    }),
+    subscribe: jest.fn(() => Promise.resolve({ id: "mock-subscription-id" })),
     unsubscribe: jest.fn((subscription, callback) => {
-      mockUnsubscribe.mockImplementation((sub, cb) => {
-        if (cb) cb();
-      });
-      if (typeof arguments[1] === "function") {
-        arguments[1]();
-      }
+      if (callback) callback();
     }),
-    onError: jest.fn((callback) => {
-      mockOnError.mockImplementation((cb) => {
-        return cb;
-      });
-      return callback;
-    }),
+    onError: jest.fn((callback) => callback),
   }),
   { virtual: true }
 );
@@ -77,6 +58,8 @@ describe("c-prometheion-event-monitor", () => {
       await Promise.resolve();
 
       expect(element).not.toBeNull();
+      const card = element.shadowRoot.querySelector("lightning-card");
+      expect(card).not.toBeNull();
     });
   });
 
@@ -103,33 +86,23 @@ describe("c-prometheion-event-monitor", () => {
   });
 
   describe("State Management", () => {
-    it("hasEvents returns true when events exist", async () => {
+    it("shows no events message when events empty", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      element.events = [
-        {
-          id: "ev1",
-          eventType: "GAP_DETECTED",
-          timestamp: new Date().toISOString(),
-        },
-      ];
-
-      expect(element.hasEvents).toBe(true);
+      // Check DOM shows "no events" message
+      const noEventsMessage = element.shadowRoot.querySelector("p");
+      expect(noEventsMessage).not.toBeNull();
+      expect(noEventsMessage.textContent).toContain("No events received yet");
     });
 
-    it("hasEvents returns false when events empty", async () => {
+    it("does not show table when no events", async () => {
       const element = await createComponent();
       await Promise.resolve();
 
-      expect(element.hasEvents).toBe(false);
-    });
-
-    it("noEvents returns true when no events", async () => {
-      const element = await createComponent();
-      await Promise.resolve();
-
-      expect(element.noEvents).toBe(true);
+      // Table should not be rendered
+      const table = element.shadowRoot.querySelector("table");
+      expect(table).toBeNull();
     });
   });
 });
