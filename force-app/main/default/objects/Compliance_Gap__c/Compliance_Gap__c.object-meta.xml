@@ -211,4 +211,31 @@
         <length>32768</length>
         <visibleLines>5</visibleLines>
     </fields>
+    <fields>
+        <fullName>Jira_Issue_Key__c</fullName>
+        <label>Jira Issue Key</label>
+        <type>Text</type>
+        <length>50</length>
+        <externalId>true</externalId>
+        <description>Linked Jira issue key (e.g., COMPLIANCE-123)</description>
+    </fields>
+    <fields>
+        <fullName>Jira_Issue_URL__c</fullName>
+        <label>Jira Issue URL</label>
+        <type>Url</type>
+        <description>Direct link to the Jira issue</description>
+    </fields>
+    <fields>
+        <fullName>Jira_Status__c</fullName>
+        <label>Jira Status</label>
+        <type>Text</type>
+        <length>50</length>
+        <description>Current status of the linked Jira issue</description>
+    </fields>
+    <fields>
+        <fullName>Jira_Last_Sync__c</fullName>
+        <label>Jira Last Sync</label>
+        <type>DateTime</type>
+        <description>Last time the Jira issue was synced</description>
+    </fields>
 </CustomObject>
