@@ -1,0 +1,201 @@
+<template>
+    <lightning-card title="On-Call Schedule Management" icon-name="standard:shift">
+        <div slot="actions">
+            <lightning-button-group>
+                <lightning-button
+                    label="Refresh"
+                    icon-name="utility:refresh"
+                    onclick={handleRefresh}>
+                </lightning-button>
+                <lightning-button
+                    label="New Schedule"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleNewSchedule}>
+                </lightning-button>
+            </lightning-button-group>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Current On-Call Section -->
+            <template lwc:if={hasCurrentOnCall}>
+                <div class="slds-box slds-box_small slds-theme_success slds-m-bottom_medium">
+                    <div class="slds-text-heading_small slds-m-bottom_x-small">
+                        <lightning-icon icon-name="utility:clock" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                        Currently On-Call
+                    </div>
+                    <template for:each={currentOnCall} for:item="user">
+                        <div key={user.userId} class="slds-m-vertical_xx-small">
+                            <strong>{user.userName}</strong> ({user.rotationName}) - Until {user.shiftEnd}
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <template lwc:elseif={hasSchedules}>
+                <lightning-datatable
+                    key-field="id"
+                    data={schedules}
+                    columns={columns}
+                    onrowaction={handleRowAction}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-illustration slds-illustration_small">
+                    <div class="slds-text-longform">
+                        <h3 class="slds-text-heading_medium">No On-Call Schedules</h3>
+                        <p class="slds-text-body_regular">
+                            Create on-call schedules to receive mobile alerts for compliance gaps.
+                        </p>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <!-- Create/Edit Modal -->
+    <template lwc:if={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-record-picker
+                        label="User"
+                        placeholder="Select a user"
+                        object-api-name="User"
+                        value={formData.userId}
+                        data-field="userId"
+                        onchange={handleInputChange}
+                        required>
+                    </lightning-record-picker>
+
+                    <lightning-input
+                        type="text"
+                        label="Schedule Name"
+                        data-field="name"
+                        value={formData.name}
+                        onchange={handleInputChange}
+                        required
+                        class="slds-m-top_small">
+                    </lightning-input>
+
+                    <lightning-combobox
+                        label="Rotation"
+                        data-field="rotationName"
+                        value={formData.rotationName}
+                        options={rotationOptions}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <div class="slds-grid slds-gutters slds-m-top_small">
+                        <div class="slds-col">
+                            <lightning-input
+                                type="datetime"
+                                label="Start Time"
+                                data-field="startTime"
+                                value={formData.startTime}
+                                onchange={handleInputChange}
+                                required>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-input
+                                type="datetime"
+                                label="End Time"
+                                data-field="endTime"
+                                value={formData.endTime}
+                                onchange={handleInputChange}
+                                required>
+                            </lightning-input>
+                        </div>
+                    </div>
+
+                    <lightning-combobox
+                        label="Timezone"
+                        data-field="timezone"
+                        value={formData.timezone}
+                        options={timezoneOptions}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <lightning-dual-listbox
+                        label="Notification Methods"
+                        source-label="Available"
+                        selected-label="Selected"
+                        data-field="notificationMethods"
+                        options={notificationOptions}
+                        value={formData.notificationMethods}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-dual-listbox>
+
+                    <lightning-input
+                        type="checkbox"
+                        label="Active"
+                        data-field="active"
+                        checked={formData.active}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-input>
+                </div>
+
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeModal}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Save"
+                        onclick={handleSave}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Delete Confirmation Modal -->
+    <template lwc:if={isDeleteModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme_error">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeDeleteModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title">Delete Schedule</h2>
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>Are you sure you want to delete the schedule "{selectedSchedule.name}"?</p>
+                    <p class="slds-m-top_small slds-text-color_weak">This action cannot be undone.</p>
+                </div>
+
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeDeleteModal}></lightning-button>
+                    <lightning-button
+                        variant="destructive"
+                        label="Delete"
+                        onclick={handleDelete}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

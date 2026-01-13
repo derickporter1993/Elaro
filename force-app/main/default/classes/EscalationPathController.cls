@@ -1,0 +1,87 @@
+/**
+ * @description Controller for Escalation Path LWC component
+ * Provides CRUD operations for Prometheion_Escalation_Path__c records
+ *
+ * @author Prometheion Development Team
+ * @since 2026-01
+ */
+public with sharing class EscalationPathController {
+
+    /**
+     * @description Gets all escalation paths ordered by level
+     * @return List of path records with related user info
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<Prometheion_Escalation_Path__c> getPaths() {
+        return [
+            SELECT Id, Name, User__c, User__r.Name, User__r.Email,
+                   Level__c, Role__c, Notification_Method__c,
+                   Escalation_Delay_Minutes__c, Active__c
+            FROM Prometheion_Escalation_Path__c
+            WITH USER_MODE
+            ORDER BY Level__c ASC, Role__c ASC
+            LIMIT 100
+        ];
+    }
+
+    /**
+     * @description Creates a new escalation path
+     * @param path The path record to create
+     * @return The created path ID
+     */
+    @AuraEnabled
+    public static Id createPath(Prometheion_Escalation_Path__c path) {
+        validatePath(path);
+
+        if (Schema.sObjectType.Prometheion_Escalation_Path__c.isCreateable()) {
+            insert path;
+            return path.Id;
+        } else {
+            throw new AuraHandledException('Insufficient permissions to create escalation paths');
+        }
+    }
+
+    /**
+     * @description Updates an existing escalation path
+     * @param path The path record to update
+     */
+    @AuraEnabled
+    public static void updatePath(Prometheion_Escalation_Path__c path) {
+        validatePath(path);
+
+        if (Schema.sObjectType.Prometheion_Escalation_Path__c.isUpdateable()) {
+            update path;
+        } else {
+            throw new AuraHandledException('Insufficient permissions to update escalation paths');
+        }
+    }
+
+    /**
+     * @description Deletes an escalation path
+     * @param pathId The ID of the path to delete
+     */
+    @AuraEnabled
+    public static void deletePath(Id pathId) {
+        if (Schema.sObjectType.Prometheion_Escalation_Path__c.isDeletable()) {
+            delete [SELECT Id FROM Prometheion_Escalation_Path__c WHERE Id = :pathId WITH USER_MODE];
+        } else {
+            throw new AuraHandledException('Insufficient permissions to delete escalation paths');
+        }
+    }
+
+    /**
+     * @description Validates path data before save
+     * @param path The path to validate
+     */
+    private static void validatePath(Prometheion_Escalation_Path__c path) {
+        if (path.User__c == null) {
+            throw new AuraHandledException('User is required');
+        }
+        if (path.Level__c == null || path.Level__c < 1 || path.Level__c > 3) {
+            throw new AuraHandledException('Level must be between 1 and 3');
+        }
+        if (path.Escalation_Delay_Minutes__c == null || path.Escalation_Delay_Minutes__c < 1) {
+            throw new AuraHandledException('Escalation delay must be at least 1 minute');
+        }
+    }
+}

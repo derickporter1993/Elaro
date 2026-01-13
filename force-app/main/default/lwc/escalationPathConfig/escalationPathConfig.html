@@ -1,0 +1,307 @@
+<template>
+    <lightning-card title="Escalation Path Configuration" icon-name="standard:flow">
+        <div slot="actions">
+            <lightning-button-group>
+                <lightning-button
+                    label="Refresh"
+                    icon-name="utility:refresh"
+                    onclick={handleRefresh}>
+                </lightning-button>
+                <lightning-button
+                    label="New Escalation Level"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleNewPath}>
+                </lightning-button>
+            </lightning-button-group>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <!-- Escalation Path Visualization -->
+            <div class="slds-box slds-box_small slds-m-bottom_medium">
+                <div class="slds-text-heading_small slds-m-bottom_small">
+                    <lightning-icon icon-name="utility:steps" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                    Escalation Flow
+                </div>
+                <div class="escalation-flow slds-grid slds-grid_align-center">
+                    <div class="slds-text-align_center">
+                        <lightning-badge label="Alert Triggered" class="slds-badge_inverse"></lightning-badge>
+                    </div>
+                    <lightning-icon icon-name="utility:forward" size="x-small" class="slds-m-horizontal_small"></lightning-icon>
+                    <div class="slds-text-align_center">
+                        <lightning-badge label="L1: Team Lead" variant="success"></lightning-badge>
+                    </div>
+                    <lightning-icon icon-name="utility:forward" size="x-small" class="slds-m-horizontal_small"></lightning-icon>
+                    <div class="slds-text-align_center">
+                        <lightning-badge label="L2: Manager" variant="warning"></lightning-badge>
+                    </div>
+                    <lightning-icon icon-name="utility:forward" size="x-small" class="slds-m-horizontal_small"></lightning-icon>
+                    <div class="slds-text-align_center">
+                        <lightning-badge label="L3: CISO" variant="error"></lightning-badge>
+                    </div>
+                </div>
+            </div>
+
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <template lwc:elseif={hasPaths}>
+                <!-- Level 1 -->
+                <div class="slds-box slds-m-bottom_small">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                        <lightning-badge label="Level 1" variant="success" class="slds-m-right_small"></lightning-badge>
+                        <span class="slds-text-heading_small">Team Lead Escalation</span>
+                    </div>
+                    <template for:each={level1Paths} for:item="path">
+                        <div key={path.id} class="slds-box slds-box_x-small slds-m-bottom_x-small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col slds-grow">
+                                <div class="slds-text-title_bold">{path.userName}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">
+                                    {path.role} | {path.notificationMethod} | Delay: {path.delayMinutes}min
+                                </div>
+                            </div>
+                            <div class="slds-col slds-shrink">
+                                <template lwc:if={path.active}>
+                                    <lightning-badge label="Active" variant="success" class="slds-m-right_small"></lightning-badge>
+                                </template>
+                                <template lwc:else>
+                                    <lightning-badge label="Inactive" class="slds-m-right_small"></lightning-badge>
+                                </template>
+                                <lightning-button-icon
+                                    icon-name="utility:edit"
+                                    alternative-text="Edit"
+                                    data-id={path.id}
+                                    onclick={handleEdit}
+                                    class="slds-m-right_xx-small">
+                                </lightning-button-icon>
+                                <lightning-button-icon
+                                    icon-name="utility:delete"
+                                    alternative-text="Delete"
+                                    variant="destructive"
+                                    data-id={path.id}
+                                    onclick={handleDeleteConfirm}>
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:if={level1Paths.length === 0}>
+                        <p class="slds-text-color_weak">No Level 1 escalation paths configured</p>
+                    </template>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="slds-box slds-m-bottom_small">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                        <lightning-badge label="Level 2" variant="warning" class="slds-m-right_small"></lightning-badge>
+                        <span class="slds-text-heading_small">Manager Escalation</span>
+                    </div>
+                    <template for:each={level2Paths} for:item="path">
+                        <div key={path.id} class="slds-box slds-box_x-small slds-m-bottom_x-small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col slds-grow">
+                                <div class="slds-text-title_bold">{path.userName}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">
+                                    {path.role} | {path.notificationMethod} | Delay: {path.delayMinutes}min
+                                </div>
+                            </div>
+                            <div class="slds-col slds-shrink">
+                                <template lwc:if={path.active}>
+                                    <lightning-badge label="Active" variant="success" class="slds-m-right_small"></lightning-badge>
+                                </template>
+                                <template lwc:else>
+                                    <lightning-badge label="Inactive" class="slds-m-right_small"></lightning-badge>
+                                </template>
+                                <lightning-button-icon
+                                    icon-name="utility:edit"
+                                    alternative-text="Edit"
+                                    data-id={path.id}
+                                    onclick={handleEdit}
+                                    class="slds-m-right_xx-small">
+                                </lightning-button-icon>
+                                <lightning-button-icon
+                                    icon-name="utility:delete"
+                                    alternative-text="Delete"
+                                    variant="destructive"
+                                    data-id={path.id}
+                                    onclick={handleDeleteConfirm}>
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:if={level2Paths.length === 0}>
+                        <p class="slds-text-color_weak">No Level 2 escalation paths configured</p>
+                    </template>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="slds-box">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
+                        <lightning-badge label="Level 3" variant="error" class="slds-m-right_small"></lightning-badge>
+                        <span class="slds-text-heading_small">CISO/Director Escalation</span>
+                    </div>
+                    <template for:each={level3Paths} for:item="path">
+                        <div key={path.id} class="slds-box slds-box_x-small slds-m-bottom_x-small slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col slds-grow">
+                                <div class="slds-text-title_bold">{path.userName}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">
+                                    {path.role} | {path.notificationMethod} | Delay: {path.delayMinutes}min
+                                </div>
+                            </div>
+                            <div class="slds-col slds-shrink">
+                                <template lwc:if={path.active}>
+                                    <lightning-badge label="Active" variant="success" class="slds-m-right_small"></lightning-badge>
+                                </template>
+                                <template lwc:else>
+                                    <lightning-badge label="Inactive" class="slds-m-right_small"></lightning-badge>
+                                </template>
+                                <lightning-button-icon
+                                    icon-name="utility:edit"
+                                    alternative-text="Edit"
+                                    data-id={path.id}
+                                    onclick={handleEdit}
+                                    class="slds-m-right_xx-small">
+                                </lightning-button-icon>
+                                <lightning-button-icon
+                                    icon-name="utility:delete"
+                                    alternative-text="Delete"
+                                    variant="destructive"
+                                    data-id={path.id}
+                                    onclick={handleDeleteConfirm}>
+                                </lightning-button-icon>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:if={level3Paths.length === 0}>
+                        <p class="slds-text-color_weak">No Level 3 escalation paths configured</p>
+                    </template>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-illustration slds-illustration_small">
+                    <div class="slds-text-longform">
+                        <h3 class="slds-text-heading_medium">No Escalation Paths</h3>
+                        <p class="slds-text-body_regular">
+                            Configure escalation paths to automatically escalate unacknowledged alerts.
+                        </p>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <!-- Create/Edit Modal -->
+    <template lwc:if={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-record-picker
+                        label="User"
+                        placeholder="Select a user"
+                        object-api-name="User"
+                        value={formData.userId}
+                        data-field="userId"
+                        onchange={handleInputChange}
+                        required>
+                    </lightning-record-picker>
+
+                    <lightning-combobox
+                        label="Escalation Level"
+                        data-field="level"
+                        value={formData.level}
+                        options={levelOptions}
+                        onchange={handleInputChange}
+                        required
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        label="Role"
+                        data-field="role"
+                        value={formData.role}
+                        options={roleOptions}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        label="Notification Method"
+                        data-field="notificationMethod"
+                        value={formData.notificationMethod}
+                        options={notificationMethodOptions}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <lightning-combobox
+                        label="Escalation Delay"
+                        data-field="delayMinutes"
+                        value={formData.delayMinutes}
+                        options={delayOptions}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <lightning-input
+                        type="checkbox"
+                        label="Active"
+                        data-field="active"
+                        checked={formData.active}
+                        onchange={handleInputChange}
+                        class="slds-m-top_small">
+                    </lightning-input>
+                </div>
+
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeModal}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Save"
+                        onclick={handleSave}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Delete Confirmation Modal -->
+    <template lwc:if={isDeleteModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header slds-theme_error">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeDeleteModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title">Delete Escalation Path</h2>
+                </header>
+
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>Are you sure you want to delete the escalation path for "{selectedPath.userName}"?</p>
+                    <p class="slds-m-top_small slds-text-color_weak">This action cannot be undone.</p>
+                </div>
+
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeDeleteModal}></lightning-button>
+                    <lightning-button
+                        variant="destructive"
+                        label="Delete"
+                        onclick={handleDelete}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

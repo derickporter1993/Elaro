@@ -238,4 +238,46 @@
         <type>DateTime</type>
         <description>Last time the Jira issue was synced</description>
     </fields>
+    <fields>
+        <fullName>Alert_Acknowledged__c</fullName>
+        <label>Alert Acknowledged</label>
+        <type>Checkbox</type>
+        <defaultValue>false</defaultValue>
+        <description>Whether the mobile alert for this gap has been acknowledged</description>
+    </fields>
+    <fields>
+        <fullName>Alert_Escalation_Level__c</fullName>
+        <label>Alert Escalation Level</label>
+        <type>Number</type>
+        <precision>2</precision>
+        <scale>0</scale>
+        <description>Current escalation level (0=none, 1=Team Lead, 2=Manager, 3=CISO)</description>
+    </fields>
+    <fields>
+        <fullName>Alert_Snoozed_Until__c</fullName>
+        <label>Alert Snoozed Until</label>
+        <type>DateTime</type>
+        <description>If set, alerts are snoozed until this time</description>
+    </fields>
+    <fields>
+        <fullName>Alert_Sent_At__c</fullName>
+        <label>Alert Sent At</label>
+        <type>DateTime</type>
+        <description>When the initial alert was sent</description>
+    </fields>
+    <fields>
+        <fullName>Alert_Acknowledged_By__c</fullName>
+        <label>Alert Acknowledged By</label>
+        <type>Lookup</type>
+        <referenceTo>User</referenceTo>
+        <relationshipLabel>Acknowledged Alerts</relationshipLabel>
+        <relationshipName>Acknowledged_Alerts</relationshipName>
+        <description>User who acknowledged the alert</description>
+    </fields>
+    <fields>
+        <fullName>Alert_Acknowledged_At__c</fullName>
+        <label>Alert Acknowledged At</label>
+        <type>DateTime</type>
+        <description>When the alert was acknowledged</description>
+    </fields>
 </CustomObject>
