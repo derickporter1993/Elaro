@@ -1,0 +1,286 @@
+<template>
+    <lightning-card title="AI-Assisted Remediation" icon-name="standard:ai_accelerator_card">
+        <div slot="actions">
+            <lightning-button-group>
+                <lightning-button
+                    label="Refresh"
+                    icon-name="utility:refresh"
+                    onclick={handleRefresh}>
+                </lightning-button>
+                <lightning-button
+                    label="Generate Suggestions"
+                    variant="brand"
+                    icon-name="utility:magicwand"
+                    onclick={handleGenerateSuggestions}
+                    disabled={isLoading}>
+                </lightning-button>
+            </lightning-button-group>
+        </div>
+
+        <div class="slds-p-around_medium">
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <template lwc:elseif={hasSuggestions}>
+                <!-- Pending Suggestions -->
+                <template lwc:if={hasPending}>
+                    <div class="slds-section slds-is-open">
+                        <h3 class="slds-section__title">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Pending Review">
+                                <lightning-icon icon-name="utility:clock" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                Pending Review ({pendingSuggestions.length})
+                            </span>
+                        </h3>
+                        <div class="slds-section__content">
+                            <template for:each={pendingSuggestions} for:item="suggestion">
+                                <article key={suggestion.id} class="slds-card slds-card_boundary slds-m-bottom_small">
+                                    <div class="slds-card__header slds-grid">
+                                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                            <div class="slds-media__figure">
+                                                <lightning-icon icon-name={suggestion.typeIcon} size="small"></lightning-icon>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <h2 class="slds-card__header-title">
+                                                    <span class="slds-text-heading_small">{suggestion.typeLabel}</span>
+                                                </h2>
+                                                <p class="slds-text-body_small slds-text-color_weak">
+                                                    {suggestion.framework} | Confidence: {suggestion.confidence}%
+                                                </p>
+                                            </div>
+                                        </header>
+                                        <div class="slds-no-flex">
+                                            <template lwc:if={suggestion.autoAvailable}>
+                                                <lightning-badge label="Auto-remediable" variant="success" class="slds-m-right_x-small"></lightning-badge>
+                                            </template>
+                                            <lightning-badge label={suggestion.status} variant={suggestion.statusVariant}></lightning-badge>
+                                        </div>
+                                    </div>
+                                    <div class="slds-card__body slds-card__body_inner">
+                                        <p class="slds-m-bottom_small">{suggestion.description}</p>
+
+                                        <div class="slds-grid slds-gutters slds-m-bottom_small">
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <div class="slds-text-title_caps slds-text-color_weak">Risk Reduction</div>
+                                                <div class="slds-text-heading_small">{suggestion.riskReduction}/10</div>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <div class="slds-text-title_caps slds-text-color_weak">Effort</div>
+                                                <div class="slds-text-heading_small">{suggestion.effortLabel}</div>
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <div class="slds-text-title_caps slds-text-color_weak">Priority Score</div>
+                                                <div class="slds-text-heading_small">{suggestion.priority}</div>
+                                            </div>
+                                        </div>
+
+                                        <lightning-accordion allow-multiple-sections-open>
+                                            <lightning-accordion-section name="steps" label="Implementation Steps">
+                                                <pre class="slds-text-body_small" style="white-space: pre-wrap;">{suggestion.steps}</pre>
+                                            </lightning-accordion-section>
+                                        </lightning-accordion>
+                                    </div>
+                                    <footer class="slds-card__footer">
+                                        <lightning-button
+                                            label="Approve"
+                                            variant="success"
+                                            icon-name="utility:check"
+                                            data-id={suggestion.id}
+                                            onclick={handleApprove}
+                                            class="slds-m-right_x-small">
+                                        </lightning-button>
+                                        <lightning-button
+                                            label="Reject"
+                                            variant="destructive"
+                                            icon-name="utility:close"
+                                            data-id={suggestion.id}
+                                            onclick={handleRejectClick}>
+                                        </lightning-button>
+                                    </footer>
+                                </article>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Approved Suggestions -->
+                <template lwc:if={hasApproved}>
+                    <div class="slds-section slds-is-open slds-m-top_medium">
+                        <h3 class="slds-section__title">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Ready to Execute">
+                                <lightning-icon icon-name="utility:success" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                Ready to Execute ({approvedSuggestions.length})
+                            </span>
+                        </h3>
+                        <div class="slds-section__content">
+                            <template for:each={approvedSuggestions} for:item="suggestion">
+                                <article key={suggestion.id} class="slds-card slds-card_boundary slds-m-bottom_small slds-theme_success">
+                                    <div class="slds-card__header slds-grid">
+                                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                                            <div class="slds-media__figure">
+                                                <lightning-icon icon-name={suggestion.typeIcon} size="small"></lightning-icon>
+                                            </div>
+                                            <div class="slds-media__body">
+                                                <h2 class="slds-card__header-title">
+                                                    <span class="slds-text-heading_small">{suggestion.typeLabel}</span>
+                                                </h2>
+                                            </div>
+                                        </header>
+                                        <div class="slds-no-flex">
+                                            <lightning-badge label="Approved" variant="success"></lightning-badge>
+                                        </div>
+                                    </div>
+                                    <div class="slds-card__body slds-card__body_inner">
+                                        <p>{suggestion.description}</p>
+                                        <p class="slds-m-top_small slds-text-color_weak">
+                                            Reviewed by: {suggestion.reviewedBy}
+                                        </p>
+                                    </div>
+                                    <footer class="slds-card__footer">
+                                        <template lwc:if={suggestion.autoAvailable}>
+                                            <lightning-button
+                                                label="Execute Auto-Remediation"
+                                                variant="brand"
+                                                icon-name="utility:play"
+                                                data-id={suggestion.id}
+                                                onclick={handleExecute}
+                                                class="slds-m-right_x-small">
+                                            </lightning-button>
+                                        </template>
+                                        <lightning-button
+                                            label="Mark as Manually Applied"
+                                            icon-name="utility:task"
+                                            data-id={suggestion.id}
+                                            onclick={handleManualApplyClick}>
+                                        </lightning-button>
+                                    </footer>
+                                </article>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Processed Suggestions -->
+                <template lwc:if={hasProcessed}>
+                    <div class="slds-section slds-is-open slds-m-top_medium">
+                        <h3 class="slds-section__title">
+                            <span class="slds-truncate slds-p-horizontal_small" title="History">
+                                <lightning-icon icon-name="utility:date_time" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                History ({processedSuggestions.length})
+                            </span>
+                        </h3>
+                        <div class="slds-section__content">
+                            <template for:each={processedSuggestions} for:item="suggestion">
+                                <div key={suggestion.id} class="slds-box slds-box_x-small slds-m-bottom_x-small">
+                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                        <div class="slds-col slds-grow">
+                                            <span class="slds-text-body_regular">{suggestion.typeLabel}</span>
+                                        </div>
+                                        <div class="slds-col slds-shrink">
+                                            <lightning-badge label={suggestion.status} variant={suggestion.statusVariant}></lightning-badge>
+                                        </div>
+                                    </div>
+                                    <template lwc:if={suggestion.isApplied}>
+                                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                                            Applied by {suggestion.appliedBy}
+                                        </p>
+                                    </template>
+                                    <template lwc:if={suggestion.isRejected}>
+                                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                                            Reason: {suggestion.rejectionReason}
+                                        </p>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-illustration slds-illustration_small slds-text-align_center">
+                    <div class="slds-text-longform">
+                        <h3 class="slds-text-heading_medium">No Suggestions Yet</h3>
+                        <p class="slds-text-body_regular">
+                            Click "Generate Suggestions" to get AI-powered remediation recommendations for this compliance gap.
+                        </p>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+
+    <!-- Reject Modal -->
+    <template lwc:if={isRejectModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeRejectModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title">Reject Suggestion</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p class="slds-m-bottom_medium">
+                        Please provide a reason for rejecting the "{selectedSuggestion.typeLabel}" suggestion.
+                    </p>
+                    <lightning-textarea
+                        label="Rejection Reason"
+                        value={rejectionReason}
+                        onchange={handleReasonChange}
+                        required
+                        max-length="2000">
+                    </lightning-textarea>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeRejectModal}></lightning-button>
+                    <lightning-button
+                        variant="destructive"
+                        label="Reject"
+                        onclick={handleReject}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Manual Apply Modal -->
+    <template lwc:if={isManualApplyModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeManualApplyModal}>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title">Mark as Manually Applied</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p class="slds-m-bottom_medium">
+                        Confirm that you have manually implemented the "{selectedSuggestion.typeLabel}" remediation.
+                    </p>
+                    <lightning-textarea
+                        label="Implementation Notes (Optional)"
+                        value={manualNotes}
+                        onchange={handleNotesChange}
+                        placeholder="Describe what was done to implement this remediation..."
+                        max-length="4000">
+                    </lightning-textarea>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeManualApplyModal}></lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        label="Mark as Applied"
+                        onclick={handleManualApply}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

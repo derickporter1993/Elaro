@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Remediation Suggestion</label>
+    <pluralLabel>Remediation Suggestions</pluralLabel>
+    <nameField>
+        <label>Suggestion Name</label>
+        <type>AutoNumber</type>
+        <displayFormat>REM-{00000}</displayFormat>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ReadWrite</sharingModel>
+    <enableActivities>false</enableActivities>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <description>AI-generated remediation suggestions for compliance gaps</description>
+    <fields>
+        <fullName>Compliance_Gap__c</fullName>
+        <label>Compliance Gap</label>
+        <type>Lookup</type>
+        <referenceTo>Compliance_Gap__c</referenceTo>
+        <relationshipLabel>Remediation Suggestions</relationshipLabel>
+        <relationshipName>Remediation_Suggestions</relationshipName>
+        <required>true</required>
+        <description>The compliance gap this suggestion addresses</description>
+    </fields>
+    <fields>
+        <fullName>Suggestion_Type__c</fullName>
+        <label>Suggestion Type</label>
+        <type>Picklist</type>
+        <required>true</required>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>PERMISSION_CHANGE</fullName>
+                    <default>false</default>
+                    <label>Permission Change</label>
+                </value>
+                <value>
+                    <fullName>PROFILE_UPDATE</fullName>
+                    <default>false</default>
+                    <label>Profile Update</label>
+                </value>
+                <value>
+                    <fullName>FIELD_LEVEL_SECURITY</fullName>
+                    <default>false</default>
+                    <label>Field-Level Security</label>
+                </value>
+                <value>
+                    <fullName>SHARING_RULE</fullName>
+                    <default>false</default>
+                    <label>Sharing Rule</label>
+                </value>
+                <value>
+                    <fullName>FLOW_MODIFICATION</fullName>
+                    <default>false</default>
+                    <label>Flow Modification</label>
+                </value>
+                <value>
+                    <fullName>VALIDATION_RULE</fullName>
+                    <default>false</default>
+                    <label>Validation Rule</label>
+                </value>
+                <value>
+                    <fullName>TRIGGER_UPDATE</fullName>
+                    <default>false</default>
+                    <label>Trigger Update</label>
+                </value>
+                <value>
+                    <fullName>ENCRYPTION</fullName>
+                    <default>false</default>
+                    <label>Encryption</label>
+                </value>
+                <value>
+                    <fullName>AUDIT_TRAIL</fullName>
+                    <default>false</default>
+                    <label>Audit Trail</label>
+                </value>
+                <value>
+                    <fullName>MANUAL_REVIEW</fullName>
+                    <default>false</default>
+                    <label>Manual Review Required</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Description__c</fullName>
+        <label>Description</label>
+        <type>LongTextArea</type>
+        <length>32768</length>
+        <visibleLines>5</visibleLines>
+        <description>Detailed description of the suggested remediation</description>
+    </fields>
+    <fields>
+        <fullName>Implementation_Steps__c</fullName>
+        <label>Implementation Steps</label>
+        <type>LongTextArea</type>
+        <length>32768</length>
+        <visibleLines>8</visibleLines>
+        <description>Step-by-step instructions for implementing this remediation</description>
+    </fields>
+    <fields>
+        <fullName>Auto_Remediation_Available__c</fullName>
+        <label>Auto-Remediation Available</label>
+        <type>Checkbox</type>
+        <defaultValue>false</defaultValue>
+        <description>Whether this suggestion can be automatically applied</description>
+    </fields>
+    <fields>
+        <fullName>Auto_Remediation_Payload__c</fullName>
+        <label>Auto-Remediation Payload</label>
+        <type>LongTextArea</type>
+        <length>131072</length>
+        <visibleLines>10</visibleLines>
+        <description>JSON payload for automatic remediation execution</description>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <label>Status</label>
+        <type>Picklist</type>
+        <required>true</required>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>PENDING</fullName>
+                    <default>true</default>
+                    <label>Pending Review</label>
+                </value>
+                <value>
+                    <fullName>APPROVED</fullName>
+                    <default>false</default>
+                    <label>Approved</label>
+                </value>
+                <value>
+                    <fullName>REJECTED</fullName>
+                    <default>false</default>
+                    <label>Rejected</label>
+                </value>
+                <value>
+                    <fullName>APPLIED</fullName>
+                    <default>false</default>
+                    <label>Applied</label>
+                </value>
+                <value>
+                    <fullName>FAILED</fullName>
+                    <default>false</default>
+                    <label>Failed</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Confidence_Score__c</fullName>
+        <label>Confidence Score</label>
+        <type>Percent</type>
+        <precision>5</precision>
+        <scale>2</scale>
+        <description>AI confidence level in this suggestion (0-100%)</description>
+    </fields>
+    <fields>
+        <fullName>Risk_Reduction_Score__c</fullName>
+        <label>Risk Reduction Score</label>
+        <type>Number</type>
+        <precision>5</precision>
+        <scale>2</scale>
+        <description>Estimated risk reduction if applied (0-10)</description>
+    </fields>
+    <fields>
+        <fullName>Effort_Estimate__c</fullName>
+        <label>Effort Estimate</label>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>LOW</fullName>
+                    <default>false</default>
+                    <label>Low (< 1 hour)</label>
+                </value>
+                <value>
+                    <fullName>MEDIUM</fullName>
+                    <default>true</default>
+                    <label>Medium (1-4 hours)</label>
+                </value>
+                <value>
+                    <fullName>HIGH</fullName>
+                    <default>false</default>
+                    <label>High (4-8 hours)</label>
+                </value>
+                <value>
+                    <fullName>VERY_HIGH</fullName>
+                    <default>false</default>
+                    <label>Very High (> 8 hours)</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Priority_Score__c</fullName>
+        <label>Priority Score</label>
+        <type>Number</type>
+        <precision>5</precision>
+        <scale>2</scale>
+        <description>Calculated priority based on risk reduction and effort</description>
+    </fields>
+    <fields>
+        <fullName>Applied_At__c</fullName>
+        <label>Applied At</label>
+        <type>DateTime</type>
+        <description>When the remediation was applied</description>
+    </fields>
+    <fields>
+        <fullName>Applied_By__c</fullName>
+        <label>Applied By</label>
+        <type>Lookup</type>
+        <referenceTo>User</referenceTo>
+        <relationshipLabel>Applied Remediations</relationshipLabel>
+        <relationshipName>Applied_Remediations</relationshipName>
+        <description>User who applied the remediation</description>
+    </fields>
+    <fields>
+        <fullName>Reviewed_By__c</fullName>
+        <label>Reviewed By</label>
+        <type>Lookup</type>
+        <referenceTo>User</referenceTo>
+        <relationshipLabel>Reviewed Suggestions</relationshipLabel>
+        <relationshipName>Reviewed_Suggestions</relationshipName>
+        <description>User who reviewed the suggestion</description>
+    </fields>
+    <fields>
+        <fullName>Reviewed_At__c</fullName>
+        <label>Reviewed At</label>
+        <type>DateTime</type>
+        <description>When the suggestion was reviewed</description>
+    </fields>
+    <fields>
+        <fullName>Rejection_Reason__c</fullName>
+        <label>Rejection Reason</label>
+        <type>LongTextArea</type>
+        <length>4000</length>
+        <visibleLines>3</visibleLines>
+        <description>Reason for rejecting the suggestion</description>
+    </fields>
+    <fields>
+        <fullName>Error_Message__c</fullName>
+        <label>Error Message</label>
+        <type>LongTextArea</type>
+        <length>4000</length>
+        <visibleLines>3</visibleLines>
+        <description>Error message if auto-remediation failed</description>
+    </fields>
+    <fields>
+        <fullName>Framework__c</fullName>
+        <label>Framework</label>
+        <type>Text</type>
+        <length>100</length>
+        <description>Compliance framework this suggestion relates to</description>
+    </fields>
+</CustomObject>
