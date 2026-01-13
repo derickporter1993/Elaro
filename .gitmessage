@@ -1,0 +1,50 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# === CONVENTIONAL COMMITS FORMAT ===
+#
+# Types (lowercase only):
+#   feat:     New feature for the user
+#   fix:      Bug fix for the user
+#   docs:     Documentation only changes
+#   test:     Adding/updating tests
+#   chore:    Maintenance tasks
+#   refactor: Code change that neither fixes a bug nor adds a feature
+#   style:    Formatting, missing semicolons, etc.
+#   perf:     Performance improvement
+#   ci:       CI/CD configuration changes
+#   build:    Build system or external dependencies
+#   merge:    Merge commits
+#   security: Security-related changes
+#   revert:   Revert a previous commit
+#
+# Scope (optional):
+#   Component or module being changed
+#   Examples: (api), (lwc), (apex), (auth), (dashboard)
+#
+# Subject:
+#   - Use imperative mood: "Add feature" not "Added feature"
+#   - Don't capitalize first letter
+#   - No period at the end
+#   - Max 72 characters
+#
+# Body (optional):
+#   - Explain what and why, not how
+#   - Wrap at 72 characters
+#
+# Footer (optional):
+#   - Reference issues: Fixes #123, Closes #456
+#   - Breaking changes: BREAKING CHANGE: <description>
+#
+# === EXAMPLES ===
+#
+# feat: add user authentication flow
+# fix(api): resolve timeout on large requests
+# docs: update installation guide
+# test(dashboard): add unit tests for score calculation
+# chore: update dependencies
+# refactor(apex): extract validation to separate method
+# security: add CRUD checks to DML operations
