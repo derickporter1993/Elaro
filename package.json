@@ -25,7 +25,10 @@
     "sf:deploy:validate": "sf project deploy start -o prometheion-dev --dry-run",
     "sf:retrieve": "sf project retrieve start -o prometheion-dev",
     "test:apex": "sf apex run test -o prometheion-dev -c -r human -w 10",
-    "test:all": "npm run test && npm run test:apex"
+    "test:all": "npm run test && npm run test:apex",
+    "cli:build": "cd platform && npm run build --filter=@platform/cli",
+    "cli:install": "cd platform/packages/cli && npm link",
+    "cli": "node platform/packages/cli/dist/index.js"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",
