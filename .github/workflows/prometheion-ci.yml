@@ -146,14 +146,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install npm 10.2.0
+        run: npm install -g npm@10.2.0
 
       - name: Install Platform Dependencies
         working-directory: platform
-        run: |
-          corepack install
-          npm install
+        run: npm install
 
       - name: Build Platform Packages
         working-directory: platform
