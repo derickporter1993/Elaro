@@ -11,10 +11,8 @@ export function fake(
   value: string | null | undefined,
   options: Omit<FakeStrategy, 'type'> & { deterministic?: boolean }
 ): string {
-  // Set locale if specified
-  if (options.locale) {
-    faker.setLocale(options.locale as Parameters<typeof faker.setLocale>[0]);
-  }
+  // Note: Locale setting is not supported in @faker-js/faker v8+
+  // The faker instance uses the default locale
 
   // If deterministic, seed faker with hash of original value
   if (options.deterministic && value) {
