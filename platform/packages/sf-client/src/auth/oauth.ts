@@ -73,7 +73,15 @@ export async function exchangeCodeForTokens(
     throw new OAuthError(`Token exchange failed: ${error}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as {
+    access_token: string;
+    refresh_token: string;
+    instance_url: string;
+    id: string;
+    issued_at: string;
+    token_type: string;
+    signature: string;
+  };
 
   return {
     accessToken: data.access_token,
@@ -114,7 +122,12 @@ export async function refreshAccessToken(
     throw new OAuthError(`Token refresh failed: ${error}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as {
+    access_token: string;
+    instance_url: string;
+    issued_at: string;
+    token_type: string;
+  };
 
   return {
     accessToken: data.access_token,
@@ -165,7 +178,15 @@ export async function getUserIdentity(
     throw new OAuthError(`Failed to get user identity: ${error}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as {
+    user_id: string;
+    organization_id: string;
+    preferred_username: string;
+    name: string;
+    email: string;
+    profile: string;
+    picture?: string;
+  };
 
   return {
     userId: data.user_id,

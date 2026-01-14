@@ -54,7 +54,12 @@ export async function authenticateWithJwt(
     throw new AuthenticationError(`JWT authentication failed: ${error}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as {
+    access_token: string;
+    instance_url: string;
+    issued_at: string;
+    token_type: string;
+  };
 
   return {
     accessToken: data.access_token,
