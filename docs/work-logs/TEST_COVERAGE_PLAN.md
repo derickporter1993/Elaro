@@ -19,8 +19,8 @@ Based on analysis, the following classes need test coverage:
 3. ✅ PrometheionDormantAccountAlertScheduler - **COMPLETE** (2026-01-14, Claude)
 4. PrometheionGLBAAnnualNoticeBatch
 5. ✅ PrometheionGLBAAnnualNoticeScheduler - **COMPLETE** (2026-01-14, Cursor)
-6. PrometheionISO27001QuarterlyScheduler
-7. PrometheionISO27001QuarterlyReviewScheduler
+6. ✅ PrometheionISO27001QuarterlyScheduler - **COMPLETE** (already had test class)
+7. ~~PrometheionISO27001QuarterlyReviewScheduler~~ - **N/A** (class doesn't exist, likely meant PrometheionISO27001QuarterlyScheduler)
 
 ### Batch 2: Service Classes (Priority 2)
 
