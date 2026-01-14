@@ -136,13 +136,46 @@ jobs:
           test -d force-app/main/default/objects && echo "✅ Objects directory found"
           test -f sfdx-project.json && echo "✅ sfdx-project.json found"
 
+  cli-build:
+    runs-on: ubuntu-latest
+    needs: code-quality
+    defaults:
+      run:
+        working-directory: platform/packages/cli
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: platform/packages/cli/package-lock.json
+
+      - name: Install CLI Dependencies
+        run: npm ci
+
+      - name: TypeScript Type Check
+        run: npm run typecheck
+
+      - name: Build CLI
+        run: npm run build
+
+      - name: Run CLI Tests
+        run: npm run test
+
+      - name: Verify CLI Binary
+        run: |
+          echo "✅ Verifying CLI build output..."
+          test -f dist/index.js && echo "✅ CLI binary built successfully"
+
   build-success:
     runs-on: ubuntu-latest
-    needs: [code-quality, unit-tests, validate-metadata, security-scan]
+    needs: [code-quality, unit-tests, validate-metadata, security-scan, cli-build]
     steps:
       - name: Build Summary
         run: |
           echo "✅ Prometheion CI/CD Pipeline Complete"
+          echo "🔧 CLI build and tests passed"
           echo "🔒 Security scan completed"
           echo "🎉 All quality checks passed!"
           echo "📦 Ready for deployment"
