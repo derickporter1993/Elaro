@@ -301,7 +301,7 @@ export class ToolingClient {
       );
     }
 
-    return response.json();
+    return (await response.json()) as T;
   }
 
   setAccessToken(accessToken: string): void {

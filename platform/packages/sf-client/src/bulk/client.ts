@@ -377,7 +377,7 @@ export class BulkClient {
       return undefined as T;
     }
 
-    return response.json();
+    return (await response.json()) as T;
   }
 
   private async requestText(url: string): Promise<string> {
