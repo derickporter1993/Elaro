@@ -13,7 +13,7 @@ export function fake(
 ): string {
   // Set locale if specified
   if (options.locale) {
-    faker.setLocale(options.locale as Parameters<typeof faker.setLocale>[0]);
+    // Note: Locale changes are not supported in Faker v8+. Use allFakers[locale] to get locale-specific instance.
   }
 
   // If deterministic, seed faker with hash of original value
