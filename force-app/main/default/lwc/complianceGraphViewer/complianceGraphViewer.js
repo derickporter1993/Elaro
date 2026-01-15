@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getComplianceGraph from '@salesforce/apex/ComplianceGraphService.getComplianceGraph';
 import getGraphByFramework from '@salesforce/apex/ComplianceGraphService.getGraphByFramework';
@@ -88,8 +88,8 @@ export default class ComplianceGraphViewer extends LightningElement {
     async loadStats() {
         try {
             this.stats = await getGraphStats();
-        } catch (error) {
-            console.error('Error loading stats:', error);
+        } catch {
+            // Stats loading failed silently - non-critical
         }
     }
 
@@ -273,8 +273,8 @@ export default class ComplianceGraphViewer extends LightningElement {
                 nodeId: node.id,
                 nodeType: node.nodeType
             });
-        } catch (error) {
-            console.error('Error loading node details:', error);
+        } catch {
+            // Node details loading failed silently
         }
     }
 
@@ -331,6 +331,5 @@ export default class ComplianceGraphViewer extends LightningElement {
     handleError(error) {
         const message = error.body?.message || error.message || 'An error occurred';
         this.showToast('Error', message, 'error');
-        console.error('Error:', error);
     }
 }
