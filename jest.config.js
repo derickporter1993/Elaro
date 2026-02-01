@@ -2,7 +2,10 @@ import { jestConfig } from "@salesforce/sfdx-lwc-jest/config.js";
 
 export default {
   ...jestConfig,
-  modulePathIgnorePatterns: ["<rootDir>/.localdevserver"],
+  modulePathIgnorePatterns: [
+    "<rootDir>/.localdevserver",
+    "<rootDir>/platform/",
+  ],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
     "<rootDir>/platform/",
