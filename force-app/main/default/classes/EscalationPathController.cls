@@ -13,15 +13,21 @@ public with sharing class EscalationPathController {
      */
     @AuraEnabled(cacheable=true)
     public static List<Elaro_Escalation_Path__c> getPaths() {
-        return [
+        List<Elaro_Escalation_Path__c> paths = [
             SELECT Id, Name, User__c, User__r.Name, User__r.Email,
                    Level__c, Role__c, Notification_Method__c,
                    Escalation_Delay_Minutes__c, Active__c
             FROM Elaro_Escalation_Path__c
-            WITH USER_MODE
+            WITH SECURITY_ENFORCED
             ORDER BY Level__c ASC, Role__c ASC
             LIMIT 100
         ];
+
+        // Strip inaccessible fields for FLS security
+        return (List<Elaro_Escalation_Path__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            paths
+        );
     }
 
     /**

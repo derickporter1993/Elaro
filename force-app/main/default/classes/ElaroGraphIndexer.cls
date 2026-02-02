@@ -36,11 +36,12 @@ public with sharing class ElaroGraphIndexer {
         );
 
         try {
+            ElaroSecurityUtils.validateCRUDAccess('Elaro_Graph_Node__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert node;
             return nodeHash;
         } catch (DmlException e) {
             String correlationId = generateCorrelationId(entityType, entityId);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroGraphIndexer] Graph indexing failed - CorrelationId: ' + correlationId + 
                 ', EntityType: ' + entityType + 
                 ', EntityId: ' + entityId + 
@@ -49,7 +50,7 @@ public with sharing class ElaroGraphIndexer {
             throw new ElaroException('Graph indexing failed for ' + entityType + ' (' + entityId + '): ' + getSafeDmlMessage(e));
         } catch (Exception e) {
             String correlationId = generateCorrelationId(entityType, entityId);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroGraphIndexer] Graph indexing unexpected error - CorrelationId: ' + correlationId + 
                 ', EntityType: ' + entityType + 
                 ', EntityId: ' + entityId + 
@@ -132,7 +133,7 @@ public with sharing class ElaroGraphIndexer {
         } catch (Exception e) {
             // Log Einstein prediction failure
             String correlationId = generateCorrelationId('EINSTEIN', framework);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroGraphIndexer] Einstein prediction failed - CorrelationId: ' + correlationId + 
                 ', Framework: ' + framework + 
                 ', Error: ' + e.getMessage() + 
@@ -152,7 +153,7 @@ public with sharing class ElaroGraphIndexer {
                 insert error;
             } catch (Exception logError) {
                 // Don't fail if error logging fails
-                System.debug(LoggingLevel.WARN, 'Failed to log Einstein error: ' + logError.getMessage());
+                ElaroLogger.warn( 'Failed to log Einstein error: ' + logError.getMessage());
             }
             
             // Fallback to rule-based scoring
@@ -207,7 +208,7 @@ public with sharing class ElaroGraphIndexer {
         // Enforce size limit (Big Object Long Text fields can be large, but we limit to 50KB)
         Integer MAX_METADATA_SIZE = 50000;
         if (serialized.length() > MAX_METADATA_SIZE) {
-            System.debug(LoggingLevel.WARN, '[ElaroGraphIndexer] Metadata exceeds size limit: ' + serialized.length() + ' bytes. Truncating.');
+            ElaroLogger.warn( '[ElaroGraphIndexer] Metadata exceeds size limit: ' + serialized.length() + ' bytes. Truncating.');
             serialized = serialized.substring(0, MAX_METADATA_SIZE - 3) + '...';
         }
         
@@ -253,13 +254,13 @@ public with sharing class ElaroGraphIndexer {
             try {
                 // Validate input
                 if (String.isBlank(input.entityType) || String.isBlank(input.entityId) || String.isBlank(input.framework)) {
-                    System.debug(LoggingLevel.WARN, 'ElaroGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
+                    ElaroLogger.warn( 'ElaroGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
                     continue;
                 }
                 
                 // Validate framework
                 if (!ElaroConstants.isValidFramework(input.framework)) {
-                    System.debug(LoggingLevel.WARN, 'ElaroGraphIndexer: Skipping invalid framework - ' + input.framework);
+                    ElaroLogger.warn( 'ElaroGraphIndexer: Skipping invalid framework - ' + input.framework);
                     continue;
                 }
                 
@@ -285,7 +286,7 @@ public with sharing class ElaroGraphIndexer {
                 results.put(input.entityId, nodeHash);
             } catch (Exception e) {
                 String correlationId = generateCorrelationId(input.entityType, input.entityId);
-                System.debug(LoggingLevel.ERROR, 
+                ElaroLogger.error( 
                     '[ElaroGraphIndexer] Bulk indexing failed for entity - CorrelationId: ' + correlationId + 
                     ', EntityType: ' + input.entityType + 
                     ', EntityId: ' + input.entityId + 
@@ -300,7 +301,7 @@ public with sharing class ElaroGraphIndexer {
                 insert nodesToInsert;
             } catch (DmlException e) {
                 String correlationId = generateCorrelationId('BULK', String.valueOf(nodesToInsert.size()));
-                System.debug(LoggingLevel.ERROR, 
+                ElaroLogger.error( 
                     '[ElaroGraphIndexer] Bulk insert failed - CorrelationId: ' + correlationId + 
                     ', Records: ' + nodesToInsert.size() + 
                     ', Error: ' + e.getMessage());

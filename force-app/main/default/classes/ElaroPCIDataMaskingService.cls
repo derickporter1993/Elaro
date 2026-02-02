@@ -156,7 +156,7 @@ public with sharing class ElaroPCIDataMaskingService {
             // Return true as placeholder for dev environments
             return true;
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN,
+            ElaroLogger.warn(
                 '[PCIDataMaskingService] Error checking encryption: ' + e.getMessage());
             return false;
         }

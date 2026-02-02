@@ -67,7 +67,7 @@ public with sharing class JiraIntegrationService {
         try {
             createIssue(gapId, priority);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Async Jira issue creation failed: ' + e.getMessage());
+            ElaroLogger.error('Async Jira issue creation failed: ' + e.getMessage(), e);
             // Log to custom object for monitoring
             logError('createIssueAsync', gapId, e.getMessage());
         }
@@ -141,7 +141,7 @@ public with sharing class JiraIntegrationService {
                 JiraIssue issue = createIssue(gapId, null);
                 createdIssues.add(issue);
             } catch (Exception e) {
-                System.debug(LoggingLevel.WARN, 'Failed to create issue for gap ' + gapId + ': ' + e.getMessage());
+                ElaroLogger.warn('Failed to create issue for gap ' + gapId + ': ' + e.getMessage());
             }
         }
 
@@ -501,7 +501,7 @@ public with sharing class JiraIntegrationService {
 
     private static void logError(String operation, String recordId, String errorMessage) {
         // Could log to a custom object for monitoring
-        System.debug(LoggingLevel.ERROR, 'Jira Integration Error - Operation: ' + operation +
+        ElaroLogger.error('Jira Integration Error - Operation: ' + operation +
                      ', Record: ' + recordId + ', Error: ' + errorMessage);
     }
 

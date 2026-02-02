@@ -38,19 +38,19 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
         try {
             // Validate payload size before sending
             if (String.isBlank(payload)) {
-                System.debug(LoggingLevel.WARN, 'ElaroTeamsNotifier: Empty payload, skipping notification. CorrelationId: ' + correlationId);
+                ElaroLogger.warn( 'ElaroTeamsNotifier: Empty payload, skipping notification. CorrelationId: ' + correlationId);
                 return;
             }
 
             if (payload.length() > MAX_PAYLOAD_SIZE) {
-                System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Payload exceeds size limit (' + payload.length() + ' bytes). CorrelationId: ' + correlationId);
+                ElaroLogger.error( 'ElaroTeamsNotifier: Payload exceeds size limit (' + payload.length() + ' bytes). CorrelationId: ' + correlationId);
                 // Truncate payload to prevent failures
                 payload = truncatePayload(payload);
             }
 
             // Validate named credential exists
             if (!isNamedCredentialConfigured()) {
-                System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Named credential not configured. CorrelationId: ' + correlationId);
+                ElaroLogger.error( 'ElaroTeamsNotifier: Named credential not configured. CorrelationId: ' + correlationId);
                 return;
             }
 
@@ -66,7 +66,7 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
 
             // Check response status
             if (res.getStatusCode() >= 200 && res.getStatusCode() < 300) {
-                System.debug(LoggingLevel.INFO, 'ElaroTeamsNotifier: Successfully sent notification. CorrelationId: ' + correlationId);
+                ElaroLogger.info( 'ElaroTeamsNotifier: Successfully sent notification. CorrelationId: ' + correlationId);
             } else {
                 handleFailedResponse(res);
             }
@@ -74,7 +74,7 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
         } catch (CalloutException e) {
             handleCalloutException(e);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Unexpected error. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
+            ElaroLogger.error( 'ElaroTeamsNotifier: Unexpected error. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
             // Don't retry on unexpected exceptions
         }
     }
@@ -86,13 +86,13 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
         Integer statusCode = res.getStatusCode();
         String status = res.getStatus();
 
-        System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Failed with status ' + statusCode + ': ' + status + '. CorrelationId: ' + correlationId + ', Retry: ' + retryCount);
+        ElaroLogger.error( 'ElaroTeamsNotifier: Failed with status ' + statusCode + ': ' + status + '. CorrelationId: ' + correlationId + ', Retry: ' + retryCount);
 
         // Retry on transient errors (5xx server errors, 429 rate limits, timeout)
         if (shouldRetry(statusCode) && retryCount < MAX_RETRIES) {
             retryWithBackoff();
         } else {
-            System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Max retries reached or non-retryable error. CorrelationId: ' + correlationId);
+            ElaroLogger.error( 'ElaroTeamsNotifier: Max retries reached or non-retryable error. CorrelationId: ' + correlationId);
         }
     }
 
@@ -100,13 +100,13 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
      * Handle callout exceptions with retry logic
      */
     private void handleCalloutException(CalloutException e) {
-        System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Callout exception. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage() + ', Retry: ' + retryCount);
+        ElaroLogger.error( 'ElaroTeamsNotifier: Callout exception. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage() + ', Retry: ' + retryCount);
 
         // Retry on timeout/connection errors
         if (retryCount < MAX_RETRIES) {
             retryWithBackoff();
         } else {
-            System.debug(LoggingLevel.ERROR, 'ElaroTeamsNotifier: Max retries reached for callout exception. CorrelationId: ' + correlationId);
+            ElaroLogger.error( 'ElaroTeamsNotifier: Max retries reached for callout exception. CorrelationId: ' + correlationId);
         }
     }
 
@@ -127,7 +127,7 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
         Integer nextRetry = retryCount + 1;
         Integer backoffDelay = calculateBackoffDelay(nextRetry);
 
-        System.debug(LoggingLevel.INFO, 'ElaroTeamsNotifier: Scheduling retry ' + nextRetry + ' (calculated backoff: ' + backoffDelay + 'ms). CorrelationId: ' + correlationId);
+        ElaroLogger.info( 'ElaroTeamsNotifier: Scheduling retry ' + nextRetry + ' (calculated backoff: ' + backoffDelay + 'ms). CorrelationId: ' + correlationId);
 
         // Enqueue new job for retry
         // Salesforce will process this in the queue, providing natural delay
@@ -183,7 +183,7 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
 
             return JSON.serialize(payloadMap);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'ElaroTeamsNotifier: Failed to truncate payload, using substring. CorrelationId: ' + correlationId);
+            ElaroLogger.warn( 'ElaroTeamsNotifier: Failed to truncate payload, using substring. CorrelationId: ' + correlationId);
             return originalPayload.substring(0, Math.min(MAX_PAYLOAD_SIZE, originalPayload.length()));
         }
     }

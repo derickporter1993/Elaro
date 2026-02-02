@@ -81,7 +81,7 @@ public with sharing class ElaroComplianceCopilot {
                 orgCache.put(cacheKey, (queryCount == null ? 1 : queryCount + 1), 300);
             } catch (Cache.Org.OrgCacheException e) {
                 // Cache not configured, continue without rate limiting
-                System.debug(LoggingLevel.WARN, 'ElaroComplianceCopilot: Cache not available for rate limiting');
+                ElaroLogger.warn( 'ElaroComplianceCopilot: Cache not available for rate limiting');
             }
 
             // Classify the query type
@@ -123,9 +123,9 @@ public with sharing class ElaroComplianceCopilot {
 
             // Only include stack trace in test mode
             if (Test.isRunningTest()) {
-                System.debug(LoggingLevel.ERROR, errorMessage + '\n' + e.getStackTraceString());
+                ElaroLogger.error( errorMessage + '\n' + e.getStackTraceString());
             } else {
-                System.debug(LoggingLevel.ERROR, errorMessage);
+                ElaroLogger.error( errorMessage);
             }
         }
 
@@ -583,7 +583,7 @@ public with sharing class ElaroComplianceCopilot {
             response.answer = 'Error performing deep analysis: ' + errorMsg;
             response.confidence = 0.0;
             String correlationId = 'DEEP-ANALYSIS-' + System.now().getTime();
-            System.debug(LoggingLevel.ERROR, ElaroConstants.LOG_PREFIX + 'deepAnalysis error: ' + e.getTypeName() + ' - ' + e.getMessage() + ' [CorrelationId: ' + correlationId + ']');
+            ElaroLogger.error( ElaroConstants.LOG_PREFIX + 'deepAnalysis error: ' + e.getTypeName() + ' - ' + e.getMessage() + ' [CorrelationId: ' + correlationId + ']');
         }
 
         return response;

@@ -74,7 +74,7 @@ public with sharing class ElaroQuickActionsService {
                 LIMIT 50 // Governor limit protection
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] Security exception querying excessive admins: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroQuickActionsService] Security exception querying excessive admins: ' + e.getMessage());
             result.messages.add('Security exception: Unable to query users. ' + e.getMessage());
             return result;
         }
@@ -111,7 +111,7 @@ public with sharing class ElaroQuickActionsService {
                 ];
                 assignmentsToRemove.addAll(modAllAssignments);
             } catch (SecurityException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] Security exception querying assignments for user ' + u.Id + ': ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] Security exception querying assignments for user ' + u.Id + ': ' + e.getMessage());
                 continue; // Skip this user and continue with others
             }
             
@@ -132,7 +132,7 @@ public with sharing class ElaroQuickActionsService {
                     insert decision.getRecords();
                 }
             } catch (DmlException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] DML exception inserting assignments: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] DML exception inserting assignments: ' + e.getMessage());
                 result.messages.add('Error creating permission set assignments: ' + e.getMessage());
             }
         }
@@ -147,7 +147,7 @@ public with sharing class ElaroQuickActionsService {
                     result.assignmentsRemoved.addAll(assignmentsToRemove);
                 }
             } catch (DmlException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] DML exception deleting assignments: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] DML exception deleting assignments: ' + e.getMessage());
                 result.messages.add('Error removing permission set assignments: ' + e.getMessage());
             }
         }
@@ -176,7 +176,7 @@ public with sharing class ElaroQuickActionsService {
                 LIMIT 100
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] Security exception querying inactive users: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroQuickActionsService] Security exception querying inactive users: ' + e.getMessage());
             result.messages.add('Security exception: Unable to query inactive users. ' + e.getMessage());
             return result;
         }
@@ -207,7 +207,7 @@ public with sharing class ElaroQuickActionsService {
                     update decision.getRecords();
                 }
             } catch (DmlException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] DML exception updating users: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] DML exception updating users: ' + e.getMessage());
                 result.messages.add('Error deactivating users: ' + e.getMessage());
             }
         }
@@ -254,7 +254,7 @@ public with sharing class ElaroQuickActionsService {
                     }
                 }
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] Error removing assignments: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] Error removing assignments: ' + e.getMessage());
                 result.messages.add('Error removing permission set assignments: ' + e.getMessage());
             }
 
@@ -266,7 +266,7 @@ public with sharing class ElaroQuickActionsService {
                     delete setsToRemove;
                 }
             } catch (DmlException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] DML exception deleting permission sets: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] DML exception deleting permission sets: ' + e.getMessage());
                 result.messages.add('Error deleting permission sets: ' + e.getMessage());
             }
             
@@ -302,7 +302,7 @@ public with sharing class ElaroQuickActionsService {
                 HAVING COUNT(Id) > 10
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] Security exception querying excessive assignments: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroQuickActionsService] Security exception querying excessive assignments: ' + e.getMessage());
             result.messages.add('Security exception: Unable to query assignments. ' + e.getMessage());
             return result;
         }
@@ -329,7 +329,7 @@ public with sharing class ElaroQuickActionsService {
                     ORDER BY AssigneeId
                 ];
             } catch (SecurityException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] Security exception querying all assignments: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] Security exception querying all assignments: ' + e.getMessage());
                 result.messages.add('Security exception: Unable to query assignments. ' + e.getMessage());
                 return result;
             }
@@ -366,7 +366,7 @@ public with sharing class ElaroQuickActionsService {
                         ' excessive permission set assignments.');
                 }
             } catch (DmlException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroQuickActionsService] DML exception removing assignments: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroQuickActionsService] DML exception removing assignments: ' + e.getMessage());
                 result.messages.add('Error removing excessive assignments: ' + e.getMessage());
             }
         }

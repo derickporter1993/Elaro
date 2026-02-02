@@ -318,11 +318,11 @@ public with sharing class ElaroMatrixController {
             return rowCount * colCount;
         } catch (QueryException e) {
             // If query fails, assume worst case
-            System.debug(LoggingLevel.WARN, 'ElaroMatrixController: Estimation query failed: ' + e.getMessage());
+            ElaroLogger.warn( 'ElaroMatrixController: Estimation query failed: ' + e.getMessage());
             return MAX_GROUP_COMBINATIONS + 1;
         } catch (Exception e) {
             // If estimation fails, assume worst case
-            System.debug(LoggingLevel.WARN, 'ElaroMatrixController: Unexpected error in estimation: ' + e.getMessage());
+            ElaroLogger.warn( 'ElaroMatrixController: Unexpected error in estimation: ' + e.getMessage());
             return MAX_GROUP_COMBINATIONS + 1;
         }
     }
@@ -356,7 +356,7 @@ public with sharing class ElaroMatrixController {
         } catch (System.SecurityException e) {
             throw new AuraHandledException('Access denied to query data: ' + e.getMessage());
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroMatrixController: Unexpected query error: ' + e.getStackTraceString());
+            ElaroLogger.error( 'ElaroMatrixController: Unexpected query error: ' + e.getStackTraceString());
             throw new AuraHandledException('Matrix query failed');
         }
 
@@ -397,7 +397,7 @@ public with sharing class ElaroMatrixController {
         } catch (System.SecurityException e) {
             throw new AuraHandledException('Access denied to query data: ' + e.getMessage());
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroMatrixController: Unexpected summary query error: ' + e.getStackTraceString());
+            ElaroLogger.error( 'ElaroMatrixController: Unexpected summary query error: ' + e.getStackTraceString());
             throw new AuraHandledException('Summary query failed');
         }
 

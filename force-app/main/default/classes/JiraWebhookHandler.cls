@@ -64,7 +64,7 @@ global with sharing class JiraWebhookHandler {
             res.responseBody = Blob.valueOf(JSON.serialize(result));
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, LOG_SOURCE + ' error: ' + e.getMessage() + '\n' + e.getStackTraceString());
+            ElaroLogger.error( LOG_SOURCE + ' error: ' + e.getMessage() + '\n' + e.getStackTraceString());
             res.statusCode = 500;
             res.responseBody = Blob.valueOf('{"error": "' + e.getMessage().escapeJava() + '"}');
         }

@@ -56,7 +56,7 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
      * @return QueryLocator for EventLogFile records
      */
     public Database.QueryLocator start(Database.BatchableContext bc) {
-        System.debug('Starting ElaroHistoricalEventBatch for ' + eventType + 
+        ElaroLogger.debug('Starting ElaroHistoricalEventBatch for ' + eventType + 
             ' from ' + startDate + ' to ' + endDate);
         
         return Database.getQueryLocator([
@@ -83,7 +83,7 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
                 totalErrors++;
                 String errorMsg = 'Error processing LogFile ' + logFile.Id + ': ' + e.getMessage();
                 errorMessages.add(errorMsg);
-                System.debug(LoggingLevel.ERROR, errorMsg);
+                ElaroLogger.error( errorMsg);
             }
         }
     }
@@ -93,10 +93,10 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
      * @param bc Batchable context
      */
     public void finish(Database.BatchableContext bc) {
-        System.debug('ElaroHistoricalEventBatch completed');
-        System.debug('Files processed: ' + totalFilesProcessed);
-        System.debug('Events processed: ' + totalEventsProcessed);
-        System.debug('Errors: ' + totalErrors);
+        ElaroLogger.debug('ElaroHistoricalEventBatch completed');
+        ElaroLogger.debug('Files processed: ' + totalFilesProcessed);
+        ElaroLogger.debug('Events processed: ' + totalEventsProcessed);
+        ElaroLogger.debug('Errors: ' + totalErrors);
         
         // Publish completion event
         publishCompletionEvent();
@@ -223,7 +223,7 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
                 
             } catch (Exception e) {
                 totalErrors++;
-                System.debug(LoggingLevel.WARN, 'Error processing event: ' + e.getMessage());
+                ElaroLogger.warn( 'Error processing event: ' + e.getMessage());
             }
         }
         
@@ -248,13 +248,13 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
             for (Database.SaveResult sr : results) {
                 if (!sr.isSuccess()) {
                     for (Database.Error err : sr.getErrors()) {
-                        System.debug(LoggingLevel.ERROR, 'Event publish error: ' + err.getMessage());
+                        ElaroLogger.error( 'Event publish error: ' + err.getMessage());
                         totalErrors++;
                     }
                 }
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to publish events: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to publish events: ' + e.getMessage());
             totalErrors++;
         }
     }
@@ -366,7 +366,7 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
             
             EventBus.publish(completionEvent);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to publish completion event: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to publish completion event: ' + e.getMessage());
         }
     }
     
@@ -403,7 +403,7 @@ public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&
             
             Messaging.sendEmail(new List&lt;Messaging.SingleEmailMessage&gt;{ email });
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to send error notification: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to send error notification: ' + e.getMessage());
         }
     }
     

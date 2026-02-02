@@ -16,7 +16,7 @@ public with sharing class PerformanceAlertPublisher {
         try {
             // Rate limiting check
             if (!checkRateLimit('PerformanceAlertPublisher')) {
-                System.debug(LoggingLevel.WARN, 'PerformanceAlertPublisher: Rate limit exceeded, skipping alert publication');
+                ElaroLogger.warn( 'PerformanceAlertPublisher: Rate limit exceeded, skipping alert publication');
                 return;
             }
             // Validate inputs
@@ -54,15 +54,15 @@ public with sharing class PerformanceAlertPublisher {
             try {
                 SlackNotifier.notifyPerformanceAlert(metric, value, threshold, contextRecordId);
             } catch (Exception slackError) {
-                System.debug(LoggingLevel.WARN, 'PerformanceAlertPublisher: Slack notification failed: ' + slackError.getMessage());
+                ElaroLogger.warn( 'PerformanceAlertPublisher: Slack notification failed: ' + slackError.getMessage());
             }
             
         } catch (IllegalArgumentException e) {
-            System.debug(LoggingLevel.ERROR, 'PerformanceAlertPublisher: Validation error: ' + e.getMessage());
+            ElaroLogger.error( 'PerformanceAlertPublisher: Validation error: ' + e.getMessage());
             throw new AuraHandledException('Invalid input: ' + e.getMessage());
         } catch (DmlException e) {
             String correlationId = 'ALERT-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
-            System.debug(LoggingLevel.ERROR, 'PerformanceAlertPublisher: DML error: ' + e.getMessage() + '. CorrelationId: ' + correlationId);
+            ElaroLogger.error( 'PerformanceAlertPublisher: DML error: ' + e.getMessage() + '. CorrelationId: ' + correlationId);
             
             // Log to Integration_Error__c for error tracking
             try {
@@ -77,12 +77,12 @@ public with sharing class PerformanceAlertPublisher {
                 );
                 insert error;
             } catch (Exception logError) {
-                System.debug(LoggingLevel.WARN, 'Failed to log PerformanceAlertPublisher error: ' + logError.getMessage());
+                ElaroLogger.warn( 'Failed to log PerformanceAlertPublisher error: ' + logError.getMessage());
             }
             
             throw new AuraHandledException('Failed to publish alert: ' + e.getMessage());
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'PerformanceAlertPublisher: Unexpected error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
+            ElaroLogger.error( 'PerformanceAlertPublisher: Unexpected error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
             throw new AuraHandledException('Failed to publish alert: ' + e.getMessage());
         }
     }
@@ -109,7 +109,7 @@ public with sharing class PerformanceAlertPublisher {
             return true;
         } catch (Exception e) {
             // If cache partition doesn't exist, allow the call
-            System.debug(LoggingLevel.WARN, 'PerformanceAlertPublisher: Rate limit check failed, allowing call: ' + e.getMessage());
+            ElaroLogger.warn( 'PerformanceAlertPublisher: Rate limit check failed, allowing call: ' + e.getMessage());
             return true;
         }
     }

@@ -65,7 +65,7 @@ public with sharing class RootCauseAnalysisEngine {
         } catch (QueryException e) {
             throw new AuraHandledException('Event not found: ' + eventId);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'RCA error: ' + e.getMessage());
+            ElaroLogger.error( 'RCA error: ' + e.getMessage());
             return createErrorResult(eventId, e.getMessage());
         }
     }
@@ -376,7 +376,7 @@ public with sharing class RootCauseAnalysisEngine {
             Cache.OrgPartition partition = Cache.Org.getPartition(CACHE_PARTITION);
             partition.put(key, result, CACHE_TTL_SECONDS);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Cache put failed: ' + e.getMessage());
+            ElaroLogger.warn( 'Cache put failed: ' + e.getMessage());
         }
     }
     

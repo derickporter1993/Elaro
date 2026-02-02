@@ -33,7 +33,7 @@ public with sharing class WeeklyScorecardScheduler implements Schedulable {
      * @param channel 'Slack', 'Teams', or 'Both'
      */
     public static void sendWeeklyScorecard(String channel) {
-        System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Starting weekly scorecard generation for channel: ' + channel);
+        ElaroLogger.info( LOG_PREFIX + 'Starting weekly scorecard generation for channel: ' + channel);
 
         try {
             // Calculate current compliance score
@@ -41,7 +41,7 @@ public with sharing class WeeklyScorecardScheduler implements Schedulable {
             ElaroComplianceScorer.ScoreResult scoreResult = ElaroComplianceScorer.calculateReadinessScore();
             Long duration = System.currentTimeMillis() - startTime;
 
-            System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Score calculation completed in ' + duration + 'ms. Score: ' + scoreResult.overallScore);
+            ElaroLogger.info( LOG_PREFIX + 'Score calculation completed in ' + duration + 'ms. Score: ' + scoreResult.overallScore);
 
             // Validate score result
             if (scoreResult == null || scoreResult.overallScore == null) {
@@ -53,21 +53,21 @@ public with sharing class WeeklyScorecardScheduler implements Schedulable {
             Boolean sendToTeams = channel == TEAMS || channel == BOTH;
 
             if (sendToSlack) {
-                System.debug(LoggingLevel.DEBUG, LOG_PREFIX + 'Sending to Slack...');
+                ElaroLogger.debug( LOG_PREFIX + 'Sending to Slack...');
                 sendSlackScorecard(scoreResult);
             }
 
             if (sendToTeams) {
-                System.debug(LoggingLevel.DEBUG, LOG_PREFIX + 'Sending to Teams...');
+                ElaroLogger.debug( LOG_PREFIX + 'Sending to Teams...');
                 sendTeamsScorecard(scoreResult);
             }
 
-            System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Weekly scorecard sent successfully');
+            ElaroLogger.info( LOG_PREFIX + 'Weekly scorecard sent successfully');
 
         } catch (Exception e) {
             // Safely handle null error messages (consistent with ElaroComplianceCopilot)
             String errorMsg = String.isNotBlank(e.getMessage()) ? e.getMessage() : 'Unknown error';
-            System.debug(LoggingLevel.ERROR, LOG_PREFIX + 'Error: ' + errorMsg + '\n' + e.getStackTraceString());
+            ElaroLogger.error( LOG_PREFIX + 'Error: ' + errorMsg + '\n' + e.getStackTraceString());
 
             // Send error notification using custom label
             String formattedError = '❌ ' + Label.Scorecard_Error.replace('{0}', errorMsg);
@@ -276,7 +276,7 @@ public with sharing class WeeklyScorecardScheduler implements Schedulable {
             .replace('{0}', nextRun.format('yyyy-MM-dd HH:mm'))
             .replace('{1}', jobName);
 
-        System.debug(LoggingLevel.INFO, LOG_PREFIX + result);
+        ElaroLogger.info( LOG_PREFIX + result);
         return result;
     }
 

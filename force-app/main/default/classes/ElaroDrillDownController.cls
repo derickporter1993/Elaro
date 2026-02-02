@@ -77,6 +77,12 @@ public with sharing class ElaroDrillDownController {
             throw new AuraHandledException('Query failed: ' + e.getMessage());
         }
 
+        // Strip inaccessible fields for FLS security
+        records = ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            records
+        );
+
         // Get total count for pagination
         Integer totalCount = getTotalCount(ctx);
 
@@ -358,10 +364,10 @@ public with sharing class ElaroDrillDownController {
         try {
             return Database.countQuery(countSoql);
         } catch (QueryException e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroDrillDownController: Count query failed: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroDrillDownController: Count query failed: ' + e.getMessage());
             return 0;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroDrillDownController: Unexpected error in count query: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroDrillDownController: Unexpected error in count query: ' + e.getMessage());
             return 0;
         }
     }

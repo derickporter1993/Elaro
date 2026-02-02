@@ -148,7 +148,7 @@ public with sharing class ElaroGDPRDataErasureService {
             try {
                 Database.update(auditLog, AccessLevel.USER_MODE);
             } catch (Exception updateError) {
-                System.debug(LoggingLevel.ERROR, 'Failed to update audit log: ' + updateError.getMessage());
+                ElaroLogger.error( 'Failed to update audit log: ' + updateError.getMessage());
             }
 
             throw new GDPRException('Failed to complete erasure: ' + e.getMessage(), e);

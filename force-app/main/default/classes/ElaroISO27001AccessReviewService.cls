@@ -440,7 +440,7 @@ public with sharing class ElaroISO27001AccessReviewService {
     private static void revokeUserAccess(Id userId) {
         // In production, this would deactivate user or remove permissions
         // Requires appropriate permissions to modify User records
-        System.debug(LoggingLevel.INFO,
+        ElaroLogger.info(
             '[ISO27001AccessReviewService] Access revocation initiated for User: ' + userId);
     }
 
@@ -452,7 +452,7 @@ public with sharing class ElaroISO27001AccessReviewService {
     private static void publishAccessReviewEvent(Access_Review__c review, String action) {
         // Publish to platform event for immutable audit
         // Would use Access_Review_Event__e in production
-        System.debug(LoggingLevel.INFO,
+        ElaroLogger.info(
             '[ISO27001AccessReviewService] Access review event: ' + action +
             ' for Review: ' + review.Id);
     }

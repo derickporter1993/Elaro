@@ -68,7 +68,7 @@ public with sharing class ElaroSecurityUtils {
             
             return fieldDescribe != null && fieldDescribe.isAccessible();
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error checking field access: ' + e.getMessage());
+            ElaroLogger.error('Error checking field access', e);
             return false;
         }
     }
@@ -86,7 +86,7 @@ public with sharing class ElaroSecurityUtils {
             
             return fieldDescribe != null && fieldDescribe.isCreateable() && fieldDescribe.isUpdateable();
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error checking field write access: ' + e.getMessage());
+            ElaroLogger.error('Error checking field write access', e);
             return false;
         }
     }
@@ -104,7 +104,7 @@ public with sharing class ElaroSecurityUtils {
             SObjectAccessDecision decision = Security.stripInaccessible(accessType, records);
             return decision.getRecords();
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error stripping inaccessible fields: ' + e.getMessage());
+            ElaroLogger.error('Error stripping inaccessible fields', e);
             throw new SecurityException('Access denied: ' + e.getMessage());
         }
     }

@@ -221,7 +221,7 @@ public with sharing class RemediationExecutor {
 
         // In production, this would use Metadata API or Tooling API to modify permissions
         // For now, we log the action and mark as successful (simulation mode)
-        System.debug(LoggingLevel.INFO, 'Auto-remediation: ' + action + ' on permission set ' + targetPermissionSet);
+        ElaroLogger.info( 'Auto-remediation: ' + action + ' on permission set ' + targetPermissionSet);
 
         result.success = true;
         result.message = 'Permission change queued for deployment. Action: ' + action;
@@ -245,7 +245,7 @@ public with sharing class RemediationExecutor {
             return result;
         }
 
-        System.debug(LoggingLevel.INFO, 'Auto-remediation: ' + action + ' on object ' + targetObject);
+        ElaroLogger.info( 'Auto-remediation: ' + action + ' on object ' + targetObject);
 
         result.success = true;
         result.message = 'Field-level security change queued for deployment. Action: ' + action;
@@ -268,7 +268,7 @@ public with sharing class RemediationExecutor {
             return result;
         }
 
-        System.debug(LoggingLevel.INFO, 'Auto-remediation: ' + action + ' on profile ' + targetProfile);
+        ElaroLogger.info( 'Auto-remediation: ' + action + ' on profile ' + targetProfile);
 
         result.success = true;
         result.message = 'Profile update queued for deployment. Action: ' + action;
@@ -319,7 +319,7 @@ public with sharing class RemediationExecutor {
     }
 
     private static void logRemediationAction(String actionType, String action, String target) {
-        System.debug(LoggingLevel.INFO, String.format(
+        ElaroLogger.info( String.format(
             'REMEDIATION LOG: Type={0}, Action={1}, Target={2}, User={3}, Timestamp={4}',
             new List<Object>{ actionType, action, target, UserInfo.getUserId(), Datetime.now() }
         ));

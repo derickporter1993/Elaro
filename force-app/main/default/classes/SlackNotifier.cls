@@ -6,7 +6,7 @@ public with sharing class SlackNotifier {
      */
     public static void notifyAsyncQueueable(String text) {
         if (String.isBlank(text)) {
-            System.debug(LoggingLevel.WARN, 'SlackNotifier: Empty text provided, skipping notification');
+            ElaroLogger.warn( 'SlackNotifier: Empty text provided, skipping notification');
             return;
         }
 
@@ -20,7 +20,7 @@ public with sharing class SlackNotifier {
         } catch (Exception e) {
             String correlationId = 'TEXT-ERROR-' + System.now().getTime();
             logIntegrationError('SLACK', 'Failed to enqueue notification', e.getMessage(), e.getStackTraceString(), correlationId, text);
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
+            ElaroLogger.error( 'SlackNotifier: Failed to enqueue notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         }
     }
 
@@ -31,7 +31,7 @@ public with sharing class SlackNotifier {
      */
     public static void notifyRichAsyncQueueable(String jsonPayload) {
         if (String.isBlank(jsonPayload)) {
-            System.debug(LoggingLevel.WARN, 'SlackNotifier: Empty payload provided, skipping notification');
+            ElaroLogger.warn( 'SlackNotifier: Empty payload provided, skipping notification');
             return;
         }
 
@@ -45,11 +45,11 @@ public with sharing class SlackNotifier {
         } catch (JSONException e) {
             String correlationId = 'RICH-ERROR-' + System.now().getTime();
             logIntegrationError('SLACK', 'Invalid JSON payload', e.getMessage(), e.getStackTraceString(), correlationId, jsonPayload);
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Invalid JSON payload. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
+            ElaroLogger.error( 'SlackNotifier: Invalid JSON payload. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         } catch (Exception e) {
             String correlationId = 'RICH-ERROR-' + System.now().getTime();
             logIntegrationError('SLACK', 'Failed to enqueue rich notification', e.getMessage(), e.getStackTraceString(), correlationId, jsonPayload);
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to enqueue rich notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
+            ElaroLogger.error( 'SlackNotifier: Failed to enqueue rich notification. CorrelationId: ' + correlationId + ', Error: ' + e.getMessage());
         }
     }
 
@@ -93,7 +93,7 @@ public with sharing class SlackNotifier {
                 req.setBody(jsonPayload);
                 HttpResponse res = new Http().send(req);
                 if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                    System.debug(
+                    ElaroLogger.debug(
                         LoggingLevel.ERROR,
                         'Slack bulk notify failed with status ' +
                             res.getStatusCode() +
@@ -103,7 +103,7 @@ public with sharing class SlackNotifier {
                 }
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Slack bulk notify exception: ' + e.getMessage());
+            ElaroLogger.error( 'Slack bulk notify exception: ' + e.getMessage());
         }
     }
 
@@ -270,11 +270,11 @@ public with sharing class SlackNotifier {
     ) {
         // Validate inputs
         if (String.isBlank(flowName)) {
-            System.debug(LoggingLevel.WARN, 'SlackNotifier: Empty flowName provided, skipping notification');
+            ElaroLogger.warn( 'SlackNotifier: Empty flowName provided, skipping notification');
             return;
         }
         if (cpuTime == null || cpuTime < 0) {
-            System.debug(LoggingLevel.WARN, 'SlackNotifier: Invalid cpuTime provided, skipping notification');
+            ElaroLogger.warn( 'SlackNotifier: Invalid cpuTime provided, skipping notification');
             return;
         }
         if (String.isBlank(rating)) {
@@ -361,7 +361,7 @@ public with sharing class SlackNotifier {
             insert error;
         } catch (Exception e) {
             // Don't fail the main operation if error logging fails
-            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
+            ElaroLogger.error( 'SlackNotifier: Failed to log integration error. Original error: ' + errorMessage + ', Logging error: ' + e.getMessage());
         }
     }
 }

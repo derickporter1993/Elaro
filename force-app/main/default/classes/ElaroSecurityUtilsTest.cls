@@ -121,89 +121,107 @@ private class ElaroSecurityUtilsTest {
     @IsTest
     static void testValidateCRUDAccess_Insert() {
         Test.startTest();
+        Boolean validationPassed = false;
         try {
             ElaroSecurityUtils.validateCRUDAccess(
                 'Account',
                 ElaroSecurityUtils.DmlOperation.DML_INSERT
             );
-            System.assert(true, 'Should not throw exception for valid insert access');
+            validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
+
+        System.assert(validationPassed, 'Insert access validation should complete successfully');
     }
     
     @IsTest
     static void testValidateCRUDAccess_Update() {
         Test.startTest();
+        Boolean validationPassed = false;
         try {
             ElaroSecurityUtils.validateCRUDAccess(
                 'Account',
                 ElaroSecurityUtils.DmlOperation.DML_UPDATE
             );
-            System.assert(true, 'Should not throw exception for valid update access');
+            validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
+
+        System.assert(validationPassed, 'Update access validation should complete successfully');
     }
     
     @IsTest
     static void testValidateCRUDAccess_Delete() {
         Test.startTest();
+        Boolean validationPassed = false;
         try {
             ElaroSecurityUtils.validateCRUDAccess(
                 'Account',
                 ElaroSecurityUtils.DmlOperation.DML_DELETE
             );
-            System.assert(true, 'Should not throw exception for valid delete access');
+            validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
+
+        System.assert(validationPassed, 'Delete access validation should complete successfully');
     }
     
     @IsTest
     static void testValidateCRUDAccess_Upsert() {
         Test.startTest();
+        Boolean validationPassed = false;
         try {
             ElaroSecurityUtils.validateCRUDAccess(
                 'Account',
                 ElaroSecurityUtils.DmlOperation.DML_UPSERT
             );
-            System.assert(true, 'Should not throw exception for valid upsert access');
+            validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
+
+        System.assert(validationPassed, 'Upsert access validation should complete successfully');
     }
     
     @IsTest
     static void testValidateFLSAccess_Read() {
         List<String> fields = new List<String>{'Name', 'BillingCity'};
-        
+
         Test.startTest();
+        Boolean validationPassed = false;
         try {
             ElaroSecurityUtils.validateFLSAccess('Account', fields, false);
-            System.assert(true, 'Should not throw exception for valid FLS read access');
+            validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
+
+        System.assert(validationPassed, 'FLS read validation should complete successfully for accessible fields');
     }
     
     @IsTest
     static void testValidateFLSAccess_Write() {
         List<String> fields = new List<String>{'Name', 'BillingCity'};
-        
+
         Test.startTest();
+        Boolean validationPassed = false;
         try {
             ElaroSecurityUtils.validateFLSAccess('Account', fields, true);
-            System.assert(true, 'Should not throw exception for valid FLS write access');
+            validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(false, 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
+
+        System.assert(validationPassed, 'FLS write validation should complete successfully for writable fields');
     }
     
     @IsTest

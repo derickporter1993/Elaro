@@ -296,7 +296,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             Http http = new Http();
             http.send(req);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Slack digest send failed: ' + e.getMessage());
+            ElaroLogger.error( 'Slack digest send failed: ' + e.getMessage());
         }
     }
     

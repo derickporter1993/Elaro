@@ -32,7 +32,7 @@ public class ElaroAlertQueueable implements Queueable, Database.AllowsCallouts {
             );
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Alert queue processing error: ' + e.getMessage());
+            ElaroLogger.error( 'Alert queue processing error: ' + e.getMessage());
         }
     }
     

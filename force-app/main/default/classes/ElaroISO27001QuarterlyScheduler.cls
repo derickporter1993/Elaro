@@ -41,14 +41,14 @@ public with sharing class ElaroISO27001QuarterlyScheduler implements Schedulable
         try {
             List<Access_Review__c> reviews = ElaroISO27001AccessReviewService.initiateQuarterlyReviews();
 
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[ElaroISO27001QuarterlyScheduler] Created ' + reviews.size() + ' quarterly reviews');
 
             // Send notification to reviewers
             sendReviewerNotifications(reviews);
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR,
+            ElaroLogger.error(
                 '[ElaroISO27001QuarterlyScheduler] Error initiating quarterly reviews: ' + e.getMessage());
         }
     }
@@ -60,14 +60,14 @@ public with sharing class ElaroISO27001QuarterlyScheduler implements Schedulable
         try {
             List<Access_Review__c> reviews = ElaroISO27001AccessReviewService.initiatePrivilegedAccessReviews();
 
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[ElaroISO27001QuarterlyScheduler] Created ' + reviews.size() + ' privileged access reviews');
 
             // Send urgent notifications for privileged reviews
             sendPrivilegedReviewNotifications(reviews);
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR,
+            ElaroLogger.error(
                 '[ElaroISO27001QuarterlyScheduler] Error initiating privileged reviews: ' + e.getMessage());
         }
     }
@@ -92,7 +92,7 @@ public with sharing class ElaroISO27001QuarterlyScheduler implements Schedulable
         // Create custom notifications for each reviewer
         for (Id reviewerId : reviewsByReviewer.keySet()) {
             Integer reviewCount = reviewsByReviewer.get(reviewerId).size();
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[ElaroISO27001QuarterlyScheduler] Reviewer ' + reviewerId +
                 ' assigned ' + reviewCount + ' reviews');
         }
@@ -104,7 +104,7 @@ public with sharing class ElaroISO27001QuarterlyScheduler implements Schedulable
      */
     private void sendPrivilegedReviewNotifications(List<Access_Review__c> reviews) {
         for (Access_Review__c review : reviews) {
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[ElaroISO27001QuarterlyScheduler] Privileged review created for user: ' +
                 review.User__c + ' assigned to: ' + review.Reviewer__c);
         }

@@ -30,18 +30,18 @@ global class ElaroInstallHandler implements InstallHandler {
             // Send installation notification (if configured)
             notifyAdministrators(context);
 
-            System.debug(LoggingLevel.INFO, 'Elaro installation completed successfully');
+            ElaroLogger.info( 'Elaro installation completed successfully');
 
         } catch (Exception e) {
             // Log error but don't throw - don't block installation
-            System.debug(LoggingLevel.ERROR, 'Elaro InstallHandler error: ' + e.getMessage());
-            System.debug(LoggingLevel.ERROR, 'Stack trace: ' + e.getStackTraceString());
+            ElaroLogger.error( 'Elaro InstallHandler error: ' + e.getMessage());
+            ElaroLogger.error( 'Stack trace: ' + e.getStackTraceString());
 
             // Create error audit log if possible
             try {
                 createErrorAuditLog(e, context);
             } catch (Exception auditError) {
-                System.debug(LoggingLevel.ERROR, 'Could not create error audit log: ' + auditError.getMessage());
+                ElaroLogger.error( 'Could not create error audit log: ' + auditError.getMessage());
             }
         }
     }
@@ -52,22 +52,22 @@ global class ElaroInstallHandler implements InstallHandler {
      */
     private void logInstallation(InstallContext context) {
         if (context.isInstall()) {
-            System.debug(LoggingLevel.INFO, '===== ELARO INSTALLATION =====');
-            System.debug(LoggingLevel.INFO, 'Installation Type: New Installation');
+            ElaroLogger.info( '===== ELARO INSTALLATION =====');
+            ElaroLogger.info( 'Installation Type: New Installation');
         } else if (context.isUpgrade()) {
-            System.debug(LoggingLevel.INFO, '===== ELARO UPGRADE =====');
-            System.debug(LoggingLevel.INFO, 'Installation Type: Upgrade');
-            System.debug(LoggingLevel.INFO, 'Previous Version: ' + context.previousVersion());
+            ElaroLogger.info( '===== ELARO UPGRADE =====');
+            ElaroLogger.info( 'Installation Type: Upgrade');
+            ElaroLogger.info( 'Previous Version: ' + context.previousVersion());
         } else if (context.isPush()) {
-            System.debug(LoggingLevel.INFO, '===== ELARO PUSH UPGRADE =====');
-            System.debug(LoggingLevel.INFO, 'Installation Type: Push Upgrade');
-            System.debug(LoggingLevel.INFO, 'Previous Version: ' + context.previousVersion());
+            ElaroLogger.info( '===== ELARO PUSH UPGRADE =====');
+            ElaroLogger.info( 'Installation Type: Push Upgrade');
+            ElaroLogger.info( 'Previous Version: ' + context.previousVersion());
         }
 
-        System.debug(LoggingLevel.INFO, 'Organization ID: ' + context.organizationId());
-        System.debug(LoggingLevel.INFO, 'Installer ID: ' + context.installerId());
-        System.debug(LoggingLevel.INFO, 'Timestamp: ' + System.now());
-        System.debug(LoggingLevel.INFO, '=====================================');
+        ElaroLogger.info( 'Organization ID: ' + context.organizationId());
+        ElaroLogger.info( 'Installer ID: ' + context.installerId());
+        ElaroLogger.info( 'Timestamp: ' + System.now());
+        ElaroLogger.info( '=====================================');
     }
 
     /**
@@ -92,13 +92,14 @@ global class ElaroInstallHandler implements InstallHandler {
             );
 
             try {
+                ElaroSecurityUtils.validateCRUDAccess('Elaro_AI_Settings__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
                 insert defaultSettings;
-                System.debug(LoggingLevel.INFO, 'Created default AI settings: ' + defaultSettings.Id);
+                ElaroLogger.info( 'Created default AI settings: ' + defaultSettings.Id);
             } catch (DmlException e) {
-                System.debug(LoggingLevel.WARN, 'Could not create AI settings (may already exist): ' + e.getMessage());
+                ElaroLogger.warn( 'Could not create AI settings (may already exist): ' + e.getMessage());
             }
         } else {
-            System.debug(LoggingLevel.INFO, 'AI settings already exist: ' + existingSettings.Id);
+            ElaroLogger.info( 'AI settings already exist: ' + existingSettings.Id);
         }
     }
 
@@ -109,7 +110,7 @@ global class ElaroInstallHandler implements InstallHandler {
     private void createWelcomeAuditLog(InstallContext context) {
         // Check if Elaro_Audit_Log__c object exists and is accessible
         if (!Schema.sObjectType.Elaro_Audit_Log__c.isCreateable()) {
-            System.debug(LoggingLevel.WARN, 'Cannot create audit log: insufficient permissions');
+            ElaroLogger.warn( 'Cannot create audit log: insufficient permissions');
             return;
         }
 
@@ -134,10 +135,11 @@ global class ElaroInstallHandler implements InstallHandler {
         );
 
         try {
+            ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert welcomeLog;
-            System.debug(LoggingLevel.INFO, 'Created welcome audit log: ' + welcomeLog.Id);
+            ElaroLogger.info( 'Created welcome audit log: ' + welcomeLog.Id);
         } catch (DmlException e) {
-            System.debug(LoggingLevel.WARN, 'Could not create welcome audit log: ' + e.getMessage());
+            ElaroLogger.warn( 'Could not create welcome audit log: ' + e.getMessage());
         }
     }
 
@@ -147,10 +149,6 @@ global class ElaroInstallHandler implements InstallHandler {
      * @param context Installation context
      */
     private void createErrorAuditLog(Exception e, InstallContext context) {
-        if (!Schema.sObjectType.Elaro_Audit_Log__c.isCreateable()) {
-            return;
-        }
-
         Elaro_Audit_Log__c errorLog = new Elaro_Audit_Log__c(
             Action__c = 'Package Installation Error',
             Description__c = 'An error occurred during post-install processing: ' + e.getMessage(),
@@ -161,6 +159,7 @@ global class ElaroInstallHandler implements InstallHandler {
             Severity__c = 'ERROR'
         );
 
+        ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
         insert errorLog;
     }
 
@@ -181,7 +180,7 @@ global class ElaroInstallHandler implements InstallHandler {
             ];
 
             if (adminAssignments.isEmpty()) {
-                System.debug(LoggingLevel.INFO, 'No Elaro_Admin users found - skipping notification');
+                ElaroLogger.info( 'No Elaro_Admin users found - skipping notification');
                 return;
             }
 
@@ -203,12 +202,13 @@ global class ElaroInstallHandler implements InstallHandler {
                     Type = 'TextPost'
                 );
 
+                ElaroSecurityUtils.validateCRUDAccess('FeedItem', ElaroSecurityUtils.DmlOperation.DML_INSERT);
                 insert post;
-                System.debug(LoggingLevel.INFO, 'Posted installation notification to Chatter');
+                ElaroLogger.info( 'Posted installation notification to Chatter');
             }
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Could not notify administrators: ' + e.getMessage());
+            ElaroLogger.warn( 'Could not notify administrators: ' + e.getMessage());
         }
     }
 

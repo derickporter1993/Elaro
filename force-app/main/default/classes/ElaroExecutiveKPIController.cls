@@ -60,7 +60,7 @@ public with sharing class ElaroExecutiveKPIController {
                 }
             } catch (Exception e) {
                 // Log error but don't fail entire dashboard
-                System.debug(LoggingLevel.ERROR,
+                ElaroLogger.error(
                     'KPI query failed for ' + config.DeveloperName + ': ' + e.getMessage());
 
                 // Add placeholder with error state

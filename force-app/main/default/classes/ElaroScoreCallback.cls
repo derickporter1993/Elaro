@@ -180,7 +180,7 @@ global without sharing class ElaroScoreCallback {
             Database.SaveResult publishResult = EventBus.publish(scoreEvent);
             if (!publishResult.isSuccess()) {
                 // Log error but don't fail the request - score was saved successfully
-                System.debug(LoggingLevel.ERROR, 'Failed to publish Elaro_Score_Result__e: ' + publishResult.getErrors());
+                ElaroLogger.error( 'Failed to publish Elaro_Score_Result__e: ' + publishResult.getErrors());
             }
             
             // Return success response (score was saved, event publish failure is non-critical)
@@ -198,7 +198,7 @@ global without sharing class ElaroScoreCallback {
             logSecurityEvent('SCORE_CALLBACK_ERROR', correlationId, getClientIp(req), errorCategory);
             
             // Log full details to debug logs (not exposed to client)
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 'ElaroScoreCallback error [CorrelationId: ' + correlationId + ']: ' + 
                 errorCategory + ' - ' + e.getMessage());
             
@@ -234,7 +234,7 @@ global without sharing class ElaroScoreCallback {
             ];
 
             if (configs.isEmpty() || String.isBlank(configs[0].API_Key_Hash__c)) {
-                System.debug(LoggingLevel.WARN, 'ElaroScoreCallback: API key hash not configured');
+                ElaroLogger.warn( 'ElaroScoreCallback: API key hash not configured');
                 return false;
             }
 
@@ -244,7 +244,7 @@ global without sharing class ElaroScoreCallback {
 
         } catch (Exception e) {
             // If Custom Metadata doesn't exist or query fails, deny access
-            System.debug(LoggingLevel.ERROR, 'ElaroScoreCallback: API key validation error: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroScoreCallback: API key validation error: ' + e.getMessage());
             return false;
         }
     }
@@ -268,11 +268,11 @@ global without sharing class ElaroScoreCallback {
      */
     global static void generateHashForKey(String apiKey) {
         if (String.isBlank(apiKey)) {
-            System.debug('Error: API key cannot be blank');
+            ElaroLogger.debug('Error: API key cannot be blank');
             return;
         }
         String hash = generateApiKeyHash(apiKey);
-        System.debug('API Key Hash (copy to Custom Metadata API_Key_Hash__c field): ' + hash);
+        ElaroLogger.debug('API Key Hash (copy to Custom Metadata API_Key_Hash__c field): ' + hash);
     }
 
     /**
@@ -341,7 +341,7 @@ global without sharing class ElaroScoreCallback {
             return true;
         } catch (Exception e) {
             // If cache fails, log but allow request (fail open for availability)
-            System.debug(LoggingLevel.WARN, 'Rate limit check failed: ' + e.getMessage());
+            ElaroLogger.warn( 'Rate limit check failed: ' + e.getMessage());
             return true;
         }
     }
@@ -353,7 +353,7 @@ global without sharing class ElaroScoreCallback {
     private static Boolean validateReplayProtection(String timestamp, String nonce) {
         // If headers not provided, allow (backward compatibility, but log warning)
         if (String.isBlank(timestamp) || String.isBlank(nonce)) {
-            System.debug(LoggingLevel.WARN, 'ElaroScoreCallback: Replay protection headers missing');
+            ElaroLogger.warn( 'ElaroScoreCallback: Replay protection headers missing');
             return true; // Allow for backward compatibility, but should be required in production
         }
         
@@ -380,12 +380,12 @@ global without sharing class ElaroScoreCallback {
                 }
             } catch (Exception e) {
                 // Cache unavailable, allow request but log warning
-                System.debug(LoggingLevel.WARN, 'Nonce validation cache unavailable: ' + e.getMessage());
+                ElaroLogger.warn( 'Nonce validation cache unavailable: ' + e.getMessage());
             }
             
             return true;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Replay protection validation error: ' + e.getMessage());
+            ElaroLogger.error( 'Replay protection validation error: ' + e.getMessage());
             return false;
         }
     }
@@ -419,7 +419,7 @@ global without sharing class ElaroScoreCallback {
             // Constant-time comparison to prevent timing attacks
             return calculatedSignature.equals(providedSignature);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'HMAC validation error: ' + e.getMessage());
+            ElaroLogger.error( 'HMAC validation error: ' + e.getMessage());
             return false;
         }
     }
@@ -463,13 +463,13 @@ global without sharing class ElaroScoreCallback {
                 logMessage += ' | Details: ' + details;
             }
             
-            System.debug(LoggingLevel.INFO, logMessage);
+            ElaroLogger.info( logMessage);
             
             // Optionally log to custom object for audit trail (if Elaro_Audit_Log__c exists)
             // This would require with sharing context, so we'll use debug logs for now
         } catch (Exception e) {
             // Don't fail request if logging fails
-            System.debug(LoggingLevel.WARN, 'Failed to log security event: ' + e.getMessage());
+            ElaroLogger.warn( 'Failed to log security event: ' + e.getMessage());
         }
     }
 }

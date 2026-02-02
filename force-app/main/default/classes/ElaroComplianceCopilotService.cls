@@ -78,9 +78,9 @@ public with sharing class ElaroComplianceCopilotService {
             cacheRecommendation(cacheKey, recommendation);
             
             return recommendation;
-            
+
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error analyzing event pattern: ' + e.getMessage());
+            ElaroLogger.error('Error analyzing event pattern: ' + e.getMessage(), e);
             return createDefaultRecommendation('Analysis error: ' + e.getMessage());
         }
     }
@@ -143,9 +143,9 @@ public with sharing class ElaroComplianceCopilotService {
             cacheString(cacheKey, summary);
             
             return summary;
-            
+
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error generating summary: ' + e.getMessage());
+            ElaroLogger.error('Error generating summary: ' + e.getMessage(), e);
             throw new AuraHandledException('Error generating summary: ' + e.getMessage());
         }
     }
@@ -191,9 +191,9 @@ public with sharing class ElaroComplianceCopilotService {
             cacheRiskPredictions(cacheKey, predictions);
             
             return predictions;
-            
+
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error predicting risks: ' + e.getMessage());
+            ElaroLogger.error('Error predicting risks: ' + e.getMessage(), e);
             return new List&lt;RiskPrediction&gt;();
         }
     }
@@ -229,11 +229,11 @@ public with sharing class ElaroComplianceCopilotService {
             
             // Parse categorization
             mappings = parseCategorizationResponse(response, items);
-            
+
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error categorizing events: ' + e.getMessage());
+            ElaroLogger.error('Error categorizing events: ' + e.getMessage(), e);
         }
-        
+
         return mappings;
     }
     
@@ -408,9 +408,9 @@ public with sharing class ElaroComplianceCopilotService {
                 return (String)firstContent.get('text');
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Error extracting text: ' + e.getMessage());
+            ElaroLogger.warn('Error extracting text: ' + e.getMessage());
         }
-        
+
         return 'Unable to generate summary.';
     }
     
@@ -443,9 +443,9 @@ public with sharing class ElaroComplianceCopilotService {
                 predictions.add(rp);
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Error parsing predictions: ' + e.getMessage());
+            ElaroLogger.warn('Error parsing predictions: ' + e.getMessage());
         }
-        
+
         return predictions;
     }
     
@@ -461,9 +461,9 @@ public with sharing class ElaroComplianceCopilotService {
                 mappings.put(key, String.valueOf(catMap.get(key)));
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Error parsing categorization: ' + e.getMessage());
+            ElaroLogger.warn('Error parsing categorization: ' + e.getMessage());
         }
-        
+
         return mappings;
     }
     
@@ -485,7 +485,7 @@ public with sharing class ElaroComplianceCopilotService {
             Cache.OrgPartition partition = Cache.Org.getPartition(CACHE_PARTITION);
             partition.put(key, rec, CACHE_TTL_SECONDS);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Cache put failed: ' + e.getMessage());
+            ElaroLogger.warn('Cache put failed: ' + e.getMessage());
         }
     }
     
@@ -503,7 +503,7 @@ public with sharing class ElaroComplianceCopilotService {
             Cache.OrgPartition partition = Cache.Org.getPartition(CACHE_PARTITION);
             partition.put(key, value, CACHE_TTL_SECONDS);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Cache put failed: ' + e.getMessage());
+            ElaroLogger.warn('Cache put failed: ' + e.getMessage());
         }
     }
     
@@ -521,7 +521,7 @@ public with sharing class ElaroComplianceCopilotService {
             Cache.OrgPartition partition = Cache.Org.getPartition(CACHE_PARTITION);
             partition.put(key, predictions, CACHE_TTL_SECONDS);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Cache put failed: ' + e.getMessage());
+            ElaroLogger.warn('Cache put failed: ' + e.getMessage());
         }
     }
     

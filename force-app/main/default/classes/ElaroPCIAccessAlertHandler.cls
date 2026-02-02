@@ -127,8 +127,7 @@ public with sharing class ElaroPCIAccessAlertHandler {
      */
     private static void sendSecurityAlert(String subject, String body, String severity) {
         // Log the alert
-        System.debug(LoggingLevel.ERROR,
-            '[PCIAccessAlertHandler] ' + severity + ': ' + subject + '\n' + body);
+        ElaroLogger.error('[PCIAccessAlertHandler] ' + severity + ': ' + subject + '\n' + body);
 
         // In production, would:
         // 1. Send email to security team
@@ -143,8 +142,7 @@ public with sharing class ElaroPCIAccessAlertHandler {
      * @param eventType - Type of security event
      */
     private static void logSecurityEvent(Elaro_Raw_Event__e event, String eventType) {
-        System.debug(LoggingLevel.WARN,
-            '[PCIAccessAlertHandler] Security Event: ' + eventType + '\n' +
+        ElaroLogger.warn('[PCIAccessAlertHandler] Security Event: ' + eventType + '\n' +
             'User: ' + parseEventField(event, 'username') + '\n' +
             'Timestamp: ' + event.Timestamp__c + '\n' +
             'IP: ' + parseEventField(event, 'ipAddress') + '\n' +
@@ -159,8 +157,7 @@ public with sharing class ElaroPCIAccessAlertHandler {
      */
     public static void createSecurityIncident(String subject, String description, String priority) {
         // Would create a Case record for security team to investigate
-        System.debug(LoggingLevel.ERROR,
-            '[PCIAccessAlertHandler] Creating security incident: ' + subject);
+        ElaroLogger.error('[PCIAccessAlertHandler] Creating security incident: ' + subject);
     }
 
     /**
@@ -179,7 +176,7 @@ public with sharing class ElaroPCIAccessAlertHandler {
             Object value = data.get(fieldName);
             return value != null ? String.valueOf(value) : '';
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Failed to parse event field ' + fieldName + ': ' + e.getMessage());
+            ElaroLogger.warn('Failed to parse event field ' + fieldName + ': ' + e.getMessage());
             return '';
         }
     }

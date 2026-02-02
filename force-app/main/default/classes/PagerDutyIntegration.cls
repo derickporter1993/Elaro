@@ -18,7 +18,7 @@ public with sharing class PagerDutyIntegration {
         // Get routing key from Custom Metadata
         String routingKey = getRoutingKey();
         if (String.isBlank(routingKey)) {
-            System.debug(LoggingLevel.WARN, 
+            ElaroLogger.warn( 
                 '[PagerDutyIntegration] Cannot trigger incident: routing key not configured');
             return;
         }
@@ -69,7 +69,7 @@ public with sharing class PagerDutyIntegration {
         // Get routing key from Custom Metadata
         String routingKey = getRoutingKey();
         if (String.isBlank(routingKey)) {
-            System.debug(LoggingLevel.WARN, 
+            ElaroLogger.warn( 
                 '[PagerDutyIntegration] Cannot resolve incident: routing key not configured');
             return;
         }
@@ -92,7 +92,7 @@ public with sharing class PagerDutyIntegration {
         // Get routing key from Custom Metadata
         String routingKey = getRoutingKey();
         if (String.isBlank(routingKey)) {
-            System.debug(LoggingLevel.WARN, 
+            ElaroLogger.warn( 
                 '[PagerDutyIntegration] Cannot acknowledge incident: routing key not configured');
             return;
         }
@@ -150,7 +150,7 @@ public with sharing class PagerDutyIntegration {
         // Validate routing key is present
         String routingKey = (String)event.get('routing_key');
         if (String.isBlank(routingKey)) {
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[PagerDutyIntegration] Cannot send event: routing key is missing');
             return;
         }
@@ -168,14 +168,14 @@ public with sharing class PagerDutyIntegration {
             
             if (res.getStatusCode() == 202) {
                 Map<String, Object> response = (Map<String, Object>)JSON.deserializeUntyped(res.getBody());
-                System.debug(LoggingLevel.INFO, 
+                ElaroLogger.info( 
                     '[PagerDutyIntegration] Event sent successfully: ' + response.get('dedup_key'));
             } else {
-                System.debug(LoggingLevel.ERROR, 
+                ElaroLogger.error( 
                     '[PagerDutyIntegration] API error (status ' + res.getStatusCode() + '): ' + res.getBody());
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[PagerDutyIntegration] Integration error: ' + e.getMessage());
         }
     }
@@ -196,7 +196,7 @@ public with sharing class PagerDutyIntegration {
             ];
 
             if (configs.isEmpty()) {
-                System.debug(LoggingLevel.WARN, 
+                ElaroLogger.warn( 
                     '[PagerDutyIntegration] PagerDuty integration not configured. ' +
                     'Create Elaro_API_Config__mdt record with DeveloperName=PagerDuty');
                 return null;
@@ -205,7 +205,7 @@ public with sharing class PagerDutyIntegration {
             String routingKey = configs[0].API_Key__c;
 
             if (String.isBlank(routingKey) || routingKey.contains('PLACEHOLDER')) {
-                System.debug(LoggingLevel.ERROR, 
+                ElaroLogger.error( 
                     '[PagerDutyIntegration] PagerDuty routing key not set. ' +
                     'Update Elaro_API_Config__mdt.PagerDuty record with actual routing key');
                 return null;
@@ -213,7 +213,7 @@ public with sharing class PagerDutyIntegration {
 
             return routingKey;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[PagerDutyIntegration] Error retrieving routing key: ' + e.getMessage());
             return null;
         }
