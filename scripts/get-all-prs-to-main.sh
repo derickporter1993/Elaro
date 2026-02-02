@@ -6,11 +6,32 @@
 REPO="derickporter1993/Elaro"
 STATE="${1:-all}"
 
+# Show help
+if [[ "$STATE" == "-h" || "$STATE" == "--help" ]]; then
+    echo "Get all pull requests to main branch"
+    echo ""
+    echo "Usage: $0 [state]"
+    echo ""
+    echo "Arguments:"
+    echo "  state    Filter PRs by state: open, closed, all (default: all)"
+    echo ""
+    echo "Examples:"
+    echo "  $0           # Get all PRs (open and closed)"
+    echo "  $0 open      # Get only open PRs"
+    echo "  $0 closed    # Get only closed PRs"
+    echo ""
+    echo "Requirements:"
+    echo "  - GitHub CLI (gh) installed and authenticated, OR"
+    echo "  - GITHUB_TOKEN environment variable set"
+    exit 0
+fi
+
 # Validate state parameter
 if [[ ! "$STATE" =~ ^(open|closed|all)$ ]]; then
     echo "Error: Invalid state '$STATE'"
     echo "Usage: $0 [state]"
     echo "  state: open, closed, all (default: all)"
+    echo "Run '$0 --help' for more information"
     exit 1
 fi
 
