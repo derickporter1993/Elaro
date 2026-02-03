@@ -1,5 +1,6 @@
 public with sharing class ElaroGraphIndexer {
     private static final String GRAPH_VERSION = 'v3.0';
+    private static final Integer MAX_METADATA_SIZE = 50000;
 
     public static String indexChange(String entityType, String entityId, String parentNodeId, String framework) {
         // Input validation
@@ -172,10 +173,10 @@ public with sharing class ElaroGraphIndexer {
     }
 
     private static String determineDriftCategory(Decimal riskScore, Map<String, Object> metadata) {
-        if (riskScore >= 8.0) return 'POLICY_VIOLATION';
-        if (riskScore >= 5.0) return 'UNAUTHORIZED';
-        if (riskScore >= 3.0) return 'ANOMALY';
-        return 'MANUAL_OVERRIDE';
+        if (riskScore >= ElaroConstants.RISK_THRESHOLD_AUTO_FIX) return ElaroConstants.DRIFT_POLICY_VIOLATION;
+        if (riskScore >= ElaroConstants.RISK_THRESHOLD_MEDIUM) return ElaroConstants.DRIFT_UNAUTHORIZED;
+        if (riskScore >= ElaroConstants.RISK_THRESHOLD_LOW) return ElaroConstants.DRIFT_ANOMALY;
+        return ElaroConstants.DRIFT_MANUAL_OVERRIDE;
     }
 
     /**
@@ -203,9 +204,8 @@ public with sharing class ElaroGraphIndexer {
         }
         
         String serialized = JSON.serialize(sanitized);
-        
+
         // Enforce size limit (Big Object Long Text fields can be large, but we limit to 50KB)
-        Integer MAX_METADATA_SIZE = 50000;
         if (serialized.length() > MAX_METADATA_SIZE) {
             System.debug(LoggingLevel.WARN, '[ElaroGraphIndexer] Metadata exceeds size limit: ' + serialized.length() + ' bytes. Truncating.');
             serialized = serialized.substring(0, MAX_METADATA_SIZE - 3) + '...';
