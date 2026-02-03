@@ -16,7 +16,7 @@ public with sharing class AlertHistoryService {
     }
     
     @AuraEnabled(cacheable=true)
-    public static List<AlertRow> recent(Integer limitSize) {
+    public static List<AlertRow> getRecentAlerts(Integer limitSize) {
         // Validate read access
         if (!ElaroSecurityUtils.hasReadAccess('Performance_Alert_History__c')) {
             throw new AuraHandledException('Insufficient access to Performance Alert History');

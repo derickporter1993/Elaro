@@ -11,7 +11,7 @@ private class AlertHistoryServiceTest {
         );
 
         Test.startTest();
-        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.recent(5);
+        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.getRecentAlerts(5);
         Test.stopTest();
 
         // Verify exact count
@@ -53,7 +53,7 @@ private class AlertHistoryServiceTest {
         insert alerts;
 
         Test.startTest();
-        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.recent(10);
+        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.getRecentAlerts(10);
         Test.stopTest();
 
         System.assertEquals(3, rows.size(), 'Should return all 3 alerts');
@@ -84,7 +84,7 @@ private class AlertHistoryServiceTest {
         insert alerts;
 
         Test.startTest();
-        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.recent(5);
+        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.getRecentAlerts(5);
         Test.stopTest();
 
         System.assertEquals(5, rows.size(), 'Should respect limit of 5');
@@ -94,7 +94,7 @@ private class AlertHistoryServiceTest {
     static void testRecentEmpty() {
         // Test with no history records
         Test.startTest();
-        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.recent(5);
+        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.getRecentAlerts(5);
         Test.stopTest();
 
         System.assertEquals(0, rows.size(), 'Should return empty list when no history');
@@ -116,7 +116,7 @@ private class AlertHistoryServiceTest {
         insert alerts;
 
         Test.startTest();
-        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.recent(10);
+        List<AlertHistoryService.AlertRow> rows = AlertHistoryService.getRecentAlerts(10);
         Test.stopTest();
 
         // Verify descending order by created date (most recent first)

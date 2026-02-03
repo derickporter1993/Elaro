@@ -18,7 +18,7 @@ import { safeCleanupDom } from "../../__tests__/wireAdapterTestUtils";
 let mockSnapshotsResult = null;
 let mockSnapshotsError = null;
 
-jest.mock("@salesforce/apex/ApiUsageDashboardController.recent", () => ({
+jest.mock("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots", () => ({
   default: jest.fn(() => {
     if (mockSnapshotsError) {
       return Promise.reject(mockSnapshotsError);
@@ -118,7 +118,7 @@ describe("c-api-usage-dashboard", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
 
@@ -186,7 +186,7 @@ describe("c-api-usage-dashboard", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
   });
@@ -276,7 +276,7 @@ describe("c-api-usage-dashboard", () => {
       await flushPromises();
 
       // Verify component initializes correctly (loads data)
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalled();
     });
 
@@ -293,7 +293,7 @@ describe("c-api-usage-dashboard", () => {
       await flushPromises();
 
       // Polling should start - verify data loads initially
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
 

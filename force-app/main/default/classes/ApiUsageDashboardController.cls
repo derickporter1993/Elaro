@@ -21,7 +21,7 @@ public with sharing class ApiUsageDashboardController {
     }
 
     @AuraEnabled(cacheable = true)
-    public static List<Row> recent(Integer limitSize) {
+    public static List<Row> getRecentSnapshots(Integer limitSize) {
         List<Row> out = new List<Row>();
         Integer recordLimit = Math.max(1, limitSize);
 
