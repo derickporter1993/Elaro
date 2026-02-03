@@ -572,8 +572,8 @@ Types: feat, fix, test, docs, refactor, style
 
 5. **Check for API Version Consistency**:
    ```bash
-   # All metadata should use API version 63.0
-   grep -rn "apiVersion" force-app/main/default/**/*.xml | grep -v "63.0"
+   # All metadata should use API version 65.0
+   grep -rn "apiVersion" force-app/main/default/**/*.xml | grep -v "65.0"
    ```
 
 ### After Coding
