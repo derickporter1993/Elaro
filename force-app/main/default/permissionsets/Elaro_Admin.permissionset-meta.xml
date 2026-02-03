@@ -590,4 +590,13 @@
     <modifyAllRecords>false</modifyAllRecords>
     <viewAllRecords>true</viewAllRecords>
   </objectPermissions>
+  <objectPermissions>
+    <object>Integration_Error__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
 </PermissionSet>
