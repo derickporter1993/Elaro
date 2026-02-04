@@ -121,6 +121,9 @@ public with sharing class ElaroConstants {
     // DRIFT CATEGORIES
     // ============================================
     public static final String DRIFT_POLICY_VIOLATION = 'POLICY_VIOLATION';
+    public static final String DRIFT_UNAUTHORIZED = 'UNAUTHORIZED';
+    public static final String DRIFT_ANOMALY = 'ANOMALY';
+    public static final String DRIFT_MANUAL_OVERRIDE = 'MANUAL_OVERRIDE';
     public static final String DRIFT_AUTO_REMEDIATED = 'AUTO_REMEDIATED';
     public static final String DRIFT_HUMAN_APPROVED = 'HUMAN_APPROVED';
     public static final String DRIFT_PENDING_REVIEW = 'PENDING_REVIEW';

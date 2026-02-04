@@ -76,16 +76,6 @@ private class FlowExecutionStatsTest {
     }
     
     @IsTest
-    static void testTopFlows_DeprecatedMethod() {
-        Test.startTest();
-        List<FlowExecutionStats.ExecAgg> results = FlowExecutionStats.topFlows(5);
-        Test.stopTest();
-        
-        // Deprecated method should still work
-        System.assertNotEquals(null, results, 'Deprecated method should return results');
-    }
-    
-    @IsTest
     static void testGetTopFlows_EmptyData() {
         Test.startTest();
         // Delete all test data inside test context to preserve DML limits

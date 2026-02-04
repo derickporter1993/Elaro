@@ -18,7 +18,7 @@ import { safeCleanupDom } from "../../__tests__/wireAdapterTestUtils";
 let mockSnapshotsResult = null;
 let mockSnapshotsError = null;
 
-jest.mock("@salesforce/apex/ApiUsageDashboardController.recent", () => ({
+jest.mock("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots", () => ({
   default: jest.fn(() => {
     if (mockSnapshotsError) {
       return Promise.reject(mockSnapshotsError);
@@ -114,11 +114,32 @@ describe("c-api-usage-dashboard", () => {
       expect(card).toBeTruthy();
     });
 
+    it("shows loading spinner initially", async () => {
+      // Create element but don't wait for promises to flush
+      const element = createElement("c-api-usage-dashboard", {
+        is: ApiUsageDashboard,
+      });
+      document.body.appendChild(element);
+
+      // Check for spinner before data loads
+      const spinner = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinner).not.toBeNull();
+      expect(spinner.alternativeText).toBe("Loading API usage data");
+
+      // Now flush promises and verify spinner is gone
+      await flushPromises();
+      await Promise.resolve();
+      await flushPromises();
+
+      const spinnerAfterLoad = element.shadowRoot.querySelector("lightning-spinner");
+      expect(spinnerAfterLoad).toBeNull();
+    });
+
     it("loads API usage data on connected", async () => {
       const element = await createComponent();
       await flushPromises();
 
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
 
@@ -186,7 +207,7 @@ describe("c-api-usage-dashboard", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
   });
@@ -276,7 +297,7 @@ describe("c-api-usage-dashboard", () => {
       await flushPromises();
 
       // Verify component initializes correctly (loads data)
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalled();
     });
 
@@ -293,7 +314,7 @@ describe("c-api-usage-dashboard", () => {
       await flushPromises();
 
       // Polling should start - verify data loads initially
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.recent").default;
+      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
 

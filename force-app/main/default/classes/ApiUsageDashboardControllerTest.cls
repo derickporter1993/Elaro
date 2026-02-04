@@ -18,7 +18,7 @@ private class ApiUsageDashboardControllerTest {
         insert snapshots;
 
         Test.startTest();
-        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.recent(10);
+        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(10);
         Test.stopTest();
 
         System.assertEquals(5, rows.size(), 'Should return 5 snapshot rows');
@@ -45,7 +45,7 @@ private class ApiUsageDashboardControllerTest {
         insert snapshots;
 
         Test.startTest();
-        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.recent(5);
+        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(5);
         Test.stopTest();
 
         System.assertEquals(5, rows.size(), 'Should respect limit size of 5');
@@ -55,7 +55,7 @@ private class ApiUsageDashboardControllerTest {
     static void testRecentEmpty() {
         // Test with no data
         Test.startTest();
-        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.recent(10);
+        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(10);
         Test.stopTest();
 
         System.assertEquals(0, rows.size(), 'Should return empty list when no data');
@@ -72,7 +72,7 @@ private class ApiUsageDashboardControllerTest {
         );
 
         Test.startTest();
-        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.recent(0);
+        List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(0);
         Test.stopTest();
 
         // Math.max(1, limitSize) should ensure at least 1 result

@@ -82,8 +82,10 @@ public with sharing class SlackNotifier {
 
     @future(callout=true)
     public static void notifyBulkAsync(String serializedPayloads) {
+        String correlationId = 'BULK-' + System.now().getTime();
         try {
             List<Object> payloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
+            Integer index = 0;
             for (Object payloadObj : payloads) {
                 String jsonPayload = (String) payloadObj;
                 HttpRequest req = new HttpRequest();
@@ -93,17 +95,35 @@ public with sharing class SlackNotifier {
                 req.setBody(jsonPayload);
                 HttpResponse res = new Http().send(req);
                 if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                    System.debug(
-                        LoggingLevel.ERROR,
-                        'Slack bulk notify failed with status ' +
-                            res.getStatusCode() +
-                            ': ' +
-                            res.getStatus()
-                    );
+                    String errorCorrelationId = correlationId + '-' + index;
+                    logBulkAsyncError('HTTP_ERROR', 'Slack bulk notify failed with status ' + res.getStatusCode() + ': ' + res.getStatus(), errorCorrelationId, jsonPayload);
                 }
+                index++;
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Slack bulk notify exception: ' + e.getMessage());
+            logBulkAsyncError('EXCEPTION', 'Slack bulk notify exception: ' + e.getMessage(), correlationId, e.getStackTraceString());
+        }
+    }
+
+    /**
+     * Log errors from @future context where DML is allowed
+     */
+    private static void logBulkAsyncError(String errorType, String errorMessage, String correlationId, String context) {
+        System.debug(LoggingLevel.ERROR, 'SlackNotifier: ' + errorMessage + '. CorrelationId: ' + correlationId);
+        try {
+            if (Schema.sObjectType.Integration_Error__c.isCreateable()) {
+                Integration_Error__c error = new Integration_Error__c(
+                    Error_Type__c = 'SLACK_' + errorType,
+                    Error_Message__c = errorMessage,
+                    Correlation_Id__c = correlationId,
+                    Context__c = context != null && context.length() > 32000 ? context.substring(0, 32000) : context,
+                    Status__c = 'NEW',
+                    Timestamp__c = System.now()
+                );
+                insert error;
+            }
+        } catch (Exception e) {
+            System.debug(LoggingLevel.ERROR, 'SlackNotifier: Failed to log bulk async error: ' + e.getMessage());
         }
     }
 

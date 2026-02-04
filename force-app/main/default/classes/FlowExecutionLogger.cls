@@ -1,4 +1,9 @@
 public with sharing class FlowExecutionLogger {
+    // Rate limiting constants
+    private static final String RATE_LIMIT_PARTITION = 'ElaroRateLimit';
+    private static final Integer RATE_LIMIT_MAX_CALLS = 100;
+    private static final Integer RATE_LIMIT_WINDOW_SECONDS = 60;
+
     public class LogInput {
         @InvocableVariable(required=true) public String flowName;
         @InvocableVariable public Id primaryRecordId;
@@ -42,6 +47,17 @@ public with sharing class FlowExecutionLogger {
     }
     @AuraEnabled
     public static void log(String flowName, Id primaryRecordId, String status, Integer cpu, Integer soql, Integer dml) {
+        // Input validation
+        if (String.isBlank(flowName)) {
+            throw new AuraHandledException('Flow name cannot be blank');
+        }
+        if (String.isBlank(status)) {
+            throw new AuraHandledException('Status cannot be blank');
+        }
+
+        // Rate limiting check
+        checkRateLimit();
+
         LogInput input = new LogInput();
         input.flowName = flowName;
         input.primaryRecordId = primaryRecordId;
@@ -50,5 +66,26 @@ public with sharing class FlowExecutionLogger {
         input.soql = soql;
         input.dml = dml;
         logInvocable(new List<LogInput>{ input });
+    }
+
+    private static void checkRateLimit() {
+        String userId = UserInfo.getUserId();
+        String cacheKey = 'FlowLogger_' + userId.substring(0, 15);
+
+        try {
+            Cache.OrgPartition partition = Cache.Org.getPartition(RATE_LIMIT_PARTITION);
+            Integer callCount = (Integer) partition.get(cacheKey);
+
+            if (callCount == null) {
+                partition.put(cacheKey, 1, RATE_LIMIT_WINDOW_SECONDS);
+            } else if (callCount >= RATE_LIMIT_MAX_CALLS) {
+                throw new AuraHandledException('Rate limit exceeded. Please try again later.');
+            } else {
+                partition.put(cacheKey, callCount + 1, RATE_LIMIT_WINDOW_SECONDS);
+            }
+        } catch (Cache.CacheException e) {
+            // If cache partition doesn't exist, log warning but don't block
+            System.debug(LoggingLevel.WARN, '[FlowExecutionLogger] Rate limit cache unavailable: ' + e.getMessage());
+        }
     }
 }

@@ -1,6 +1,32 @@
 public with sharing class ElaroLegalDocumentGenerator {
+    private static final String RATE_LIMIT_PARTITION = 'ElaroRateLimit';
+    private static final Integer RATE_LIMIT_MAX_CALLS = 10;
+    private static final Integer RATE_LIMIT_WINDOW_SECONDS = 60;
+
     @AuraEnabled
     public static String generateLegalAttestation(String framework, Date startDate, Date endDate) {
+        // Rate limiting check
+        if (!checkRateLimit('ElaroLegalDocumentGenerator')) {
+            throw new AuraHandledException('Rate limit exceeded. Please wait before generating another evidence pack.');
+        }
+
+        // Input validation
+        if (String.isBlank(framework)) {
+            throw new AuraHandledException('Framework cannot be blank');
+        }
+        if (!ElaroConstants.isValidFramework(framework)) {
+            throw new AuraHandledException('Unsupported framework: ' + framework + '. Supported frameworks: ' + ElaroConstants.SUPPORTED_FRAMEWORKS);
+        }
+        if (startDate == null) {
+            throw new AuraHandledException('Start date cannot be null');
+        }
+        if (endDate == null) {
+            throw new AuraHandledException('End date cannot be null');
+        }
+        if (startDate > endDate) {
+            throw new AuraHandledException('Start date cannot be after end date');
+        }
+
         try {
             // Generate compliance evidence pack
             String documentContent = generateEvidencePackContent(framework, startDate, endDate);
@@ -37,9 +63,60 @@ public with sharing class ElaroLegalDocumentGenerator {
                 throw new AuraHandledException('Insufficient access to ContentVersion');
             }
             cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+
+            // Audit logging for evidence pack generation
+            logAuditEvent('EVIDENCE_PACK_GENERATED', framework, startDate, endDate, cv.ContentDocumentId);
+
             return cv.ContentDocumentId;
         } catch (Exception e) {
             throw new AuraHandledException('Error generating evidence pack: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * Check rate limit using Cache.OrgPartition
+     * Returns true if within limit, false if limit exceeded
+     */
+    private static Boolean checkRateLimit(String key) {
+        try {
+            Cache.OrgPartition orgPart = Cache.Org.getPartition(RATE_LIMIT_PARTITION);
+            String cacheKey = key + '_' + String.valueOf(System.now().getTime() / (RATE_LIMIT_WINDOW_SECONDS * 1000));
+            Integer currentCount = (Integer)orgPart.get(cacheKey);
+
+            if (currentCount == null) {
+                currentCount = 0;
+            }
+
+            if (currentCount >= RATE_LIMIT_MAX_CALLS) {
+                return false;
+            }
+
+            orgPart.put(cacheKey, currentCount + 1, RATE_LIMIT_WINDOW_SECONDS);
+            return true;
+        } catch (Exception e) {
+            // If cache partition doesn't exist, allow the call but log warning
+            System.debug(LoggingLevel.WARN, 'ElaroLegalDocumentGenerator: Rate limit check failed, allowing call: ' + e.getMessage());
+            return true;
+        }
+    }
+
+    /**
+     * Log audit event for compliance tracking
+     */
+    private static void logAuditEvent(String action, String framework, Date startDate, Date endDate, String documentId) {
+        try {
+            if (Schema.sObjectType.Elaro_Audit_Log__c.isCreateable()) {
+                Elaro_Audit_Log__c auditLog = new Elaro_Audit_Log__c(
+                    Action__c = action,
+                    User__c = UserInfo.getUserId(),
+                    Timestamp__c = System.now(),
+                    Details__c = 'Framework: ' + framework + ', Period: ' + startDate + ' to ' + endDate + ', DocumentId: ' + documentId
+                );
+                insert auditLog;
+            }
+        } catch (Exception e) {
+            // Don't fail the main operation if audit logging fails
+            System.debug(LoggingLevel.WARN, 'ElaroLegalDocumentGenerator: Failed to log audit event: ' + e.getMessage());
         }
     }
 

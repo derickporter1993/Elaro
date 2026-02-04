@@ -1,10 +1,11 @@
 import { LightningElement, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getSnapshots from "@salesforce/apex/ApiUsageDashboardController.recent";
+import getSnapshots from "@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots";
 import PollingManager from "c/pollingManager";
 
 export default class ApiUsageDashboard extends LightningElement {
   @track rows = [];
+  @track isLoading = true;
   pollingManager = null;
   pollInterval = 60000; // Base poll interval (60s)
   currentInterval = 60000; // Current interval with backoff
@@ -33,6 +34,7 @@ export default class ApiUsageDashboard extends LightningElement {
   }
 
   async load() {
+    this.isLoading = true;
     try {
       const data = await getSnapshots({ limitSize: 20 });
       // Use stable IDs from server data if available, otherwise fallback to index
@@ -60,6 +62,8 @@ export default class ApiUsageDashboard extends LightningElement {
         this.currentInterval = this.pollInterval * this.errorBackoffMultiplier;
         this.pollingManager.updateInterval(this.currentInterval);
       }
+    } finally {
+      this.isLoading = false;
     }
   }
 
