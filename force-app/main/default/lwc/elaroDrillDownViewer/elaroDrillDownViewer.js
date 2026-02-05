@@ -140,7 +140,7 @@ export default class ElaroDrillDownViewer extends NavigationMixin(LightningEleme
     }
     try {
       return JSON.parse(this.contextJson);
-    } catch (_e) {
+    } catch {
       this.showError("Invalid context data. Please refresh the page.");
       return {};
     }

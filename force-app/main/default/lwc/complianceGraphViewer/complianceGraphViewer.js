@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from "lwc";
+import { LightningElement, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getComplianceGraph from "@salesforce/apex/ComplianceGraphService.getComplianceGraph";
 import getGraphByFramework from "@salesforce/apex/ComplianceGraphService.getGraphByFramework";
