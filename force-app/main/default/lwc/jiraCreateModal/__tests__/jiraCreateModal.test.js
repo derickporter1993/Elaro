@@ -14,19 +14,29 @@
 import { createElement } from "lwc";
 import JiraCreateModal from "c/jiraCreateModal";
 
-// Mock imperative Apex methods
-const mockCreateIssue = jest.fn();
-const mockIsConfigured = jest.fn();
+// Mock imperative Apex methods - variables to control mock behavior
+let mockIsConfiguredResult = true;
+let mockCreateIssueResult = null;
+let mockCreateIssueError = null;
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.createIssue",
-  () => ({ default: mockCreateIssue }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockCreateIssueError) return Promise.reject(mockCreateIssueError);
+      return Promise.resolve(mockCreateIssueResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.isConfigured",
-  () => ({ default: mockIsConfigured }),
+  () => ({
+    default: jest.fn(() => {
+      return Promise.resolve(mockIsConfiguredResult);
+    }),
+  }),
   { virtual: true }
 );
 
@@ -44,11 +54,12 @@ jest.mock(
 describe("c-jira-create-modal", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsConfigured.mockResolvedValue(true);
-    mockCreateIssue.mockResolvedValue({
+    mockIsConfiguredResult = true;
+    mockCreateIssueResult = {
       key: "COMPLIANCE-124",
       url: "https://jira.example.com/browse/COMPLIANCE-124",
-    });
+    };
+    mockCreateIssueError = null;
   });
 
   afterEach(() => {
@@ -106,7 +117,8 @@ describe("c-jira-create-modal", () => {
 
     it("calls isConfigured on mount", async () => {
       await createComponent();
-      expect(mockIsConfigured).toHaveBeenCalled();
+      const isConfigured = require("@salesforce/apex/JiraIntegrationService.isConfigured").default;
+      expect(isConfigured).toHaveBeenCalled();
     });
   });
 
@@ -188,7 +200,7 @@ describe("c-jira-create-modal", () => {
 
   describe("Configuration Check", () => {
     it("shows warning when not configured", async () => {
-      mockIsConfigured.mockResolvedValue(false);
+      mockIsConfiguredResult = false;
 
       const element = await createComponent();
 
@@ -197,10 +209,13 @@ describe("c-jira-create-modal", () => {
 
       const warning = element.shadowRoot.querySelector(".slds-alert_warning");
       expect(warning).not.toBeNull();
+      
+      // Reset
+      mockIsConfiguredResult = true;
     });
 
     it("Create button is disabled when not configured", async () => {
-      mockIsConfigured.mockResolvedValue(false);
+      mockIsConfiguredResult = false;
 
       const element = await createComponent();
 
@@ -210,10 +225,13 @@ describe("c-jira-create-modal", () => {
       const createButton = findButtonByLabel(element, "Create Issue");
       expect(createButton).not.toBeNull();
       expect(createButton.disabled).toBe(true);
+      
+      // Reset
+      mockIsConfiguredResult = true;
     });
 
     it("isNotConfigured getter returns correct value", async () => {
-      mockIsConfigured.mockResolvedValue(false);
+      mockIsConfiguredResult = false;
 
       const element = await createComponent();
       await flushAll();
@@ -302,9 +320,7 @@ describe("c-jira-create-modal", () => {
 
   describe("Error Handling", () => {
     it("shows error message on creation failure", async () => {
-      mockCreateIssue.mockRejectedValue({
-        body: { message: "Creation failed" },
-      });
+      mockCreateIssueError = { body: { message: "Creation failed" } };
 
       const element = await createComponent();
 
@@ -322,12 +338,13 @@ describe("c-jira-create-modal", () => {
         // If button is disabled due to config, just verify error display capability
         expect(element.shadowRoot.querySelector("lightning-card")).toBeNull(); // Modal content exists
       }
+      
+      // Reset
+      mockCreateIssueError = null;
     });
 
     it("keeps modal open on error", async () => {
-      mockCreateIssue.mockRejectedValue({
-        body: { message: "Creation failed" },
-      });
+      mockCreateIssueError = { body: { message: "Creation failed" } };
 
       const element = await createComponent();
 
@@ -346,6 +363,9 @@ describe("c-jira-create-modal", () => {
         const modal = element.shadowRoot.querySelector('[role="dialog"]');
         expect(modal).not.toBeNull();
       }
+      
+      // Reset
+      mockCreateIssueError = null;
     });
 
     it("getErrorMessage handles body.message", async () => {
@@ -433,7 +453,7 @@ describe("c-jira-create-modal", () => {
     });
 
     it("warning alert has role=alert", async () => {
-      mockIsConfigured.mockResolvedValue(false);
+      mockIsConfiguredResult = false;
 
       const element = await createComponent();
 
@@ -442,14 +462,15 @@ describe("c-jira-create-modal", () => {
 
       const alert = element.shadowRoot.querySelector('[role="alert"]');
       expect(alert).not.toBeNull();
+      
+      // Reset
+      mockIsConfiguredResult = true;
     });
   });
 
   describe("Reset State", () => {
     it("clears error when modal is reopened", async () => {
-      mockCreateIssue.mockRejectedValue({
-        body: { message: "Creation failed" },
-      });
+      mockCreateIssueError = { body: { message: "Creation failed" } };
 
       const element = await createComponent();
 
@@ -468,10 +489,11 @@ describe("c-jira-create-modal", () => {
       await flushPromises();
 
       // Reset mock and reopen
-      mockCreateIssue.mockResolvedValue({
+      mockCreateIssueError = null;
+      mockCreateIssueResult = {
         key: "COMPLIANCE-125",
         url: "https://jira.example.com/browse/COMPLIANCE-125",
-      });
+      };
 
       element.open();
       await flushPromises();

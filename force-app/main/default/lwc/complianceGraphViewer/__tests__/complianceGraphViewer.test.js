@@ -14,36 +14,60 @@
 import { createElement } from "lwc";
 import ComplianceGraphViewer from "c/complianceGraphViewer";
 
-// Mock Apex methods
-const mockGetComplianceGraph = jest.fn();
-const mockGetGraphByFramework = jest.fn();
-const mockGetGraphStats = jest.fn();
-const mockGetNodeDetails = jest.fn();
-const mockAnalyzeImpact = jest.fn();
+// Mock Apex methods - variables to control mock behavior
+let mockGraphResult = null;
+let mockGraphError = null;
+let mockStatsResult = null;
+let mockStatsError = null;
+let mockGraphByFrameworkResult = null;
+let mockNodeDetailsResult = null;
+let mockImpactResult = null;
 
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.getComplianceGraph",
-  () => ({ default: mockGetComplianceGraph }),
+  () => ({
+    default: jest.fn(() => {
+      if (mockGraphError) return Promise.reject(mockGraphError);
+      return Promise.resolve(mockGraphResult);
+    }),
+  }),
   { virtual: true }
 );
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.getGraphByFramework",
-  () => ({ default: mockGetGraphByFramework }),
+  () => ({
+    default: jest.fn((params) => {
+      return Promise.resolve(mockGraphByFrameworkResult);
+    }),
+  }),
   { virtual: true }
 );
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.getGraphStats",
-  () => ({ default: mockGetGraphStats }),
+  () => ({
+    default: jest.fn(() => {
+      if (mockStatsError) return Promise.reject(mockStatsError);
+      return Promise.resolve(mockStatsResult);
+    }),
+  }),
   { virtual: true }
 );
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.getNodeDetails",
-  () => ({ default: mockGetNodeDetails }),
+  () => ({
+    default: jest.fn((params) => {
+      return Promise.resolve(mockNodeDetailsResult);
+    }),
+  }),
   { virtual: true }
 );
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.analyzeImpact",
-  () => ({ default: mockAnalyzeImpact }),
+  () => ({
+    default: jest.fn((params) => {
+      return Promise.resolve(mockImpactResult);
+    }),
+  }),
   { virtual: true }
 );
 
@@ -132,11 +156,13 @@ const MOCK_IMPACT_ANALYSIS = {
 describe("c-compliance-graph-viewer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetGraphStats.mockResolvedValue(MOCK_STATS);
-    mockGetComplianceGraph.mockResolvedValue(MOCK_GRAPH_DATA);
-    mockGetGraphByFramework.mockResolvedValue(MOCK_GRAPH_DATA);
-    mockGetNodeDetails.mockResolvedValue(MOCK_NODE_DETAILS);
-    mockAnalyzeImpact.mockResolvedValue(MOCK_IMPACT_ANALYSIS);
+    mockStatsResult = MOCK_STATS;
+    mockStatsError = null;
+    mockGraphResult = MOCK_GRAPH_DATA;
+    mockGraphError = null;
+    mockGraphByFrameworkResult = MOCK_GRAPH_DATA;
+    mockNodeDetailsResult = MOCK_NODE_DETAILS;
+    mockImpactResult = MOCK_IMPACT_ANALYSIS;
   });
 
   afterEach(() => {
@@ -176,8 +202,9 @@ describe("c-compliance-graph-viewer", () => {
     });
 
     it("shows loading spinner on initial load", async () => {
-      mockGetGraphStats.mockImplementation(() => new Promise(() => {}));
-      mockGetComplianceGraph.mockImplementation(() => new Promise(() => {}));
+      // Set up pending promises to keep component in loading state
+      mockStatsResult = new Promise(() => {}); // Never resolves
+      mockGraphResult = new Promise(() => {}); // Never resolves
 
       const element = createElement("c-compliance-graph-viewer", {
         is: ComplianceGraphViewer,
@@ -186,6 +213,10 @@ describe("c-compliance-graph-viewer", () => {
 
       const spinner = element.shadowRoot.querySelector("lightning-spinner");
       expect(spinner).not.toBeNull();
+      
+      // Reset for cleanup
+      mockStatsResult = MOCK_STATS;
+      mockGraphResult = MOCK_GRAPH_DATA;
     });
 
     it("renders stats after loading", async () => {
@@ -193,7 +224,8 @@ describe("c-compliance-graph-viewer", () => {
       await flushAll();
 
       // Verify stats were loaded by checking the mock was called
-      expect(mockGetGraphStats).toHaveBeenCalled();
+      const getGraphStats = require("@salesforce/apex/ComplianceGraphService.getGraphStats").default;
+      expect(getGraphStats).toHaveBeenCalled();
     });
   });
 
@@ -216,7 +248,8 @@ describe("c-compliance-graph-viewer", () => {
       );
 
       await flushAll();
-      expect(mockGetGraphByFramework).toHaveBeenCalledWith({ framework: "SOX" });
+      const getGraphByFramework = require("@salesforce/apex/ComplianceGraphService.getGraphByFramework").default;
+      expect(getGraphByFramework).toHaveBeenCalledWith({ framework: "SOX" });
     });
 
     it("calls getComplianceGraph when ALL is selected", async () => {
@@ -242,7 +275,8 @@ describe("c-compliance-graph-viewer", () => {
       );
       await flushAll();
 
-      expect(mockGetComplianceGraph).toHaveBeenCalled();
+      const getComplianceGraph = require("@salesforce/apex/ComplianceGraphService.getComplianceGraph").default;
+      expect(getComplianceGraph).toHaveBeenCalled();
     });
   });
 
@@ -266,14 +300,16 @@ describe("c-compliance-graph-viewer", () => {
 
       await flushAll();
 
-      expect(mockGetGraphStats).toHaveBeenCalled();
-      expect(mockGetComplianceGraph).toHaveBeenCalled();
+      const getGraphStats = require("@salesforce/apex/ComplianceGraphService.getGraphStats").default;
+      const getComplianceGraph = require("@salesforce/apex/ComplianceGraphService.getComplianceGraph").default;
+      expect(getGraphStats).toHaveBeenCalled();
+      expect(getComplianceGraph).toHaveBeenCalled();
     });
   });
 
   describe("Empty State", () => {
     it("shows empty state when no graph data", async () => {
-      mockGetComplianceGraph.mockResolvedValue({ nodes: [], edges: [] });
+      mockGraphResult = { nodes: [], edges: [] };
 
       const element = await createComponent();
       await flushPromises();
@@ -281,6 +317,9 @@ describe("c-compliance-graph-viewer", () => {
 
       const emptyMessage = element.shadowRoot.querySelector(".slds-illustration");
       expect(emptyMessage).not.toBeNull();
+      
+      // Reset
+      mockGraphResult = MOCK_GRAPH_DATA;
     });
   });
 
@@ -290,7 +329,8 @@ describe("c-compliance-graph-viewer", () => {
       await flushAll();
 
       // Verify the graph data was fetched
-      expect(mockGetComplianceGraph).toHaveBeenCalled();
+      const getComplianceGraph = require("@salesforce/apex/ComplianceGraphService.getComplianceGraph").default;
+      expect(getComplianceGraph).toHaveBeenCalled();
     });
 
     it("renders the card with correct icon", async () => {
@@ -308,15 +348,14 @@ describe("c-compliance-graph-viewer", () => {
       await flushAll();
 
       // Verify stats were loaded
-      expect(mockGetGraphStats).toHaveBeenCalled();
+      const getGraphStats = require("@salesforce/apex/ComplianceGraphService.getGraphStats").default;
+      expect(getGraphStats).toHaveBeenCalled();
     });
   });
 
   describe("Error Handling", () => {
     it("handles graph loading error gracefully", async () => {
-      mockGetComplianceGraph.mockRejectedValue({
-        body: { message: "Failed to load graph" },
-      });
+      mockGraphError = { body: { message: "Failed to load graph" } };
 
       const element = await createComponent();
       await flushPromises();
@@ -324,30 +363,37 @@ describe("c-compliance-graph-viewer", () => {
 
       // Component should still render
       expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
+      
+      // Reset
+      mockGraphError = null;
     });
 
     it("handles stats loading error gracefully", async () => {
-      mockGetGraphStats.mockRejectedValue({
-        body: { message: "Failed to load stats" },
-      });
+      mockStatsError = { body: { message: "Failed to load stats" } };
 
       const element = await createComponent();
       await flushPromises();
 
       // Component should still render
       expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
+      
+      // Reset
+      mockStatsError = null;
     });
   });
 
   describe("Computed Properties", () => {
     it("hasGraph returns false for empty nodes", async () => {
-      mockGetComplianceGraph.mockResolvedValue({ nodes: [], edges: [] });
+      mockGraphResult = { nodes: [], edges: [] };
 
       const element = await createComponent();
       await flushAll();
 
       const emptyState = element.shadowRoot.querySelector(".slds-illustration");
       expect(emptyState).not.toBeNull();
+      
+      // Reset
+      mockGraphResult = MOCK_GRAPH_DATA;
     });
 
     it("component renders correctly with stats data", async () => {

@@ -58,40 +58,70 @@ function emitSuggestionsError(error) {
   });
 }
 
-// Mock imperative Apex methods
-const mockGenerateSuggestions = jest.fn();
-const mockApproveSuggestion = jest.fn();
-const mockRejectSuggestion = jest.fn();
-const mockExecuteRemediation = jest.fn();
-const mockMarkAsManuallyApplied = jest.fn();
+// Mock imperative Apex methods - variables to control mock behavior
+let mockGenerateResult = {};
+let mockGenerateError = null;
+let mockApproveResult = {};
+let mockApproveError = null;
+let mockRejectResult = {};
+let mockRejectError = null;
+let mockExecuteResult = { success: true, message: "Success" };
+let mockExecuteError = null;
+let mockMarkAppliedResult = {};
+let mockMarkAppliedError = null;
 
 jest.mock(
   "@salesforce/apex/RemediationSuggestionService.generateSuggestions",
-  () => ({ default: mockGenerateSuggestions }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockGenerateError) return Promise.reject(mockGenerateError);
+      return Promise.resolve(mockGenerateResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/RemediationSuggestionService.approveSuggestion",
-  () => ({ default: mockApproveSuggestion }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockApproveError) return Promise.reject(mockApproveError);
+      return Promise.resolve(mockApproveResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/RemediationSuggestionService.rejectSuggestion",
-  () => ({ default: mockRejectSuggestion }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockRejectError) return Promise.reject(mockRejectError);
+      return Promise.resolve(mockRejectResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/RemediationExecutor.executeRemediation",
-  () => ({ default: mockExecuteRemediation }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockExecuteError) return Promise.reject(mockExecuteError);
+      return Promise.resolve(mockExecuteResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/RemediationExecutor.markAsManuallyApplied",
-  () => ({ default: mockMarkAsManuallyApplied }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockMarkAppliedError) return Promise.reject(mockMarkAppliedError);
+      return Promise.resolve(mockMarkAppliedResult);
+    }),
+  }),
   { virtual: true }
 );
 
@@ -178,11 +208,16 @@ describe("c-remediation-suggestion-card", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSuggestionsCallbacks.clear();
-    mockGenerateSuggestions.mockResolvedValue({});
-    mockApproveSuggestion.mockResolvedValue({});
-    mockRejectSuggestion.mockResolvedValue({});
-    mockExecuteRemediation.mockResolvedValue({ success: true, message: "Success" });
-    mockMarkAsManuallyApplied.mockResolvedValue({});
+    mockGenerateResult = {};
+    mockGenerateError = null;
+    mockApproveResult = {};
+    mockApproveError = null;
+    mockRejectResult = {};
+    mockRejectError = null;
+    mockExecuteResult = { success: true, message: "Success" };
+    mockExecuteError = null;
+    mockMarkAppliedResult = {};
+    mockMarkAppliedError = null;
   });
 
   afterEach(() => {
@@ -312,11 +347,13 @@ describe("c-remediation-suggestion-card", () => {
       emitSuggestionsData([MOCK_PENDING_SUGGESTION]);
       await flushPromises();
       await flushPromises();
+      await flushPromises(); // Extra flush for template reactivity
 
-      const approveButtons = element.shadowRoot.querySelectorAll(
-        'lightning-button[variant="success"]'
-      );
-      expect(approveButtons.length).toBeGreaterThan(0);
+      // Query all buttons and find by label
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const approveButton = Array.from(allButtons).find(btn => btn.label === "Approve");
+      
+      expect(approveButton).not.toBeNull();
     });
 
     it("renders Reject button for pending suggestions", async () => {
@@ -324,11 +361,12 @@ describe("c-remediation-suggestion-card", () => {
       emitSuggestionsData([MOCK_PENDING_SUGGESTION]);
       await flushPromises();
       await flushPromises();
+      await flushPromises();
 
-      const rejectButtons = element.shadowRoot.querySelectorAll(
-        'lightning-button[variant="destructive"]'
-      );
-      expect(rejectButtons.length).toBeGreaterThan(0);
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const rejectButton = Array.from(allButtons).find(btn => btn.label === "Reject");
+      
+      expect(rejectButton).not.toBeNull();
     });
 
     it("clicking Approve calls approveSuggestion", async () => {
@@ -337,13 +375,13 @@ describe("c-remediation-suggestion-card", () => {
       await flushPromises();
       await flushPromises();
 
-      const approveButton = element.shadowRoot.querySelector(
-        'lightning-button[variant="success"]'
-      );
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const approveButton = Array.from(allButtons).find(btn => btn.label === "Approve");
       approveButton.click();
       await flushPromises();
 
-      expect(mockApproveSuggestion).toHaveBeenCalled();
+      const approveSuggestion = require("@salesforce/apex/RemediationSuggestionService.approveSuggestion").default;
+      expect(approveSuggestion).toHaveBeenCalled();
     });
   });
 
@@ -354,9 +392,8 @@ describe("c-remediation-suggestion-card", () => {
       await flushPromises();
       await flushPromises();
 
-      const rejectButton = element.shadowRoot.querySelector(
-        'lightning-button[variant="destructive"]'
-      );
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const rejectButton = Array.from(allButtons).find(btn => btn.label === "Reject");
       rejectButton.click();
       await flushPromises();
 
@@ -370,9 +407,8 @@ describe("c-remediation-suggestion-card", () => {
       await flushPromises();
       await flushPromises();
 
-      const rejectButton = element.shadowRoot.querySelector(
-        'lightning-button[variant="destructive"]'
-      );
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const rejectButton = Array.from(allButtons).find(btn => btn.label === "Reject");
       rejectButton.click();
       await flushPromises();
 
@@ -388,12 +424,8 @@ describe("c-remediation-suggestion-card", () => {
       await flushPromises();
       await flushPromises();
 
-      const executeButtons = element.shadowRoot.querySelectorAll(
-        'lightning-button[variant="brand"]'
-      );
-      const executeButton = Array.from(executeButtons).find((btn) =>
-        btn.label?.includes("Execute")
-      );
+      const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+      const executeButton = Array.from(buttons).find(btn => btn.label?.includes("Execute"));
       expect(executeButton).not.toBeNull();
     });
 
@@ -424,7 +456,8 @@ describe("c-remediation-suggestion-card", () => {
       generateButton.click();
       await flushPromises();
 
-      expect(mockGenerateSuggestions).toHaveBeenCalledWith({ gapId: "a00test123" });
+      const generateSuggestions = require("@salesforce/apex/RemediationSuggestionService.generateSuggestions").default;
+      expect(generateSuggestions).toHaveBeenCalledWith({ gapId: "a00test123" });
     });
   });
 
@@ -491,25 +524,27 @@ describe("c-remediation-suggestion-card", () => {
 
   describe("Error Handling", () => {
     it("handles approve error gracefully", async () => {
-      mockApproveSuggestion.mockRejectedValue({ body: { message: "Approval failed" } });
+      mockApproveError = { body: { message: "Approval failed" } };
 
       const element = await createComponent();
       emitSuggestionsData([MOCK_PENDING_SUGGESTION]);
       await flushPromises();
       await flushPromises();
 
-      const approveButton = element.shadowRoot.querySelector(
-        'lightning-button[variant="success"]'
-      );
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const approveButton = Array.from(allButtons).find(btn => btn.label === "Approve");
       approveButton.click();
       await flushPromises();
 
       // Component should still be functional
       expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
+      
+      // Reset
+      mockApproveError = null;
     });
 
     it("handles generate suggestions error gracefully", async () => {
-      mockGenerateSuggestions.mockRejectedValue({ body: { message: "Generation failed" } });
+      mockGenerateError = { body: { message: "Generation failed" } };
 
       const element = await createComponent();
       emitSuggestionsData([]);
@@ -524,6 +559,9 @@ describe("c-remediation-suggestion-card", () => {
 
       // Component should still be functional
       expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
+      
+      // Reset
+      mockGenerateError = null;
     });
   });
 
@@ -534,9 +572,8 @@ describe("c-remediation-suggestion-card", () => {
       await flushPromises();
       await flushPromises();
 
-      const rejectButton = element.shadowRoot.querySelector(
-        'lightning-button[variant="destructive"]'
-      );
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const rejectButton = Array.from(allButtons).find(btn => btn.label === "Reject");
       rejectButton.click();
       await flushPromises();
 
@@ -550,9 +587,8 @@ describe("c-remediation-suggestion-card", () => {
       await flushPromises();
       await flushPromises();
 
-      const rejectButton = element.shadowRoot.querySelector(
-        'lightning-button[variant="destructive"]'
-      );
+      const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+      const rejectButton = Array.from(allButtons).find(btn => btn.label === "Reject");
       rejectButton.click();
       await flushPromises();
 

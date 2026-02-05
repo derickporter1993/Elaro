@@ -39,33 +39,57 @@ jest.mock(
   { virtual: true }
 );
 
-// Mock imperative Apex methods
-const mockSyncIssueStatus = jest.fn();
-const mockAddComment = jest.fn();
-const mockGetAvailableTransitions = jest.fn();
-const mockTransitionIssue = jest.fn();
+// Mock imperative Apex methods - variables to control mock behavior
+let mockSyncResult = {};
+let mockSyncError = null;
+let mockCommentResult = {};
+let mockCommentError = null;
+let mockTransitionsResult = [];
+let mockTransitionsError = null;
+let mockTransitionResult = {};
+let mockTransitionError = null;
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.syncIssueStatus",
-  () => ({ default: mockSyncIssueStatus }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockSyncError) return Promise.reject(mockSyncError);
+      return Promise.resolve(mockSyncResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.addComment",
-  () => ({ default: mockAddComment }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockCommentError) return Promise.reject(mockCommentError);
+      return Promise.resolve(mockCommentResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.getAvailableTransitions",
-  () => ({ default: mockGetAvailableTransitions }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockTransitionsError) return Promise.reject(mockTransitionsError);
+      return Promise.resolve(mockTransitionsResult);
+    }),
+  }),
   { virtual: true }
 );
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.transitionIssue",
-  () => ({ default: mockTransitionIssue }),
+  () => ({
+    default: jest.fn((params) => {
+      if (mockTransitionError) return Promise.reject(mockTransitionError);
+      return Promise.resolve(mockTransitionResult);
+    }),
+  }),
   { virtual: true }
 );
 
@@ -129,10 +153,14 @@ describe("c-jira-issue-card", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockWireCallbacks.clear();
-    mockSyncIssueStatus.mockResolvedValue({});
-    mockAddComment.mockResolvedValue({});
-    mockGetAvailableTransitions.mockResolvedValue(MOCK_TRANSITIONS);
-    mockTransitionIssue.mockResolvedValue({});
+    mockSyncResult = {};
+    mockSyncError = null;
+    mockCommentResult = {};
+    mockCommentError = null;
+    mockTransitionsResult = MOCK_TRANSITIONS;
+    mockTransitionsError = null;
+    mockTransitionResult = {};
+    mockTransitionError = null;
   });
 
   afterEach(() => {
@@ -185,10 +213,13 @@ describe("c-jira-issue-card", () => {
 
     it("displays link icon when no issue", async () => {
       const element = await createComponent();
+      await flushPromises(); // Extra flush to ensure template renders
 
-      const linkIcon = element.shadowRoot.querySelector(
-        'lightning-icon[icon-name="utility:link"]'
-      );
+      // Try querying all lightning-icons first
+      const allIcons = element.shadowRoot.querySelectorAll("lightning-icon");
+      
+      // Find the one with utility:link
+      const linkIcon = Array.from(allIcons).find(icon => icon.iconName === "utility:link");
       expect(linkIcon).not.toBeNull();
     });
 
@@ -323,7 +354,8 @@ describe("c-jira-issue-card", () => {
       syncButton.click();
       await flushPromises();
 
-      expect(mockSyncIssueStatus).toHaveBeenCalledWith({ gapId: "a00test123" });
+      const syncIssueStatus = require("@salesforce/apex/JiraIntegrationService.syncIssueStatus").default;
+      expect(syncIssueStatus).toHaveBeenCalledWith({ gapId: "a00test123" });
     });
   });
 
@@ -406,7 +438,8 @@ describe("c-jira-issue-card", () => {
       submitButton.click();
       await flushPromises();
 
-      expect(mockAddComment).toHaveBeenCalled();
+      const addComment = require("@salesforce/apex/JiraIntegrationService.addComment").default;
+      expect(addComment).toHaveBeenCalled();
     });
   });
 
@@ -437,7 +470,8 @@ describe("c-jira-issue-card", () => {
       transitionButton.click();
       await flushPromises();
 
-      expect(mockGetAvailableTransitions).toHaveBeenCalledWith({ jiraKey: "COMPLIANCE-123" });
+      const getAvailableTransitions = require("@salesforce/apex/JiraIntegrationService.getAvailableTransitions").default;
+      expect(getAvailableTransitions).toHaveBeenCalledWith({ jiraKey: "COMPLIANCE-123" });
     });
 
     it("modal has combobox for transitions", async () => {
@@ -540,7 +574,7 @@ describe("c-jira-issue-card", () => {
 
   describe("Error Handling", () => {
     it("handles sync error gracefully", async () => {
-      mockSyncIssueStatus.mockRejectedValue({ body: { message: "Sync failed" } });
+      mockSyncError = { body: { message: "Sync failed" } };
 
       const element = await createComponent({
         recordId: "a00test123",
@@ -557,10 +591,13 @@ describe("c-jira-issue-card", () => {
 
       // Component should still be functional
       expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
+      
+      // Reset
+      mockSyncError = null;
     });
 
     it("handles comment error gracefully", async () => {
-      mockAddComment.mockRejectedValue({ body: { message: "Comment failed" } });
+      mockCommentError = { body: { message: "Comment failed" } };
 
       const element = await createComponent({ jiraKey: "COMPLIANCE-123" });
       emitWireData(MOCK_ISSUE);
@@ -586,6 +623,9 @@ describe("c-jira-issue-card", () => {
 
       // Component should still be functional
       expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
+      
+      // Reset
+      mockCommentError = null;
     });
   });
 
