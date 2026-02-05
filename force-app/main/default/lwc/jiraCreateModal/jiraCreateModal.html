@@ -32,7 +32,7 @@
 
           <template lwc:else>
             <!-- Not Configured Warning -->
-            <template lwc:if={!isConfigured}>
+            <template lwc:if={isNotConfigured}>
               <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
                 <span class="slds-assistive-text">Warning</span>
                 <lightning-icon

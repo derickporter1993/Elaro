@@ -26,6 +26,10 @@ export default class JiraCreateModal extends LightningElement {
     return this.isLoading || !this.isConfigured;
   }
 
+  get isNotConfigured() {
+    return !this.isConfigured;
+  }
+
   connectedCallback() {
     this.checkConfiguration();
   }
