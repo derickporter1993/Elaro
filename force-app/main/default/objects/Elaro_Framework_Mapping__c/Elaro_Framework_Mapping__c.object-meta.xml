@@ -45,7 +45,6 @@
         <type>LongTextArea</type>
         <length>32768</length>
         <visibleLines>5</visibleLines>
-        <required>true</required>
     </fields>
     <fields>
         <fullName>Entity_Type__c</fullName>

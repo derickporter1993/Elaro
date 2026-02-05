@@ -19,7 +19,7 @@
         <type>Lookup</type>
         <referenceTo>User</referenceTo>
         <relationshipName>EscalationPaths</relationshipName>
-        <required>true</required>
+        <required>false</required>
         <description>The user to escalate to at this level</description>
     </fields>
     <fields>
