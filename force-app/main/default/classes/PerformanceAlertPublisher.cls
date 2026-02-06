@@ -30,18 +30,24 @@ public with sharing class PerformanceAlertPublisher {
                 throw new IllegalArgumentException('Threshold cannot be null');
             }
 
+            // XSS prevention: sanitize metric parameter
+            // Escape HTML special characters (& must be escaped first to prevent double-encoding)
+            String safeMetric = metric.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                .replace('"', '&quot;').replace('\'', '&#39;');
+
             // Truncate and sanitize stack trace if too long
             String safeStack = String.isNotBlank(stack) && stack.length() > 32768
                 ? stack.substring(0, 32765) + '...'
                 : stack;
             // XSS protection: escape HTML special characters in stack trace
+            // Note: & must be escaped first to prevent double-encoding of &lt; / &gt;
             if (String.isNotBlank(safeStack)) {
-                safeStack = safeStack.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;');
+                safeStack = safeStack.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;');
             }
 
             // Store alert in Performance_Alert_History__c instead of platform event
             Performance_Alert_History__c alertHistory = new Performance_Alert_History__c(
-                Metric__c = metric,
+                Metric__c = safeMetric,
                 Value__c = value,
                 Threshold__c = threshold,
                 Context_Record__c = contextRecordId,

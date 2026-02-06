@@ -4,7 +4,7 @@
  * @group Shield Integration
  * @author Elaro Team
  */
-public class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&gt;, Database.Stateful {
+public with sharing class ElaroHistoricalEventBatch implements Database.Batchable&lt;SObject&gt;, Database.Stateful {
     
     // ═══════════════════════════════════════════════════════════════
     // CONSTANTS

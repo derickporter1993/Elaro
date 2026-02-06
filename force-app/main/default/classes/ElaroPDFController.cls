@@ -62,11 +62,12 @@ public with sharing class ElaroPDFController {
     private void loadPackageData(Id packageId) {
         List&lt;Elaro_Audit_Package__c&gt; packages = [
             SELECT Id, Name, Package_Name__c, Framework__c, Status__c,
-                   Audit_Period_Start__c, Audit_Period_End__c, 
+                   Audit_Period_Start__c, Audit_Period_End__c,
                    Last_Generated__c, CreatedDate, CreatedById,
                    CreatedBy.Name
             FROM Elaro_Audit_Package__c
             WHERE Id = :packageId
+            WITH SECURITY_ENFORCED
             LIMIT 1
         ];
         
@@ -97,8 +98,8 @@ public with sharing class ElaroPDFController {
         // Note: Control filtering would require a Control_Reference__c field
         // For now, we'll load all evidence
         
-        query += 'ORDER BY Evidence_Date__c DESC LIMIT 5000';
-        
+        query += 'WITH SECURITY_ENFORCED ORDER BY Evidence_Date__c DESC LIMIT 5000';
+
         evidenceItems = Database.query(query);
         evidenceCount = evidenceItems.size();
     }

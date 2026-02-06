@@ -47,12 +47,19 @@ public with sharing class FlowExecutionLogger {
     }
     @AuraEnabled
     public static void log(String flowName, Id primaryRecordId, String status, Integer cpu, Integer soql, Integer dml) {
-        // Input validation
+        // Input validation - non-null, non-empty
         if (String.isBlank(flowName)) {
             throw new AuraHandledException('Flow name cannot be blank');
         }
         if (String.isBlank(status)) {
             throw new AuraHandledException('Status cannot be blank');
+        }
+        // Reasonable length validation to prevent oversized payloads
+        if (flowName.length() > 255) {
+            throw new AuraHandledException('Flow name exceeds maximum length of 255 characters');
+        }
+        if (status.length() > 255) {
+            throw new AuraHandledException('Status exceeds maximum length of 255 characters');
         }
 
         // Rate limiting check

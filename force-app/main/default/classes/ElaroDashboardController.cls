@@ -24,15 +24,15 @@ public with sharing class ElaroDashboardController {
                       'Audit_Period_Start__c, Audit_Period_End__c, CreatedDate, ' +
                       'Created_By__r.Name, LastModifiedDate ' +
                       'FROM Elaro_Audit_Package__c ';
-        
+
         if (framework != null) {
             soql += 'WHERE Framework__c = :framework ';
         }
-        
-        soql += 'ORDER BY CreatedDate DESC LIMIT 10';
-        
+
+        soql += 'WITH SECURITY_ENFORCED ORDER BY CreatedDate DESC LIMIT 10';
+
         List<Elaro_Audit_Package__c> packages = new List<Elaro_Audit_Package__c>();
-        
+
         try {
             if (framework != null) {
                 packages = Database.query(soql);

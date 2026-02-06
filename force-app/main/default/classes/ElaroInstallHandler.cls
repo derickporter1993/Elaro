@@ -7,8 +7,12 @@
  * @version 3.0
  *
  * @see ElaroInstallHandlerTest
+ *
+ * Security: Uses 'without sharing' because install handlers run during package
+ * installation where the installing user may not have sharing access to all
+ * objects that need to be initialized (Custom Settings, Audit Logs, etc.).
  */
-global class ElaroInstallHandler implements InstallHandler {
+global without sharing class ElaroInstallHandler implements InstallHandler {
 
     /**
      * @description Main installation handler method

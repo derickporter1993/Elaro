@@ -94,6 +94,7 @@ public with sharing class ComplianceReportGenerator {
             query += 'AND Framework__c = :framework ';
         }
 
+        query += 'WITH SECURITY_ENFORCED ';
         query += 'ORDER BY Severity__c DESC, CreatedDate DESC ';
         query += 'LIMIT 200';
 

@@ -54,7 +54,7 @@ public with sharing class ElaroGraphIndexer {
      * );
      */
     public static String indexChange(String entityType, String entityId, String parentNodeId, String framework) {
-        // Input validation
+        // Input validation - non-null, non-empty
         if (String.isBlank(entityType)) {
             throw new ElaroException('Entity type cannot be blank');
         }
@@ -63,6 +63,15 @@ public with sharing class ElaroGraphIndexer {
         }
         if (String.isBlank(framework)) {
             throw new ElaroException('Framework cannot be blank');
+        }
+        // Injection character validation for entityType and entityId
+        // Prevent SOQL injection, XSS, and path traversal via dangerous characters
+        String injectionPattern = '.*[;\'\"\\-\\-<>\\\\/%].*';
+        if (Pattern.matches(injectionPattern, entityType)) {
+            throw new ElaroException('Entity type contains invalid characters');
+        }
+        if (Pattern.matches(injectionPattern, entityId)) {
+            throw new ElaroException('Entity ID contains invalid characters');
         }
         // Validate framework is supported
         if (!ElaroConstants.isValidFramework(framework)) {
