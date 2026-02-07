@@ -1,4 +1,4 @@
-import { LightningElement, track } from "lwc";
+import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
 // PDF export will be implemented in future release
@@ -63,20 +63,21 @@ const OUTPUT_OPTIONS = [
 ];
 
 export default class ElaroAuditWizard extends NavigationMixin(LightningElement) {
-  @track currentStep = "1";
-  @track selectedFramework = "";
-  @track auditStartDate = "";
-  @track auditEndDate = "";
-  @track controls = [];
-  @track packageName = "";
-  @track selectedOutputOptions = ["pdf", "executive"];
+  currentStep = "1";
+  selectedFramework = "";
+  auditStartDate = "";
+  auditEndDate = "";
+  controls = [];
+  packageName = "";
+  selectedOutputOptions = ["pdf", "executive"];
 
-  @track isGenerating = false;
-  @track generationComplete = false;
-  @track generationProgress = 0;
-  @track generationStatus = "";
-  @track generatedPackageId = "";
+  isGenerating = false;
+  generationComplete = false;
+  generationProgress = 0;
+  generationStatus = "";
+  generatedPackageId = "";
 
+  _progressTimer = null;
   outputOptions = OUTPUT_OPTIONS;
 
   get frameworks() {
@@ -148,6 +149,12 @@ export default class ElaroAuditWizard extends NavigationMixin(LightningElement) 
 
     this.auditStartDate = quarterStart.toISOString().split("T")[0];
     this.auditEndDate = quarterEnd.toISOString().split("T")[0];
+  }
+
+  disconnectedCallback() {
+    if (this._progressTimer) {
+      clearTimeout(this._progressTimer);
+    }
   }
 
   // Framework selection
@@ -383,7 +390,7 @@ export default class ElaroAuditWizard extends NavigationMixin(LightningElement) 
 
   simulateProgress(status, progress) {
     return new Promise((resolve) => {
-      setTimeout(() => {
+      this._progressTimer = setTimeout(() => {
         this.generationStatus = status;
         this.generationProgress = progress;
         resolve();

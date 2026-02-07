@@ -1,4 +1,4 @@
-import { LightningElement, track } from "lwc";
+import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getComplianceGraph from "@salesforce/apex/ComplianceGraphService.getComplianceGraph";
 import getGraphByFramework from "@salesforce/apex/ComplianceGraphService.getGraphByFramework";
@@ -19,20 +19,21 @@ const FRAMEWORK_OPTIONS = [
 ];
 
 export default class ComplianceGraphViewer extends LightningElement {
-  @track graphData = null;
-  @track stats = null;
-  @track isLoading = true;
-  @track selectedFramework = "ALL";
-  @track selectedNode = null;
-  @track nodeDetails = null;
-  @track impactAnalysis = null;
-  @track showDetailsPanel = false;
-  @track showImpactPanel = false;
+  graphData = null;
+  stats = null;
+  isLoading = true;
+  selectedFramework = "ALL";
+  selectedNode = null;
+  nodeDetails = null;
+  impactAnalysis = null;
+  showDetailsPanel = false;
+  showImpactPanel = false;
 
   frameworkOptions = FRAMEWORK_OPTIONS;
   simulation = null;
   svgWidth = 800;
   svgHeight = 600;
+  _nodeClickHandlers = [];
 
   get hasGraph() {
     return this.graphData && this.graphData.nodes && this.graphData.nodes.length > 0;
@@ -97,6 +98,17 @@ export default class ComplianceGraphViewer extends LightningElement {
     this.loadGraph();
   }
 
+  disconnectedCallback() {
+    this._removeNodeClickHandlers();
+  }
+
+  _removeNodeClickHandlers() {
+    this._nodeClickHandlers.forEach(({ element, handler }) => {
+      element.removeEventListener("click", handler);
+    });
+    this._nodeClickHandlers = [];
+  }
+
   async loadStats() {
     try {
       this.stats = await getGraphStats();
@@ -134,7 +146,10 @@ export default class ComplianceGraphViewer extends LightningElement {
     if (!container) return;
 
     // Clear previous content
-    container.innerHTML = "";
+    this._removeNodeClickHandlers();
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
 
     // Create SVG
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -201,8 +216,10 @@ export default class ComplianceGraphViewer extends LightningElement {
       group.appendChild(circle);
       group.appendChild(text);
 
-      // Add click handler
-      group.addEventListener("click", () => this.handleNodeClick(node));
+      // Add click handler with stored reference for cleanup
+      const handler = () => this.handleNodeClick(node);
+      group.addEventListener("click", handler);
+      this._nodeClickHandlers.push({ element: group, handler });
 
       nodesGroup.appendChild(group);
     });
