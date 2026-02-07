@@ -5,6 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "postinstall": "test -d platform/node_modules || (cd platform && npm install --ignore-scripts)",
+    "preflight": "bash scripts/preflight.sh",
     "fmt": "prettier --write \"force-app/**/*.{js,ts,md,json,yml,yaml,xml}\" \"force-app/**/lwc/**/*.js\" \"./*.{js,json,yml,yaml,md}\"",
     "fmt:check": "prettier --check \"force-app/**/*.{js,ts,md,json,yml,yaml,xml}\" \"force-app/**/lwc/**/*.js\" \"./*.{js,json,yml,yaml,md}\"",
     "lint": "eslint \"force-app/**/*.js\" --max-warnings=3",
@@ -15,7 +17,7 @@
     "test:unit:coverage": "jest --config jest.config.js --coverage",
     "test:a11y": "node scripts/accessibility-audit.js",
     "security-scan": "echo '⚠️  SFDX Scanner not installed, skipping...'",
-    "precommit": "npm run fmt:check && npm run lint && npm run test:unit",
+    "precommit": "npm run preflight && npm run fmt:check && npm run lint && npm run test:unit",
     "validate": "npm run precommit",
     "build": "echo '✅ Elaro build validation complete'",
     "org:create": "sf org create scratch -f config/elaro-scratch-def.json -a elaro-dev -d 30",
@@ -26,9 +28,10 @@
     "sf:retrieve": "sf project retrieve start -o elaro-dev",
     "test:apex": "sf apex run test -o elaro-dev -c -r human -w 10",
     "test:all": "npm run test && npm run test:apex",
-    "cli:build": "cd platform && npm run build --filter=@platform/cli",
-    "cli:install": "cd platform/packages/cli && npm link",
-    "cli": "node platform/packages/cli/dist/index.js"
+    "cli:setup": "cd platform && npm install --ignore-scripts && npm run build",
+    "cli:build": "npm run cli:setup && cd platform && npm run build -- --filter @platform/cli",
+    "cli:install": "npm run cli:build && cd platform/packages/cli && npm link",
+    "cli": "elaro"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",

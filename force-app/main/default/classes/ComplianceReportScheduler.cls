@@ -50,7 +50,7 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
      * Execute method for Schedulable interface
      */
     public void execute(SchedulableContext ctx) {
-        System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Executing scheduled report for framework: ' + framework);
+        ElaroLogger.info( LOG_PREFIX + 'Executing scheduled report for framework: ' + framework);
 
         // If no recipients configured, get from custom settings or default to running user
         if (recipients.isEmpty()) {
@@ -60,7 +60,7 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
         if (!recipients.isEmpty()) {
             generateAndSendReport(framework, recipients);
         } else {
-            System.debug(LoggingLevel.WARN, LOG_PREFIX + 'No recipients configured for report');
+            ElaroLogger.warn( LOG_PREFIX + 'No recipients configured for report');
         }
     }
 
@@ -105,7 +105,7 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
         ComplianceReportScheduler scheduler = new ComplianceReportScheduler(freq, validRecipients, framework);
         String jobId = System.schedule(jobName, cronExpression, scheduler);
 
-        System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Scheduled report - JobId: ' + jobId + ', Name: ' + jobName);
+        ElaroLogger.info( LOG_PREFIX + 'Scheduled report - JobId: ' + jobId + ', Name: ' + jobName);
 
         return jobId;
     }
@@ -157,7 +157,7 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
 
         try {
             System.abortJob(jobId);
-            System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Cancelled scheduled report: ' + jobId);
+            ElaroLogger.info( LOG_PREFIX + 'Cancelled scheduled report: ' + jobId);
         } catch (Exception e) {
             throw new AuraHandledException('Failed to cancel report: ' + e.getMessage());
         }
@@ -183,7 +183,7 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
      * Generate and send the compliance report
      */
     private static void generateAndSendReport(String framework, List<String> recipientEmails) {
-        System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Generating report for framework: ' + framework);
+        ElaroLogger.info( LOG_PREFIX + 'Generating report for framework: ' + framework);
 
         try {
             // Generate report content
@@ -209,13 +209,13 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
                 Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
             }
 
-            System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Report sent successfully to ' + recipientEmails.size() + ' recipients');
+            ElaroLogger.info( LOG_PREFIX + 'Report sent successfully to ' + recipientEmails.size() + ' recipients');
 
             // Log audit entry
             logReportDelivery(framework, recipientEmails);
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, LOG_PREFIX + 'Error generating/sending report: ' + e.getMessage());
+            ElaroLogger.error( LOG_PREFIX + 'Error generating/sending report: ' + e.getMessage());
             throw new AuraHandledException('Failed to generate report: ' + e.getMessage());
         }
     }
@@ -460,7 +460,7 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
             }
         } catch (Exception e) {
             // Don't fail report delivery if audit logging fails
-            System.debug(LoggingLevel.WARN, LOG_PREFIX + 'Audit logging failed: ' + e.getMessage());
+            ElaroLogger.warn( LOG_PREFIX + 'Audit logging failed: ' + e.getMessage());
         }
     }
 

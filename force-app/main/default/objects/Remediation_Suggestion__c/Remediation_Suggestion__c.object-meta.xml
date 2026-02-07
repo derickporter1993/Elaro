@@ -20,6 +20,7 @@
         <referenceTo>Compliance_Gap__c</referenceTo>
         <relationshipLabel>Remediation Suggestions</relationshipLabel>
         <relationshipName>Remediation_Suggestions</relationshipName>
+        <deleteConstraint>Restrict</deleteConstraint>
         <required>true</required>
         <description>The compliance gap this suggestion addresses</description>
     </fields>
@@ -180,7 +181,7 @@
                 <value>
                     <fullName>LOW</fullName>
                     <default>false</default>
-                    <label>Low (< 1 hour)</label>
+                    <label>Low (&lt; 1 hour)</label>
                 </value>
                 <value>
                     <fullName>MEDIUM</fullName>

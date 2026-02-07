@@ -172,7 +172,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
                 accessLogs.add(log);
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error querying history: ' + e.getMessage());
+            ElaroLogger.error('Error querying history: ' + e.getMessage(), e);
         }
 
         return accessLogs;

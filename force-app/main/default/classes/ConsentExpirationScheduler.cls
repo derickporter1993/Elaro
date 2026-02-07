@@ -21,7 +21,7 @@ public with sharing class ConsentExpirationScheduler implements Schedulable {
      * @param sc SchedulableContext
      */
     public void execute(SchedulableContext sc) {
-        System.debug(LoggingLevel.INFO, SCHEDULER_NAME + ' started');
+        ElaroLogger.info( SCHEDULER_NAME + ' started');
         
         try {
             // Get batch size from Custom Metadata
@@ -29,15 +29,15 @@ public with sharing class ConsentExpirationScheduler implements Schedulable {
             
             // Execute batch job to process expiring consents
             Id batchId = Database.executeBatch(new ConsentExpirationBatch(), batchSize);
-            System.debug(LoggingLevel.INFO, 'Consent expiration batch queued with ID: ' + batchId);
+            ElaroLogger.info( 'Consent expiration batch queued with ID: ' + batchId);
             
             // Log successful scheduling
             SchedulerErrorHandler.logSuccess(SCHEDULER_NAME, 
                 'Consent expiration batch scheduled successfully. BatchId: ' + batchId);
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, SCHEDULER_NAME + ' failed: ' + e.getMessage());
-            System.debug(LoggingLevel.ERROR, 'Stack trace: ' + e.getStackTraceString());
+            ElaroLogger.error( SCHEDULER_NAME + ' failed: ' + e.getMessage());
+            ElaroLogger.error( 'Stack trace: ' + e.getStackTraceString());
             
             SchedulerErrorHandler.logError(SCHEDULER_NAME, e);
             SchedulerErrorHandler.notifyOnFailure(SCHEDULER_NAME, e);
@@ -55,7 +55,7 @@ public with sharing class ConsentExpirationScheduler implements Schedulable {
                 return config.Batch_Size__c.intValue();
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Could not load Custom Metadata, using default batch size: ' + e.getMessage());
+            ElaroLogger.warn( 'Could not load Custom Metadata, using default batch size: ' + e.getMessage());
         }
         return 200;
     }

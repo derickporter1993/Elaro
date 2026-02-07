@@ -53,8 +53,72 @@ elaro/
 ├── examples/                    # Sample outputs and reports
 ├── .github/workflows/           # GitHub Actions CI/CD
 ├── .husky/                      # Git hooks (pre-commit)
-└── manifest/                    # Deployment manifests
+├── manifest/                    # Deployment manifests
+├── platform/                    # Node.js CLI and tooling (Turborepo monorepo)
+│   ├── packages/
+│   │   ├── cli/                 # Prometheion CLI (elaro command)
+│   │   ├── types/               # Shared TypeScript types
+│   │   ├── sf-client/           # Salesforce API client library
+│   │   └── masking/             # Data masking engine
+│   ├── package.json             # Platform monorepo orchestration
+│   └── turbo.json               # Turborepo build configuration
+└── specs/                       # Feature specifications (Law 1: Specs Before Code)
 ```
+
+## Architecture: Dual-Repo Pattern
+
+Elaro uses a **dual-architecture pattern** with two independent but coordinated codebases:
+
+### 1. Salesforce Domain (`force-app/`)
+- **Purpose**: LWC, Apex, Salesforce metadata
+- **Deployment**: Salesforce CLI (`sf` commands)
+- **Testing**: Jest (LWC) + Apex test classes
+- **Build**: No build step (metadata deployed directly)
+
+### 2. Platform Domain (`platform/`)
+- **Purpose**: CLI tooling, API clients, utilities
+- **Deployment**: npm package linking (local development)
+- **Testing**: Jest (future implementation)
+- **Build**: TypeScript compilation via Turborepo
+
+### Why Dual Architecture?
+
+See [Architecture Decision Records](./architecture/) for full context:
+- **[ADR-001: Dual-Repo Strategy](./architecture/ADR-001-dual-repo-strategy.md)** - Why we maintain separate concerns
+- **[ADR-002: Monorepo Tooling](./architecture/ADR-002-monorepo-tooling.md)** - Why we use Turborepo
+- **[ADR-003: Dependency Management](./architecture/ADR-003-dependency-management.md)** - How dependencies are managed
+
+**Key Principle**: Each domain is **independent**. Salesforce code never imports platform code, and vice versa.
+
+### Platform Packages
+
+| Package | Purpose | Dependencies |
+|---------|---------|--------------|
+| `@platform/types` | Shared TypeScript types | None |
+| `@platform/sf-client` | Salesforce API client (REST, Bulk, Tooling) | types |
+| `@platform/masking` | Data masking engine (PII, HIPAA, PCI-DSS) | types |
+| `@platform/cli` | Prometheion CLI (`elaro` command) | types, sf-client |
+
+**Build order**: `types` → `sf-client` & `masking` (parallel) → `cli`
+
+### Setup Workflow
+
+```bash
+# 1. Install root dependencies (Salesforce tooling)
+npm install              # Postinstall hook automatically sets up platform
+
+# 2. Verify workspace (checks node_modules, specs/, etc.)
+npm run preflight
+
+# 3. Build platform (optional, only if using CLI)
+cd platform && npm run build
+
+# 4. Link CLI globally (optional)
+npm run cli:install
+elaro --version
+```
+
+See [`platform/README.md`](../platform/README.md) for platform-specific documentation.
 
 ## Key Configuration Files
 
@@ -508,8 +572,8 @@ Types: feat, fix, test, docs, refactor, style
 
 5. **Check for API Version Consistency**:
    ```bash
-   # All metadata should use API version 63.0
-   grep -rn "apiVersion" force-app/main/default/**/*.xml | grep -v "63.0"
+   # All metadata should use API version 65.0
+   grep -rn "apiVersion" force-app/main/default/**/*.xml | grep -v "65.0"
    ```
 
 ### After Coding

@@ -163,8 +163,7 @@ public without sharing class ElaroReasoningEngine {
         } catch (DmlException e) {
             String correlationId = generateCorrelationId(nodeHash);
             String dmlMsg = getSafeDmlMessage(e);
-            System.debug(LoggingLevel.ERROR, 
-                '[ElaroReasoningEngine] Failed to log adjudication - ' +
+            ElaroLogger.error('[ElaroReasoningEngine] Failed to log adjudication - ' +
                 'CorrelationId: ' + correlationId + ', ' +
                 'NodeHash: ' + nodeHash + ', ' +
                 'Error: ' + e.getMessage() + ', ' +

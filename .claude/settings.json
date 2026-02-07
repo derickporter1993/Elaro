@@ -1,5 +1,5 @@
 {
-  "$schema": "https://code.claude.ai/schemas/settings.json",
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "customInstructions": "You are working on Elaro, an enterprise Salesforce compliance platform. Always prioritize security (use ElaroSecurityUtils), follow Salesforce best practices, and maintain test coverage above 75%. When making changes to Apex classes, ensure all SOQL queries include WITH SECURITY_ENFORCED. Use SF CLI v2 syntax (sf not sfdx). Before deploying, always run tests and preview changes. Read claude.me for full project context.",
 
   "rules": [
@@ -76,14 +76,8 @@
       "Bash(git commit*)",
       "Bash(git push*)",
       "Bash(git pull*)",
-      "Write(/sessions/*/mnt/Elaro/*)",
-      "Write(/sessions/*/mnt/Elaro/force-app/*)",
-      "Write(/sessions/*/mnt/Elaro/.claude/*)",
-      "Write(/sessions/*/mnt/Elaro/docs/*)",
-      "Write(/sessions/*/mnt/Elaro/scripts/*)",
-      "Write(/sessions/*/mnt/Elaro/config/*)",
-      "Write(/sessions/*/mnt/Elaro/platform/*)",
-      "Write(/sessions/*/mnt/Elaro/tests/*)"
+      "Write(~/Elaro/**)",
+      "Read(~/Elaro/**)"
     ],
     "deny": [
       "Bash(sf org delete scratch -o elaro-prod*)",

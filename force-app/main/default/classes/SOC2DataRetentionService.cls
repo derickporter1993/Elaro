@@ -251,7 +251,7 @@ public with sharing class SOC2DataRetentionService extends ComplianceServiceBase
             }
             return false;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error checking field history: ' + e.getMessage());
+            ElaroLogger.error( 'Error checking field history: ' + e.getMessage());
             return false;
         }
     }

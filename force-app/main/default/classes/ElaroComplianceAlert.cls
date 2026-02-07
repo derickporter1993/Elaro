@@ -40,7 +40,8 @@ public with sharing class ElaroComplianceAlert {
             Framework__c = config.framework,
             Description__c = config.description
         );
-        
+
+        ElaroSecurityUtils.validateCRUDAccess('Elaro_Alert_Config__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
         insert alertRecord;
         return alertRecord.Id;
     }
@@ -151,6 +152,7 @@ public with sharing class ElaroComplianceAlert {
             FROM Elaro_Evidence_Item__c
             WHERE CreatedDate >= LAST_N_DAYS:7
             AND Status__c = 'Pending Review'
+            WITH SECURITY_ENFORCED
             ORDER BY CreatedDate DESC
             LIMIT 50
         ];
@@ -203,8 +205,9 @@ public with sharing class ElaroComplianceAlert {
         
         String query = 'SELECT Id, Name, Alert_Type__c, Threshold__c, Channels__c, Severity__c, Framework__c ' +
                        'FROM Elaro_Alert_Config__c ' +
-                       'WHERE Is_Active__c = true AND Threshold__c <= :riskScore';
-        
+                       'WHERE Is_Active__c = true AND Threshold__c <= :riskScore ' +
+                       'WITH SECURITY_ENFORCED';
+
         return Database.query(query);
     }
     
@@ -233,11 +236,12 @@ public with sharing class ElaroComplianceAlert {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(slackMessage));
-        
+        req.setTimeout(10000);
+
         Http http = new Http();
         http.send(req);
     }
-    
+
     private static void sendPagerDutyAlert(Map<String, Object> alertData) {
         String severity = (String)alertData.get('severity');
         String pdSeverity = severity == 'CRITICAL' ? 'critical' : 
@@ -260,7 +264,8 @@ public with sharing class ElaroComplianceAlert {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(pdEvent));
-        
+        req.setTimeout(10000);
+
         Http http = new Http();
         http.send(req);
     }
@@ -271,6 +276,7 @@ public with sharing class ElaroComplianceAlert {
             SELECT Id, DeveloperName
             FROM CustomNotificationType
             WHERE DeveloperName = 'Elaro_Alert'
+            WITH SECURITY_ENFORCED
             LIMIT 1
         ];
         
@@ -335,9 +341,10 @@ public with sharing class ElaroComplianceAlert {
         List<String> recipients = new List<String>();
         
         for (User u : [
-            SELECT Email FROM User 
-            WHERE IsActive = true 
+            SELECT Email FROM User
+            WHERE IsActive = true
             AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.Name = 'Elaro_Admin')
+            WITH SECURITY_ENFORCED
             LIMIT 10
         ]) {
             recipients.add(u.Email);

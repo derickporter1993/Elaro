@@ -79,7 +79,6 @@
         <label>Status</label>
         <type>Picklist</type>
         <required>true</required>
-        <defaultValue>DRAFT</defaultValue>
         <valueSet>
             <restricted>true</restricted>
             <valueSetDefinition>

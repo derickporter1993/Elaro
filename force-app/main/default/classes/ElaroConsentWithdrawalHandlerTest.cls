@@ -196,13 +196,14 @@ private class ElaroConsentWithdrawalHandlerTest {
     @IsTest
     static void testProcessWithdrawalsEmptyList() {
         Test.startTest();
-        
+
         // Should not throw exception with empty list
         ElaroConsentWithdrawalHandler.processWithdrawals(new List<Consent__c>());
-        
+
         Test.stopTest();
-        
-        System.assert(true, 'Should handle empty list gracefully');
+
+        // Verify empty list processed without exception or DML
+        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML with empty list');
     }
     
     @IsTest
@@ -222,13 +223,13 @@ private class ElaroConsentWithdrawalHandlerTest {
         update consents;
         
         Test.startTest();
-        
+
         ElaroConsentWithdrawalHandler.processWithdrawals(consents);
-        
+
         Test.stopTest();
-        
-        // Verify events were published (check via async context)
-        // Note: Platform events are async, so we verify the code path executed
-        System.assert(true, 'Event publishing code path executed');
+
+        // Verify withdrawal processing completed with event publishing
+        // Platform events are async, verify DML occurred for updates
+        System.assert(Limits.getDmlStatements() > 0, 'Should publish events and update records');
     }
 }

@@ -249,6 +249,7 @@ public with sharing class BlockchainVerification {
             File_Name__c = fileName
         );
 
+        ElaroSecurityUtils.validateCRUDAccess('Elaro_Evidence_Anchor__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
         insert anchor;
     }
     

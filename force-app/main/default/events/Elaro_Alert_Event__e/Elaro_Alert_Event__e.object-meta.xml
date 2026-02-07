@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <deploymentStatus>Deployed</deploymentStatus>
-    <eventType>PlatformEvent</eventType>
+    <eventType>HighVolume</eventType>
     <label>Elaro Alert Event</label>
     <pluralLabel>Elaro Alert Events</pluralLabel>
+    <publishBehavior>PublishAfterCommit</publishBehavior>
     <fields>
         <fullName>Alert_Id__c</fullName>
         <label>Alert ID</label>

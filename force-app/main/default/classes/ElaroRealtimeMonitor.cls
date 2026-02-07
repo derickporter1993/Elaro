@@ -176,7 +176,7 @@ public with sharing class ElaroRealtimeMonitor {
             stats.put('topEventTypes', topTypes);
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Error getting realtime stats: ' + e.getMessage());
+            ElaroLogger.warn( 'Error getting realtime stats: ' + e.getMessage());
         }
         
         return stats;
@@ -360,7 +360,7 @@ public with sharing class ElaroRealtimeMonitor {
     private static void queueAlert(AlertConfig config) {
         // In production, this would queue to a Queueable or Platform Event
         // For now, log the alert
-        System.debug(LoggingLevel.WARN, 'ALERT: ' + config.severity + ' - ' + config.reason);
+        ElaroLogger.warn( 'ALERT: ' + config.severity + ' - ' + config.reason);
         
         // Publish platform event
         Elaro_Event__e alertEvent = new Elaro_Event__e(
@@ -371,7 +371,7 @@ public with sharing class ElaroRealtimeMonitor {
         try {
             EventBus.publish(alertEvent);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to publish alert event: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to publish alert event: ' + e.getMessage());
         }
     }
     
@@ -393,7 +393,7 @@ public with sharing class ElaroRealtimeMonitor {
         try {
             EventBus.publish(notification);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to publish event notification: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to publish event notification: ' + e.getMessage());
         }
     }
     

@@ -102,7 +102,7 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
             }
         } catch (Exception e) {
             // Log error but don't fail the entire job
-            System.debug(LoggingLevel.ERROR, 'ElaroAuditTrailPoller: Error querying SetupAuditTrail: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroAuditTrailPoller: Error querying SetupAuditTrail: ' + e.getMessage());
         }
         
         return entries;
@@ -119,7 +119,7 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
                 return settings.Last_Audit_Trail_Poll__c;
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'ElaroAuditTrailPoller: Could not retrieve last poll time: ' + e.getMessage());
+            ElaroLogger.warn( 'ElaroAuditTrailPoller: Could not retrieve last poll time: ' + e.getMessage());
         }
         
         // Default: return 1 hour ago for first run
@@ -139,7 +139,7 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
             settings.Last_Audit_Trail_Poll__c = pollTime;
             upsert settings;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroAuditTrailPoller: Failed to update last poll time: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroAuditTrailPoller: Failed to update last poll time: ' + e.getMessage());
             // Don't throw - logging failure shouldn't break the poller
         }
     }

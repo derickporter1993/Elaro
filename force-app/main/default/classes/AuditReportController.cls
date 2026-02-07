@@ -35,7 +35,7 @@ public with sharing class AuditReportController {
         report.evaluation = ComplianceFrameworkService.evaluateFramework(framework);
         
         // Get gaps in date range
-        report.gaps = [
+        List<Compliance_Gap__c> gaps = [
             SELECT Id, Policy_Reference__c, Gap_Description__c, Severity__c, Status__c,
                    Risk_Score__c, Detected_Date__c, Remediation_Plan__c, Remediation_Owner__c,
                    Target_Remediation_Date__c, Actual_Remediation_Date__c
@@ -46,9 +46,13 @@ public with sharing class AuditReportController {
             WITH SECURITY_ENFORCED
             ORDER BY Risk_Score__c DESC NULLS LAST
         ];
-        
+        report.gaps = (List<Compliance_Gap__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            gaps
+        );
+
         // Get evidence in date range
-        report.evidence = [
+        List<Compliance_Evidence__c> evidence = [
             SELECT Id, Evidence_Type__c, Evidence_Date__c, Status__c, Compliance_Score__c,
                    Description__c, Reviewed_By__c, Reviewed_Date__c
             FROM Compliance_Evidence__c
@@ -58,6 +62,10 @@ public with sharing class AuditReportController {
             WITH SECURITY_ENFORCED
             ORDER BY Evidence_Date__c DESC
         ];
+        report.evidence = (List<Compliance_Evidence__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            evidence
+        );
         
         // Calculate summary statistics
         report.totalGaps = report.gaps.size();

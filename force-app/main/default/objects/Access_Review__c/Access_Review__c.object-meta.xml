@@ -13,7 +13,7 @@
     <nameField>
         <displayFormat>AR-{0000000}</displayFormat>
         <label>Access Review Number</label>
-        <trackHistory>true</trackHistory>
+        <trackHistory>false</trackHistory>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Access Reviews</pluralLabel>

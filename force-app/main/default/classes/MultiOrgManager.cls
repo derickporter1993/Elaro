@@ -232,7 +232,7 @@ public with sharing class MultiOrgManager {
     private static void syncPoliciesToOrg(Elaro_Connected_Org__c org, List<Compliance_Policy__mdt> policies) {
         // In production, this would call the connected org's API
         // to create/update policy records
-        System.debug(LoggingLevel.INFO, 'Syncing ' + policies.size() + ' policies to ' + org.Name);
+        ElaroLogger.info( 'Syncing ' + policies.size() + ' policies to ' + org.Name);
     }
     
     // ═══════════════════════════════════════════════════════════════

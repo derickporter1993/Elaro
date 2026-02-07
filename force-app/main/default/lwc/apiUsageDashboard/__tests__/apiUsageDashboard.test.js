@@ -18,26 +18,34 @@ import { safeCleanupDom } from "../../__tests__/wireAdapterTestUtils";
 let mockSnapshotsResult = null;
 let mockSnapshotsError = null;
 
-jest.mock("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots", () => ({
-  default: jest.fn(() => {
-    if (mockSnapshotsError) {
-      return Promise.reject(mockSnapshotsError);
-    }
-    return Promise.resolve(mockSnapshotsResult || []);
+jest.mock(
+  "@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots",
+  () => ({
+    default: jest.fn(() => {
+      if (mockSnapshotsError) {
+        return Promise.reject(mockSnapshotsError);
+      }
+      return Promise.resolve(mockSnapshotsResult || []);
+    }),
   }),
-}), { virtual: true });
+  { virtual: true }
+);
 
 // Use real PollingManager with fake timers to avoid actual intervals in tests
 jest.useFakeTimers();
 
 // Mock ShowToastEvent
 const mockShowToastEvent = jest.fn();
-jest.mock("lightning/platformShowToastEvent", () => ({
-  ShowToastEvent: jest.fn().mockImplementation((config) => {
-    mockShowToastEvent(config);
-    return new CustomEvent("showtoast", { detail: config });
+jest.mock(
+  "lightning/platformShowToastEvent",
+  () => ({
+    ShowToastEvent: jest.fn().mockImplementation((config) => {
+      mockShowToastEvent(config);
+      return new CustomEvent("showtoast", { detail: config });
+    }),
   }),
-}), { virtual: true });
+  { virtual: true }
+);
 
 // Sample mock data
 const MOCK_SNAPSHOTS = [
@@ -139,7 +147,8 @@ describe("c-api-usage-dashboard", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
+      const getSnapshots =
+        require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
 
@@ -207,7 +216,8 @@ describe("c-api-usage-dashboard", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
+      const getSnapshots =
+        require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
   });
@@ -262,14 +272,14 @@ describe("c-api-usage-dashboard", () => {
       mockSnapshotsError = { message: "Error" };
       const element = await createComponent();
       await flushPromises();
-      
+
       // Should show error toast
       expect(mockShowToastEvent).toHaveBeenCalled();
 
       // Second call succeeds - need to manually trigger via connectedCallback
       mockSnapshotsError = null;
       mockSnapshotsResult = MOCK_SNAPSHOTS;
-      
+
       // Re-create component to simulate successful retry
       safeCleanupDom();
       const newElement = await createComponent();
@@ -297,7 +307,8 @@ describe("c-api-usage-dashboard", () => {
       await flushPromises();
 
       // Verify component initializes correctly (loads data)
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
+      const getSnapshots =
+        require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalled();
     });
 
@@ -314,14 +325,15 @@ describe("c-api-usage-dashboard", () => {
       await flushPromises();
 
       // Polling should start - verify data loads initially
-      const getSnapshots = require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
+      const getSnapshots =
+        require("@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots").default;
       expect(getSnapshots).toHaveBeenCalledWith({ limitSize: 20 });
     });
 
     it("cleans up polling on disconnected", async () => {
       const element = await createComponent();
       await flushPromises();
-      
+
       // Remove element from DOM to trigger disconnectedCallback
       expect(() => {
         element.remove();

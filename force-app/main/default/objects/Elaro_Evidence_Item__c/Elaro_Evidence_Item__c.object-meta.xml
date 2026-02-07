@@ -62,7 +62,6 @@
         <label>Status</label>
         <type>Picklist</type>
         <required>true</required>
-        <defaultValue>COLLECTED</defaultValue>
         <valueSet>
             <restricted>true</restricted>
             <valueSetDefinition>
@@ -81,6 +80,7 @@
         <referenceTo>Elaro_Audit_Package__c</referenceTo>
         <relationshipLabel>Evidence Items</relationshipLabel>
         <relationshipName>Evidence_Items</relationshipName>
+        <deleteConstraint>Restrict</deleteConstraint>
         <required>true</required>
     </fields>
     <fields>
@@ -96,8 +96,8 @@
         <label>Reviewed By</label>
         <type>Lookup</type>
         <referenceTo>User</referenceTo>
-        <relationshipLabel>Evidence Reviews</relationshipLabel>
-        <relationshipName>Evidence_Reviews</relationshipName>
+        <relationshipLabel>Elaro Evidence Reviews</relationshipLabel>
+        <relationshipName>Elaro_Evidence_Reviews</relationshipName>
     </fields>
     <fields>
         <fullName>Reviewed_Date__c</fullName>

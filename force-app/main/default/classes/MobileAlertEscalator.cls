@@ -77,7 +77,7 @@ public with sharing class MobileAlertEscalator implements Schedulable {
         List<Id> escalationRecipients = getEscalationRecipients(nextLevel);
 
         if (escalationRecipients.isEmpty()) {
-            System.debug(LoggingLevel.WARN, 'No escalation recipients for level ' + nextLevel);
+            ElaroLogger.warn( 'No escalation recipients for level ' + nextLevel);
             return;
         }
 
@@ -183,7 +183,7 @@ public with sharing class MobileAlertEscalator implements Schedulable {
             ];
 
             if (notifTypes.isEmpty()) {
-                System.debug(LoggingLevel.ERROR, 'Notification type not found');
+                ElaroLogger.error( 'Notification type not found');
                 return;
             }
 
@@ -203,7 +203,7 @@ public with sharing class MobileAlertEscalator implements Schedulable {
             }
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Escalated notification failed: ' + e.getMessage());
+            ElaroLogger.error( 'Escalated notification failed: ' + e.getMessage());
         }
     }
 
@@ -222,7 +222,7 @@ public with sharing class MobileAlertEscalator implements Schedulable {
         try {
             System.schedule(jobName, cronExp, new MobileAlertEscalator(alertId));
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to schedule next escalation: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to schedule next escalation: ' + e.getMessage());
         }
     }
 
@@ -230,7 +230,7 @@ public with sharing class MobileAlertEscalator implements Schedulable {
      * @description Logs when maximum escalation level is reached
      */
     private void logMaxEscalationReached(Compliance_Gap__c gap) {
-        System.debug(LoggingLevel.WARN, 'Maximum escalation level reached for gap: ' + gap.Name +
+        ElaroLogger.warn( 'Maximum escalation level reached for gap: ' + gap.Name +
                      '. Alert was never acknowledged.');
     }
 }

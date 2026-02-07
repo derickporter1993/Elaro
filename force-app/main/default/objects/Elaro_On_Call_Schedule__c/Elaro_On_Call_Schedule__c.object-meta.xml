@@ -18,7 +18,7 @@
         <type>Lookup</type>
         <referenceTo>User</referenceTo>
         <relationshipName>OnCallSchedules</relationshipName>
-        <required>true</required>
+        <required>false</required>
         <description>The user who is on-call during this schedule</description>
     </fields>
     <fields>
@@ -106,7 +106,7 @@
                 </value>
                 <value>
                     <fullName>Email</fullName>
-                    <default>true</default>
+                    <default>false</default>
                     <label>Email</label>
                 </value>
                 <value>

@@ -161,7 +161,7 @@ public with sharing class ElaroPDFExporter {
                 Id cvId = generateAuditPackagePDF(packageId);
                 contentVersionIds.add(cvId);
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, 'Error generating PDF for package ' + packageId + ': ' + e.getMessage());
+                ElaroLogger.error( 'Error generating PDF for package ' + packageId + ': ' + e.getMessage());
             }
         }
         

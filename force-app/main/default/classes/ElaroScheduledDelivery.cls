@@ -3,7 +3,7 @@
  * @group Export &amp; Delivery
  * @author Elaro Team
  */
-global class ElaroScheduledDelivery implements Schedulable {
+global with sharing class ElaroScheduledDelivery implements Schedulable {
     
     private String packageId;
     private List&lt;String&gt; recipientEmails;
@@ -30,10 +30,10 @@ global class ElaroScheduledDelivery implements Schedulable {
             // Deliver to recipients
             ElaroDeliveryService.deliverAuditPackage(packageId, recipientEmails);
             
-            System.debug('Scheduled delivery completed for package: ' + packageId);
+            ElaroLogger.debug('Scheduled delivery completed for package: ' + packageId);
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Scheduled delivery failed: ' + e.getMessage());
+            ElaroLogger.error( 'Scheduled delivery failed: ' + e.getMessage());
             
             // Send error notification
             sendErrorNotification(e.getMessage());
@@ -61,7 +61,7 @@ global class ElaroScheduledDelivery implements Schedulable {
                 Messaging.sendEmail(new List&lt;Messaging.SingleEmailMessage&gt;{ email });
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to send error notification: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to send error notification: ' + e.getMessage());
         }
     }
     

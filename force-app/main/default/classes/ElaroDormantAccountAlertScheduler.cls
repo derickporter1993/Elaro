@@ -46,7 +46,7 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
                     batchLimit = config.Batch_Size__c.intValue();
                 }
             } catch (Exception e) {
-                System.debug(LoggingLevel.WARN, 'Could not load Custom Metadata, using default batch size: ' + e.getMessage());
+                ElaroLogger.warn( 'Could not load Custom Metadata, using default batch size: ' + e.getMessage());
             }
 
             List<User> dormantUsers = [
@@ -61,7 +61,7 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
             ];
 
         if (dormantUsers.isEmpty()) {
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[DormantAccountAlertScheduler] No dormant accounts detected');
             return;
         }
@@ -90,7 +90,7 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
         if (!reviews.isEmpty()) {
             Database.insert(reviews, AccessLevel.USER_MODE);
 
-            System.debug(LoggingLevel.WARN,
+            ElaroLogger.warn(
                 '[DormantAccountAlertScheduler] Created ' + reviews.size() +
                 ' termination reviews for dormant accounts');
 
@@ -98,7 +98,7 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
             sendDormantAccountAlert(dormantUsers);
         }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, '[DormantAccountAlertScheduler] Error in detectDormantAccounts: ' + e.getMessage());
+            ElaroLogger.error( '[DormantAccountAlertScheduler] Error in detectDormantAccounts: ' + e.getMessage());
             throw e; // Re-throw to stop execution
         }
     }
@@ -123,20 +123,20 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
         ];
 
         if (!warningUsers.isEmpty()) {
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[DormantAccountAlertScheduler] ' + warningUsers.size() +
                 ' accounts approaching dormant threshold (60-90 days)');
 
             // Send warning notifications
             for (User u : warningUsers) {
                 Integer daysSinceLogin = Math.abs(Date.today().daysBetween(u.LastLoginDate.date()));
-                System.debug(LoggingLevel.INFO,
+                ElaroLogger.info(
                     '[DormantAccountAlertScheduler] Warning: ' + u.Username +
                     ' - ' + daysSinceLogin + ' days since last login');
             }
         }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, '[DormantAccountAlertScheduler] Error in detectApproachingDormant: ' + e.getMessage());
+            ElaroLogger.error( '[DormantAccountAlertScheduler] Error in detectApproachingDormant: ' + e.getMessage());
             throw e; // Re-throw to stop execution
         }
     }
@@ -176,14 +176,14 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
             WITH USER_MODE
         ];
 
-        System.debug(LoggingLevel.INFO,
+        ElaroLogger.info(
             '[DormantAccountAlertScheduler] Security Report - ' +
             'Total Active Users: ' + totalActive + ', ' +
             'Dormant Accounts: ' + dormantCount + ', ' +
             'Privileged Dormant: ' + privilegedDormant + ', ' +
             'Pending Reviews: ' + pendingReviews);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, '[DormantAccountAlertScheduler] Error in generateSecurityReport: ' + e.getMessage());
+            ElaroLogger.error( '[DormantAccountAlertScheduler] Error in generateSecurityReport: ' + e.getMessage());
             throw e; // Re-throw to stop execution
         }
     }
@@ -200,7 +200,7 @@ public with sharing class ElaroDormantAccountAlertScheduler implements Schedulab
             byProfile.put(profile, (byProfile.containsKey(profile) ? byProfile.get(profile) : 0) + 1);
         }
 
-        System.debug(LoggingLevel.WARN,
+        ElaroLogger.warn(
             '[DormantAccountAlertScheduler] SECURITY ALERT: ' + dormantUsers.size() +
             ' dormant accounts detected. Breakdown by profile: ' + JSON.serialize(byProfile));
 

@@ -46,10 +46,10 @@ public with sharing class ConsentExpirationBatch implements Database.Batchable<S
         }
         
         // Send renewal reminders (simplified - in production would send emails)
-        System.debug(LoggingLevel.INFO, 'Processing ' + contactsToNotify.size() + ' contacts for consent renewal reminders');
+        ElaroLogger.info( 'Processing ' + contactsToNotify.size() + ' contacts for consent renewal reminders');
     }
     
     public void finish(Database.BatchableContext bc) {
-        System.debug(LoggingLevel.INFO, 'ConsentExpirationBatch completed');
+        ElaroLogger.info( 'ConsentExpirationBatch completed');
     }
 }

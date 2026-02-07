@@ -66,11 +66,9 @@ jest.mock(
   }),
   { virtual: true }
 );
-jest.mock(
-  "@salesforce/label/c.Elaro_Quick_Commands",
-  () => ({ default: "Quick Commands:" }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.Elaro_Quick_Commands", () => ({ default: "Quick Commands:" }), {
+  virtual: true,
+});
 jest.mock(
   "@salesforce/label/c.Elaro_Ask_Question",
   () => ({ default: "Ask a compliance question" }),

@@ -1,0 +1,38 @@
+{
+  "mode": "yolo",
+  "depth": "standard",
+  "workflow": {
+    "research": true,
+    "plan_check": true,
+    "verifier": true
+  },
+  "parallelization": {
+    "enabled": true
+  },
+  "planning": {
+    "commit_docs": true
+  },
+  "git": {
+    "branching_strategy": "none",
+    "phase_branch_template": "gsd/phase-{phase}-{slug}",
+    "milestone_branch_template": "gsd/{milestone}-{slug}"
+  },
+  "model_profiles": {
+    "current": "balanced",
+    "quality": {
+      "planning": "claude-opus-4",
+      "execution": "claude-opus-4",
+      "verification": "claude-sonnet-4"
+    },
+    "balanced": {
+      "planning": "claude-opus-4",
+      "execution": "claude-sonnet-4",
+      "verification": "claude-sonnet-4"
+    },
+    "budget": {
+      "planning": "claude-sonnet-4",
+      "execution": "claude-sonnet-4",
+      "verification": "claude-haiku"
+    }
+  }
+}

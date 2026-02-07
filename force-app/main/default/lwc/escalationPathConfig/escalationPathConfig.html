@@ -85,7 +85,7 @@
                             </div>
                         </div>
                     </template>
-                    <template lwc:if={level1Paths.length === 0}>
+                    <template lwc:if={hasNoLevel1Paths}>
                         <p class="slds-text-color_weak">No Level 1 escalation paths configured</p>
                     </template>
                 </div>
@@ -128,7 +128,7 @@
                             </div>
                         </div>
                     </template>
-                    <template lwc:if={level2Paths.length === 0}>
+                    <template lwc:if={hasNoLevel2Paths}>
                         <p class="slds-text-color_weak">No Level 2 escalation paths configured</p>
                     </template>
                 </div>
@@ -171,7 +171,7 @@
                             </div>
                         </div>
                     </template>
-                    <template lwc:if={level3Paths.length === 0}>
+                    <template lwc:if={hasNoLevel3Paths}>
                         <p class="slds-text-color_weak">No Level 3 escalation paths configured</p>
                     </template>
                 </div>

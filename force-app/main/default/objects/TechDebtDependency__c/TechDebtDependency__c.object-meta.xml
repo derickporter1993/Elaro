@@ -67,7 +67,6 @@
         <columns>SourceDebt__c</columns>
         <columns>DependencyType__c</columns>
         <columns>TargetDebt__c</columns>
-        <columns>OwnerId</columns>
     </listViews>
 
     <compactLayouts>

@@ -49,7 +49,7 @@ public with sharing class ElaroBatchEventLoader implements Database.Batchable<SO
             List<Database.SaveResult> results = EventBus.publish(events);
             for (Integer i = 0; i < results.size(); i++) {
                 if (!results[i].isSuccess()) {
-                    System.debug(LoggingLevel.ERROR, 
+                    ElaroLogger.error( 
                         '[ElaroBatchEventLoader] Failed to publish event: ' + 
                         results[i].getErrors());
                 }
@@ -58,6 +58,6 @@ public with sharing class ElaroBatchEventLoader implements Database.Batchable<SO
     }
     
     public void finish(Database.BatchableContext bc) {
-        System.debug(LoggingLevel.INFO, '[ElaroBatchEventLoader] Batch completed');
+        ElaroLogger.info( '[ElaroBatchEventLoader] Batch completed');
     }
 }

@@ -28,7 +28,7 @@ public without sharing class SchedulerErrorHandler {
                 Timestamp__c = System.now()
             );
         } catch (Exception logError) {
-            System.debug(LoggingLevel.ERROR, 'SchedulerErrorHandler: Failed to log error: ' + logError.getMessage());
+            ElaroLogger.error( 'SchedulerErrorHandler: Failed to log error: ' + logError.getMessage());
         }
     }
 
@@ -46,7 +46,7 @@ public without sharing class SchedulerErrorHandler {
                 Timestamp__c = System.now()
             );
         } catch (Exception logError) {
-            System.debug(LoggingLevel.ERROR, 'SchedulerErrorHandler: Failed to log success: ' + logError.getMessage());
+            ElaroLogger.error( 'SchedulerErrorHandler: Failed to log success: ' + logError.getMessage());
         }
     }
 
@@ -60,7 +60,7 @@ public without sharing class SchedulerErrorHandler {
             String message = schedulerName + ' failed: ' + (e.getMessage() != null ? e.getMessage() : 'Unknown error');
             SlackNotifier.notifyAsyncQueueable(message);
         } catch (Exception notifyError) {
-            System.debug(LoggingLevel.ERROR, 'SchedulerErrorHandler: Failed to notify: ' + notifyError.getMessage());
+            ElaroLogger.error( 'SchedulerErrorHandler: Failed to notify: ' + notifyError.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public without sharing class SchedulerErrorHandler {
                 return config.CRON_Expression__c;
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN,
+            ElaroLogger.warn(
                 '[SchedulerErrorHandler] Could not retrieve config for ' + schedulerName +
                 ': ' + e.getMessage() + '. Using default.');
         }
@@ -97,7 +97,7 @@ public without sharing class SchedulerErrorHandler {
                 return config.Batch_Size__c.intValue();
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN,
+            ElaroLogger.warn(
                 '[SchedulerErrorHandler] Could not retrieve batch size for ' + schedulerName +
                 ': ' + e.getMessage() + '. Using default.');
         }
@@ -116,7 +116,7 @@ public without sharing class SchedulerErrorHandler {
                 return config.Is_Active__c;
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN,
+            ElaroLogger.warn(
                 '[SchedulerErrorHandler] Could not check active status for ' + schedulerName +
                 ': ' + e.getMessage() + '. Assuming active.');
         }

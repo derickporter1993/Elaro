@@ -1,9 +1,60 @@
+/**
+ * ElaroGraphIndexer - Compliance Graph Indexing Service for Big Object Storage
+ *
+ * Indexes compliance-related entity changes into the Elaro_Compliance_Graph__b Big Object
+ * for long-term audit trail retention and compliance analysis. Supports both single
+ * and bulk indexing operations with comprehensive metadata extraction and risk scoring.
+ *
+ * Key Features:
+ * - Deterministic node hashing for idempotent indexing
+ * - Framework-specific risk score calculation
+ * - Metadata size limits to prevent payload bloat
+ * - Structured error handling with correlation IDs
+ * - Bulk indexing support for high-volume operations
+ * - Fallback to rule-based scoring when Einstein Platform is unavailable
+ *
+ * Supported Entity Types:
+ * - PERMISSION_SET: Indexes permission set metadata and object/field permission counts
+ * - FLOW: Indexes flow definition metadata and trigger types
+ *
+ * Security:
+ * - Uses WITH USER_MODE for all SOQL queries
+ * - Sanitizes metadata to prevent sensitive data leakage
+ * - Validates framework values against allowed set
+ * - Enforces field-level access through schema describe
+ *
+ * @author Elaro Team
+ * @version 3.0
+ * @see Elaro_Compliance_Graph__b
+ * @see ElaroConstants
+ */
 public with sharing class ElaroGraphIndexer {
     private static final String GRAPH_VERSION = 'v3.0';
     private static final Integer MAX_METADATA_SIZE = 50000;
 
+    /**
+     * Indexes a single compliance entity change into the graph Big Object.
+     *
+     * Creates a deterministic hash-based node ID, extracts entity metadata,
+     * calculates risk score, and persists to Elaro_Compliance_Graph__b.
+     *
+     * @param entityType The type of entity being indexed (e.g., 'PERMISSION_SET', 'FLOW')
+     * @param entityId The Salesforce record ID of the entity
+     * @param parentNodeId Optional parent node ID for hierarchical relationships
+     * @param framework The compliance framework (e.g., 'HIPAA', 'SOC2', 'GDPR')
+     * @return The generated node hash that serves as the unique identifier
+     * @throws ElaroException if validation fails, entity not found, or indexing error occurs
+     *
+     * @example
+     * String nodeHash = ElaroGraphIndexer.indexChange(
+     *     'PERMISSION_SET',
+     *     '0PSxxxxxxxxxxxx',
+     *     null,
+     *     'HIPAA'
+     * );
+     */
     public static String indexChange(String entityType, String entityId, String parentNodeId, String framework) {
-        // Input validation
+        // Input validation - non-null, non-empty
         if (String.isBlank(entityType)) {
             throw new ElaroException('Entity type cannot be blank');
         }
@@ -12,6 +63,15 @@ public with sharing class ElaroGraphIndexer {
         }
         if (String.isBlank(framework)) {
             throw new ElaroException('Framework cannot be blank');
+        }
+        // Injection character validation for entityType and entityId
+        // Prevent SOQL injection, XSS, and path traversal via dangerous characters
+        String injectionPattern = '.*[;\'\"\\-\\-<>\\\\/%].*';
+        if (Pattern.matches(injectionPattern, entityType)) {
+            throw new ElaroException('Entity type contains invalid characters');
+        }
+        if (Pattern.matches(injectionPattern, entityId)) {
+            throw new ElaroException('Entity ID contains invalid characters');
         }
         // Validate framework is supported
         if (!ElaroConstants.isValidFramework(framework)) {
@@ -37,11 +97,12 @@ public with sharing class ElaroGraphIndexer {
         );
 
         try {
+            ElaroSecurityUtils.validateCRUDAccess('Elaro_Graph_Node__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert node;
             return nodeHash;
         } catch (DmlException e) {
             String correlationId = generateCorrelationId(entityType, entityId);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroGraphIndexer] Graph indexing failed - CorrelationId: ' + correlationId + 
                 ', EntityType: ' + entityType + 
                 ', EntityId: ' + entityId + 
@@ -50,7 +111,7 @@ public with sharing class ElaroGraphIndexer {
             throw new ElaroException('Graph indexing failed for ' + entityType + ' (' + entityId + '): ' + getSafeDmlMessage(e));
         } catch (Exception e) {
             String correlationId = generateCorrelationId(entityType, entityId);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroGraphIndexer] Graph indexing unexpected error - CorrelationId: ' + correlationId + 
                 ', EntityType: ' + entityType + 
                 ', EntityId: ' + entityId + 
@@ -60,6 +121,18 @@ public with sharing class ElaroGraphIndexer {
         }
     }
 
+    /**
+     * Generates a deterministic SHA-256 hash for consistent node identification.
+     *
+     * Uses stable, immutable inputs (entityType, entityId, framework) to ensure
+     * the same inputs always produce the same hash. Truncated to 50 characters
+     * to fit within Big Object field limits.
+     *
+     * @param entityType The type of entity being indexed
+     * @param entityId The Salesforce record ID
+     * @param framework The compliance framework
+     * @return Base64-encoded SHA-256 hash (first 50 characters)
+     */
     public static String generateDeterministicHash(String entityType, String entityId, String framework) {
         // Use only stable, immutable inputs for deterministic hashing
         String input = entityType + '|' + entityId + '|' + framework;
@@ -133,7 +206,7 @@ public with sharing class ElaroGraphIndexer {
         } catch (Exception e) {
             // Log Einstein prediction failure
             String correlationId = generateCorrelationId('EINSTEIN', framework);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroGraphIndexer] Einstein prediction failed - CorrelationId: ' + correlationId + 
                 ', Framework: ' + framework + 
                 ', Error: ' + e.getMessage() + 
@@ -153,7 +226,7 @@ public with sharing class ElaroGraphIndexer {
                 insert error;
             } catch (Exception logError) {
                 // Don't fail if error logging fails
-                System.debug(LoggingLevel.WARN, 'Failed to log Einstein error: ' + logError.getMessage());
+                ElaroLogger.warn( 'Failed to log Einstein error: ' + logError.getMessage());
             }
             
             // Fallback to rule-based scoring
@@ -207,7 +280,7 @@ public with sharing class ElaroGraphIndexer {
 
         // Enforce size limit (Big Object Long Text fields can be large, but we limit to 50KB)
         if (serialized.length() > MAX_METADATA_SIZE) {
-            System.debug(LoggingLevel.WARN, '[ElaroGraphIndexer] Metadata exceeds size limit: ' + serialized.length() + ' bytes. Truncating.');
+            ElaroLogger.warn( '[ElaroGraphIndexer] Metadata exceeds size limit: ' + serialized.length() + ' bytes. Truncating.');
             serialized = serialized.substring(0, MAX_METADATA_SIZE - 3) + '...';
         }
         
@@ -226,8 +299,10 @@ public with sharing class ElaroGraphIndexer {
     }
 
     /**
-     * Bulk index multiple changes at once
-     * Input structure for bulk indexing
+     * Input wrapper class for bulk indexing operations.
+     *
+     * Encapsulates all required parameters for indexing a single entity
+     * within a bulk operation. Used by indexChangeBulk() method.
      */
     public class IndexInput {
         public String entityType;
@@ -237,9 +312,25 @@ public with sharing class ElaroGraphIndexer {
     }
     
     /**
-     * Bulk index changes for better performance
-     * @param inputs List of IndexInput objects to index
-     * @return Map of entityId to nodeHash
+     * Performs bulk indexing of multiple compliance entity changes.
+     *
+     * Processes a list of IndexInput objects, validates each entry,
+     * generates nodes, and performs a single bulk insert operation.
+     * Invalid inputs are logged and skipped rather than failing the entire batch.
+     *
+     * @param inputs List of IndexInput objects containing entity data to index
+     * @return Map of entityId to generated nodeHash for successfully indexed records
+     * @throws ElaroException if the entire bulk insert operation fails
+     *
+     * @example
+     * List<ElaroGraphIndexer.IndexInput> inputs = new List<ElaroGraphIndexer.IndexInput>();
+     * ElaroGraphIndexer.IndexInput input = new ElaroGraphIndexer.IndexInput();
+     * input.entityType = 'PERMISSION_SET';
+     * input.entityId = '0PSxxxxxxxxxxxx';
+     * input.framework = 'HIPAA';
+     * inputs.add(input);
+     *
+     * Map<String, String> results = ElaroGraphIndexer.indexChangeBulk(inputs);
      */
     public static Map<String, String> indexChangeBulk(List<IndexInput> inputs) {
         if (inputs == null || inputs.isEmpty()) {
@@ -253,13 +344,13 @@ public with sharing class ElaroGraphIndexer {
             try {
                 // Validate input
                 if (String.isBlank(input.entityType) || String.isBlank(input.entityId) || String.isBlank(input.framework)) {
-                    System.debug(LoggingLevel.WARN, 'ElaroGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
+                    ElaroLogger.warn( 'ElaroGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
                     continue;
                 }
                 
                 // Validate framework
                 if (!ElaroConstants.isValidFramework(input.framework)) {
-                    System.debug(LoggingLevel.WARN, 'ElaroGraphIndexer: Skipping invalid framework - ' + input.framework);
+                    ElaroLogger.warn( 'ElaroGraphIndexer: Skipping invalid framework - ' + input.framework);
                     continue;
                 }
                 
@@ -285,7 +376,7 @@ public with sharing class ElaroGraphIndexer {
                 results.put(input.entityId, nodeHash);
             } catch (Exception e) {
                 String correlationId = generateCorrelationId(input.entityType, input.entityId);
-                System.debug(LoggingLevel.ERROR, 
+                ElaroLogger.error( 
                     '[ElaroGraphIndexer] Bulk indexing failed for entity - CorrelationId: ' + correlationId + 
                     ', EntityType: ' + input.entityType + 
                     ', EntityId: ' + input.entityId + 
@@ -300,7 +391,7 @@ public with sharing class ElaroGraphIndexer {
                 insert nodesToInsert;
             } catch (DmlException e) {
                 String correlationId = generateCorrelationId('BULK', String.valueOf(nodesToInsert.size()));
-                System.debug(LoggingLevel.ERROR, 
+                ElaroLogger.error( 
                     '[ElaroGraphIndexer] Bulk insert failed - CorrelationId: ' + correlationId + 
                     ', Records: ' + nodesToInsert.size() + 
                     ', Error: ' + e.getMessage());
@@ -321,5 +412,11 @@ public with sharing class ElaroGraphIndexer {
         return e.getDmlMessage(0);
     }
 
+    /**
+     * Custom exception class for ElaroGraphIndexer errors.
+     *
+     * Provides standardized error handling for indexing operations with
+     * support for structured error messages and correlation IDs.
+     */
     public class ElaroException extends Exception {}
 }

@@ -42,7 +42,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 orgOwnedSets.put(ps.Name.toLowerCase(), ps);
             }
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying permission sets: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying permission sets: ' + e.getMessage());
             return threats; // Return empty list if user lacks access
         }
         
@@ -62,7 +62,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 WITH SECURITY_ENFORCED
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying custom permission sets: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying custom permission sets: ' + e.getMessage());
             return threats;
         }
         
@@ -122,7 +122,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 LIMIT :MAX_ACCOUNT_HIERARCHY_QUERY
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying accounts: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying accounts: ' + e.getMessage());
             return threats;
         }
         
@@ -200,7 +200,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 ORDER BY LastLoginDate ASC NULLS LAST
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying inactive users: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying inactive users: ' + e.getMessage());
             return threats;
         }
         
@@ -227,7 +227,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                     }
                 }
             } catch (SecurityException e) {
-                System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying permission set assignments: ' + e.getMessage());
+                ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying permission set assignments: ' + e.getMessage());
             }
         }
         
@@ -310,7 +310,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 WITH SECURITY_ENFORCED
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying admin users: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying admin users: ' + e.getMessage());
             return threats;
         }
         
@@ -357,7 +357,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 WITH SECURITY_ENFORCED
             ];
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroSalesforceThreatDetector] Security exception querying recent permission sets: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying recent permission sets: ' + e.getMessage());
             return threats;
         }
         

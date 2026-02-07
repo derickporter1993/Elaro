@@ -60,10 +60,10 @@ public with sharing class ElaroDynamicReportController {
             }
         } catch (Cache.Org.OrgCacheException e) {
             // Cache not configured, continue without it
-            System.debug(LoggingLevel.WARN, 'Cache partition not available: ' + e.getMessage());
+            ElaroLogger.warn( 'Cache partition not available: ' + e.getMessage());
         } catch (Exception e) {
             // Unexpected cache error - log but continue
-            System.debug(LoggingLevel.WARN, 'Unexpected cache error: ' + e.getMessage());
+            ElaroLogger.warn( 'Unexpected cache error: ' + e.getMessage());
         }
 
         // Validate object exists and is accessible
@@ -101,9 +101,9 @@ public with sharing class ElaroDynamicReportController {
             try {
                 orgCache.put(cacheKey, result, 86400); // 24 hour TTL
             } catch (Cache.Org.OrgCacheException e) {
-                System.debug(LoggingLevel.WARN, 'Failed to cache field metadata: ' + e.getMessage());
+                ElaroLogger.warn( 'Failed to cache field metadata: ' + e.getMessage());
             } catch (Exception e) {
-                System.debug(LoggingLevel.WARN, 'Unexpected cache error: ' + e.getMessage());
+                ElaroLogger.warn( 'Unexpected cache error: ' + e.getMessage());
             }
         }
 
@@ -141,6 +141,12 @@ public with sharing class ElaroDynamicReportController {
             throw new AuraHandledException('Query failed: ' + e.getMessage());
         }
 
+        // Strip inaccessible fields for FLS security
+        rows = ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            rows
+        );
+
         // Transform results
         List<Map<String, Object>> data = new List<Map<String, Object>>();
         for (SObject row : rows) {
@@ -159,7 +165,7 @@ public with sharing class ElaroDynamicReportController {
                     rowData.put(safeField, null);
                 } catch (Exception e) {
                     // Unexpected error accessing field - log and set to null
-                    System.debug(LoggingLevel.WARN, 'Unexpected error accessing field ' + safeField + ': ' + e.getMessage());
+                    ElaroLogger.warn( 'Unexpected error accessing field ' + safeField + ': ' + e.getMessage());
                     rowData.put(safeField, null);
                 }
             }

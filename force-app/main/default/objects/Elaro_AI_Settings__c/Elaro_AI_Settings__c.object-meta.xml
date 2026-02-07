@@ -21,7 +21,7 @@
     <fields>
         <fullName>Blocked_Users__c</fullName>
         <label>Blocked Users (Comma-separated IDs)</label>
-        <length>1000</length>
+        <length>255</length>
         <type>Text</type>
     </fields>
     <fields>

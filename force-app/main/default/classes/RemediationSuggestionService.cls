@@ -167,7 +167,7 @@ public with sharing class RemediationSuggestionService {
                 List<Remediation_Suggestion__c> suggestions = generateSuggestions(gapId);
                 totalGenerated += suggestions.size();
             } catch (Exception e) {
-                System.debug(LoggingLevel.WARN, 'Failed to generate suggestions for gap ' + gapId + ': ' + e.getMessage());
+                ElaroLogger.warn( 'Failed to generate suggestions for gap ' + gapId + ': ' + e.getMessage());
             }
         }
 

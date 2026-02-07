@@ -14,17 +14,13 @@ import ElaroDrillDownViewer from "c/elaroDrillDownViewer";
 import getRecords from "@salesforce/apex/ElaroDrillDownController.getRecords";
 import exportToCSV from "@salesforce/apex/ElaroDrillDownController.exportToCSV";
 
-jest.mock(
-  "@salesforce/apex/ElaroDrillDownController.getRecords",
-  () => ({ default: jest.fn() }),
-  { virtual: true }
-);
+jest.mock("@salesforce/apex/ElaroDrillDownController.getRecords", () => ({ default: jest.fn() }), {
+  virtual: true,
+});
 
-jest.mock(
-  "@salesforce/apex/ElaroDrillDownController.exportToCSV",
-  () => ({ default: jest.fn() }),
-  { virtual: true }
-);
+jest.mock("@salesforce/apex/ElaroDrillDownController.exportToCSV", () => ({ default: jest.fn() }), {
+  virtual: true,
+});
 
 jest.mock(
   "lightning/platformShowToastEvent",

@@ -12,7 +12,7 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
     private Integer errors = 0;
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
-        System.debug(LoggingLevel.INFO, 'GLBA Batch start() - Job ID: ' + bc.getJobId());
+        ElaroLogger.info( 'GLBA Batch start() - Job ID: ' + bc.getJobId());
 
         try {
             // Find contacts due for annual notice
@@ -28,7 +28,7 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
                 ORDER BY Next_Annual_Notice_Due__c ASC
             ]);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Query failed: ' + e.getMessage());
+            ElaroLogger.error( 'Query failed: ' + e.getMessage());
             SchedulerErrorHandler.logError('ElaroGLBAAnnualNoticeBatch.start', e);
             throw e;
         }
@@ -61,7 +61,7 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
                 noticesSent++;
             } catch (Exception e) {
                 errors++;
-                System.debug(LoggingLevel.ERROR,
+                ElaroLogger.error(
                     '[ElaroGLBAAnnualNoticeBatch] Error processing contact ' +
                     oldNotice.Contact__c + ': ' + e.getMessage());
             }
@@ -73,7 +73,7 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
                 if (!results[i].isSuccess()) {
                     errors++;
                     for (Database.Error err : results[i].getErrors()) {
-                        System.debug(LoggingLevel.ERROR, 'Insert failed for notice ' + i + ': ' + err.getMessage());
+                        ElaroLogger.error( 'Insert failed for notice ' + i + ': ' + err.getMessage());
                     }
                 } else {
                     noticesSent++;
@@ -105,7 +105,7 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
     }
 
     public void finish(Database.BatchableContext bc) {
-        System.debug(LoggingLevel.INFO, 'GLBA Batch finish() - Notices sent: ' + noticesSent + ', Errors: ' + errors);
+        ElaroLogger.info( 'GLBA Batch finish() - Notices sent: ' + noticesSent + ', Errors: ' + errors);
 
         // Query job status
         AsyncApexJob job;
@@ -117,7 +117,7 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
                 LIMIT 1
             ];
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to query job status: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to query job status: ' + e.getMessage());
             job = null;
         }
 
@@ -138,11 +138,11 @@ public with sharing class ElaroGLBAAnnualNoticeBatch implements Database.Batchab
             try {
                 Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, 'Failed to send notification email: ' + e.getMessage());
+                ElaroLogger.error( 'Failed to send notification email: ' + e.getMessage());
             }
         }
 
-        System.debug(LoggingLevel.INFO,
+        ElaroLogger.info(
             '[ElaroGLBAAnnualNoticeBatch] Completed. Sent: ' + noticesSent + ', Errors: ' + errors);
     }
 }

@@ -151,7 +151,7 @@ public with sharing class ElaroConsentWithdrawalHandler {
         if (!erasureRequests.isEmpty()) {
             Database.insert(erasureRequests, AccessLevel.USER_MODE);
 
-            System.debug(LoggingLevel.INFO,
+            ElaroLogger.info(
                 '[ConsentWithdrawalHandler] Created ' + erasureRequests.size() +
                 ' erasure requests from consent withdrawals');
         }

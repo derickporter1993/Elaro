@@ -136,7 +136,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             result.compliant = result.score >= 80;
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Error evaluating framework ' + framework + ': ' + e.getMessage());
+            ElaroLogger.warn( 'Error evaluating framework ' + framework + ': ' + e.getMessage());
             result.score = 0;
             result.compliant = false;
         }
@@ -207,7 +207,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             insert log;
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to create daily summary: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to create daily summary: ' + e.getMessage());
         }
     }
 
@@ -249,7 +249,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             ElaroSecurityUtils.validateCRUDAccess('Compliance_Gap__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert gap;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to create score alert: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to create score alert: ' + e.getMessage());
         }
     }
 
@@ -271,7 +271,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             ElaroSecurityUtils.validateCRUDAccess('Compliance_Gap__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert gap;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to create compliance alert: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to create compliance alert: ' + e.getMessage());
         }
     }
 
@@ -289,7 +289,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert log;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to log execution: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to log execution: ' + e.getMessage());
         }
     }
 
@@ -306,7 +306,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert log;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to log error: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to log error: ' + e.getMessage());
         }
     }
 

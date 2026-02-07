@@ -26,6 +26,10 @@ export default class JiraCreateModal extends LightningElement {
     return this.isLoading || !this.isConfigured;
   }
 
+  get isNotConfigured() {
+    return !this.isConfigured;
+  }
+
   connectedCallback() {
     this.checkConfiguration();
   }
@@ -33,7 +37,7 @@ export default class JiraCreateModal extends LightningElement {
   async checkConfiguration() {
     try {
       this.isConfigured = await isConfigured();
-    } catch (err) {
+    } catch {
       this.isConfigured = false;
     }
   }

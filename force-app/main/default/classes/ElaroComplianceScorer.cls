@@ -105,7 +105,7 @@ public with sharing class ElaroComplianceScorer {
             result.topRisks = getTopRisks();
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroComplianceScorer] Error calculating readiness score - ' +
                 'Component: calculateReadinessScore, ' +
                 'Error: ' + e.getMessage() + ', ' +
@@ -197,7 +197,7 @@ public with sharing class ElaroComplianceScorer {
                 usersWithViewAll = (Integer)viewAllResults[0].get('assignmentCount');
             }
         } catch (SecurityException e) {
-            System.debug(LoggingLevel.ERROR, '[ElaroComplianceScorer] Security exception calculating permission sprawl: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroComplianceScorer] Security exception calculating permission sprawl: ' + e.getMessage());
             factor.score = 0;
             factor.status = 'ERROR';
             factor.detail = 'Security exception: Unable to query permission data.';
@@ -382,7 +382,7 @@ public with sharing class ElaroComplianceScorer {
             activePolicyCount = Database.countQuery('SELECT COUNT() FROM Compliance_Policy__mdt WHERE Is_Active__c = true');
         } catch (Exception e) {
             // Custom metadata may not exist or have different schema
-            System.debug(LoggingLevel.WARN, '[ElaroComplianceScorer] Could not query policies: ' + e.getMessage());
+            ElaroLogger.warn( '[ElaroComplianceScorer] Could not query policies: ' + e.getMessage());
             activePolicyCount = 0;
         }
         
@@ -451,7 +451,7 @@ public with sharing class ElaroComplianceScorer {
                 modifyAllUsers = (Integer)modifyAllResults[0].get('assignmentCount');
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, '[ElaroComplianceScorer] Error querying modify all users: ' + e.getMessage());
+            ElaroLogger.warn( '[ElaroComplianceScorer] Error querying modify all users: ' + e.getMessage());
         }
         
         if (modifyAllUsers > 5) {
@@ -479,7 +479,7 @@ public with sharing class ElaroComplianceScorer {
                 inactiveUsersWithAccess = (Integer)inactiveResults[0].get('userCount');
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, '[ElaroComplianceScorer] Error querying inactive users: ' + e.getMessage());
+            ElaroLogger.warn( '[ElaroComplianceScorer] Error querying inactive users: ' + e.getMessage());
         }
         
         if (inactiveUsersWithAccess > 0) {

@@ -267,7 +267,7 @@ public with sharing class TeamsNotifier {
     private static String validateAndBuildUrl(String baseUrl, String recordId, String path) {
         // Validate recordId format (Salesforce ID: 15 or 18 characters, alphanumeric)
         if (String.isBlank(recordId) || !Pattern.matches('^[a-zA-Z0-9]{15,18}$', recordId)) {
-            System.debug(LoggingLevel.WARN, 'TeamsNotifier: Invalid recordId format: ' + recordId);
+            ElaroLogger.warn( 'TeamsNotifier: Invalid recordId format: ' + recordId);
             // Return safe default URL without ID parameter
             return baseUrl + path;
         }

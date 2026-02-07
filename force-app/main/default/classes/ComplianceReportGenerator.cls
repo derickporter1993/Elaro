@@ -50,7 +50,7 @@ public with sharing class ComplianceReportGenerator {
      */
     @AuraEnabled
     public static ReportData generateReportData(String frameworkFilter) {
-        System.debug(LoggingLevel.INFO, LOG_PREFIX + 'Generating report data for: ' + frameworkFilter);
+        ElaroLogger.info( LOG_PREFIX + 'Generating report data for: ' + frameworkFilter);
 
         ReportData data = new ReportData();
         data.framework = String.isNotBlank(frameworkFilter) ? frameworkFilter : 'ALL';
@@ -70,7 +70,7 @@ public with sharing class ComplianceReportGenerator {
             data.scoreTrend = getScoreTrend(data.framework);
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, LOG_PREFIX + 'Error generating report: ' + e.getMessage());
+            ElaroLogger.error( LOG_PREFIX + 'Error generating report: ' + e.getMessage());
             // Return partial data rather than failing completely
             if (data.scoreResult == null) {
                 data.scoreResult = new ElaroComplianceScorer.ScoreResult();
@@ -94,6 +94,7 @@ public with sharing class ComplianceReportGenerator {
             query += 'AND Framework__c = :framework ';
         }
 
+        query += 'WITH SECURITY_ENFORCED ';
         query += 'ORDER BY Severity__c DESC, CreatedDate DESC ';
         query += 'LIMIT 200';
 
@@ -165,7 +166,7 @@ public with sharing class ComplianceReportGenerator {
             }
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, LOG_PREFIX + 'Could not retrieve score trend: ' + e.getMessage());
+            ElaroLogger.warn( LOG_PREFIX + 'Could not retrieve score trend: ' + e.getMessage());
         }
 
         return trend;
