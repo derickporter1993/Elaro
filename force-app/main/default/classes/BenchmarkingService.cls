@@ -212,13 +212,14 @@ public with sharing class BenchmarkingService {
     
     private static Decimal calculateProcessMaturity() {
         // Check for documented policies
+        // Custom Metadata: SECURITY_ENFORCED not applicable to __mdt objects
         Integer policyCount = [SELECT COUNT() FROM Compliance_Policy__mdt];
         return Math.min(100, policyCount * 5);
     }
     
     private static Decimal calculateTechnologyMaturity() {
         // Check for automation and tooling
-        Integer auditTrailEntries = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30 LIMIT 10000];
+        Integer auditTrailEntries = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30 WITH SECURITY_ENFORCED LIMIT 10000];
         return Math.min(100, 70 + (auditTrailEntries > 1000 ? 30 : auditTrailEntries / 33));
     }
     
@@ -229,7 +230,7 @@ public with sharing class BenchmarkingService {
     
     private static Decimal calculateGovernanceMaturity() {
         // Check for governance structures
-        Integer adminUsers = [SELECT COUNT() FROM User WHERE Profile.Name LIKE '%Admin%' AND IsActive = true];
+        Integer adminUsers = [SELECT COUNT() FROM User WHERE Profile.Name LIKE '%Admin%' AND IsActive = true WITH SECURITY_ENFORCED];
         return adminUsers < 10 ? 80 : 60; // Fewer admins = better governance
     }
     

@@ -229,6 +229,7 @@ public with sharing class MobileAlertPublisher {
             List<CustomNotificationType> notifTypes = [
                 SELECT Id FROM CustomNotificationType
                 WHERE DeveloperName = :typeName
+                WITH SECURITY_ENFORCED
                 LIMIT 1
             ];
 
@@ -336,6 +337,7 @@ public with sharing class MobileAlertPublisher {
         List<CronTrigger> jobs = [
             SELECT Id FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + jobPrefix + '%')
+            WITH SECURITY_ENFORCED
         ];
 
         for (CronTrigger job : jobs) {
@@ -405,6 +407,7 @@ public with sharing class MobileAlertPublisher {
                 SELECT Id, Name, Framework__c, Severity__c, Gap_Description__c, Alert_Snoozed_Until__c
                 FROM Compliance_Gap__c
                 WHERE Id = :alertId
+                WITH SECURITY_ENFORCED
                 LIMIT 1
             ];
 

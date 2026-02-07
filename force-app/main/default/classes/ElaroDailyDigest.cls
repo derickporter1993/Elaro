@@ -45,7 +45,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         String jobName = 'Elaro_Daily_Digest_' + UserInfo.getUserId();
         
         // Remove existing job if present
-        for (CronTrigger ct : [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName]) {
+        for (CronTrigger ct : [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName WITH SECURITY_ENFORCED]) {
             System.abortJob(ct.Id);
         }
         
@@ -116,6 +116,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             SELECT Evidence_Type__c eventType, COUNT(Id) cnt, Status__c status
             FROM Elaro_Evidence_Item__c
             WHERE CreatedDate >= :cutoffTime
+            WITH SECURITY_ENFORCED
             GROUP BY Evidence_Type__c, Status__c
             LIMIT :QUERY_LIMIT
         ];
@@ -148,6 +149,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             SELECT Action, Section
             FROM SetupAuditTrail
             WHERE CreatedDate >= :cutoffTime
+            WITH SECURITY_ENFORCED
             LIMIT :QUERY_LIMIT
         ];
         
@@ -174,6 +176,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             FROM SetupAuditTrail
             WHERE CreatedDate >= :cutoffTime
             AND (Action LIKE '%permission%' OR Action LIKE '%delete%' OR Action LIKE '%LoginAs%')
+            WITH SECURITY_ENFORCED
             ORDER BY CreatedDate DESC
             LIMIT :MAX_TOP_RISKS
         ];
@@ -377,9 +380,10 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         List<String> recipients = new List<String>();
         
         for (User u : [
-            SELECT Email FROM User 
-            WHERE IsActive = true 
+            SELECT Email FROM User
+            WHERE IsActive = true
             AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.Name = 'Elaro_Admin')
+            WITH SECURITY_ENFORCED
             LIMIT 10
         ]) {
             recipients.add(u.Email);

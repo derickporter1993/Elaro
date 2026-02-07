@@ -361,6 +361,7 @@ public with sharing class BreachDeadlineMonitor implements Schedulable {
             SELECT Id, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + JOB_NAME + '%')
+            WITH SECURITY_ENFORCED
         ];
 
         for (CronTrigger job : jobs) {

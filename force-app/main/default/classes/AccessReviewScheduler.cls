@@ -248,6 +248,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             SELECT Id, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + JOB_NAME + '%')
+            WITH SECURITY_ENFORCED
         ];
 
         for (CronTrigger job : jobs) {
@@ -265,6 +266,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             SELECT Id, CronJobDetail.Name, State, NextFireTime, PreviousFireTime
             FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + JOB_NAME + '%')
+            WITH SECURITY_ENFORCED
         ];
 
         for (CronTrigger job : jobs) {

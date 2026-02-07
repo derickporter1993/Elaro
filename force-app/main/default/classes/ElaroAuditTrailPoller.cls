@@ -63,8 +63,9 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
      */
     public static void unschedule() {
         List<CronTrigger> jobs = [
-            SELECT Id FROM CronTrigger 
+            SELECT Id FROM CronTrigger
             WHERE CronJobDetail.Name = :JOB_NAME
+            WITH SECURITY_ENFORCED
         ];
         
         for (CronTrigger job : jobs) {

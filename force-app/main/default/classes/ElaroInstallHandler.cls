@@ -180,6 +180,7 @@ global without sharing class ElaroInstallHandler implements InstallHandler {
                 FROM PermissionSetAssignment
                 WHERE PermissionSet.Name = 'Elaro_Admin'
                 AND Assignee.IsActive = true
+                WITH SECURITY_ENFORCED
                 LIMIT 10
             ];
 

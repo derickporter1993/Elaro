@@ -218,6 +218,7 @@ public with sharing class HIPAAModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :auditPackageId
             AND Evidence_Type__c IN ('PermissionSet', 'Profile', 'AccessReview')
+            WITH SECURITY_ENFORCED
             LIMIT 100
         ];
         
@@ -225,6 +226,7 @@ public with sharing class HIPAAModule implements IComplianceModule {
         Integer excessivePermUsers = [
             SELECT COUNT() FROM PermissionSetAssignment
             WHERE PermissionSet.PermissionsModifyAllData = true
+            WITH SECURITY_ENFORCED
             LIMIT 100
         ];
         
@@ -246,6 +248,7 @@ public with sharing class HIPAAModule implements IComplianceModule {
         Integer auditTrailCount = [
             SELECT COUNT() FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
+            WITH SECURITY_ENFORCED
             LIMIT 1000
         ];
         
@@ -294,6 +297,7 @@ public with sharing class HIPAAModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :auditPackageId
             AND Evidence_Type__c IN ('Incident', 'SecurityIncident', 'Alert')
+            WITH SECURITY_ENFORCED
             LIMIT 100
         ];
         
@@ -315,6 +319,7 @@ public with sharing class HIPAAModule implements IComplianceModule {
         Integer evidenceCount = [
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :auditPackageId
+            WITH SECURITY_ENFORCED
             LIMIT 100
         ];
         
