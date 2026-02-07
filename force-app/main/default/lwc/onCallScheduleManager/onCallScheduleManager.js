@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from "lwc";
+import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
 import getCurrentOnCallUsers from "@salesforce/apex/MobileAlertPublisher.getCurrentOnCallUsers";
@@ -48,20 +48,20 @@ const COLUMNS = [
 ];
 
 export default class OnCallScheduleManager extends LightningElement {
-  @track schedules = [];
-  @track currentOnCall = [];
-  @track isLoading = true;
-  @track isModalOpen = false;
-  @track isDeleteModalOpen = false;
-  @track selectedSchedule = null;
-  @track isEditMode = false;
+  schedules = [];
+  currentOnCall = [];
+  isLoading = true;
+  isModalOpen = false;
+  isDeleteModalOpen = false;
+  selectedSchedule = null;
+  isEditMode = false;
 
   columns = COLUMNS;
   wiredSchedulesResult;
   wiredOnCallResult;
 
   // Form fields
-  @track formData = {
+  formData = {
     name: "",
     userId: "",
     rotationName: "Primary",

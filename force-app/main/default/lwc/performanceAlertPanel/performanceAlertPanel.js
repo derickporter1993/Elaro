@@ -1,14 +1,14 @@
-import { LightningElement, track } from "lwc";
+import { LightningElement } from "lwc";
 import { subscribe, onError } from "lightning/empApi";
 import getRecentAlerts from "@salesforce/apex/AlertHistoryService.getRecentAlerts";
 
 export default class PerformanceAlertPanel extends LightningElement {
   channelName = "/event/Performance_Alert__e";
   subscription = {};
-  @track rows = [];
-  @track isLoading = true;
-  @track hasError = false;
-  @track errorMessage = "";
+  rows = [];
+  isLoading = true;
+  hasError = false;
+  errorMessage = "";
   pendingEvents = []; // Buffer for batching incoming events
   debounceTimer = null; // Timer for debouncing event processing
   maxRows = 50; // Cap array size to prevent memory issues

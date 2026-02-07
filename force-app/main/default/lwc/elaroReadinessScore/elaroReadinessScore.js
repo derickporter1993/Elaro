@@ -1,20 +1,20 @@
-import { LightningElement, wire, track } from "lwc";
+import { LightningElement, wire } from "lwc";
 import calculateReadinessScore from "@salesforce/apex/ElaroComplianceScorer.calculateReadinessScore";
 import generateEvidencePack from "@salesforce/apex/ElaroLegalDocumentGenerator.generateLegalAttestation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
 
 export default class ElaroReadinessScore extends NavigationMixin(LightningElement) {
-  @track score = 0;
-  @track accessScore = 0;
-  @track configScore = 0;
-  @track automationScore = 0;
-  @track evidenceScore = 0;
-  @track scoreStatus = "Calculating...";
-  @track currentStep = "access";
-  @track isLoading = true;
-  @track hasError = false;
-  @track errorMessage = "";
+  score = 0;
+  accessScore = 0;
+  configScore = 0;
+  automationScore = 0;
+  evidenceScore = 0;
+  scoreStatus = "Calculating...";
+  currentStep = "access";
+  isLoading = true;
+  hasError = false;
+  errorMessage = "";
 
   get notLoading() {
     return !this.isLoading;
@@ -113,9 +113,9 @@ export default class ElaroReadinessScore extends NavigationMixin(LightningElemen
         : "slds-text-color_error slds-text-heading_medium";
   }
 
-  @track selectedFramework = "";
-  @track frameworkMetrics = {};
-  @track frameworkRecommendations = [];
+  selectedFramework = "";
+  frameworkMetrics = {};
+  frameworkRecommendations = [];
 
   handleFrameworkChange(event) {
     this.selectedFramework = event.detail?.framework || "";

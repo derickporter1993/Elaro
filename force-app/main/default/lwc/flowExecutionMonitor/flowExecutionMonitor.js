@@ -1,12 +1,12 @@
-import { LightningElement, track } from "lwc";
+import { LightningElement } from "lwc";
 import getTopFlows from "@salesforce/apex/FlowExecutionStats.getTopFlows";
 import PollingManager from "c/pollingManager";
 
 export default class FlowExecutionMonitor extends LightningElement {
-  @track rows = [];
-  @track isLoading = true;
-  @track hasError = false;
-  @track errorMessage = "";
+  rows = [];
+  isLoading = true;
+  hasError = false;
+  errorMessage = "";
   columns = [
     { label: "Flow", fieldName: "flowName" },
     { label: "Runs", fieldName: "runs", type: "number" },

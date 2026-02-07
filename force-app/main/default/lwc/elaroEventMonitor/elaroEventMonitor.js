@@ -3,8 +3,8 @@ import { subscribe, unsubscribe, onError } from "lightning/empApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class ElaroEventMonitor extends LightningElement {
-  @track events = [];
-  @track isLoading = false;
+  events = [];
+  isLoading = false;
   subscription = {};
   channelName = "/event/Elaro_Event__e";
 

@@ -1,4 +1,4 @@
-import { LightningElement, api, wire, track } from "lwc";
+import { LightningElement, api, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
 import getSuggestions from "@salesforce/apex/RemediationSuggestionService.getSuggestions";
@@ -31,13 +31,13 @@ const TYPE_ICONS = {
 
 export default class RemediationSuggestionCard extends LightningElement {
   @api recordId; // Compliance_Gap__c record ID
-  @track suggestions = [];
-  @track isLoading = false;
-  @track isRejectModalOpen = false;
-  @track isManualApplyModalOpen = false;
-  @track selectedSuggestion = null;
-  @track rejectionReason = "";
-  @track manualNotes = "";
+  suggestions = [];
+  isLoading = false;
+  isRejectModalOpen = false;
+  isManualApplyModalOpen = false;
+  selectedSuggestion = null;
+  rejectionReason = "";
+  manualNotes = "";
 
   wiredSuggestionsResult;
 

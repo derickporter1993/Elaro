@@ -1,26 +1,26 @@
-import { LightningElement, track, wire } from "lwc";
+import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getTimeSeries from "@salesforce/apex/ElaroTrendController.getTimeSeries";
 import getDateFields from "@salesforce/apex/ElaroTrendController.getDateFields";
 import getMetricFields from "@salesforce/apex/ElaroTrendController.getMetricFields";
 
 export default class ElaroTrendAnalyzer extends LightningElement {
-  @track selectedObject = "";
-  @track objectOptions = [
+  selectedObject = "";
+  objectOptions = [
     { label: "Account", value: "Account" },
     { label: "Opportunity", value: "Opportunity" },
     { label: "Case", value: "Case" },
   ];
-  @track dateFields = [];
-  @track metricFields = [];
-  @track dateField = "";
-  @track metricField = "";
-  @track granularity = "month";
-  @track monthsBack = 12;
-  @track trendData = null;
-  @track isLoading = false;
-  @track hasError = false;
-  @track errorMessage = "";
+  dateFields = [];
+  metricFields = [];
+  dateField = "";
+  metricField = "";
+  granularity = "month";
+  monthsBack = 12;
+  trendData = null;
+  isLoading = false;
+  hasError = false;
+  errorMessage = "";
 
   granularityOptions = [
     { label: "Day", value: "day" },

@@ -1,18 +1,18 @@
-import { LightningElement, api, track } from "lwc";
+import { LightningElement, api } from "lwc";
 
 export default class ElaroROICalculator extends LightningElement {
   @api title = "ROI Calculator";
-  @track orgSize = 500;
-  @track industry = "healthcare";
-  @track currentAuditSpend = 150000;
-  @track currentAuditPrepHours = 600;
-  @track hourlyRate = 200;
+  orgSize = 500;
+  industry = "healthcare";
+  currentAuditSpend = 150000;
+  currentAuditPrepHours = 600;
+  hourlyRate = 200;
 
-  @track roiResults = null;
-  @track showResults = false;
-  @track isLoading = false;
-  @track hasError = false;
-  @track errorMessage = "";
+  roiResults = null;
+  showResults = false;
+  isLoading = false;
+  hasError = false;
+  errorMessage = "";
 
   get isEmpty() {
     return !this.isLoading && !this.hasError && !this.showResults;

@@ -1,12 +1,12 @@
-import { LightningElement, track, wire } from "lwc";
+import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getKPIMetrics from "@salesforce/apex/ElaroExecutiveKPIController.getKPIMetrics";
 
 export default class ElaroExecutiveKPIDashboard extends LightningElement {
-  @track kpiMetrics = [];
-  @track isLoading = false;
-  @track hasError = false;
-  @track errorMessage = "";
+  kpiMetrics = [];
+  isLoading = false;
+  hasError = false;
+  errorMessage = "";
 
   @wire(getKPIMetrics, { metadataRecordIds: "" })
   wiredKPIs({ error, data }) {

@@ -1,11 +1,11 @@
-import { LightningElement, track } from "lwc";
+import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import fetchGovernorStats from "@salesforce/apex/LimitMetrics.fetchGovernorStats";
 import evaluateAndPublish from "@salesforce/apex/PerformanceRuleEngine.evaluateAndPublish";
 import PollingManager from "c/pollingManager";
 
 export default class SystemMonitorDashboard extends LightningElement {
-  @track stats;
+  stats;
   pollingManager = null;
 
   get cpuPct() {

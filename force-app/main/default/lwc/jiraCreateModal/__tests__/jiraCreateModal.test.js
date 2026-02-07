@@ -86,11 +86,13 @@ describe("c-jira-create-modal", () => {
 
     element.open();
     await flushPromises();
+    await flushPromises();
 
     const handler = jest.fn();
     element.addEventListener("issuecreated", handler);
 
     const createBtn = element.shadowRoot.querySelector('lightning-button[label="Create Issue"]');
+    expect(createBtn).not.toBeNull();
     createBtn.click();
     await flushPromises();
 
@@ -108,8 +110,10 @@ describe("c-jira-create-modal", () => {
 
     element.open();
     await flushPromises();
+    await flushPromises();
 
     const createBtn = element.shadowRoot.querySelector('lightning-button[label="Create Issue"]');
+    expect(createBtn).not.toBeNull();
     createBtn.click();
     await flushPromises();
 
@@ -123,8 +127,10 @@ describe("c-jira-create-modal", () => {
 
     element.open();
     await flushPromises();
+    await flushPromises();
 
     const createBtn = element.shadowRoot.querySelector('lightning-button[label="Create Issue"]');
+    expect(createBtn).not.toBeNull();
     createBtn.click();
     await flushPromises();
 
@@ -146,8 +152,10 @@ describe("c-jira-create-modal", () => {
 
     element.open();
     await flushPromises();
+    await flushPromises();
 
     const createBtn = element.shadowRoot.querySelector('lightning-button[label="Create Issue"]');
+    expect(createBtn).not.toBeNull();
     expect(createBtn.disabled).toBe(true);
   });
 
@@ -162,6 +170,7 @@ describe("c-jira-create-modal", () => {
 
     element.open();
     await flushPromises();
+    await flushPromises();
 
     const warning = element.shadowRoot.querySelector(".slds-alert_warning");
     expect(warning).not.toBeNull();
@@ -173,8 +182,10 @@ describe("c-jira-create-modal", () => {
 
     element.open();
     await flushPromises();
+    await flushPromises();
 
     const cancelBtn = element.shadowRoot.querySelector('lightning-button[label="Cancel"]');
+    expect(cancelBtn).not.toBeNull();
     cancelBtn.click();
     await flushPromises();
 

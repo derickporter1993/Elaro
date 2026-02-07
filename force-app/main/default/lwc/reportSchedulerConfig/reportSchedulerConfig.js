@@ -1,4 +1,4 @@
-import { LightningElement, track, wire } from "lwc";
+import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
 import getScheduledReports from "@salesforce/apex/ComplianceReportScheduler.getScheduledReports";
@@ -7,17 +7,17 @@ import cancelScheduledReport from "@salesforce/apex/ComplianceReportScheduler.ca
 import sendTestReport from "@salesforce/apex/ComplianceReportScheduler.sendTestReport";
 
 export default class ReportSchedulerConfig extends LightningElement {
-  @track scheduledReports = [];
-  @track isLoading = false;
-  @track showNewReportModal = false;
-  @track showConfirmModal = false;
-  @track confirmMessage = "";
-  @track confirmAction = null;
+  scheduledReports = [];
+  isLoading = false;
+  showNewReportModal = false;
+  showConfirmModal = false;
+  confirmMessage = "";
+  confirmAction = null;
 
   // New report form fields
-  @track newReportFrequency = "WEEKLY";
-  @track newReportFramework = "ALL";
-  @track newReportRecipients = "";
+  newReportFrequency = "WEEKLY";
+  newReportFramework = "ALL";
+  newReportRecipients = "";
 
   // Wire result for refresh
   wiredReportsResult;

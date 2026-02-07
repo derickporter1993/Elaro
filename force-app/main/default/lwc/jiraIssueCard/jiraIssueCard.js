@@ -1,4 +1,4 @@
-import { LightningElement, api, wire, track } from "lwc";
+import { LightningElement, api, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
 import getIssueStatus from "@salesforce/apex/JiraIntegrationService.getIssueStatus";
@@ -12,14 +12,14 @@ export default class JiraIssueCard extends LightningElement {
   @api jiraKey; // Jira issue key (e.g., COMPLIANCE-123)
   @api jiraUrl; // Direct link to Jira issue
 
-  @track issue = null;
-  @track transitions = [];
-  @track isLoading = false;
-  @track error = null;
-  @track showCommentModal = false;
-  @track showTransitionModal = false;
-  @track commentText = "";
-  @track selectedTransition = "";
+  issue = null;
+  transitions = [];
+  isLoading = false;
+  error = null;
+  showCommentModal = false;
+  showTransitionModal = false;
+  commentText = "";
+  selectedTransition = "";
 
   wiredIssueResult;
 

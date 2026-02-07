@@ -1,4 +1,4 @@
-import { LightningElement, track } from "lwc";
+import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
 
@@ -75,28 +75,28 @@ const SEVERITY_OPTIONS = [
 ];
 
 export default class ElaroSetupWizard extends NavigationMixin(LightningElement) {
-  @track currentStep = "1";
+  currentStep = "1";
 
   // Framework selection
-  @track selectedFrameworks = [];
+  selectedFrameworks = [];
 
   // Notification settings
-  @track enableEmailNotifications = true;
-  @track notificationEmail = "";
-  @track enableSlackNotifications = false;
-  @track slackWebhookUrl = "";
-  @track scoreThreshold = "70";
-  @track selectedSeverities = ["CRITICAL", "HIGH"];
+  enableEmailNotifications = true;
+  notificationEmail = "";
+  enableSlackNotifications = false;
+  slackWebhookUrl = "";
+  scoreThreshold = "70";
+  selectedSeverities = ["CRITICAL", "HIGH"];
 
   // AI settings
-  @track enableAI = true;
-  @track requireApproval = true;
-  @track autoRemediate = false;
-  @track confidenceThreshold = 85;
+  enableAI = true;
+  requireApproval = true;
+  autoRemediate = false;
+  confidenceThreshold = 85;
 
   // Setup state
-  @track isSaving = false;
-  @track setupComplete = false;
+  isSaving = false;
+  setupComplete = false;
 
   scoreThresholdOptions = SCORE_THRESHOLD_OPTIONS;
   severityOptions = SEVERITY_OPTIONS;

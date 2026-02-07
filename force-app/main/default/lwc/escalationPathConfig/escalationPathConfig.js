@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from "lwc";
+import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
 import _getEscalationPath from "@salesforce/apex/MobileAlertPublisher.getEscalationPath";
@@ -14,16 +14,16 @@ const LEVEL_BADGES = {
 };
 
 export default class EscalationPathConfig extends LightningElement {
-  @track paths = [];
-  @track isLoading = true;
-  @track isModalOpen = false;
-  @track isDeleteModalOpen = false;
-  @track selectedPath = null;
-  @track isEditMode = false;
+  paths = [];
+  isLoading = true;
+  isModalOpen = false;
+  isDeleteModalOpen = false;
+  selectedPath = null;
+  isEditMode = false;
 
   wiredPathsResult;
 
-  @track formData = {
+  formData = {
     userId: "",
     level: 1,
     role: "Team Lead",

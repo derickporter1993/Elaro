@@ -1,11 +1,11 @@
-import { LightningElement, api, track } from "lwc";
+import { LightningElement, api } from "lwc";
 
 export default class FrameworkSelector extends LightningElement {
   @api frameworks = [];
   selectedFramework;
-  @track isLoading = false;
-  @track hasError = false;
-  @track errorMessage = "";
+  isLoading = false;
+  hasError = false;
+  errorMessage = "";
 
   get hasFrameworks() {
     return this.frameworks && this.frameworks.length > 0;
