@@ -34,10 +34,10 @@ public with sharing class RetentionEnforcementBatch implements Database.Batchabl
         }
         
         // Trigger erasure workflows for records exceeding retention
-        System.debug(LoggingLevel.INFO, 'Processing ' + recordsToErase.size() + ' records for retention enforcement');
+        ElaroLogger.info( 'Processing ' + recordsToErase.size() + ' records for retention enforcement');
     }
     
     public void finish(Database.BatchableContext bc) {
-        System.debug(LoggingLevel.INFO, 'RetentionEnforcementBatch completed');
+        ElaroLogger.info( 'RetentionEnforcementBatch completed');
     }
 }

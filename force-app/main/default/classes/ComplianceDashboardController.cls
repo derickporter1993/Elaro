@@ -36,13 +36,13 @@ public with sharing class ComplianceDashboardController {
                 
                 summary.frameworks.add(fwSummary);
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, 'Error evaluating framework ' + framework + ': ' + e.getMessage());
+                ElaroLogger.error( 'Error evaluating framework ' + framework + ': ' + e.getMessage());
             }
         }
         
         // Get recent gaps
-        summary.recentGaps = [
-            SELECT Id, Framework__c, Policy_Reference__c, Severity__c, Status__c, 
+        List<Compliance_Gap__c> gaps = [
+            SELECT Id, Framework__c, Policy_Reference__c, Severity__c, Status__c,
                    Detected_Date__c, Risk_Score__c
             FROM Compliance_Gap__c
             WHERE Status__c != 'VERIFIED'
@@ -50,16 +50,24 @@ public with sharing class ComplianceDashboardController {
             ORDER BY Detected_Date__c DESC
             LIMIT 10
         ];
-        
+        summary.recentGaps = (List<Compliance_Gap__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            gaps
+        );
+
         // Get recent evidence
-        summary.recentEvidence = [
+        List<Compliance_Evidence__c> evidence = [
             SELECT Id, Framework__c, Evidence_Type__c, Evidence_Date__c, Status__c, Compliance_Score__c
             FROM Compliance_Evidence__c
             WITH SECURITY_ENFORCED
             ORDER BY Evidence_Date__c DESC
             LIMIT 10
         ];
-        
+        summary.recentEvidence = (List<Compliance_Evidence__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            evidence
+        );
+
         return summary;
     }
     
@@ -80,7 +88,7 @@ public with sharing class ComplianceDashboardController {
         data.evaluation = ComplianceFrameworkService.evaluateFramework(framework);
         
         // Get all gaps for this framework
-        data.gaps = [
+        List<Compliance_Gap__c> gaps = [
             SELECT Id, Policy_Reference__c, Gap_Description__c, Severity__c, Status__c,
                    Risk_Score__c, Detected_Date__c, Remediation_Owner__c, Target_Remediation_Date__c
             FROM Compliance_Gap__c
@@ -88,9 +96,13 @@ public with sharing class ComplianceDashboardController {
             WITH SECURITY_ENFORCED
             ORDER BY Risk_Score__c DESC NULLS LAST
         ];
-        
+        data.gaps = (List<Compliance_Gap__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            gaps
+        );
+
         // Get evidence for this framework
-        data.evidence = [
+        List<Compliance_Evidence__c> evidence = [
             SELECT Id, Evidence_Type__c, Evidence_Date__c, Status__c, Compliance_Score__c, Description__c
             FROM Compliance_Evidence__c
             WHERE Framework__c = :framework
@@ -98,7 +110,11 @@ public with sharing class ComplianceDashboardController {
             ORDER BY Evidence_Date__c DESC
             LIMIT 50
         ];
-        
+        data.evidence = (List<Compliance_Evidence__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            evidence
+        );
+
         return data;
     }
     

@@ -74,7 +74,7 @@ public with sharing class PerformanceRuleEngine {
 
             return out;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'PerformanceRuleEngine: Error in evaluateAndPublish. Error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
+            ElaroLogger.error( 'PerformanceRuleEngine: Error in evaluateAndPublish. Error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
             out.message = 'Error evaluating performance: ' + e.getMessage();
             return out;
         }
@@ -89,7 +89,7 @@ public with sharing class PerformanceRuleEngine {
         try {
             s = CCX_Settings__c.getInstance();
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'CCX_Settings__c not accessible or not configured: ' + e.getMessage());
+            ElaroLogger.warn( 'CCX_Settings__c not accessible or not configured: ' + e.getMessage());
         }
 
         if (s != null) {
@@ -130,12 +130,12 @@ public with sharing class PerformanceRuleEngine {
             Integer intValue = Integer.valueOf(value);
             // Guard against negative or unreasonably large values
             if (intValue < 0 || intValue > 100000) {
-                System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: Threshold value out of range: ' + intValue + ', using default: ' + defaultValue);
+                ElaroLogger.warn( 'PerformanceRuleEngine: Threshold value out of range: ' + intValue + ', using default: ' + defaultValue);
                 return defaultValue;
             }
             return intValue;
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: Failed to parse threshold value: ' + value + ', using default: ' + defaultValue);
+            ElaroLogger.warn( 'PerformanceRuleEngine: Failed to parse threshold value: ' + value + ', using default: ' + defaultValue);
             return defaultValue;
         }
     }
@@ -146,19 +146,19 @@ public with sharing class PerformanceRuleEngine {
     private static void validateThresholds(Thresholds t) {
         // Ensure warn < crit for all metrics
         if (t.cpuWarn >= t.cpuCrit) {
-            System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: CPU warn threshold >= crit, adjusting');
+            ElaroLogger.warn( 'PerformanceRuleEngine: CPU warn threshold >= crit, adjusting');
             t.cpuWarn = t.cpuCrit - 1000;
         }
         if (t.heapWarn >= t.heapCrit) {
-            System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: Heap warn threshold >= crit, adjusting');
+            ElaroLogger.warn( 'PerformanceRuleEngine: Heap warn threshold >= crit, adjusting');
             t.heapWarn = t.heapCrit - 500;
         }
         if (t.soqlWarn >= t.soqlCrit) {
-            System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: SOQL warn threshold >= crit, adjusting');
+            ElaroLogger.warn( 'PerformanceRuleEngine: SOQL warn threshold >= crit, adjusting');
             t.soqlWarn = t.soqlCrit - 10;
         }
         if (t.dmlWarn >= t.dmlCrit) {
-            System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: DML warn threshold >= crit, adjusting');
+            ElaroLogger.warn( 'PerformanceRuleEngine: DML warn threshold >= crit, adjusting');
             t.dmlWarn = t.dmlCrit - 10;
         }
     }
@@ -176,7 +176,7 @@ public with sharing class PerformanceRuleEngine {
         List<AlertData> alerts
     ) {
         if (value == null) {
-            System.debug(LoggingLevel.WARN, 'PerformanceRuleEngine: Null value for metric: ' + metric);
+            ElaroLogger.warn( 'PerformanceRuleEngine: Null value for metric: ' + metric);
             return;
         }
 
@@ -266,7 +266,7 @@ public with sharing class PerformanceRuleEngine {
                     String errorMsg = String.join(errorMessages, '; ');
                     
                     // Log with structured format for monitoring systems
-                    System.debug(LoggingLevel.ERROR, 
+                    ElaroLogger.error( 
                         '[PerformanceRuleEngine] Alert save failed - ' +
                         'CorrelationId: ' + correlationId + ', ' +
                         'Metric: ' + alerts[i].metric + ', ' +
@@ -277,7 +277,7 @@ public with sharing class PerformanceRuleEngine {
         } catch (DmlException e) {
             // Structured error logging with correlation ID
             String correlationId = generateCorrelationId('BULK_SAVE', String.valueOf(alerts.size()));
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[PerformanceRuleEngine] DML exception saving alerts - ' +
                 'CorrelationId: ' + correlationId + ', ' +
                 'AlertCount: ' + alerts.size() + ', ' +
@@ -287,7 +287,7 @@ public with sharing class PerformanceRuleEngine {
         } catch (Exception e) {
             // Structured error logging with correlation ID
             String correlationId = generateCorrelationId('BULK_SAVE', String.valueOf(alerts.size()));
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[PerformanceRuleEngine] Unexpected exception saving alerts - ' +
                 'CorrelationId: ' + correlationId + ', ' +
                 'AlertCount: ' + alerts.size() + ', ' +

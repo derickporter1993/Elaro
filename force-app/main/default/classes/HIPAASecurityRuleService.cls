@@ -132,7 +132,7 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
                     }
                 }
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, 'Error checking encryption: ' + e.getMessage());
+                ElaroLogger.error( 'Error checking encryption: ' + e.getMessage());
             }
 
             info.shieldEnabled = !info.encryptedFields.isEmpty();

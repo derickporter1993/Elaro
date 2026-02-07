@@ -98,12 +98,12 @@ public with sharing class ElaroCCPASLAMonitorScheduler implements Schedulable {
         for (Database.SaveResult sr : results) {
             if (!sr.isSuccess()) {
                 for (Database.Error err : sr.getErrors()) {
-                    System.debug(LoggingLevel.ERROR, '[CCPASLAMonitorScheduler] Update failed: ' + err.getMessage());
+                    ElaroLogger.error( '[CCPASLAMonitorScheduler] Update failed: ' + err.getMessage());
                 }
             }
         }
 
-        System.debug(LoggingLevel.WARN,
+        ElaroLogger.warn(
             '[CCPASLAMonitorScheduler] Marked ' + overdueRequests.size() + ' requests as overdue');
 
         // Send overdue notification to compliance team
@@ -133,7 +133,7 @@ public with sharing class ElaroCCPASLAMonitorScheduler implements Schedulable {
         Decimal avgResponseDays = avgResults.isEmpty() || avgResults[0].get('avgDays') == null ?
             0 : (Decimal)avgResults[0].get('avgDays');
 
-        System.debug(LoggingLevel.INFO,
+        ElaroLogger.info(
             '[CCPASLAMonitorScheduler] Daily Report - ' +
             'Pending: ' + pending + ', ' +
             'In Progress: ' + inProgress + ', ' +
@@ -149,7 +149,7 @@ public with sharing class ElaroCCPASLAMonitorScheduler implements Schedulable {
     private void sendCriticalAlerts(List<CCPA_Request__c> requests) {
         for (CCPA_Request__c request : requests) {
             Integer daysRemaining = Date.today().daysBetween(request.Response_Deadline__c);
-            System.debug(LoggingLevel.ERROR,
+            ElaroLogger.error(
                 '[CCPASLAMonitorScheduler] CRITICAL: Request ' + request.Name +
                 ' due in ' + daysRemaining + ' days');
         }
@@ -163,7 +163,7 @@ public with sharing class ElaroCCPASLAMonitorScheduler implements Schedulable {
     private void sendWarningAlerts(List<CCPA_Request__c> requests) {
         for (CCPA_Request__c request : requests) {
             Integer daysRemaining = Date.today().daysBetween(request.Response_Deadline__c);
-            System.debug(LoggingLevel.WARN,
+            ElaroLogger.warn(
                 '[CCPASLAMonitorScheduler] WARNING: Request ' + request.Name +
                 ' due in ' + daysRemaining + ' days');
         }
@@ -174,7 +174,7 @@ public with sharing class ElaroCCPASLAMonitorScheduler implements Schedulable {
      * @param requests - List of overdue requests
      */
     private void sendOverdueNotification(List<CCPA_Request__c> requests) {
-        System.debug(LoggingLevel.ERROR,
+        ElaroLogger.error(
             '[CCPASLAMonitorScheduler] ALERT: ' + requests.size() +
             ' CCPA requests are now OVERDUE. Immediate action required.');
     }

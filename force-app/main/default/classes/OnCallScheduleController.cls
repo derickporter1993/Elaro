@@ -13,15 +13,21 @@ public with sharing class OnCallScheduleController {
      */
     @AuraEnabled(cacheable=true)
     public static List<Elaro_On_Call_Schedule__c> getSchedules() {
-        return [
+        List<Elaro_On_Call_Schedule__c> schedules = [
             SELECT Id, Name, User__c, User__r.Name, User__r.Email,
                    Rotation_Name__c, Start_Time__c, End_Time__c,
                    Timezone__c, Notification_Methods__c, Active__c
             FROM Elaro_On_Call_Schedule__c
-            WITH USER_MODE
+            WITH SECURITY_ENFORCED
             ORDER BY Start_Time__c DESC
             LIMIT 200
         ];
+
+        // Strip inaccessible fields for FLS security
+        return (List<Elaro_On_Call_Schedule__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            schedules
+        );
     }
 
     /**

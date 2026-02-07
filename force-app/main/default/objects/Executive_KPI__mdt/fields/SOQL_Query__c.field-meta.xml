@@ -6,7 +6,7 @@
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>SOQL Query</label>
     <length>32768</length>
-    <required>true</required>
+    <required>false</required>
     <type>LongTextArea</type>
     <visibleLines>10</visibleLines>
 </CustomField>

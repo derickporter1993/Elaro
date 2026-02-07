@@ -163,7 +163,7 @@ public with sharing class ElaroShieldService {
             }
         } catch (Exception e) {
             // Return empty list if Shield is not available
-            System.debug(LoggingLevel.WARN, 'Unable to query EventLogFile: ' + e.getMessage());
+            ElaroLogger.warn( 'Unable to query EventLogFile: ' + e.getMessage());
         }
         
         return new List&lt;String&gt;(availableTypes);
@@ -207,7 +207,7 @@ public with sharing class ElaroShieldService {
             status.put('fieldAuditTrail', Schema.sObjectType.FieldHistoryArchive.isAccessible());
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error checking Shield status: ' + e.getMessage());
+            ElaroLogger.error( 'Error checking Shield status: ' + e.getMessage());
         }
         
         return status;

@@ -120,7 +120,7 @@ public with sharing class ComplianceFrameworkService {
             try {
                 results.put(framework, evaluateFramework(framework));
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, 'Error evaluating framework ' + framework + ': ' + e.getMessage());
+                ElaroLogger.error('Error evaluating framework ' + framework + ': ' + e.getMessage(), e);
             }
         }
         

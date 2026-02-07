@@ -31,7 +31,7 @@ public with sharing class MobileAlertPublisher {
         }
 
         if (recipients.isEmpty()) {
-            System.debug(LoggingLevel.WARN, 'No recipients found for critical alert');
+            ElaroLogger.warn('No recipients found for critical alert');
             return;
         }
 
@@ -233,7 +233,7 @@ public with sharing class MobileAlertPublisher {
             ];
 
             if (notifTypes.isEmpty()) {
-                System.debug(LoggingLevel.ERROR, 'Notification type not found: ' + typeName);
+                ElaroLogger.error('Notification type not found: ' + typeName);
                 return;
             }
 
@@ -255,7 +255,7 @@ public with sharing class MobileAlertPublisher {
             logNotificationSent(targetId, title, recipients.size());
 
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Mobile notification failed: ' + e.getMessage());
+            ElaroLogger.error('Mobile notification failed: ' + e.getMessage(), e);
         }
     }
 
@@ -315,7 +315,7 @@ public with sharing class MobileAlertPublisher {
         try {
             System.schedule(jobName, cronExp, new MobileAlertEscalator(alertId));
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to schedule escalation: ' + e.getMessage());
+            ElaroLogger.error('Failed to schedule escalation: ' + e.getMessage(), e);
         }
     }
 
@@ -326,7 +326,7 @@ public with sharing class MobileAlertPublisher {
         try {
             System.schedule(jobName, cronExp, new MobileAlertResender(alertId));
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to schedule delayed notification: ' + e.getMessage());
+            ElaroLogger.error('Failed to schedule delayed notification: ' + e.getMessage(), e);
         }
     }
 
@@ -342,7 +342,7 @@ public with sharing class MobileAlertPublisher {
             try {
                 System.abortJob(job.Id);
             } catch (Exception e) {
-                System.debug(LoggingLevel.WARN, 'Failed to abort job: ' + e.getMessage());
+                ElaroLogger.warn('Failed to abort job: ' + e.getMessage());
             }
         }
     }
@@ -355,7 +355,7 @@ public with sharing class MobileAlertPublisher {
     }
 
     private static void logNotificationSent(String targetId, String title, Integer recipientCount) {
-        System.debug(LoggingLevel.INFO, 'Mobile notification sent - Target: ' + targetId +
+        ElaroLogger.info('Mobile notification sent - Target: ' + targetId +
                      ', Title: ' + title + ', Recipients: ' + recipientCount);
     }
 

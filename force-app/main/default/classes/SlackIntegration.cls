@@ -196,10 +196,10 @@ public with sharing class SlackIntegration {
             HttpResponse res = http.send(req);
             
             if (res.getStatusCode() != 200) {
-                System.debug(LoggingLevel.ERROR, 'Slack send failed: ' + res.getBody());
+                ElaroLogger.error( 'Slack send failed: ' + res.getBody());
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Slack integration error: ' + e.getMessage());
+            ElaroLogger.error( 'Slack integration error: ' + e.getMessage());
         }
     }
     

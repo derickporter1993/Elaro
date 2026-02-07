@@ -315,7 +315,7 @@ public with sharing class BreachDeadlineMonitor implements Schedulable {
             ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert log;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to log execution: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to log execution: ' + e.getMessage());
         }
     }
 
@@ -332,7 +332,7 @@ public with sharing class BreachDeadlineMonitor implements Schedulable {
             ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert log;
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Failed to log error: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to log error: ' + e.getMessage());
         }
     }
 

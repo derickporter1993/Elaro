@@ -161,6 +161,8 @@ public with sharing class ElaroDeliveryService {
                 PreferencesPasswordRequired = true,
                 ExpiryDate = Date.today().addDays(expirationDays)
             );
+
+            ElaroSecurityUtils.validateCRUDAccess('ContentDistribution', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert cd;
             
             // Query for the generated URL
@@ -215,12 +217,12 @@ public with sharing class ElaroDeliveryService {
                 HttpResponse res = http.send(req);
                 
                 if (res.getStatusCode() != 200) {
-                    System.debug(LoggingLevel.ERROR, 'Slack notification failed: ' + res.getBody());
+                    ElaroLogger.error( 'Slack notification failed: ' + res.getBody());
                 }
             }
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error sending Slack notification: ' + e.getMessage());
+            ElaroLogger.error( 'Error sending Slack notification: ' + e.getMessage());
         }
     }
     

@@ -86,11 +86,6 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
      */
     protected Id createGap(String policyReference, String description, String severity,
                           String entityType, String entityId, Decimal riskScore) {
-        // Validate CRUD access
-        if (!Schema.sObjectType.Compliance_Gap__c.isCreateable()) {
-            throw new ComplianceServiceException('Insufficient permissions to create Compliance Gap records');
-        }
-
         Compliance_Gap__c gap = new Compliance_Gap__c(
             Framework__c = getFrameworkName(),
             Policy_Reference__c = policyReference,
@@ -103,6 +98,7 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
             Detected_Date__c = Date.today()
         );
 
+        ElaroSecurityUtils.validateCRUDAccess('Compliance_Gap__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
         insert gap;
         logAuditEntry('GAP_CREATED', 'Created compliance gap: ' + policyReference, gap.Id);
         return gap.Id;
@@ -118,11 +114,6 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
      */
     protected Id createEvidence(String evidenceType, String description,
                                String evidenceData, String policyReference) {
-        // Validate CRUD access
-        if (!Schema.sObjectType.Compliance_Evidence__c.isCreateable()) {
-            throw new ComplianceServiceException('Insufficient permissions to create Compliance Evidence records');
-        }
-
         Compliance_Evidence__c evidence = new Compliance_Evidence__c(
             Framework__c = getFrameworkName(),
             Evidence_Type__c = evidenceType,
@@ -133,6 +124,7 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
             Status__c = 'COLLECTED'
         );
 
+        ElaroSecurityUtils.validateCRUDAccess('Compliance_Evidence__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
         insert evidence;
         logAuditEntry('EVIDENCE_COLLECTED', 'Collected evidence: ' + evidenceType, evidence.Id);
         return evidence.Id;
@@ -190,11 +182,6 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
      */
     protected void logAuditEntry(String action, String description, Id relatedRecordId) {
         try {
-            if (!Schema.sObjectType.Elaro_Audit_Log__c.isCreateable()) {
-                System.debug(LoggingLevel.WARN, 'Cannot create audit log entry - insufficient permissions');
-                return;
-            }
-
             Elaro_Audit_Log__c auditLog = new Elaro_Audit_Log__c(
                 Action__c = action,
                 Description__c = description,
@@ -204,10 +191,11 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
                 Timestamp__c = DateTime.now()
             );
 
+            ElaroSecurityUtils.validateCRUDAccess('Elaro_Audit_Log__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert auditLog;
         } catch (Exception e) {
             // Log but don't fail the main operation
-            System.debug(LoggingLevel.ERROR, 'Failed to create audit log: ' + e.getMessage());
+            ElaroLogger.error( 'Failed to create audit log: ' + e.getMessage());
         }
     }
 

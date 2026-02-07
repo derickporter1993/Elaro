@@ -64,7 +64,6 @@
         <columns>Item__c</columns>
         <columns>IsRequired__c</columns>
         <columns>IsComplete__c</columns>
-        <columns>OwnerId</columns>
     </listViews>
 
     <compactLayouts>

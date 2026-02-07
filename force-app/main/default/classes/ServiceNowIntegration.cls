@@ -58,12 +58,12 @@ public with sharing class ServiceNowIntegration {
             HttpResponse res = http.send(req);
             
             if (res.getStatusCode() == 201) {
-                System.debug(LoggingLevel.INFO, 'Evidence pushed to ServiceNow: ' + evidenceId);
+                ElaroLogger.info( 'Evidence pushed to ServiceNow: ' + evidenceId);
             } else {
-                System.debug(LoggingLevel.ERROR, 'ServiceNow push failed: ' + res.getBody());
+                ElaroLogger.error( 'ServiceNow push failed: ' + res.getBody());
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ServiceNow integration error: ' + e.getMessage());
+            ElaroLogger.error( 'ServiceNow integration error: ' + e.getMessage());
         }
     }
     
@@ -131,7 +131,7 @@ public with sharing class ServiceNowIntegration {
                 return (Map<String, Object>)response.get('result');
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ServiceNow query error: ' + e.getMessage());
+            ElaroLogger.error( 'ServiceNow query error: ' + e.getMessage());
         }
         
         return new Map<String, Object>();
@@ -174,7 +174,7 @@ public with sharing class ServiceNowIntegration {
             Http http = new Http();
             http.send(req);
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ServiceNow sync error: ' + e.getMessage());
+            ElaroLogger.error( 'ServiceNow sync error: ' + e.getMessage());
         }
     }
     
@@ -218,7 +218,7 @@ public with sharing class ServiceNowIntegration {
             Http http = new Http();
             http.send(req);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Control sync failed: ' + e.getMessage());
+            ElaroLogger.warn( 'Control sync failed: ' + e.getMessage());
         }
     }
     

@@ -70,8 +70,13 @@ public with sharing class ElaroPDFController {
             WITH SECURITY_ENFORCED
             LIMIT 1
         ];
-        
+
         if (!packages.isEmpty()) {
+            // Strip inaccessible fields for FLS security
+            packages = (List&lt;Elaro_Audit_Package__c&gt;) ElaroSecurityUtils.stripInaccessibleFields(
+                AccessType.READABLE,
+                packages
+            );
             auditPackage = packages[0];
         }
     }
@@ -101,6 +106,13 @@ public with sharing class ElaroPDFController {
         query += 'WITH SECURITY_ENFORCED ORDER BY Evidence_Date__c DESC LIMIT 5000';
 
         evidenceItems = Database.query(query);
+
+        // Strip inaccessible fields for FLS security
+        evidenceItems = (List&lt;Elaro_Evidence_Item__c&gt;) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            evidenceItems
+        );
+
         evidenceCount = evidenceItems.size();
     }
     

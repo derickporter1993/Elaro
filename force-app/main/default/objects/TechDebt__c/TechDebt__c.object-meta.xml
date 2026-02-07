@@ -322,7 +322,6 @@
         <columns>Category__c</columns>
         <columns>Severity__c</columns>
         <columns>Status__c</columns>
-        <columns>OwnerId</columns>
     </listViews>
 
     <compactLayouts>

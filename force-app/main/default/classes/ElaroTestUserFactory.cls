@@ -120,7 +120,7 @@ public class ElaroTestUserFactory {
                 PermissionSetId = ps.Id
             );
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Could not assign permission set ' + permissionSetName + ': ' + e.getMessage());
+            ElaroLogger.warn( 'Could not assign permission set ' + permissionSetName + ': ' + e.getMessage());
         }
     }
 

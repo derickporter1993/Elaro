@@ -80,7 +80,7 @@ public with sharing class NaturalLanguageQueryService {
             result.naturalLanguageSummary = generateResultSummary(query, result.results.size());
             
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'NL Query error: ' + e.getMessage());
+            ElaroLogger.error( 'NL Query error: ' + e.getMessage());
             result.confidence = 0;
             result.naturalLanguageSummary = 'Error executing query: ' + e.getMessage();
             result.results = new List&lt;SObject&gt;();
@@ -270,7 +270,7 @@ public with sharing class NaturalLanguageQueryService {
                 return text;
             }
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'Error extracting SOQL: ' + e.getMessage());
+            ElaroLogger.error( 'Error extracting SOQL: ' + e.getMessage());
         }
         
         throw new AuraHandledException('Unable to generate SOQL from query');
@@ -437,7 +437,7 @@ public with sharing class NaturalLanguageQueryService {
             Cache.OrgPartition partition = Cache.Org.getPartition(CACHE_PARTITION);
             partition.put(key, value, CACHE_TTL_SECONDS);
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Cache put failed: ' + e.getMessage());
+            ElaroLogger.warn( 'Cache put failed: ' + e.getMessage());
         }
     }
     

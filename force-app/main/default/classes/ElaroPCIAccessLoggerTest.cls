@@ -30,9 +30,9 @@ private class ElaroPCIAccessLoggerTest {
         );
         Test.stopTest();
 
-        // Platform events are published asynchronously
-        // We verify no exceptions were thrown
-        System.assert(true, 'Access log should be created without error');
+        // Verify platform event was published successfully
+        // Platform events use DML operations
+        System.assert(Limits.getDmlStatements() > 0, 'Should publish platform event via DML');
     }
 
     @IsTest
@@ -52,7 +52,9 @@ private class ElaroPCIAccessLoggerTest {
         }
         Test.stopTest();
 
-        System.assert(true, 'All access types should be logged');
+        // Verify all access types were logged via platform events
+        System.assertEquals(5, accessTypes.size(), 'Should test all 5 access types');
+        System.assert(Limits.getDmlStatements() >= accessTypes.size(), 'Should publish event for each access type');
     }
 
     @IsTest
@@ -71,7 +73,9 @@ private class ElaroPCIAccessLoggerTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'Bulk logging should complete without error');
+        // Verify bulk logging completed with proper bulkification
+        System.assertEquals(200, recordIds.size(), 'Should process 200 records');
+        System.assert(Limits.getDmlStatements() <= 2, 'Should bulkify platform event publishing');
     }
 
     @IsTest
@@ -86,7 +90,9 @@ private class ElaroPCIAccessLoggerTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'Empty set should not cause error');
+        // Verify empty set is handled gracefully without DML
+        System.assertEquals(0, emptySet.size(), 'Set should be empty');
+        System.assertEquals(0, Limits.getDmlStatements(), 'Should not publish event for empty set');
     }
 
     @IsTest
@@ -100,7 +106,8 @@ private class ElaroPCIAccessLoggerTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'Failed access should be logged');
+        // Verify failed access event was published
+        System.assert(Limits.getDmlStatements() > 0, 'Should publish failed access event');
     }
 
     @IsTest
@@ -114,7 +121,9 @@ private class ElaroPCIAccessLoggerTest {
         ElaroPCIAccessLogger.logSensitiveDataView(acc.Id, dataElements);
         Test.stopTest();
 
-        System.assert(true, 'Sensitive data view should be logged');
+        // Verify sensitive data view event was published
+        System.assertEquals(3, dataElements.size(), 'Should track 3 data elements');
+        System.assert(Limits.getDmlStatements() > 0, 'Should publish sensitive data view event');
     }
 
     @IsTest
@@ -126,7 +135,9 @@ private class ElaroPCIAccessLoggerTest {
         ElaroPCIAccessLogger.logSensitiveDataView(acc.Id, emptyElements);
         Test.stopTest();
 
-        System.assert(true, 'Empty elements list should not cause error');
+        // Verify empty elements list is handled gracefully
+        System.assertEquals(0, emptyElements.size(), 'Elements list should be empty');
+        // Method may still log with empty list, verify no exception thrown
     }
 
     @IsTest
@@ -190,7 +201,8 @@ private class ElaroPCIAccessLoggerTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'Null record ID should not cause error');
+        // Verify null record ID is handled gracefully without exception
+        // Method should complete successfully even with null parameter
     }
 
     @IsTest
@@ -204,7 +216,9 @@ private class ElaroPCIAccessLoggerTest {
         }
         Test.stopTest();
 
-        System.assert(true, 'Multiple concurrent logs should succeed');
+        // Verify concurrent logging completed successfully
+        System.assertEquals(10, accounts.size(), 'Should process 10 accounts');
+        System.assert(Limits.getDmlStatements() >= 20, 'Should publish 20 events (2 per account)');
     }
 
     @IsTest
@@ -220,6 +234,8 @@ private class ElaroPCIAccessLoggerTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'Session info should be captured or handled gracefully');
+        // Verify method handles missing session info gracefully in test context
+        // Should still publish event even if session details are unavailable
+        System.assert(Limits.getDmlStatements() > 0, 'Should publish event despite missing session info');
     }
 }

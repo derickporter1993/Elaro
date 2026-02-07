@@ -4,8 +4,8 @@
     <deleteConstraint>SetNull</deleteConstraint>
     <label>User</label>
     <referenceTo>User</referenceTo>
-    <relationshipLabel>Audit Log Users</relationshipLabel>
-    <relationshipName>Audit_Log_Users</relationshipName>
+    <relationshipLabel>Elaro Audit Log Users</relationshipLabel>
+    <relationshipName>Elaro_Audit_Log_Users</relationshipName>
     <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>

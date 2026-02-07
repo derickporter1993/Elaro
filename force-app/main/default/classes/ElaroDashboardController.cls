@@ -39,6 +39,12 @@ public with sharing class ElaroDashboardController {
             } else {
                 packages = Database.query(soql.replace('WHERE Framework__c = :framework ', ''));
             }
+
+            // Strip inaccessible fields for FLS security
+            packages = (List<Elaro_Audit_Package__c>) ElaroSecurityUtils.stripInaccessibleFields(
+                AccessType.READABLE,
+                packages
+            );
         } catch (Exception e) {
             throw new AuraHandledException('Error querying audit packages: ' + e.getMessage());
         }
@@ -62,15 +68,27 @@ public with sharing class ElaroDashboardController {
             throw new AuraHandledException('Package ID cannot be blank');
         }
         
-        Elaro_Audit_Package__c pkg = [
+        List<Elaro_Audit_Package__c> pkgList = [
             SELECT Id, Package_Name__c, Framework__c, Status__c,
                    Audit_Period_Start__c, Audit_Period_End__c,
                    Created_By__r.Name, LastModifiedDate
             FROM Elaro_Audit_Package__c
             WHERE Id = :packageId
-            WITH USER_MODE
+            WITH SECURITY_ENFORCED
             LIMIT 1
         ];
+
+        if (pkgList.isEmpty()) {
+            throw new AuraHandledException('Audit package not found');
+        }
+
+        // Strip inaccessible fields for FLS security
+        pkgList = (List<Elaro_Audit_Package__c>) ElaroSecurityUtils.stripInaccessibleFields(
+            AccessType.READABLE,
+            pkgList
+        );
+
+        Elaro_Audit_Package__c pkg = pkgList[0];
         
         // Count framework mappings
         Integer mappingCount = [

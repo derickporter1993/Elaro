@@ -35,16 +35,13 @@ public with sharing class ApiUsageSnapshot implements Schedulable, Queueable {
             projected = now.addSeconds((Integer)Math.min(Integer.MAX_VALUE, secsToExhaust));
         }
 
-        if (Schema.sObjectType.API_Usage_Snapshot__c.isCreateable()) {
-            insert new API_Usage_Snapshot__c(
-                Taken_On__c = now,
-                Daily_Used__c = used,
-                Daily_Limit__c = max,
-                Percent_Used__c = pct.setScale(2),
-                Projected_Exhaustion__c = projected
-            );
-        } else {
-            System.debug(LoggingLevel.ERROR, 'ApiUsageSnapshot: Insufficient permissions to create API_Usage_Snapshot__c');
-        }
+        ElaroSecurityUtils.validateCRUDAccess('API_Usage_Snapshot__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
+        insert new API_Usage_Snapshot__c(
+            Taken_On__c = now,
+            Daily_Used__c = used,
+            Daily_Limit__c = max,
+            Percent_Used__c = pct.setScale(2),
+            Projected_Exhaustion__c = projected
+        );
     }
 }

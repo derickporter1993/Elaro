@@ -25,7 +25,7 @@ public with sharing class ElaroEventProcessor {
             String eventType = event.Event_Type__c;
             
             if (String.isBlank(entityType) || String.isBlank(entityId)) {
-                System.debug(LoggingLevel.WARN, '[ElaroEventProcessor] Missing entity type or ID');
+                ElaroLogger.warn( '[ElaroEventProcessor] Missing entity type or ID');
                 return;
             }
             
@@ -37,7 +37,7 @@ public with sharing class ElaroEventProcessor {
                 String.isNotBlank(framework) ? framework : ElaroConstants.FRAMEWORK_SOC2
             );
             
-            System.debug(LoggingLevel.INFO, 
+            ElaroLogger.info( 
                 '[ElaroEventProcessor] Event processed - NodeId: ' + nodeId + 
                 ', EntityType: ' + entityType + 
                 ', EntityId: ' + entityId);
@@ -45,7 +45,7 @@ public with sharing class ElaroEventProcessor {
         } catch (Exception e) {
             String correlationId = event.Correlation_Id__c != null ? event.Correlation_Id__c : 
                 'EVT-' + System.now().getTime();
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 '[ElaroEventProcessor] Error processing event - CorrelationId: ' + correlationId + 
                 ', Error: ' + e.getMessage() + 
                 ', StackTrace: ' + e.getStackTraceString());

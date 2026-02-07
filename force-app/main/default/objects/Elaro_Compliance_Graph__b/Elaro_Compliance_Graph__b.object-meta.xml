@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
     <label>Elaro Compliance Graph</label>
     <pluralLabel>Compliance Graph Nodes</pluralLabel>
-    <deploymentStatus>Deployed</deploymentStatus>
-    <eventType>BigObject</eventType>
     <fields>
         <fullName>Graph_Node_Id__c</fullName>
         <label>Graph Node ID</label>
         <type>Text</type>
-        <length>255</length>
+        <length>50</length>
         <required>true</required>
     </fields>
     <fields>
@@ -84,8 +83,8 @@
     <fields>
         <fullName>Human_Adjudicated__c</fullName>
         <label>Human Adjudicated</label>
-        <type>Checkbox</type>
-        <defaultValue>false</defaultValue>
+        <type>Text</type>
+        <length>5</length>
     </fields>
     <fields>
         <fullName>Graph_Version__c</fullName>

@@ -31,6 +31,29 @@ Thumbs.db
 .sf/
 .localdevserver/
 .salesforce/
+*.auth
+*_auth.json
+
+# Security - NEVER commit credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*secret*
+*credential*
+*password*
+.zshrc
+.bashrc
+.bash_profile
+.profile
+auth.json
+config.prod.*
+secrets.json
+private.key
 
 # Cache and coverage
 .cache/

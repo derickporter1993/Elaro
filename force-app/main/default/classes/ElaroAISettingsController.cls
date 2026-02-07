@@ -49,15 +49,15 @@ public with sharing class ElaroAISettingsController {
                 if (!result.isSuccess()) {
                     throw new DmlException('Failed to create default settings');
                 }
-                System.debug(LoggingLevel.INFO, 'ElaroAISettingsController: Created org default settings');
+                ElaroLogger.info( 'ElaroAISettingsController: Created org default settings');
                 return sanitizedSettings[0];
             } else {
-                System.debug(LoggingLevel.WARN, 'ElaroAISettingsController: No accessible fields to create settings');
+                ElaroLogger.warn( 'ElaroAISettingsController: No accessible fields to create settings');
                 // Return in-memory object as fallback (should not happen in normal operation)
                 return settings;
             }
         } catch (DmlException e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroAISettingsController: Failed to create default settings: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroAISettingsController: Failed to create default settings: ' + e.getMessage());
             // Return in-memory object as fallback
             return new Elaro_AI_Settings__c(
                 Enable_AI_Reasoning__c = DEFAULT_ENABLE_AI_REASONING,
@@ -67,7 +67,7 @@ public with sharing class ElaroAISettingsController {
                 Blacklisted_Users__c = DEFAULT_BLACKLISTED_USERS
             );
         } catch (Exception e) {
-            System.debug(LoggingLevel.ERROR, 'ElaroAISettingsController: Unexpected error creating default settings: ' + e.getMessage());
+            ElaroLogger.error( 'ElaroAISettingsController: Unexpected error creating default settings: ' + e.getMessage());
             // Return in-memory object as fallback
             return new Elaro_AI_Settings__c(
                 Enable_AI_Reasoning__c = DEFAULT_ENABLE_AI_REASONING,
@@ -115,7 +115,7 @@ public with sharing class ElaroAISettingsController {
         } catch (DmlException e) {
             // Log detailed error server-side with correlation ID
             String correlationId = 'AI_SETTINGS-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 'DML error saving settings [CorrelationId: ' + correlationId + ']: ' + 
                 e.getMessage() + ' | DML: ' + getSafeDmlMessage(e));
             
@@ -125,7 +125,7 @@ public with sharing class ElaroAISettingsController {
             // Log detailed error server-side with correlation ID
             String correlationId = 'AI_SETTINGS-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
             String errorCategory = categorizeError(e);
-            System.debug(LoggingLevel.ERROR, 
+            ElaroLogger.error( 
                 'Error saving settings [CorrelationId: ' + correlationId + ', Category: ' + errorCategory + ']: ' + 
                 e.getMessage());
             
@@ -159,14 +159,14 @@ public with sharing class ElaroAISettingsController {
             if (!sanitizedLogs.isEmpty()) {
                 Database.SaveResult logResult = Database.insert(sanitizedLogs[0], AccessLevel.USER_MODE);
                 if (logResult.isSuccess()) {
-                    System.debug(LoggingLevel.INFO, '[Audit] Logged: ' + action + ' - ' + entityType + ' (' + entityId + ')');
+                    ElaroLogger.info( '[Audit] Logged: ' + action + ' - ' + entityType + ' (' + entityId + ')');
                 }
             } else {
-                System.debug(LoggingLevel.WARN, '[Audit] No accessible fields to create audit log for: ' + action);
+                ElaroLogger.warn( '[Audit] No accessible fields to create audit log for: ' + action);
             }
         } catch (Exception e) {
             // Don't fail the main operation if audit logging fails
-            System.debug(LoggingLevel.WARN, 'ElaroAISettingsController: Failed to log audit event: ' + e.getMessage());
+            ElaroLogger.warn( 'ElaroAISettingsController: Failed to log audit event: ' + e.getMessage());
         }
     }
 

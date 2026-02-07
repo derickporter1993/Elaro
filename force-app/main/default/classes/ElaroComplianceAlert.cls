@@ -40,7 +40,8 @@ public with sharing class ElaroComplianceAlert {
             Framework__c = config.framework,
             Description__c = config.description
         );
-        
+
+        ElaroSecurityUtils.validateCRUDAccess('Elaro_Alert_Config__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
         insert alertRecord;
         return alertRecord.Id;
     }

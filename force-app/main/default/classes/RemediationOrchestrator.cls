@@ -133,7 +133,7 @@ public with sharing class RemediationOrchestrator {
         } catch (Exception e) {
             result.success = false;
             result.errorMessage = e.getMessage();
-            System.debug(LoggingLevel.ERROR, 'Remediation error: ' + e.getMessage());
+            ElaroLogger.error( 'Remediation error: ' + e.getMessage());
         }
         
         return result;
@@ -341,13 +341,13 @@ public with sharing class RemediationOrchestrator {
             );
             update event;
         } catch (Exception e) {
-            System.debug(LoggingLevel.WARN, 'Could not update event: ' + e.getMessage());
+            ElaroLogger.warn( 'Could not update event: ' + e.getMessage());
         }
     }
     
     private static void logRemediationAction(RemediationResult result) {
         // In production, log to a custom object for audit trail
-        System.debug(LoggingLevel.INFO, 'Remediation Action: ' + JSON.serialize(result));
+        ElaroLogger.info( 'Remediation Action: ' + JSON.serialize(result));
     }
     
     // ═══════════════════════════════════════════════════════════════
