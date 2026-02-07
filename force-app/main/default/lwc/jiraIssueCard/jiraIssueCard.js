@@ -66,6 +66,9 @@ export default class JiraIssueCard extends LightningElement {
   }
 
   get transitionOptions() {
+    if (!this.transitions || !Array.isArray(this.transitions)) {
+      return [];
+    }
     return this.transitions.map((t) => ({
       label: t.name,
       value: t.id,

@@ -89,6 +89,18 @@ export default class EscalationPathConfig extends LightningElement {
     return this.paths.filter((p) => p.level === 3);
   }
 
+  get hasNoLevel1Paths() {
+    return !this.level1Paths || this.level1Paths.length === 0;
+  }
+
+  get hasNoLevel2Paths() {
+    return !this.level2Paths || this.level2Paths.length === 0;
+  }
+
+  get hasNoLevel3Paths() {
+    return !this.level3Paths || this.level3Paths.length === 0;
+  }
+
   @wire(getEscalationPaths)
   wiredPaths(result) {
     this.wiredPathsResult = result;

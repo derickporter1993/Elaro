@@ -38,7 +38,7 @@
                     <div class="slds-grid slds-wrap">
                         <template for:each={severityStats} for:item="sev">
                             <div key={sev.label} class="slds-m-right_small slds-m-bottom_x-small">
-                                <lightning-badge label="{sev.label}: {sev.value}" variant={sev.variant}></lightning-badge>
+                                <lightning-badge label={sev.badgeLabel} variant={sev.variant}></lightning-badge>
                             </div>
                         </template>
                     </div>

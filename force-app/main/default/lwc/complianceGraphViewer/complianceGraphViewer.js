@@ -58,11 +58,15 @@ export default class ComplianceGraphViewer extends LightningElement {
   get severityStats() {
     if (!this.stats || !this.stats.severityCounts) return [];
     const severities = ["CRITICAL", "HIGH", "MEDIUM", "LOW"];
-    return severities.map((s) => ({
-      label: s,
-      value: this.stats.severityCounts[s] || 0,
-      variant: this.getSeverityVariant(s),
-    }));
+    return severities.map((s) => {
+      const value = this.stats.severityCounts[s] || 0;
+      return {
+        label: s,
+        value: value,
+        badgeLabel: `${s}: ${value}`,
+        variant: this.getSeverityVariant(s),
+      };
+    });
   }
 
   get frameworkStats() {

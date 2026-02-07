@@ -46,14 +46,23 @@ export default class RemediationSuggestionCard extends LightningElement {
   }
 
   get pendingSuggestions() {
+    if (!this.suggestions || !Array.isArray(this.suggestions)) {
+      return [];
+    }
     return this.suggestions.filter((s) => s.status === "PENDING");
   }
 
   get approvedSuggestions() {
+    if (!this.suggestions || !Array.isArray(this.suggestions)) {
+      return [];
+    }
     return this.suggestions.filter((s) => s.status === "APPROVED");
   }
 
   get processedSuggestions() {
+    if (!this.suggestions || !Array.isArray(this.suggestions)) {
+      return [];
+    }
     return this.suggestions.filter((s) => ["APPLIED", "REJECTED", "FAILED"].includes(s.status));
   }
 
