@@ -10,7 +10,7 @@ _Current: v3.0 — Unified Enterprise Platform_
 [![Salesforce API](https://img.shields.io/badge/Salesforce-v65.0-blue.svg)](https://developer.salesforce.com)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-success.svg)](.github/workflows)
 
-[Quick Start](#quick-start) • [Sample Report](examples/compliance-baseline-report-sample.md) • [Who It's For](#who-its-for) • [Roadmap](#roadmap) • [Permission Intelligence PRD](docs/permission-intelligence-engine-prd.md)
+[Quick Start](#quick-start) • [Sample Report](examples/compliance-baseline-report-sample.md) • [Who It's For](#who-its-for) • [Roadmap](docs/ROADMAP.md) • [Documentation](docs/)
 
 </div>
 
@@ -39,7 +39,7 @@ Elaro makes your Salesforce org **audit-ready and protected from configuration d
 - ✅ **Git**: Main branch synced, cleaned up abandoned branches
 - ✅ **Tests**: Added critical test coverage for security utilities
 - ✅ **Code Quality**: Removed dead code, fixed all compilation errors
-- ✅ **CI/CD**: Automated PR merging and status monitoring ([docs](docs/PR_AUTO_MERGE.md))
+- ✅ **CI/CD**: Automated PR merging and status monitoring ([docs](docs/archive/loose/PR_AUTO_MERGE.md))
 
 ### Component Status
 
