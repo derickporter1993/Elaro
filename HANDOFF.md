@@ -1,266 +1,222 @@
 # Handoff: Session End
 
-**Timestamp**: 2026-02-11
-**Session**: Agent 6 Build Complete
+**Timestamp**: 2026-02-12
+**Session**: Team 1 Agent 1 — Async Framework Complete
+**Branch**: `claude/async-framework-foundation-0cM3m`
 
-## Current State
-
-- **Branch**: `main`
-- **Working Tree**: Clean (all AI Governance work committed)
-- **Latest Commit**: `09d9180 feat(ai-governance): add AI Governance Module MVP (Agent 6)`
-- **Remote**: Local only (not pushed to origin yet)
+---
 
 ## What Was Done This Session
 
-### Agent 6: AI Governance Module MVP (COMPLETE ✅)
+### Team 1 Agent 1: WS6 — Step-Based Async Framework (COMPLETE)
 
-**EU AI Act Deadline**: August 2, 2026 (179 days remaining)
+Built the foundational async processing framework replacing Batch Apex with Cursors + Queueable (Spring '26 GA). All future compliance scans, rule evaluations, and data processing run through this framework.
 
-**Built complete AI governance system** for EU AI Act and NIST AI RMF compliance:
+#### Production Classes (11)
 
-#### Custom Objects Created (3)
+| Class | Type | Purpose |
+|-------|------|---------|
+| Step.cls | Interface | Core contract: execute(), finalize(), getName(), shouldRestart() |
+| StepContext.cls | State carrier | Serializable context with typed getters, cursor position, metrics |
+| StepExecutionMetric.cls | DTO | Per-step metrics: timing, SOQL/DML usage, record counts |
+| CursorStep.cls | Abstract | Database.Cursor wrapper with CursorWrapper/CursorLike for test mocking |
+| ComputeStep.cls | Abstract | Non-query computation, stores result in context by key |
+| DMLStep.cls | Abstract | Auto-chunking DML (200/batch), DML limit circuit breakers |
+| CalloutStep.cls | Abstract | HTTP callouts with auto-retry for 5xx, callout limit checks |
+| FlowStep.cls | Concrete | Wraps Flow.Interview for declarative steps |
+| NoOpStep.cls | Concrete | Null object pattern for disabled steps |
+| StepProcessor.cls | Orchestrator | Queueable + Finalizer with exponential backoff retry |
+| ElaroAsyncFeatureFlags.cls | Utility | Hierarchy Custom Setting accessor with defaults |
 
-1. **AI_System_Registry\_\_c** - Central registry with risk classification
-   - Fields: System_Type**c, Detection_Method**c, Risk_Level**c, Status**c, Use_Case_Description\_\_c
-   - Risk levels: Unacceptable, High, Limited, Minimal (per EU AI Act Annex III)
+#### Metadata
 
-2. **AI_Human_Oversight_Record\_\_c** - Human oversight audit trail
-   - Fields: AI_System**c, Original_AI_Output**c, Human_Decision**c, Justification**c, Reviewer\_\_c
-   - Decisions: Accept, Modify, Reject, Override
+- **StepLog\_\_e** Platform Event (PublishImmediately, 10 fields)
+- **Elaro_Async_Framework_Flags\_\_c** Hierarchy Custom Setting (4 fields)
+- **Elaro_Async_Admin** + **Elaro_Async_User** Permission Sets
+- **7 AF\_ Custom Labels** (framework disabled, step failed/complete, workflow complete, retry, max retries, governor warning)
 
-3. **AI_RMF_Mapping\_\_c** - NIST AI RMF compliance tracking
-   - Fields: AI_System**c, RMF_Function**c (Govern/Map/Measure/Manage), Compliance_Status\_\_c
+#### Test Classes (10)
 
-#### Custom Metadata Type
-
-- **AI_Classification_Rule\_\_mdt** with 6 fields
-- 4 sample classification rules:
-  - Einstein_Prediction_Default (Limited risk)
-  - Einstein_Bot_Customer_Service (Minimal risk)
-  - GenAI_Function_Default (Limited risk)
-  - GenAI_Planner_Default (High risk)
-
-#### Apex Classes (6 core + 6 test)
-
-1. **AIDetectionEngine.cls** - Metadata API scanner
-   - Discovers: Einstein Prediction, Einstein Bot, GenAI Function, GenAI Planner, Custom ML
-   - Uses Tooling API to query BotDefinition, MLPredictionDefinition, GenAiFunction, GenAiPlanner
-
-2. **AIAuditTrailScanner.cls** - SetupAuditTrail scanner
-   - Scans last 180 days of AI-related changes
-   - Severity classification: HIGH_RISK, MEDIUM_RISK, LOW_RISK
-
-3. **AILicenseDetector.cls** - PermissionSetAssignment scanner
-   - Detects Einstein and AI-related permissions
-   - Counts unique users with AI capabilities
-
-4. **AIRiskClassificationEngine.cls** - EU AI Act Annex III classifier
-   - Risk levels: Unacceptable/High/Limited/Minimal
-   - Recommended controls per risk level
-   - Batch classification support
-
-5. **AIGovernanceService.cls** - IComplianceModule implementation
-   - 9 controls (5 EU AI Act + 4 NIST AI RMF)
-   - calculateScore() - weighted composite: Registry 40%, Classification 30%, Oversight 20%, Transparency 10%
-   - identifyGaps() - detects unregistered systems, missing classifications, missing oversight
-   - evaluateControl() - control-specific assessment
-
-6. **AIGovernanceController.cls** - LWC controller (@AuraEnabled methods)
-   - discoverAISystems() - imperative discovery
-   - registerAISystem() - auto-classification on registration
-   - getGovernanceSummary() - dashboard data
-   - recordOversightDecision() - human oversight logging
-   - getAIAuditTrail(), getAILicenses(), updateRiskLevel()
-
-#### Test Classes (100% coverage standards)
-
-- AIDetectionEngineTest.cls - HttpCalloutMock for Tooling API
-- AIAuditTrailScannerTest.cls - SetupAuditTrail query validation
-- AILicenseDetectorTest.cls - Permission detection tests
-- AIRiskClassificationEngineTest.cls - All risk levels + batch classification
-- AIGovernanceServiceTest.cls - IComplianceModule contract + score calculation
-- AIGovernanceControllerTest.cls - @AuraEnabled endpoint coverage
-
-All tests use:
-
-- `@IsTest(testFor=ClassName.class)` for RunRelevantTests
-- Assert class (NOT System.assert\*)
-- @TestSetup for shared data
-- HttpCalloutMock for external calls
-
-#### Custom Labels (24)
-
-AI_DiscoveryInProgress, AI_DiscoveryComplete, AI_NoSystemsFound, AI_RiskUnacceptable, AI_RiskHigh, AI_RiskLimited, AI_RiskMinimal, AI_RegisterSystem, AI_ViewDetails, AI_ComplianceScore, AI_TotalSystems, AI_HighRiskSystems, AI_GapsIdentified, AI_EUAIAct, AI_NISTRMF, AI_OversightRequired, AI_RecordDecision, AI_DecisionAccept, AI_DecisionModify, AI_DecisionReject, AI_DecisionOverride, AI_ErrorGeneric, AI_RefreshData
-
-#### Permission Sets (2)
-
-1. **Elaro_AI_Governance_Admin.permissionset-meta.xml**
-   - Full CRUD on all AI objects
-   - All Apex class access
-   - Modify All Records
-
-2. **Elaro_AI_Governance_User.permissionset-meta.xml**
-   - Read access to AI_System_Registry\_\_c
-   - Create/Edit on AI_Human_Oversight_Record\_\_c (own records)
-   - Controller access only
+StepContextTest (11 tests), StepExecutionMetricTest (3), CursorStepTest (12), ComputeStepTest (7), DMLStepTest (8), CalloutStepTest (8), FlowStepTest (4), NoOpStepTest (5), ElaroAsyncFeatureFlagsTest (3), StepProcessorTest (10)
 
 #### Technical Standards (100% compliance)
 
-✅ API v66.0 (Spring '26)
-✅ WITH USER_MODE on all SOQL (NEVER WITH SECURITY_ENFORCED)
-✅ `as user` on all DML
-✅ `inherited sharing` on services/utilities
-✅ `with sharing` on controller
-✅ ApexDoc on every class and public method
-✅ ElaroLogger integration
-✅ Null coalescing operator (??) used
-✅ Explicit access modifiers on all methods
-✅ AuraHandledException for LWC error handling
+- API v66.0 (Spring '26)
+- WITH USER_MODE on all SOQL
+- `as user` on all DML
+- `inherited sharing` on all services
+- ApexDoc on every class and public method
+- Assert class only (no System.assert)
+- ElaroLogger integration
+- Null coalescing (??) and safe navigation (?.)
 
-#### Files Created: 55 files, 3,006 lines
+#### Files Created: 57 files, 2,635 lines
 
-```
-force-app/main/default/
-├── objects/
-│   ├── AI_System_Registry__c/ (1 object + 5 fields)
-│   ├── AI_Human_Oversight_Record__c/ (1 object + 6 fields)
-│   ├── AI_RMF_Mapping__c/ (1 object + 3 fields)
-│   └── AI_Classification_Rule__mdt/ (1 metadata type + 6 fields)
-├── customMetadata/ (4 classification rules)
-├── classes/ (12 Apex classes with meta.xml)
-├── labels/ (24 AI labels added to CustomLabels.labels-meta.xml)
-└── permissionsets/ (2 permission sets)
-```
+---
 
-### Documentation Created
+## Full Project Audit (2026-02-12)
 
-1. **TEAM2_BUILD_STATUS.md** - Agent 1-8 build tracking
-   - Agent 6 marked COMPLETE ✅
-   - Agents 1-5 previously completed
-   - Agents 7-8 pending
+### Team 1 Status (Sovereign Infrastructure)
 
-2. **CLAUDE.md** - Updated with TEAM2_BUILD_STATUS.md reference
+| Agent | Workstream | Status | Completion | Blocker? |
+|-------|------------|--------|------------|----------|
+| Agent 1 | WS6 — Async Framework | **COMPLETE** | 100% | No |
+| Agent 2 | WS1 — CMMC 2.0 | **NOT STARTED** | 0% | Yes — Team 2 Assessment Wizards depend on CMMC data model |
+| Agent 3 | WS3 — Rule Engine + Orchestration | **PARTIAL** | ~40% | Yes — Event infra exists, core evaluators missing |
+| Agent 4 | WS1 — Batch Migration | **NOT STARTED** | 0% | No — framework ready, no actual migrations |
+| Agent 5 | WS7 — NIS2/DORA | **NOT STARTED** | 0% | No — independent regulatory module |
 
-### Commit Details
+#### Team 1 Agent 2 — CMMC 2.0 (MISSING — 0%)
 
-```
-Commit: 09d9180
-Author: Claude Sonnet 4.5
-Message: feat(ai-governance): add AI Governance Module MVP (Agent 6)
-Files: 55 changed, 3,006 insertions(+)
-Branch: main (local only, not pushed)
-```
+**All deliverables missing:**
 
-## Next Steps
+- 9 custom objects (CMMC_Domain\_\_c, CMMC_Practice\_\_c, CMMC_Assessment\_\_c, CMMC_Practice_Result\_\_c, POA_M\_\_c, SSP\_\_c, Evidence\_\_c, C3PAO_Assessment_Tracker\_\_c, CMMC_NIST53_Mapping\_\_c)
+- 2 custom metadata types (CMMC_Control_Definition\_\_mdt with 127 records, SPRS_Weight_Config\_\_mdt)
+- 4 Apex classes (SPRSScoreCalculator, CMMCComplianceService, CMMCAssessmentController, CMMCDashboardController)
+- 4 test classes
+- 3 permission sets (Admin, User, Assessor)
+- 5 LWC components (cmmcDashboard, cmmcPracticeGrid, cmmcSPRSGauge, cmmcPOAMTracker, cmmcAssessmentView)
+- Custom Labels (CMMC\_ prefix)
 
-### Option 1: Push to Origin (Recommended)
+#### Team 1 Agent 3 — Rule Engine + Orchestration (PARTIAL — ~40%)
 
-```bash
-git push origin main
-```
+**What exists:**
 
-### Option 2: Continue to Agent 7 (Trust Center MVP)
+- Platform Events: ComplianceAlert\_\_e, ConfigurationDrift\_\_e, BreachIndicator\_\_e
+- Event classes: ComplianceAlertPublisher, ConfigDriftDetector, EventCorrelationEngine, BreachPatternMatcher, EventWindowService (all with tests)
+- Correlation_Rule\_\_mdt with 8 seed records
+- RemediationOrchestrator + RemediationExecutor (supports Command Center)
+- ElaroFrameworkEngine (framework requirement mapping)
+- Big Object: Elaro_Compliance_Graph\_\_b
 
-**WARNING:** Agent 7 is security-critical (public-facing via Salesforce Sites)
+**What's missing (core rule engine):**
 
-**CRITICAL REQUIREMENTS:**
+- Compliance_Rule\_\_mdt (primary rule metadata — critical gap)
+- Compliance_Remediation\_\_mdt, Compliance_Workflow_Template\_\_mdt
+- Workflow_Execution\_\_c, Step_Execution\_\_c audit objects
+- RuleResult.cls, ComplianceRuleEvaluator.cls, MetadataCheckEvaluator.cls, SOQLQueryEvaluator.cls, ConfigScanEvaluator.cls
+- ComplianceOrchestrationEngine.cls, WorkflowTemplateReader.cls, RemediationService.cls, SelfHealingDeployer.cls
+- ComplianceScoreAggregator.cls, RuleEngineController.cls
+- Permission Sets (Elaro_Rule_Engine_Admin, Elaro_Rule_Engine_User)
 
-- NEVER expose Compliance_Finding**c, Evidence**c, or PII
-- ONLY expose Trust_Center_View\_\_c (materialized/aggregated data)
-- Guest User Profile: ZERO access to sensitive objects
-- Triple-check every Sites controller method
-- Shareable link expiration validation on every page load
+#### Team 1 Agent 4 — Batch Migration (NOT STARTED — 0%)
 
-**Deliverables:**
+- CursorStep framework is ready (delivered by Agent 1)
+- No batch classes have been migrated to CursorStep yet
+- No @Deprecated annotations on old batch classes
+- 5 existing batch classes remain on legacy Batch Apex pattern
 
-- Trust_Center_View\_\_c (materialized view)
-- Trust_Center_Link\_\_c (token-based access control)
-- TrustCenterDataService.cls (scheduled aggregation)
-- TrustCenterLinkService.cls (token management)
-- TrustCenterController.cls (internal admin)
-- TrustCenterGuestController.cls (Sites - security-critical)
+#### Team 1 Agent 5 — NIS2/DORA (NOT STARTED — 0%)
 
-### Option 3: Agent 8 Integration & QA
+**All deliverables missing:**
 
-**Dependencies:** Agents 1-7 must be complete
+- 5 custom objects (NIS2_Entity_Classification\_\_c, NIS2_Incident_Report\_\_c, ICT_Third_Party_Provider\_\_c, ICT_Service_Contract\_\_c, Resilience_Test\_\_c)
+- 5 Apex classes + 5 test classes
+- 4 permission sets
+- 5 LWC components
+- Custom Labels (NIS2\_, DORA\_ prefixes)
 
-**Tasks:**
+---
 
-1. Upgrade remaining v65.0 classes to v66.0
-2. Wire Command Center to Team 1 Orchestration Engine
-3. Wire Assessment Wizard auto-scan to Team 1 Rule Engine
-4. Wire Event Monitoring to Team 1 Rule Engine results
-5. Joint Checkmarx scan (fix ALL findings)
-6. End-to-end testing: CMMC, SEC, AI Gov workflows
-7. Performance testing: 500+ rules, 1000+ controls
-8. WCAG 2.1 AA audit
-9. AppExchange security review submission
-10. Documentation and listing content
+### Team 2 Status (User-Facing Modules)
 
-### Quality Gates (Before Any Deployment)
+| Agent | Workstream | Status | Completion | Notes |
+|-------|------------|--------|------------|-------|
+| Agent 1 | WS4 — Health Check | **COMPLETE** | 100% | Separate 2GP, all LWC + Jest tests |
+| Agent 2 | WS-CC — Command Center | **COMPLETE** | 100% | 38 Compliance_Action\_\_mdt records |
+| Agent 3 | WS-EM — Event Monitoring | **COMPLETE** | 100% | 3 Platform Events, 8 correlation rules |
+| Agent 4 | WS-AW — Assessment Wizards | **COMPLETE** | 100% | 28+ wizard config records |
+| Agent 5 | WS8 — SEC Disclosure | **95%** | 95% | Missing: 4 Jest tests, User perm set |
+| Agent 6 | WS2 — AI Governance | **COMPLETE** | 100% | EU AI Act deadline Aug 2, 2026 |
+| Agent 7 | WS5 — Trust Center | **40%** | 40% | Missing: LWC components, perm sets |
+| Agent 8 | Integration & QA | **25%** | 25% | API v66.0 done, quality gates not run |
 
-```bash
-# Code Analyzer
-sf scanner run --target force-app --format table --severity-threshold 1
+#### Team 2 Agent 5 — SEC Disclosure (95% — small gaps)
 
-# Apex Tests (85%+ coverage per class)
-sf apex run test --target-org elaro-dev --test-level RunLocalTests --wait 30
+**Missing:**
 
-# LWC Tests
-npm run test:unit
+- 4 LWC Jest test files (secDisclosureDashboard, secDisclosureForm, secMaterialityCard, secIncidentTimeline)
+- Elaro_SEC_User.permissionset-meta.xml (only Admin exists)
 
-# Code Coverage Report
-sf apex run test --target-org elaro-dev --test-level RunLocalTests --code-coverage
-```
+#### Team 2 Agent 7 — Trust Center (40% — significant gaps)
 
-**Target:** Zero HIGH findings, 85%+ coverage per class, all Jest tests passing
+**What exists:** 4 Apex classes + 4 tests, 2 custom objects, 23 custom labels
 
-## Orgs
+**Missing:**
 
-| Alias     | Status  | Last Deploy                              |
-| --------- | ------- | ---------------------------------------- |
-| temp-auth | Unknown | Check with `sf org display -o temp-auth` |
-| prod-org  | Unknown | Check with `sf org display -o prod-org`  |
+- 3+ LWC components (trustCenterDashboard, trustCenterPublicView, trustCenterLinkManager)
+- 2 permission sets (Elaro_Trust_Center_Admin, Elaro_Trust_Center_User)
+- Sites configuration verification
 
-## Untracked Files (Intentional)
+#### Team 2 Agent 8 — Integration & QA (25%)
 
-- `.claude/agents/` - Agent definitions (local development)
-- `.restructure-complete.txt` - Documentation restructure marker
+**Done:** API v66.0 standardization across all 370+ classes and 48 LWC components
+
+**Not done:**
+
+- Code Analyzer scan (`sf scanner run`)
+- Full Apex test suite execution with coverage report
+- Jest test execution
+- WCAG 2.1 AA accessibility audit
+- Checkmarx security scan
+- E2E workflow testing
+- AppExchange security review submission
+
+---
+
+## Priority Action Items
+
+### Blocking (prevents AppExchange submission)
+
+1. **Team 1 Agent 3**: Build core Rule Engine (Compliance_Rule\_\_mdt, evaluators, orchestration engine)
+2. **Team 1 Agent 2**: Build CMMC 2.0 data model (blocks Team 2 Assessment Wizards)
+3. **Team 2 Agent 7**: Build Trust Center LWC components + permission sets
+4. **Team 2 Agent 5**: Add SEC Jest tests + User permission set
+5. **Team 2 Agent 8**: Run all quality gates
+
+### High Priority (roadmap deliverables)
+
+6. **Team 1 Agent 5**: Build NIS2/DORA module
+7. **Team 1 Agent 4**: Migrate batch classes to CursorStep
+
+---
+
+## Codebase Stats
+
+| Metric | Count |
+|--------|-------|
+| Apex Classes (production) | ~197 |
+| Apex Test Classes | ~193 |
+| LWC Components | 54 |
+| LWC Jest Tests | 46 (85% coverage) |
+| Custom Objects | 54 |
+| Platform Events | 11 |
+| Custom Metadata Types | 12+ |
+| Custom Metadata Records | 100+ |
+| Permission Sets | 12 |
+| Custom Labels | 170+ |
+
+---
 
 ## Restore Context
 
 ```bash
 cd ~/Elaro
+git checkout claude/async-framework-foundation-0cM3m
 git status
-# Should show: On branch main, nothing to commit, working tree clean
+# Should show: working tree clean
 
-git log --oneline -1
-# Should show: 09d9180 feat(ai-governance): add AI Governance Module MVP (Agent 6)
+git log --oneline -3
+# fe7ef45 chore: commit pre-existing uncommitted changes
+# 742bca3 feat(async-framework): implement Step-Based Async Framework (WS6)
+# 0e3ef87 docs(agent-8): mark Agent 8 Integration, QA & Launch complete
 
-# Review build status
+cat HANDOFF.md
 cat TEAM2_BUILD_STATUS.md
-
-# Check what's next
-# - Push to origin
-# - Start Agent 7 (Trust Center - security critical)
-# - Start Agent 8 (Integration & QA)
 ```
-
-## Team 2 Progress
-
-| Agent   | Status      | Files Created                    |
-| ------- | ----------- | -------------------------------- |
-| Agent 1 | ✅ COMPLETE | Health Check Tool (separate 2GP) |
-| Agent 2 | ✅ COMPLETE | Compliance Command Center        |
-| Agent 3 | ✅ COMPLETE | Event-Driven Monitoring          |
-| Agent 4 | ✅ COMPLETE | Guided Assessment Wizards        |
-| Agent 5 | ✅ COMPLETE | SEC Cybersecurity Disclosure     |
-| Agent 6 | ✅ COMPLETE | AI Governance Module (38 files)  |
-| Agent 7 | ⏸️ PENDING  | Trust Center MVP                 |
-| Agent 8 | ⏸️ PENDING  | Integration, QA & Launch         |
-
-**Overall Progress:** 6 of 8 agents complete (75%)
 
 ---
 
-**Session Summary**: Successfully implemented complete AI Governance Module MVP with EU AI Act and NIST AI RMF compliance. All code committed to main branch, ready for push to origin or continuation to Agent 7.
+**Last Updated By:** Team 1 Agent 1 (Async Framework)
+**Overall Project Completion:** ~55%
+**Next Priority:** Team 1 Agent 2 (CMMC 2.0) or Agent 3 (Rule Engine core)
