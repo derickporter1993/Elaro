@@ -1,0 +1,39 @@
+.slds-card {
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+}
+
+.slds-card:hover {
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.16);
+}
+
+.sla-breached {
+    border-left: 4px solid var(--lwc-colorBorderError, #ea001e);
+}
+
+.sla-at-risk {
+    border-left: 4px solid var(--lwc-colorBorderWarning, #fe9339);
+}
+
+.sla-on-track {
+    border-left: 4px solid var(--lwc-colorBorderSuccess, #2e844a);
+}
+
+.severity-high {
+    color: var(--lwc-colorTextError, #ea001e);
+    font-weight: 700;
+}
+
+.severity-medium {
+    color: var(--lwc-colorTextWarning, #fe9339);
+    font-weight: 600;
+}
+
+.severity-low {
+    color: var(--lwc-colorTextSuccess, #2e844a);
+}
+
+.slds-dl_horizontal__label {
+    font-weight: 600;
+    color: var(--lwc-colorTextLabel, #3e3e3c);
+}

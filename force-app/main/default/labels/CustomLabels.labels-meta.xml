@@ -785,4 +785,39 @@
         <shortDescription>Open assessments metric label</shortDescription>
         <value>Open Assessments</value>
     </labels>
+    <labels>
+        <fullName>SEC_DashboardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC Dashboard title</shortDescription>
+        <value>SEC Cybersecurity Disclosures</value>
+    </labels>
+    <labels>
+        <fullName>SEC_NoOpenAssessments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No open assessments message</shortDescription>
+        <value>No open materiality assessments</value>
+    </labels>
+    <labels>
+        <fullName>SEC_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading message</shortDescription>
+        <value>Loading...</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ErrorTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error title</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>SEC_NoEvents</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No events message</shortDescription>
+        <value>No timeline events</value>
+    </labels>
 </CustomLabels>

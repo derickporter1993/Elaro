@@ -1,0 +1,40 @@
+<template>
+    <article class={cardClass} onclick={handleCardClick} role="button" tabindex="0">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span class="slds-truncate" title={assessment.Name}>{assessment.Name}</span>
+                    </h2>
+                </div>
+                <div class="slds-no-flex">
+                    <lightning-badge label={slaStatus} class={slaVariant}></lightning-badge>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1">
+                    <dl class="slds-dl_horizontal">
+                        <dt class="slds-dl_horizontal__label">{label.SECDiscoveryDate}:</dt>
+                        <dd class="slds-dl_horizontal__detail">{formattedDiscoveryDate}</dd>
+                    </dl>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                    <dl class="slds-dl_horizontal">
+                        <dt class="slds-dl_horizontal__label">{label.SECFilingDeadline}:</dt>
+                        <dd class="slds-dl_horizontal__detail">{formattedFilingDeadline}</dd>
+                    </dl>
+                </div>
+                <div class="slds-col slds-size_1-of-1">
+                    <dl class="slds-dl_horizontal">
+                        <dt class="slds-dl_horizontal__label">{label.SECDeterminationResult}:</dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <span class={severityClass}>{assessment.Determination_Result__c}</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </article>
+</template>

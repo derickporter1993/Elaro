@@ -1,0 +1,49 @@
+.metric-card {
+    background: var(--lwc-colorBackgroundAlt, #f3f3f3);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: var(--lwc-colorTextWeak, #706e6b);
+    text-transform: uppercase;
+    letter-spacing: 0.0625rem;
+}
+
+.metric-at-risk {
+    background: var(--lwc-colorBackgroundErrorLight, #fef7f7);
+    border-left: 3px solid var(--lwc-colorBorderError, #ea001e);
+}
+
+.metric-at-risk .metric-value {
+    color: var(--lwc-colorTextError, #ea001e);
+}
+
+.metric-on-track {
+    background: var(--lwc-colorBackgroundSuccessLight, #f1f8f5);
+    border-left: 3px solid var(--lwc-colorBorderSuccess, #2e844a);
+}
+
+.metric-on-track .metric-value {
+    color: var(--lwc-colorTextSuccess, #2e844a);
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .metric-card {
+        padding: 0.75rem;
+    }
+
+    .metric-value {
+        font-size: 1.5rem;
+    }
+}

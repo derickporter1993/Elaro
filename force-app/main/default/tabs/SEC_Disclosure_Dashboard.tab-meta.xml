@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>SEC Disclosure</label>
+    <motif>Custom48: Graph</motif>
+    <flexiPage>SEC_Disclosure_Dashboard</flexiPage>
+</CustomTab>

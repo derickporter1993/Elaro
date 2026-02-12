@@ -1,0 +1,8 @@
+.slds-timeline__marker {
+    width: 2rem;
+    height: 2rem;
+}
+
+.slds-timeline__item_details {
+    padding-left: 1rem;
+}
