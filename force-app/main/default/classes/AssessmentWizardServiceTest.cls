@@ -10,6 +10,62 @@
 @IsTest(testFor=AssessmentWizardService.class)
 private class AssessmentWizardServiceTest {
 
+    @TestSetup
+    static void makeData() {
+        List<Compliance_Assessment_Session__c> sessions = new List<Compliance_Assessment_Session__c>();
+
+        // Not Started session for step advancement tests
+        sessions.add(new Compliance_Assessment_Session__c(
+            Wizard_Name__c = 'HIPAA_Assessment',
+            Framework__c = 'HIPAA',
+            Current_Stage__c = 1,
+            Current_Step__c = 1,
+            Status__c = 'Not Started',
+            Percent_Complete__c = 0,
+            Session_State__c = '{}',
+            Assigned_To__c = UserInfo.getUserId()
+        ));
+
+        // In Progress session for blank step tests
+        sessions.add(new Compliance_Assessment_Session__c(
+            Wizard_Name__c = 'HIPAA_Assessment',
+            Framework__c = 'HIPAA',
+            Current_Stage__c = 1,
+            Current_Step__c = 1,
+            Status__c = 'In Progress',
+            Percent_Complete__c = 0,
+            Session_State__c = '{}',
+            Assigned_To__c = UserInfo.getUserId()
+        ));
+
+        // Pending Review session for completion tests
+        sessions.add(new Compliance_Assessment_Session__c(
+            Wizard_Name__c = 'HIPAA_Assessment',
+            Framework__c = 'HIPAA',
+            Current_Stage__c = 4,
+            Current_Step__c = 2,
+            Status__c = 'Pending Review',
+            Percent_Complete__c = 100,
+            Session_State__c = '{}',
+            Assigned_To__c = UserInfo.getUserId()
+        ));
+
+        // Completed SOC2 session for prefill tests
+        sessions.add(new Compliance_Assessment_Session__c(
+            Wizard_Name__c = 'SOC2_Assessment',
+            Framework__c = 'SOC2',
+            Current_Stage__c = 4,
+            Current_Step__c = 2,
+            Status__c = 'Completed',
+            Percent_Complete__c = 100,
+            Completed_Date__c = Datetime.now(),
+            Session_State__c = '{"SOC2_Security_Scan":{"status":"Completed","response":"passed"}}',
+            Assigned_To__c = UserInfo.getUserId()
+        ));
+
+        insert as user sessions;
+    }
+
     @IsTest
     static void shouldLoadWizardFromMetadata() {
         Test.startTest();
@@ -107,18 +163,11 @@ private class AssessmentWizardServiceTest {
 
     @IsTest
     static void shouldSaveStepAndAdvance() {
-        // Create session
-        Compliance_Assessment_Session__c session = new Compliance_Assessment_Session__c(
-            Wizard_Name__c = 'HIPAA_Assessment',
-            Framework__c = 'HIPAA',
-            Current_Stage__c = 1,
-            Current_Step__c = 1,
-            Status__c = 'Not Started',
-            Percent_Complete__c = 0,
-            Session_State__c = '{}',
-            Assigned_To__c = UserInfo.getUserId()
-        );
-        insert as user session;
+        Compliance_Assessment_Session__c session = [
+            SELECT Id FROM Compliance_Assessment_Session__c
+            WHERE Status__c = 'Not Started' AND Wizard_Name__c = 'HIPAA_Assessment'
+            WITH USER_MODE LIMIT 1
+        ];
 
         Test.startTest();
         AssessmentWizardService.WizardConfig config =
@@ -144,17 +193,11 @@ private class AssessmentWizardServiceTest {
 
     @IsTest
     static void shouldReturnEmptyForBlankStepId() {
-        Compliance_Assessment_Session__c session = new Compliance_Assessment_Session__c(
-            Wizard_Name__c = 'HIPAA_Assessment',
-            Framework__c = 'HIPAA',
-            Current_Stage__c = 1,
-            Current_Step__c = 1,
-            Status__c = 'In Progress',
-            Percent_Complete__c = 0,
-            Session_State__c = '{}',
-            Assigned_To__c = UserInfo.getUserId()
-        );
-        insert as user session;
+        Compliance_Assessment_Session__c session = [
+            SELECT Id FROM Compliance_Assessment_Session__c
+            WHERE Status__c = 'In Progress' AND Wizard_Name__c = 'HIPAA_Assessment'
+            WITH USER_MODE LIMIT 1
+        ];
 
         Test.startTest();
         AssessmentWizardService.WizardConfig config =
@@ -166,17 +209,11 @@ private class AssessmentWizardServiceTest {
 
     @IsTest
     static void shouldCompleteAssessment() {
-        Compliance_Assessment_Session__c session = new Compliance_Assessment_Session__c(
-            Wizard_Name__c = 'HIPAA_Assessment',
-            Framework__c = 'HIPAA',
-            Current_Stage__c = 4,
-            Current_Step__c = 2,
-            Status__c = 'Pending Review',
-            Percent_Complete__c = 100,
-            Session_State__c = '{}',
-            Assigned_To__c = UserInfo.getUserId()
-        );
-        insert as user session;
+        Compliance_Assessment_Session__c session = [
+            SELECT Id FROM Compliance_Assessment_Session__c
+            WHERE Status__c = 'Pending Review' AND Wizard_Name__c = 'HIPAA_Assessment'
+            WITH USER_MODE LIMIT 1
+        ];
 
         Test.startTest();
         Boolean completed = AssessmentWizardService.completeAssessment(session.Id);
@@ -205,20 +242,6 @@ private class AssessmentWizardServiceTest {
 
     @IsTest
     static void shouldGetPrefillDataFromPriorSession() {
-        // Create a completed session with state
-        Compliance_Assessment_Session__c prior = new Compliance_Assessment_Session__c(
-            Wizard_Name__c = 'SOC2_Assessment',
-            Framework__c = 'SOC2',
-            Current_Stage__c = 4,
-            Current_Step__c = 2,
-            Status__c = 'Completed',
-            Percent_Complete__c = 100,
-            Completed_Date__c = Datetime.now(),
-            Session_State__c = '{"SOC2_Security_Scan":{"status":"Completed","response":"passed"}}',
-            Assigned_To__c = UserInfo.getUserId()
-        );
-        insert as user prior;
-
         Test.startTest();
         Map<String, String> prefill = AssessmentWizardService.getPrefillData(
             'HIPAA_Assessment', null
@@ -408,10 +431,13 @@ private class AssessmentWizardServiceTest {
 
     @IsTest
     static void shouldRejectAutoScanWithInvalidSession() {
+        // Use fabricated non-existent Id to test the sessions.isEmpty() validation path
+        Id fabricatedId = Compliance_Assessment_Session__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+
         Test.startTest();
         try {
             AssessmentWizardService.executeAutoScan(
-                null,
+                fabricatedId,
                 new List<String>{'SOC2-CC6.1'}
             );
             Assert.fail('Should throw exception for invalid session');

@@ -54,7 +54,7 @@ public with sharing class CommandCenterController {
             ElaroLogger.error('CommandCenterController.getActionsByFramework',
                 e.getMessage(), e.getStackTraceString());
             throw new AuraHandledException(
-                'Unable to load actions for ' + framework + '. Please try again.');
+                'Unable to load compliance actions. Please try again.');
         }
     }
 
@@ -118,8 +118,8 @@ public with sharing class CommandCenterController {
     }
 
     /**
-     * Returns recent compliance-related activity for the notification feed.
-     * Combines gap status changes and score updates into a timeline.
+     * Returns recent compliance gap changes for the notification feed,
+     * ordered by last modification time.
      *
      * @param recordLimit Maximum number of activity items to return
      * @return List of ActivityItem ordered by most recent first
@@ -222,11 +222,13 @@ public with sharing class CommandCenterController {
 
             return jobId;
 
+        } catch (AuraHandledException ae) {
+            throw ae;
         } catch (Exception e) {
             ElaroLogger.error('CommandCenterController.executeComplianceAction',
                 e.getMessage(), e.getStackTraceString());
             throw new AuraHandledException(
-                'Unable to execute compliance action: ' + e.getMessage());
+                'Unable to execute compliance action. Please verify your permissions and try again.');
         }
     }
 

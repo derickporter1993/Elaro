@@ -73,7 +73,10 @@ private class CommandCenterControllerTest {
         Test.stopTest();
 
         Assert.isNotNull(actions, 'Actions should not be null');
-        // Depends on CMT records deployed, so just verify no exception
+        Assert.isFalse(actions.isEmpty(),
+            'Should return actions for SOC2 framework');
+        Assert.areEqual('SOC2', actions[0].framework,
+            'First action should belong to SOC2 framework');
     }
 
     @IsTest
