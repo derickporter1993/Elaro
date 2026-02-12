@@ -30,8 +30,8 @@ We are committed to providing a welcoming and inclusive environment. Please be r
 
 1. **Fork and clone the repository**:
    ```bash
-   git clone https://github.com/derickporter1993/Elaro.git
-   cd Elaro
+   git clone https://github.com/derickporter1993/elaro.git
+   cd elaro
    ```
 
 2. **Install dependencies**:
@@ -143,6 +143,9 @@ update as user existingRecords;
 delete as user oldRecords;
 
 // ✅ CORRECT - Database methods with AccessLevel
+Database.insert(records, AccessLevel.USER_MODE);
+Database.update(records, AccessLevel.USER_MODE);
+// With allOrNone parameter:
 Database.insert(records, false, AccessLevel.USER_MODE);
 Database.update(records, true, AccessLevel.USER_MODE);
 ```
@@ -461,12 +464,9 @@ jest.mock(
 );
 
 describe('c-my-component', () => {
-    afterEach(() => {
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
-    });
-
+    // Note: DOM cleanup is handled globally in lwc/__tests__/setupTests.js
+    // Use safeCleanupDom() for wire-adapter disconnect edge cases if needed
+    
     it('renders loading state', () => {
         const element = createElement('c-my-component', { is: MyComponent });
         document.body.appendChild(element);
