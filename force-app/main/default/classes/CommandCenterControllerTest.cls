@@ -203,4 +203,87 @@ private class CommandCenterControllerTest {
         Assert.isNotNull(ctx, 'Should return context even with no data');
         Assert.areEqual(0, ctx.overview.totalGaps, 'Should have 0 gaps');
     }
+
+    @IsTest
+    static void shouldExecuteCreateCaseAction() {
+        Compliance_Gap__c gap = [
+            SELECT Id FROM Compliance_Gap__c
+            WHERE Status__c = 'OPEN' WITH USER_MODE LIMIT 1
+        ];
+
+        Test.startTest();
+        String caseId = CommandCenterController.executeComplianceAction(
+            'CREATE_CASE',
+            String.valueOf(gap.Id),
+            '{"priority":"High"}'
+        );
+        Test.stopTest();
+
+        Assert.isNotNull(caseId, 'Should return case ID');
+
+        // Verify case was created
+        List<Case> cases = [
+            SELECT Id, Priority FROM Case
+            WHERE Id = :caseId WITH USER_MODE
+        ];
+        Assert.areEqual(1, cases.size(), 'Case should be created');
+        Assert.areEqual('High', cases[0].Priority, 'Priority should be High');
+    }
+
+    @IsTest
+    static void shouldHandleExecuteActionWithNullParams() {
+        Compliance_Gap__c gap = [
+            SELECT Id FROM Compliance_Gap__c
+            WHERE Status__c = 'OPEN' WITH USER_MODE LIMIT 1
+        ];
+
+        Test.startTest();
+        String caseId = CommandCenterController.executeComplianceAction(
+            'CREATE_CASE',
+            String.valueOf(gap.Id),
+            null
+        );
+        Test.stopTest();
+
+        Assert.isNotNull(caseId, 'Should handle null params gracefully');
+    }
+
+    @IsTest
+    static void shouldRejectUnsupportedActionType() {
+        Compliance_Gap__c gap = [
+            SELECT Id FROM Compliance_Gap__c
+            WHERE Status__c = 'OPEN' WITH USER_MODE LIMIT 1
+        ];
+
+        Test.startTest();
+        try {
+            CommandCenterController.executeComplianceAction(
+                'UNSUPPORTED_ACTION',
+                String.valueOf(gap.Id),
+                '{}'
+            );
+            Assert.fail('Should throw exception for unsupported action');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(e.getMessage().contains('not yet implemented'),
+                'Should indicate action is not implemented');
+        }
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void shouldRejectBlankActionType() {
+        Test.startTest();
+        try {
+            CommandCenterController.executeComplianceAction(
+                '',
+                'someId',
+                '{}'
+            );
+            Assert.fail('Should throw exception for blank action type');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(e.getMessage().contains('required'),
+                'Should indicate action type is required');
+        }
+        Test.stopTest();
+    }
 }

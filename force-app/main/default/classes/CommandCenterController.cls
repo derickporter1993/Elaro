@@ -169,6 +169,68 @@ public with sharing class CommandCenterController {
     }
 
     /**
+     * Executes a compliance action by delegating to the Remediation Orchestrator.
+     * Integrates Command Center with Team 1's Orchestration Engine for automated
+     * remediation workflows.
+     *
+     * @param actionType The remediation action (e.g., 'REVOKE_PERMISSION', 'CREATE_CASE')
+     * @param contextRecordId Optional Compliance_Gap__c or Evidence__c Id
+     * @param actionParams JSON string with action-specific parameters
+     * @return Remediation Case Id for tracking
+     * @throws AuraHandledException if Remediation Orchestrator unavailable or execution fails
+     * @example
+     * String caseId = CommandCenterController.executeComplianceAction(
+     *     'CREATE_CASE',
+     *     gapId,
+     *     '{"priority":"High","description":"Urgent remediation required"}'
+     * );
+     */
+    @AuraEnabled
+    public static String executeComplianceAction(
+        String actionType,
+        String contextRecordId,
+        String actionParams
+    ) {
+        try {
+            ElaroLogger.info('CommandCenterController.executeComplianceAction',
+                'Executing action: ' + actionType + ' for record: ' + contextRecordId);
+
+            // Validate action type
+            if (String.isBlank(actionType)) {
+                throw new AuraHandledException('Action type is required.');
+            }
+
+            // Delegate to Remediation Orchestrator (Team 1 integration)
+            String jobId;
+            if (actionType == 'CREATE_CASE') {
+                // Parse action parameters
+                Map<String, Object> params = String.isNotBlank(actionParams)
+                    ? (Map<String, Object>) JSON.deserializeUntyped(actionParams)
+                    : new Map<String, Object>();
+
+                String priority = (String) params.get('priority') ?? 'Medium';
+                jobId = RemediationOrchestrator.createRemediationCase(contextRecordId, priority);
+            } else {
+                // For other action types, implement similar delegation patterns
+                throw new AuraHandledException(
+                    'Action type "' + actionType + '" is not yet implemented. '
+                    + 'Supported actions: CREATE_CASE');
+            }
+
+            ElaroLogger.info('CommandCenterController.executeComplianceAction',
+                'Action queued successfully. Job ID: ' + jobId);
+
+            return jobId;
+
+        } catch (Exception e) {
+            ElaroLogger.error('CommandCenterController.executeComplianceAction',
+                e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException(
+                'Unable to execute compliance action: ' + e.getMessage());
+        }
+    }
+
+    /**
      * Activity feed item for the notification feed component.
      */
     public class ActivityItem implements Comparable {
