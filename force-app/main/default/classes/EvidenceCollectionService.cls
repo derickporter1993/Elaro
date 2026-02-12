@@ -120,7 +120,7 @@ public with sharing class EvidenceCollectionService {
             SELECT COUNT()
             FROM PermissionSet
             WHERE IsCustom = true
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         Compliance_Evidence__c ev = new Compliance_Evidence__c(

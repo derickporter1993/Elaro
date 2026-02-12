@@ -20,11 +20,11 @@ private class FlowExecutionLoggerTest {
             FROM Flow_Execution__c
             WHERE Flow_Name__c = 'TestFlow'
         ];
-        System.assertEquals(1, logs.size(), 'Should have created 1 log record');
-        System.assertEquals('SUCCESS', logs[0].Status__c, 'Status should match');
-        System.assertEquals(100, logs[0].CPU__c, 'CPU should match');
-        System.assertEquals(5, logs[0].SOQL__c, 'SOQL should match');
-        System.assertEquals(2, logs[0].DML__c, 'DML should match');
+        Assert.areEqual(1, logs.size(), 'Should have created 1 log record');
+        Assert.areEqual('SUCCESS', logs[0].Status__c, 'Status should match');
+        Assert.areEqual(100, logs[0].CPU__c, 'CPU should match');
+        Assert.areEqual(5, logs[0].SOQL__c, 'SOQL should match');
+        Assert.areEqual(2, logs[0].DML__c, 'DML should match');
     }
 
     @IsTest
@@ -39,11 +39,11 @@ private class FlowExecutionLoggerTest {
             FROM Flow_Execution__c
             WHERE Flow_Name__c = 'AuraTestFlow'
         ];
-        System.assertEquals(1, logs.size(), 'Should have created 1 log record');
-        System.assertEquals('ERROR', logs[0].Status__c, 'Status should be ERROR');
-        System.assertEquals(500, logs[0].CPU__c, 'CPU should match');
-        System.assertEquals(10, logs[0].SOQL__c, 'SOQL should match');
-        System.assertEquals(5, logs[0].DML__c, 'DML should match');
+        Assert.areEqual(1, logs.size(), 'Should have created 1 log record');
+        Assert.areEqual('ERROR', logs[0].Status__c, 'Status should be ERROR');
+        Assert.areEqual(500, logs[0].CPU__c, 'CPU should match');
+        Assert.areEqual(10, logs[0].SOQL__c, 'SOQL should match');
+        Assert.areEqual(5, logs[0].DML__c, 'DML should match');
     }
 
     @IsTest
@@ -69,7 +69,7 @@ private class FlowExecutionLoggerTest {
             FROM Flow_Execution__c
             WHERE Flow_Name__c LIKE 'BulkFlow%'
         ];
-        System.assertEquals(10, logs.size(), 'Should have created 10 log records');
+        Assert.areEqual(10, logs.size(), 'Should have created 10 log records');
     }
 
     @IsTest
@@ -100,12 +100,12 @@ private class FlowExecutionLoggerTest {
             FROM Flow_Execution__c
             WHERE Flow_Name__c LIKE 'Bulk200Flow%'
         ];
-        System.assertEquals(200, logs.size(), 'Should have created 200 log records');
+        Assert.areEqual(200, logs.size(), 'Should have created 200 log records');
         
         // Verify data integrity
         for (Flow_Execution__c log : logs) {
-            System.assertNotEquals(null, log.Flow_Name__c, 'Flow name should not be null');
-            System.assertNotEquals(null, log.Status__c, 'Status should not be null');
+            Assert.areNotEqual(null, log.Flow_Name__c, 'Flow name should not be null');
+            Assert.areNotEqual(null, log.Status__c, 'Status should not be null');
         }
     }
     
@@ -117,17 +117,17 @@ private class FlowExecutionLoggerTest {
         // Test null inputs
         try {
             FlowExecutionLogger.logInvocable(null);
-            System.assert(false, 'Should have thrown exception for null inputs');
+            Assert.fail( 'Should have thrown exception for null inputs');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null inputs');
+            Assert.isTrue(true, 'Expected exception for null inputs');
         }
 
         // Test empty inputs
         try {
             FlowExecutionLogger.logInvocable(new List<FlowExecutionLogger.LogInput>());
-            System.assert(false, 'Should have thrown exception for empty inputs');
+            Assert.fail( 'Should have thrown exception for empty inputs');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for empty inputs');
+            Assert.isTrue(true, 'Expected exception for empty inputs');
         }
 
         // Test blank flow name
@@ -136,9 +136,9 @@ private class FlowExecutionLoggerTest {
         invalidInput.status = 'SUCCESS';
         try {
             FlowExecutionLogger.logInvocable(new List<FlowExecutionLogger.LogInput>{ invalidInput });
-            System.assert(false, 'Should have thrown exception for blank flow name');
+            Assert.fail( 'Should have thrown exception for blank flow name');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank flow name');
+            Assert.isTrue(true, 'Expected exception for blank flow name');
         }
 
         // Test negative CPU
@@ -148,9 +148,9 @@ private class FlowExecutionLoggerTest {
         negativeInput.cpu = -1;
         try {
             FlowExecutionLogger.logInvocable(new List<FlowExecutionLogger.LogInput>{ negativeInput });
-            System.assert(false, 'Should have thrown exception for negative CPU');
+            Assert.fail( 'Should have thrown exception for negative CPU');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for negative CPU');
+            Assert.isTrue(true, 'Expected exception for negative CPU');
         }
 
         Test.stopTest();
@@ -164,7 +164,7 @@ private class FlowExecutionLoggerTest {
         // Test blank flow name
         try {
             FlowExecutionLogger.log('', null, 'SUCCESS', 100, 5, 2);
-            System.assert(false, 'Should have thrown exception for blank flow name');
+            Assert.fail( 'Should have thrown exception for blank flow name');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Flow name cannot be blank'), 'Expected flow name validation error');
         }
@@ -172,7 +172,7 @@ private class FlowExecutionLoggerTest {
         // Test null flow name
         try {
             FlowExecutionLogger.log(null, null, 'SUCCESS', 100, 5, 2);
-            System.assert(false, 'Should have thrown exception for null flow name');
+            Assert.fail( 'Should have thrown exception for null flow name');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Flow name cannot be blank'), 'Expected flow name validation error');
         }
@@ -180,7 +180,7 @@ private class FlowExecutionLoggerTest {
         // Test blank status
         try {
             FlowExecutionLogger.log('TestFlow', null, '', 100, 5, 2);
-            System.assert(false, 'Should have thrown exception for blank status');
+            Assert.fail( 'Should have thrown exception for blank status');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Status cannot be blank'), 'Expected status validation error');
         }
@@ -188,7 +188,7 @@ private class FlowExecutionLoggerTest {
         // Test null status
         try {
             FlowExecutionLogger.log('TestFlow', null, null, 100, 5, 2);
-            System.assert(false, 'Should have thrown exception for null status');
+            Assert.fail( 'Should have thrown exception for null status');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Status cannot be blank'), 'Expected status validation error');
         }
@@ -211,6 +211,6 @@ private class FlowExecutionLoggerTest {
         List<Flow_Execution__c> logs = [
             SELECT Id FROM Flow_Execution__c WHERE Flow_Name__c = 'RateLimitTest'
         ];
-        System.assertEquals(1, logs.size(), 'Should create record even if rate limit cache unavailable');
+        Assert.areEqual(1, logs.size(), 'Should create record even if rate limit cache unavailable');
     }
 }

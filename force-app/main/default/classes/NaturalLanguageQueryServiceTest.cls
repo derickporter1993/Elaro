@@ -24,9 +24,9 @@ private class NaturalLanguageQueryServiceTest {
             NaturalLanguageQueryService.executeNaturalLanguageQuery('Show all audit packages');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return result');
-        System.assertNotEquals(null, result.generatedSOQL, 'Should have generated SOQL');
-        System.assertNotEquals(null, result.results, 'Should have results list');
+        Assert.areNotEqual(null, result, 'Should return result');
+        Assert.areNotEqual(null, result.generatedSOQL, 'Should have generated SOQL');
+        Assert.areNotEqual(null, result.results, 'Should have results list');
         System.assert(result.confidence &gt;= 0, 'Should have confidence score');
     }
     
@@ -37,7 +37,7 @@ private class NaturalLanguageQueryServiceTest {
         Test.startTest();
         try {
             NaturalLanguageQueryService.executeNaturalLanguageQuery('');
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required');
         }
@@ -51,7 +51,7 @@ private class NaturalLanguageQueryServiceTest {
         Test.startTest();
         try {
             NaturalLanguageQueryService.executeNaturalLanguageQuery(null);
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required');
         }
@@ -67,7 +67,7 @@ private class NaturalLanguageQueryServiceTest {
             NaturalLanguageQueryService.executeNaturalLanguageQuery('Show me all evidence items');
         Test.stopTest();
         
-        System.assertNotEquals(null, result.results, 'Should return results');
+        Assert.areNotEqual(null, result.results, 'Should return results');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -131,9 +131,9 @@ private class NaturalLanguageQueryServiceTest {
             NaturalLanguageQueryService.validateQuery('Show audit packages');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return result');
-        System.assertEquals(true, result.isValid, 'Should be valid');
-        System.assertNotEquals(null, result.generatedSOQL, 'Should have generated SOQL');
+        Assert.areNotEqual(null, result, 'Should return result');
+        Assert.areEqual(true, result.isValid, 'Should be valid');
+        Assert.areNotEqual(null, result.generatedSOQL, 'Should have generated SOQL');
     }
     
     @isTest
@@ -145,7 +145,7 @@ private class NaturalLanguageQueryServiceTest {
             NaturalLanguageQueryService.validateQuery('');
         Test.stopTest();
         
-        System.assertEquals(false, result.isValid, 'Should be invalid');
+        Assert.areEqual(false, result.isValid, 'Should be invalid');
         System.assert(result.message.contains('empty'), 'Should mention empty');
     }
     
@@ -158,7 +158,7 @@ private class NaturalLanguageQueryServiceTest {
             NaturalLanguageQueryService.validateQuery(null);
         Test.stopTest();
         
-        System.assertEquals(false, result.isValid, 'Should be invalid');
+        Assert.areEqual(false, result.isValid, 'Should be invalid');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -171,7 +171,7 @@ private class NaturalLanguageQueryServiceTest {
         List&lt;String&gt; queries = NaturalLanguageQueryService.getRecentQueries();
         Test.stopTest();
         
-        System.assertNotEquals(null, queries, 'Should return a list');
+        Assert.areNotEqual(null, queries, 'Should return a list');
     }
     
     // ═══════════════════════════════════════════════════════════════

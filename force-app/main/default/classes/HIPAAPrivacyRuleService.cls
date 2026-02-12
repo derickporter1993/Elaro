@@ -106,7 +106,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
         result.usersWithExcessAccess = excessiveUsers.size();
 
         // Calculate compliance percentage
-        Integer totalActiveUsers = [SELECT COUNT() FROM User WHERE IsActive = true WITH SECURITY_ENFORCED];
+        Integer totalActiveUsers = [SELECT COUNT() FROM User WHERE IsActive = true WITH USER_MODE];
         result.totalUsers = totalActiveUsers;
 
         if (totalActiveUsers > 0) {
@@ -156,7 +156,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
             String query = 'SELECT Id, Field, OldValue, NewValue, CreatedById, CreatedBy.Name, CreatedDate ' +
                           'FROM ' + historyObjectName + ' ' +
                           'WHERE ParentId = :recordId ' +
-                          'WITH SECURITY_ENFORCED ' +
+                          'WITH USER_MODE ' +
                           'ORDER BY CreatedDate DESC LIMIT 100';
 
             List<SObject> historyRecords = Database.query(query);
@@ -201,7 +201,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
             AND Evidence_Type__c = 'PHI_DISCLOSURE'
             AND Evidence_Date__c >= :startDate
             AND Evidence_Date__c <= :endDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Evidence_Date__c DESC
         ];
 
@@ -216,7 +216,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
         ElaroSecurityUtils.validateCRUDAccess('ContentVersion', DmlOperation.DML_INSERT);
         insert cv;
 
-        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
 
         HIPAAPrivacyRuleService service = new HIPAAPrivacyRuleService();
         service.logAuditEntry('DISCLOSURE_LOG_GENERATED', 'Generated HIPAA disclosure log', cv.ContentDocumentId);
@@ -306,7 +306,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
             WHERE Assignee.IsActive = true
             AND (PermissionSet.PermissionsModifyAllData = true
                  OR PermissionSet.PermissionsViewAllData = true)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 500
         ];
 
@@ -354,7 +354,7 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
 
     private static Integer countUsersWithAccess(String objectName) {
         // Simplified count - actual implementation would check object permissions
-        return [SELECT COUNT() FROM User WHERE IsActive = true WITH SECURITY_ENFORCED];
+        return [SELECT COUNT() FROM User WHERE IsActive = true WITH USER_MODE];
     }
 
     private Boolean hasFieldHistoryEnabled(String objectName) {

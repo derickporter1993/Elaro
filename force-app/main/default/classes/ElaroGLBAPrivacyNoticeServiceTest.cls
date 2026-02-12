@@ -70,11 +70,11 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
         Test.stopTest();
         
         // Then: Notice should be created
-        System.assertNotEquals(null, notice.Id, 'Notice should be created');
-        System.assertEquals('Initial', notice.Notice_Type__c, 'Should be initial notice');
-        System.assertEquals('Sent', notice.Delivery_Status__c, 'Status should be Sent');
-        System.assertNotEquals(null, notice.Opt_Out_Deadline__c, 'Opt-out deadline should be set');
-        System.assertNotEquals(null, notice.Next_Annual_Notice_Due__c, 'Next annual notice should be set');
+        Assert.areNotEqual(null, notice.Id, 'Notice should be created');
+        Assert.areEqual('Initial', notice.Notice_Type__c, 'Should be initial notice');
+        Assert.areEqual('Sent', notice.Delivery_Status__c, 'Status should be Sent');
+        Assert.areNotEqual(null, notice.Opt_Out_Deadline__c, 'Opt-out deadline should be set');
+        Assert.areNotEqual(null, notice.Next_Annual_Notice_Due__c, 'Next annual notice should be set');
         
         // Verify notice in database
         List<Privacy_Notice__c> notices = [
@@ -82,7 +82,7 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
             FROM Privacy_Notice__c
             WHERE Id = :notice.Id
         ];
-        System.assertEquals(1, notices.size(), 'Notice should exist in database');
+        Assert.areEqual(1, notices.size(), 'Notice should exist in database');
     }
     
     @IsTest
@@ -96,8 +96,8 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
         // Then: Annual notices should be created
         System.assert(!notices.isEmpty(), 'Should create annual notices');
         for (Privacy_Notice__c notice : notices) {
-            System.assertEquals('Annual', notice.Notice_Type__c, 'Should be annual notice');
-            System.assertEquals('Pending', notice.Delivery_Status__c, 'Status should be Pending');
+            Assert.areEqual('Annual', notice.Notice_Type__c, 'Should be annual notice');
+            Assert.areEqual('Pending', notice.Delivery_Status__c, 'Status should be Pending');
         }
     }
     
@@ -118,9 +118,9 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
         Test.stopTest();
         
         // Then: Revised notices should be created
-        System.assertEquals(3, notices.size(), 'Should create revised notices for all contacts');
+        Assert.areEqual(3, notices.size(), 'Should create revised notices for all contacts');
         for (Privacy_Notice__c notice : notices) {
-            System.assertEquals('Revised', notice.Notice_Type__c, 'Should be revised notice');
+            Assert.areEqual('Revised', notice.Notice_Type__c, 'Should be revised notice');
         }
     }
     
@@ -145,8 +145,8 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
             FROM Privacy_Notice__c
             WHERE Id = :notice.Id
         ];
-        System.assertEquals(true, updatedNotice.Customer_Opted_Out__c, 'Should be opted out');
-        System.assertNotEquals(null, updatedNotice.Opt_Out_Date__c, 'Opt-out date should be set');
+        Assert.areEqual(true, updatedNotice.Customer_Opted_Out__c, 'Should be opted out');
+        Assert.areNotEqual(null, updatedNotice.Opt_Out_Date__c, 'Opt-out date should be set');
     }
     
     @IsTest
@@ -163,7 +163,7 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
                     testContact.AccountId,
                     'Email'
                 );
-                System.assert(false, 'Should have thrown InsufficientAccessException');
+                Assert.fail( 'Should have thrown InsufficientAccessException');
             } catch (Exception e) {
                 // Then: Permission exception should be thrown
                 // Note: InsufficientAccessException may not be available, catch generic Exception
@@ -185,7 +185,7 @@ private class ElaroGLBAPrivacyNoticeServiceTest {
         Test.stopTest();
         
         // Then: Metrics should be returned
-        System.assertNotEquals(null, metrics, 'Metrics should be returned');
+        Assert.areNotEqual(null, metrics, 'Metrics should be returned');
         System.assert(metrics.containsKey('totalNoticesThisYear'), 'Should have total notices metric');
     }
     

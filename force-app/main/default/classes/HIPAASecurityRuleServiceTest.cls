@@ -31,7 +31,7 @@ public class HIPAASecurityRuleServiceTest {
         String frameworkName = service.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('HIPAA', frameworkName, 'Framework name should be HIPAA');
+        Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
     @isTest
@@ -42,7 +42,7 @@ public class HIPAASecurityRuleServiceTest {
         List<ComplianceServiceBase.Violation> violations = service.getViolations();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations should not be null');
+        Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
     @isTest
@@ -63,12 +63,12 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.evaluateTechnicalSafeguards();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.evaluationDate, 'Evaluation date should be set');
-        System.assertNotEquals(null, result.accessControlResult, 'Access control result should not be null');
-        System.assertNotEquals(null, result.auditControlResult, 'Audit control result should not be null');
-        System.assertNotEquals(null, result.integrityControlResult, 'Integrity control result should not be null');
-        System.assertNotEquals(null, result.transmissionResult, 'Transmission result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.evaluationDate, 'Evaluation date should be set');
+        Assert.areNotEqual(null, result.accessControlResult, 'Access control result should not be null');
+        Assert.areNotEqual(null, result.auditControlResult, 'Audit control result should not be null');
+        Assert.areNotEqual(null, result.integrityControlResult, 'Integrity control result should not be null');
+        Assert.areNotEqual(null, result.transmissionResult, 'Transmission result should not be null');
     }
 
     @isTest
@@ -78,10 +78,10 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.checkAccessControls();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.score, 'Score should be set');
-        System.assertNotEquals(null, result.gaps, 'Gaps should not be null');
-        System.assertNotEquals(null, result.violations, 'Violations should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.score, 'Score should be set');
+        Assert.areNotEqual(null, result.gaps, 'Gaps should not be null');
+        Assert.areNotEqual(null, result.violations, 'Violations should not be null');
     }
 
     @isTest
@@ -91,9 +91,9 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.checkAuditControls();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.score, 'Score should be set');
-        System.assertNotEquals(null, result.retentionPeriodDays, 'Retention period should be set');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.score, 'Score should be set');
+        Assert.areNotEqual(null, result.retentionPeriodDays, 'Retention period should be set');
     }
 
     @isTest
@@ -103,8 +103,8 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.checkIntegrityControls();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.score, 'Score should be set');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.score, 'Score should be set');
     }
 
     @isTest
@@ -114,9 +114,9 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.checkTransmissionSecurity();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('TLS 1.2+', result.tlsVersion, 'TLS version should be TLS 1.2+');
-        System.assertEquals(true, result.tlsCompliant, 'Should be TLS compliant');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('TLS 1.2+', result.tlsVersion, 'TLS version should be TLS 1.2+');
+        Assert.areEqual(true, result.tlsCompliant, 'Should be TLS compliant');
     }
 
     @isTest
@@ -126,7 +126,7 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.getEncryptionStatus();
         Test.stopTest();
 
-        System.assertNotEquals(null, status, 'Status should not be null');
+        Assert.areNotEqual(null, status, 'Status should not be null');
         System.assert(status.containsKey('Contact'), 'Should include Contact object');
         System.assert(status.containsKey('Lead'), 'Should include Lead object');
         System.assert(status.containsKey('Account'), 'Should include Account object');
@@ -141,10 +141,10 @@ public class HIPAASecurityRuleServiceTest {
         Test.stopTest();
 
         HIPAASecurityRuleService.EncryptionInfo contactInfo = status.get('Contact');
-        System.assertNotEquals(null, contactInfo, 'Contact encryption info should not be null');
-        System.assertEquals('Contact', contactInfo.objectName, 'Object name should be Contact');
-        System.assertNotEquals(null, contactInfo.encryptedFields, 'Encrypted fields list should not be null');
-        System.assertNotEquals(null, contactInfo.unencryptedPHIFields, 'Unencrypted PHI fields list should not be null');
+        Assert.areNotEqual(null, contactInfo, 'Contact encryption info should not be null');
+        Assert.areEqual('Contact', contactInfo.objectName, 'Object name should be Contact');
+        Assert.areNotEqual(null, contactInfo.encryptedFields, 'Encrypted fields list should not be null');
+        Assert.areNotEqual(null, contactInfo.unencryptedPHIFields, 'Unencrypted PHI fields list should not be null');
     }
 
     @isTest
@@ -154,11 +154,11 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.evaluateTechnicalSafeguards();
         Test.stopTest();
 
-        System.assertNotEquals(null, result.overallScore, 'Overall score should be set');
+        Assert.areNotEqual(null, result.overallScore, 'Overall score should be set');
         System.assert(result.overallScore >= 0 && result.overallScore <= 100,
             'Overall score should be between 0 and 100');
-        System.assertNotEquals(null, result.overallCompliant, 'Overall compliant flag should be set');
-        System.assertNotEquals(null, result.gaps, 'Gaps list should not be null');
+        Assert.areNotEqual(null, result.overallCompliant, 'Overall compliant flag should be set');
+        Assert.areNotEqual(null, result.gaps, 'Gaps list should not be null');
     }
 
     @isTest
@@ -179,6 +179,6 @@ public class HIPAASecurityRuleServiceTest {
             HIPAASecurityRuleService.evaluateTechnicalSafeguards();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should handle bulk data');
+        Assert.areNotEqual(null, result, 'Should handle bulk data');
     }
 }

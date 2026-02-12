@@ -21,11 +21,11 @@ private class ApiUsageDashboardControllerTest {
         List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(10);
         Test.stopTest();
 
-        System.assertEquals(5, rows.size(), 'Should return 5 snapshot rows');
-        System.assertNotEquals(null, rows[0].takenOn, 'TakenOn should be populated');
-        System.assertNotEquals(null, rows[0].used, 'Used should be populated');
-        System.assertEquals(100000, rows[0].dailyLimit, 'Limit should be 100000');
-        System.assertNotEquals(null, rows[0].percent, 'Percent should be populated');
+        Assert.areEqual(5, rows.size(), 'Should return 5 snapshot rows');
+        Assert.areNotEqual(null, rows[0].takenOn, 'TakenOn should be populated');
+        Assert.areNotEqual(null, rows[0].used, 'Used should be populated');
+        Assert.areEqual(100000, rows[0].dailyLimit, 'Limit should be 100000');
+        Assert.areNotEqual(null, rows[0].percent, 'Percent should be populated');
     }
 
     @IsTest
@@ -48,7 +48,7 @@ private class ApiUsageDashboardControllerTest {
         List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(5);
         Test.stopTest();
 
-        System.assertEquals(5, rows.size(), 'Should respect limit size of 5');
+        Assert.areEqual(5, rows.size(), 'Should respect limit size of 5');
     }
 
     @IsTest
@@ -58,7 +58,7 @@ private class ApiUsageDashboardControllerTest {
         List<ApiUsageDashboardController.Row> rows = ApiUsageDashboardController.getRecentSnapshots(10);
         Test.stopTest();
 
-        System.assertEquals(0, rows.size(), 'Should return empty list when no data');
+        Assert.areEqual(0, rows.size(), 'Should return empty list when no data');
     }
 
     @IsTest
@@ -76,6 +76,6 @@ private class ApiUsageDashboardControllerTest {
         Test.stopTest();
 
         // Math.max(1, limitSize) should ensure at least 1 result
-        System.assertEquals(1, rows.size(), 'Should return at least 1 row even with limit 0');
+        Assert.areEqual(1, rows.size(), 'Should return at least 1 row even with limit 0');
     }
 }

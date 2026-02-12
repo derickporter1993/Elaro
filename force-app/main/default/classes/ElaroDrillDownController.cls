@@ -6,7 +6,7 @@
  * - Object whitelisting
  * - Operator whitelisting
  * - Field validation against schema
- * - WITH SECURITY_ENFORCED
+ * - WITH USER_MODE
  * - Pagination to prevent heap issues
  * - SOQL injection prevention
  *
@@ -292,7 +292,7 @@ public with sharing class ElaroDrillDownController {
         }
 
         // Add security enforcement
-        soql += ' WITH SECURITY_ENFORCED';
+        soql += ' WITH USER_MODE';
 
         // Add ORDER BY
         if (String.isNotBlank(ctx.orderBy)) {
@@ -359,7 +359,7 @@ public with sharing class ElaroDrillDownController {
             }
         }
 
-        countSoql += ' WITH SECURITY_ENFORCED';
+        countSoql += ' WITH USER_MODE';
 
         try {
             return Database.countQuery(countSoql);

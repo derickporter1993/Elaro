@@ -54,7 +54,7 @@ private class FINRAModuleTest {
         String name = module.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('FINRA', name, 'Framework name should be FINRA');
+        Assert.areEqual('FINRA', name, 'Framework name should be FINRA');
     }
 
     @IsTest
@@ -65,7 +65,7 @@ private class FINRAModuleTest {
         String version = module.getFrameworkVersion();
         Test.stopTest();
 
-        System.assertEquals('2024', version, 'Framework version should be 2024');
+        Assert.areEqual('2024', version, 'Framework version should be 2024');
     }
 
     @IsTest
@@ -76,7 +76,7 @@ private class FINRAModuleTest {
         List<IComplianceModule.Control> controls = module.getControls();
         Test.stopTest();
 
-        System.assertNotEquals(null, controls, 'Controls list should not be null');
+        Assert.areNotEqual(null, controls, 'Controls list should not be null');
         System.assert(controls.size() > 0, 'Should have at least one control');
 
         Set<String> categories = new Set<String>();
@@ -97,7 +97,7 @@ private class FINRAModuleTest {
         Decimal score = module.calculateScore(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, score, 'Score should not be null');
+        Assert.areNotEqual(null, score, 'Score should not be null');
         System.assert(score >= 0, 'Score should be >= 0');
     }
 
@@ -109,7 +109,7 @@ private class FINRAModuleTest {
         Decimal score = module.calculateScore(null);
         Test.stopTest();
 
-        System.assertEquals(0, score, 'Score should be 0 for null audit package');
+        Assert.areEqual(0, score, 'Score should be 0 for null audit package');
     }
 
     @IsTest
@@ -121,10 +121,10 @@ private class FINRAModuleTest {
         List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, gaps, 'Gaps list should not be null');
+        Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
         for (IComplianceModule.Gap gap : gaps) {
             System.assert(gap.id.startsWith('GAP-FINRA-'), 'Gap ID should start with GAP-FINRA-');
-            System.assertNotEquals(null, gap.recommendation, 'Gap recommendation should not be null');
+            Assert.areNotEqual(null, gap.recommendation, 'Gap recommendation should not be null');
         }
     }
 
@@ -137,8 +137,8 @@ private class FINRAModuleTest {
         Blob report = module.generateReport(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, report, 'Report should not be null');
-        System.assertEquals('FINRA Report', report.toString(), 'Should return test report content');
+        Assert.areNotEqual(null, report, 'Report should not be null');
+        Assert.areEqual('FINRA Report', report.toString(), 'Should return test report content');
     }
 
     @IsTest
@@ -149,8 +149,8 @@ private class FINRAModuleTest {
         IComplianceModule.Control ctrl = module.getControlById('3110(a)');
         Test.stopTest();
 
-        System.assertNotEquals(null, ctrl, 'Should find Supervisory System control');
-        System.assertEquals('3110(a)', ctrl.code, 'Control code should match');
+        Assert.areNotEqual(null, ctrl, 'Should find Supervisory System control');
+        Assert.areEqual('3110(a)', ctrl.code, 'Control code should match');
     }
 
     @IsTest
@@ -161,7 +161,7 @@ private class FINRAModuleTest {
         IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
-        System.assertEquals(null, ctrl, 'Should return null for nonexistent control');
+        Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
     }
 
     @IsTest
@@ -176,8 +176,8 @@ private class FINRAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('3110(a)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('3110(a)', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -192,9 +192,9 @@ private class FINRAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('3110(d)', result.controlId, 'Control ID should match');
-        System.assertEquals(75, result.score, 'Score should be 75');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('3110(d)', result.controlId, 'Control ID should match');
+        Assert.areEqual(75, result.score, 'Score should be 75');
     }
 
     @IsTest
@@ -209,9 +209,9 @@ private class FINRAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
         System.assert(result.passed, 'Record keeping should pass');
-        System.assertEquals(90, result.score, 'Score should be 90');
+        Assert.areEqual(90, result.score, 'Score should be 90');
     }
 
     @IsTest
@@ -226,8 +226,8 @@ private class FINRAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('4370(a)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('4370(a)', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -242,8 +242,8 @@ private class FINRAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(70, result.score, 'Default score should be 70');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(70, result.score, 'Default score should be 70');
     }
 
     @IsTest
@@ -258,7 +258,7 @@ private class FINRAModuleTest {
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );
-            System.assertNotEquals(null, result, 'Result should not be null for: ' + ctrl.code);
+            Assert.areNotEqual(null, result, 'Result should not be null for: ' + ctrl.code);
         }
         Test.stopTest();
     }

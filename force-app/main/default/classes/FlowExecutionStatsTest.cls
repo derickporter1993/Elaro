@@ -29,7 +29,7 @@ private class FlowExecutionStatsTest {
         List<FlowExecutionStats.ExecAgg> results = FlowExecutionStats.getTopFlows(5);
         Test.stopTest();
         
-        System.assertNotEquals(null, results, 'Results should not be null');
+        Assert.areNotEqual(null, results, 'Results should not be null');
         System.assert(!results.isEmpty(), 'Should return at least one result');
     }
     
@@ -50,7 +50,7 @@ private class FlowExecutionStatsTest {
         
         // Verify fault counts are included
         for (FlowExecutionStats.ExecAgg agg : results) {
-            System.assertNotEquals(null, agg.faults, 'Fault count should not be null');
+            Assert.areNotEqual(null, agg.faults, 'Fault count should not be null');
             System.assert(agg.faults >= 0, 'Fault count should be non-negative');
         }
     }
@@ -84,6 +84,6 @@ private class FlowExecutionStatsTest {
         List<FlowExecutionStats.ExecAgg> results = FlowExecutionStats.getTopFlows(5);
         Test.stopTest();
         
-        System.assertEquals(0, results.size(), 'Should return empty list when no data');
+        Assert.areEqual(0, results.size(), 'Should return empty list when no data');
     }
 }

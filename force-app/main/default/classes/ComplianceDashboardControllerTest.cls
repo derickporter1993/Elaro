@@ -25,9 +25,9 @@ private class ComplianceDashboardControllerTest {
             ComplianceDashboardController.getDashboardSummary();
         Test.stopTest();
         
-        System.assertNotEquals(null, summary, 'Summary should not be null');
-        System.assertNotEquals(null, summary.lastUpdated, 'Last updated should not be null');
-        System.assertNotEquals(null, summary.frameworks, 'Frameworks should not be null');
+        Assert.areNotEqual(null, summary, 'Summary should not be null');
+        Assert.areNotEqual(null, summary.lastUpdated, 'Last updated should not be null');
+        Assert.areNotEqual(null, summary.frameworks, 'Frameworks should not be null');
     }
     
     @IsTest
@@ -37,11 +37,11 @@ private class ComplianceDashboardControllerTest {
             ComplianceDashboardController.getFrameworkDashboard('SOX');
         Test.stopTest();
         
-        System.assertNotEquals(null, data, 'Data should not be null');
-        System.assertEquals('SOX', data.framework, 'Framework should match');
-        System.assertNotEquals(null, data.evaluation, 'Evaluation should not be null');
-        System.assertNotEquals(null, data.gaps, 'Gaps should not be null');
-        System.assertNotEquals(null, data.evidence, 'Evidence should not be null');
+        Assert.areNotEqual(null, data, 'Data should not be null');
+        Assert.areEqual('SOX', data.framework, 'Framework should match');
+        Assert.areNotEqual(null, data.evaluation, 'Evaluation should not be null');
+        Assert.areNotEqual(null, data.gaps, 'Gaps should not be null');
+        Assert.areNotEqual(null, data.evidence, 'Evidence should not be null');
     }
     
     @IsTest
@@ -49,9 +49,9 @@ private class ComplianceDashboardControllerTest {
         Test.startTest();
         try {
             ComplianceDashboardController.getFrameworkDashboard('');
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank framework');
+            Assert.isTrue(true, 'Expected exception for blank framework');
         }
         Test.stopTest();
     }

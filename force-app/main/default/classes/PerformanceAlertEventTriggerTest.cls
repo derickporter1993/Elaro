@@ -26,9 +26,9 @@ private class PerformanceAlertEventTriggerTest {
             WHERE Id = :alert.Id
         ];
         
-        System.assertEquals('CPU', savedAlert.Metric__c, 'Metric should match');
-        System.assertEquals(9500, savedAlert.Value__c, 'Value should match');
-        System.assertEquals(10000, savedAlert.Threshold__c, 'Threshold should match');
+        Assert.areEqual('CPU', savedAlert.Metric__c, 'Metric should match');
+        Assert.areEqual(9500, savedAlert.Value__c, 'Value should match');
+        Assert.areEqual(10000, savedAlert.Threshold__c, 'Threshold should match');
     }
     
     @isTest
@@ -47,7 +47,7 @@ private class PerformanceAlertEventTriggerTest {
         Test.stopTest();
         
         Integer count = [SELECT COUNT() FROM Performance_Alert_History__c WHERE Metric__c = 'HEAP'];
-        System.assertEquals(200, count, 'Should have created 200 alerts');
+        Assert.areEqual(200, count, 'Should have created 200 alerts');
     }
     
     @isTest
@@ -61,7 +61,7 @@ private class PerformanceAlertEventTriggerTest {
             FROM Performance_Alert_History__c
             WHERE Metric__c = 'SOQL'
         ];
-        System.assertEquals(1, alerts.size(), 'Should have one SOQL alert');
-        System.assertEquals(95, alerts[0].Value__c, 'Value should be 95');
+        Assert.areEqual(1, alerts.size(), 'Should have one SOQL alert');
+        Assert.areEqual(95, alerts[0].Value__c, 'Value should be 95');
     }
 }

@@ -80,9 +80,9 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.GraphData graph = ComplianceGraphService.getComplianceGraph();
         Test.stopTest();
 
-        System.assertNotEquals(null, graph, 'Graph should not be null');
-        System.assertNotEquals(null, graph.nodes, 'Nodes should not be null');
-        System.assertNotEquals(null, graph.edges, 'Edges should not be null');
+        Assert.areNotEqual(null, graph, 'Graph should not be null');
+        Assert.areNotEqual(null, graph.nodes, 'Nodes should not be null');
+        Assert.areNotEqual(null, graph.edges, 'Edges should not be null');
         System.assert(graph.nodes.size() > 0, 'Should have nodes');
         System.assert(graph.edges.size() > 0, 'Should have edges');
 
@@ -90,8 +90,8 @@ private class ComplianceGraphServiceTest {
         Set<String> nodeTypes = new Set<String>();
         for (ComplianceGraphService.GraphNode node : graph.nodes) {
             nodeTypes.add(node.nodeType);
-            System.assertNotEquals(null, node.id, 'Node ID should be set');
-            System.assertNotEquals(null, node.label, 'Node label should be set');
+            Assert.areNotEqual(null, node.id, 'Node ID should be set');
+            Assert.areNotEqual(null, node.label, 'Node label should be set');
         }
         System.assert(nodeTypes.contains('framework'), 'Should have framework nodes');
         System.assert(nodeTypes.contains('gap'), 'Should have gap nodes');
@@ -103,13 +103,13 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.GraphData graph = ComplianceGraphService.getGraphByFramework('SOX');
         Test.stopTest();
 
-        System.assertNotEquals(null, graph, 'Graph should not be null');
+        Assert.areNotEqual(null, graph, 'Graph should not be null');
         System.assert(graph.nodes.size() > 0, 'Should have nodes');
 
         // Verify all gaps are SOX
         for (ComplianceGraphService.GraphNode node : graph.nodes) {
             if (node.nodeType == 'gap' && node.metadata != null) {
-                System.assertEquals('SOX', node.metadata.get('framework'), 'All gaps should be SOX');
+                Assert.areEqual('SOX', node.metadata.get('framework'), 'All gaps should be SOX');
             }
         }
     }
@@ -120,9 +120,9 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.ImpactAnalysis analysis = ComplianceGraphService.analyzeImpact('PERMISSION_SET', '0PS000000000001');
         Test.stopTest();
 
-        System.assertNotEquals(null, analysis, 'Analysis should not be null');
-        System.assertEquals('PERMISSION_SET', analysis.entityType, 'Entity type should match');
-        System.assertEquals('0PS000000000001', analysis.entityId, 'Entity ID should match');
+        Assert.areNotEqual(null, analysis, 'Analysis should not be null');
+        Assert.areEqual('PERMISSION_SET', analysis.entityType, 'Entity type should match');
+        Assert.areEqual('0PS000000000001', analysis.entityId, 'Entity ID should match');
         System.assert(analysis.totalGaps >= 2, 'Should have at least 2 gaps affecting this entity');
         System.assert(analysis.affectedFrameworks.size() >= 2, 'Should affect multiple frameworks');
         System.assert(analysis.riskScore > 0, 'Risk score should be positive');
@@ -134,9 +134,9 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.ImpactAnalysis analysis = ComplianceGraphService.analyzeImpact('UNKNOWN_TYPE', 'UNKNOWN_ID');
         Test.stopTest();
 
-        System.assertNotEquals(null, analysis, 'Analysis should not be null');
-        System.assertEquals(0, analysis.totalGaps, 'Should have no gaps');
-        System.assertEquals(0, analysis.riskScore, 'Risk score should be 0');
+        Assert.areNotEqual(null, analysis, 'Analysis should not be null');
+        Assert.areEqual(0, analysis.totalGaps, 'Should have no gaps');
+        Assert.areEqual(0, analysis.riskScore, 'Risk score should be 0');
     }
 
     @isTest
@@ -145,19 +145,19 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.GraphStats stats = ComplianceGraphService.getGraphStats();
         Test.stopTest();
 
-        System.assertNotEquals(null, stats, 'Stats should not be null');
-        System.assertEquals(5, stats.totalGaps, 'Should have 5 gaps');
-        System.assertEquals(4, stats.totalFrameworks, 'Should have 4 frameworks');
-        System.assertNotEquals(null, stats.frameworkCounts, 'Framework counts should not be null');
-        System.assertNotEquals(null, stats.severityCounts, 'Severity counts should not be null');
-        System.assertNotEquals(null, stats.statusCounts, 'Status counts should not be null');
+        Assert.areNotEqual(null, stats, 'Stats should not be null');
+        Assert.areEqual(5, stats.totalGaps, 'Should have 5 gaps');
+        Assert.areEqual(4, stats.totalFrameworks, 'Should have 4 frameworks');
+        Assert.areNotEqual(null, stats.frameworkCounts, 'Framework counts should not be null');
+        Assert.areNotEqual(null, stats.severityCounts, 'Severity counts should not be null');
+        Assert.areNotEqual(null, stats.statusCounts, 'Status counts should not be null');
 
         // Verify framework counts
-        System.assertEquals(2, stats.frameworkCounts.get('SOX'), 'SOX should have 2 gaps');
-        System.assertEquals(1, stats.frameworkCounts.get('HIPAA'), 'HIPAA should have 1 gap');
+        Assert.areEqual(2, stats.frameworkCounts.get('SOX'), 'SOX should have 2 gaps');
+        Assert.areEqual(1, stats.frameworkCounts.get('HIPAA'), 'HIPAA should have 1 gap');
 
         // Verify severity counts
-        System.assertEquals(2, stats.severityCounts.get('CRITICAL'), 'Should have 2 critical gaps');
+        Assert.areEqual(2, stats.severityCounts.get('CRITICAL'), 'Should have 2 critical gaps');
     }
 
     @isTest
@@ -166,10 +166,10 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.NodeDetails details = ComplianceGraphService.getNodeDetails('framework-SOX', 'framework');
         Test.stopTest();
 
-        System.assertNotEquals(null, details, 'Details should not be null');
-        System.assertEquals('framework-SOX', details.nodeId, 'Node ID should match');
-        System.assertEquals('framework', details.nodeType, 'Node type should match');
-        System.assertEquals('SOX', details.name, 'Name should be SOX');
+        Assert.areNotEqual(null, details, 'Details should not be null');
+        Assert.areEqual('framework-SOX', details.nodeId, 'Node ID should match');
+        Assert.areEqual('framework', details.nodeType, 'Node type should match');
+        Assert.areEqual('SOX', details.name, 'Name should be SOX');
     }
 
     @isTest
@@ -181,10 +181,10 @@ private class ComplianceGraphServiceTest {
         ComplianceGraphService.NodeDetails details = ComplianceGraphService.getNodeDetails(nodeId, 'gap');
         Test.stopTest();
 
-        System.assertNotEquals(null, details, 'Details should not be null');
-        System.assertNotEquals(null, details.metadata, 'Metadata should be set');
-        System.assertNotEquals(null, details.metadata.get('framework'), 'Framework should be in metadata');
-        System.assertNotEquals(null, details.metadata.get('severity'), 'Severity should be in metadata');
+        Assert.areNotEqual(null, details, 'Details should not be null');
+        Assert.areNotEqual(null, details.metadata, 'Metadata should be set');
+        Assert.areNotEqual(null, details.metadata.get('framework'), 'Framework should be in metadata');
+        Assert.areNotEqual(null, details.metadata.get('severity'), 'Severity should be in metadata');
     }
 
     @isTest
@@ -197,19 +197,19 @@ private class ComplianceGraphServiceTest {
         node.color = '#1E88E5';
         node.metadata = new Map<String, Object>{ 'key' => 'value' };
 
-        System.assertEquals('test-node', node.id, 'ID should match');
-        System.assertEquals('Test Node', node.label, 'Label should match');
-        System.assertEquals(30, node.size, 'Size should match');
+        Assert.areEqual('test-node', node.id, 'ID should match');
+        Assert.areEqual('Test Node', node.label, 'Label should match');
+        Assert.areEqual(30, node.size, 'Size should match');
     }
 
     @isTest
     static void testGraphEdgeWrapper() {
         ComplianceGraphService.GraphEdge edge = new ComplianceGraphService.GraphEdge('source', 'target', 'CONTAINS', 2);
 
-        System.assertEquals('source', edge.source, 'Source should match');
-        System.assertEquals('target', edge.target, 'Target should match');
-        System.assertEquals('CONTAINS', edge.edgeType, 'Edge type should match');
-        System.assertEquals(2, edge.weight, 'Weight should match');
+        Assert.areEqual('source', edge.source, 'Source should match');
+        Assert.areEqual('target', edge.target, 'Target should match');
+        Assert.areEqual('CONTAINS', edge.edgeType, 'Edge type should match');
+        Assert.areEqual(2, edge.weight, 'Weight should match');
     }
 
     @isTest
@@ -226,9 +226,9 @@ private class ComplianceGraphServiceTest {
         analysis.mediumCount = 1;
         analysis.lowCount = 0;
 
-        System.assertEquals('PERMISSION_SET', analysis.entityType, 'Entity type should match');
-        System.assertEquals(15.5, analysis.riskScore, 'Risk score should match');
-        System.assertEquals(3, analysis.totalGaps, 'Total gaps should match');
+        Assert.areEqual('PERMISSION_SET', analysis.entityType, 'Entity type should match');
+        Assert.areEqual(15.5, analysis.riskScore, 'Risk score should match');
+        Assert.areEqual(3, analysis.totalGaps, 'Total gaps should match');
     }
 
     @isTest
@@ -241,9 +241,9 @@ private class ComplianceGraphServiceTest {
         gap.status = 'OPEN';
         gap.riskScore = 9.0;
 
-        System.assertEquals('GAP-00001', gap.gapName, 'Gap name should match');
-        System.assertEquals('SOX', gap.framework, 'Framework should match');
-        System.assertEquals('CRITICAL', gap.severity, 'Severity should match');
+        Assert.areEqual('GAP-00001', gap.gapName, 'Gap name should match');
+        Assert.areEqual('SOX', gap.framework, 'Framework should match');
+        Assert.areEqual('CRITICAL', gap.severity, 'Severity should match');
     }
 
     @isTest
@@ -256,8 +256,8 @@ private class ComplianceGraphServiceTest {
         stats.severityCounts = new Map<String, Integer>{ 'CRITICAL' => 2 };
         stats.statusCounts = new Map<String, Integer>{ 'OPEN' => 8 };
 
-        System.assertEquals(10, stats.totalGaps, 'Total gaps should match');
-        System.assertEquals(4, stats.totalFrameworks, 'Total frameworks should match');
+        Assert.areEqual(10, stats.totalGaps, 'Total gaps should match');
+        Assert.areEqual(4, stats.totalFrameworks, 'Total frameworks should match');
     }
 
     @isTest
@@ -269,8 +269,8 @@ private class ComplianceGraphServiceTest {
         details.label = 'Test Gap Label';
         details.metadata = new Map<String, Object>{ 'key' => 'value' };
 
-        System.assertEquals('test-id', details.nodeId, 'Node ID should match');
-        System.assertEquals('gap', details.nodeType, 'Node type should match');
+        Assert.areEqual('test-id', details.nodeId, 'Node ID should match');
+        Assert.areEqual('gap', details.nodeType, 'Node type should match');
     }
 
     @isTest
@@ -279,8 +279,8 @@ private class ComplianceGraphServiceTest {
         data.nodes = new List<ComplianceGraphService.GraphNode>();
         data.edges = new List<ComplianceGraphService.GraphEdge>();
 
-        System.assertNotEquals(null, data.nodes, 'Nodes should not be null');
-        System.assertNotEquals(null, data.edges, 'Edges should not be null');
+        Assert.areNotEqual(null, data.nodes, 'Nodes should not be null');
+        Assert.areNotEqual(null, data.edges, 'Edges should not be null');
     }
 
     @isTest
@@ -309,8 +309,8 @@ private class ComplianceGraphServiceTest {
         Set<String> edgeTypes = new Set<String>();
         for (ComplianceGraphService.GraphEdge edge : graph.edges) {
             edgeTypes.add(edge.edgeType);
-            System.assertNotEquals(null, edge.source, 'Edge source should be set');
-            System.assertNotEquals(null, edge.target, 'Edge target should be set');
+            Assert.areNotEqual(null, edge.source, 'Edge source should be set');
+            Assert.areNotEqual(null, edge.target, 'Edge target should be set');
         }
 
         System.assert(edgeTypes.contains('HAS_GAP'), 'Should have HAS_GAP edges');

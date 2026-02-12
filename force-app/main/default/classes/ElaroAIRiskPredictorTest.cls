@@ -16,13 +16,13 @@ private class ElaroAIRiskPredictorTest {
             ElaroAIRiskPredictor.predictRisk('PERMISSION_SET', '001000000000001AAA', 'SOX');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('PERMISSION_SET', result.entityType, 'Entity type should match');
-        System.assertEquals('SOX', result.framework, 'Framework should match');
-        System.assertNotEquals(null, result.riskScore, 'Risk score should not be null');
-        System.assertNotEquals(null, result.confidence, 'Confidence should not be null');
-        System.assertNotEquals(null, result.isViolation, 'Is violation should not be null');
-        System.assertNotEquals(null, result.recommendation, 'Recommendation should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('PERMISSION_SET', result.entityType, 'Entity type should match');
+        Assert.areEqual('SOX', result.framework, 'Framework should match');
+        Assert.areNotEqual(null, result.riskScore, 'Risk score should not be null');
+        Assert.areNotEqual(null, result.confidence, 'Confidence should not be null');
+        Assert.areNotEqual(null, result.isViolation, 'Is violation should not be null');
+        Assert.areNotEqual(null, result.recommendation, 'Recommendation should not be null');
     }
     
     @IsTest
@@ -30,9 +30,9 @@ private class ElaroAIRiskPredictorTest {
         Test.startTest();
         try {
             ElaroAIRiskPredictor.predictRisk('', '001000000000001AAA', 'SOX');
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank parameters');
+            Assert.isTrue(true, 'Expected exception for blank parameters');
         }
         Test.stopTest();
     }
@@ -42,9 +42,9 @@ private class ElaroAIRiskPredictorTest {
         Test.startTest();
         try {
             ElaroAIRiskPredictor.predictRisk(null, null, null);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null parameters');
+            Assert.isTrue(true, 'Expected exception for null parameters');
         }
         Test.stopTest();
     }

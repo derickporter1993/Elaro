@@ -87,7 +87,7 @@ public with sharing class GDPRBreachNotificationService extends ComplianceServic
                 SELECT Id, Affected_Records__c, Breach_Date__c, Status__c
                 FROM GDPR_Breach__c
                 WHERE Id = :breachId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -138,7 +138,7 @@ public with sharing class GDPRBreachNotificationService extends ComplianceServic
                 SELECT Id, DPA_Notified__c, Notification_Deadline__c, Status__c
                 FROM GDPR_Breach__c
                 WHERE Id = :breachId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -199,7 +199,7 @@ public with sharing class GDPRBreachNotificationService extends ComplianceServic
                 SELECT Id, Affected_Records__c, Status__c
                 FROM GDPR_Breach__c
                 WHERE Id = :breachId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -260,7 +260,7 @@ public with sharing class GDPRBreachNotificationService extends ComplianceServic
                 FROM GDPR_Breach__c
                 WHERE Status__c != 'Resolved'
                 AND (Notification_Deadline__c <= :alertThreshold OR Notification_Deadline__c < :now)
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY Notification_Deadline__c ASC
             ];
             

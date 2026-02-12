@@ -6,8 +6,8 @@ private class ApiUsageSnapshotTest {
         ApiUsageSnapshot.run();
         Test.stopTest();
         List<API_Usage_Snapshot__c> rows = [SELECT Id, Daily_Used__c, Daily_Limit__c FROM API_Usage_Snapshot__c LIMIT 1];
-        System.assertEquals(1, rows.size());
-        System.assertEquals(25000, rows[0].Daily_Used__c);
-        System.assertEquals(100000, rows[0].Daily_Limit__c);
+        Assert.areEqual(1, rows.size());
+        Assert.areEqual(25000, rows[0].Daily_Used__c);
+        Assert.areEqual(100000, rows[0].Daily_Limit__c);
     }
 }

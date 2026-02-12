@@ -8,8 +8,8 @@ private class ElaroQuickActionsServiceTest {
             ElaroQuickActionsService.autoRemediateTopViolations();
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return remediation result');
-        System.assertNotEquals(null, result.messages, 'Should have messages');
+        Assert.areNotEqual(null, result, 'Should return remediation result');
+        Assert.areNotEqual(null, result.messages, 'Should have messages');
     }
     
     @isTest
@@ -35,7 +35,7 @@ private class ElaroQuickActionsServiceTest {
             ElaroQuickActionsService.revokeModifyAllData(new List<Id>{u.Id});
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return action result');
+        Assert.areNotEqual(null, result, 'Should return action result');
     }
     
     @isTest
@@ -45,7 +45,7 @@ private class ElaroQuickActionsServiceTest {
             ElaroQuickActionsService.deactivateInactiveUsers(90);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return action result');
+        Assert.areNotEqual(null, result, 'Should return action result');
     }
     
     @isTest
@@ -83,8 +83,8 @@ private class ElaroQuickActionsServiceTest {
             ElaroQuickActionsService.removePermissionSetAssignment(psa.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return action result');
-        System.assertEquals(true, result.success, 'Should succeed');
+        Assert.areNotEqual(null, result, 'Should return action result');
+        Assert.areEqual(true, result.success, 'Should succeed');
     }
 }
 

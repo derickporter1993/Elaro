@@ -16,7 +16,7 @@ private class ElaroAlertTriggerTest {
 
         // Verify alert was created
         Alert__c insertedAlert = [SELECT Id, Title__c FROM Alert__c WHERE Id = :alert.Id];
-        System.assertEquals('Test Alert', insertedAlert.Title__c);
+        Assert.areEqual('Test Alert', insertedAlert.Title__c);
     }
 
     @IsTest
@@ -35,7 +35,7 @@ private class ElaroAlertTriggerTest {
 
         // Verify alert was created but event should not be published
         Alert__c insertedAlert = [SELECT Id, Acknowledged__c FROM Alert__c WHERE Id = :alert.Id];
-        System.assertEquals(true, insertedAlert.Acknowledged__c);
+        Assert.areEqual(true, insertedAlert.Acknowledged__c);
     }
 
     @IsTest
@@ -56,6 +56,6 @@ private class ElaroAlertTriggerTest {
         Test.stopTest();
 
         List<Alert__c> insertedAlerts = [SELECT Id FROM Alert__c WHERE Title__c LIKE 'Bulk Alert%'];
-        System.assertEquals(200, insertedAlerts.size(), 'Should insert all alerts');
+        Assert.areEqual(200, insertedAlerts.size(), 'Should insert all alerts');
     }
 }

@@ -35,7 +35,7 @@ private class RetentionEnforcementBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete successfully');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete successfully');
     }
 
     @isTest
@@ -51,7 +51,7 @@ private class RetentionEnforcementBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete even with no activities');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete even with no activities');
     }
 
     @isTest
@@ -71,7 +71,7 @@ private class RetentionEnforcementBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should handle null retention periods');
+        Assert.areEqual('Completed', job.Status, 'Batch should handle null retention periods');
     }
 
     @isTest
@@ -95,8 +95,8 @@ private class RetentionEnforcementBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status, NumberOfErrors FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete bulk processing');
-        System.assertEquals(0, job.NumberOfErrors, 'Batch should complete without errors');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete bulk processing');
+        Assert.areEqual(0, job.NumberOfErrors, 'Batch should complete without errors');
     }
 
     @isTest
@@ -110,6 +110,6 @@ private class RetentionEnforcementBatchTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, queryLocator, 'QueryLocator should not be null');
+        Assert.areNotEqual(null, queryLocator, 'QueryLocator should not be null');
     }
 }

@@ -18,7 +18,7 @@ public with sharing class OnCallScheduleController {
                    Rotation_Name__c, Start_Time__c, End_Time__c,
                    Timezone__c, Notification_Methods__c, Active__c
             FROM Elaro_On_Call_Schedule__c
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Start_Time__c DESC
             LIMIT 200
         ];

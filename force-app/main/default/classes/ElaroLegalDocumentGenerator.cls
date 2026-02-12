@@ -62,7 +62,7 @@ public with sharing class ElaroLegalDocumentGenerator {
             if (!ElaroSecurityUtils.hasReadAccess('ContentVersion')) {
                 throw new AuraHandledException('Insufficient access to ContentVersion');
             }
-            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
 
             // Audit logging for evidence pack generation
             logAuditEvent('EVIDENCE_PACK_GENERATED', framework, startDate, endDate, cv.ContentDocumentId);
@@ -141,7 +141,7 @@ public with sharing class ElaroLegalDocumentGenerator {
             WHERE Compliance_Framework__c = :framework
             AND Timestamp__c >= :startDate
             AND Timestamp__c <= :endDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Timestamp__c DESC
             LIMIT 1000
         ];

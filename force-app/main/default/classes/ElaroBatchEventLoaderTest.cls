@@ -35,7 +35,7 @@ private class ElaroBatchEventLoaderTest {
         Database.executeBatch(batch, 200);
         Test.stopTest();
 
-        System.assert(true, 'Batch should execute without errors');
+        Assert.isTrue(true, 'Batch should execute without errors');
     }
 
     @isTest
@@ -50,7 +50,7 @@ private class ElaroBatchEventLoaderTest {
         Id batchId = Database.executeBatch(batch, 200);
         Test.stopTest();
 
-        System.assertNotEquals(null, batchId, 'Batch ID should not be null');
+        Assert.areNotEqual(null, batchId, 'Batch ID should not be null');
         System.assert(Limits.getQueries() < 100, 'Should stay under SOQL limit');
         System.assert(Limits.getDmlStatements() < 150, 'Should stay under DML limit');
     }
@@ -67,7 +67,7 @@ private class ElaroBatchEventLoaderTest {
         Database.executeBatch(batch, 10);
         Test.stopTest();
 
-        System.assert(true, 'Small batch size should execute');
+        Assert.isTrue(true, 'Small batch size should execute');
     }
 
     @isTest
@@ -86,7 +86,7 @@ private class ElaroBatchEventLoaderTest {
         }
         Test.stopTest();
 
-        System.assert(true, 'All frameworks should process');
+        Assert.isTrue(true, 'All frameworks should process');
     }
 
     @isTest
@@ -113,6 +113,6 @@ private class ElaroBatchEventLoaderTest {
 
         Test.stopTest();
 
-        System.assert(true, 'Date ranges should be handled');
+        Assert.isTrue(true, 'Date ranges should be handled');
     }
 }

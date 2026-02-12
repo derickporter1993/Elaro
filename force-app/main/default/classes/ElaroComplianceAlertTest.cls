@@ -69,7 +69,7 @@ private class ElaroComplianceAlertTest {
         Id configId = ElaroComplianceAlert.configureAlert(config);
         Test.stopTest();
         
-        System.assertNotEquals(null, configId, 'Should return config ID');
+        Assert.areNotEqual(null, configId, 'Should return config ID');
         
         Elaro_Alert_Config__c alertConfig = [
             SELECT Id, Name, Threshold__c, Channels__c, Severity__c
@@ -77,8 +77,8 @@ private class ElaroComplianceAlertTest {
             WHERE Id = :configId
         ];
         
-        System.assertEquals('Test Alert Config', alertConfig.Name, 'Name should match');
-        System.assertEquals(75, alertConfig.Threshold__c, 'Threshold should match');
+        Assert.areEqual('Test Alert Config', alertConfig.Name, 'Name should match');
+        Assert.areEqual(75, alertConfig.Threshold__c, 'Threshold should match');
         System.assert(alertConfig.Channels__c.contains('EMAIL'), 'Should include EMAIL channel');
     }
     
@@ -92,7 +92,7 @@ private class ElaroComplianceAlertTest {
         Test.startTest();
         try {
             ElaroComplianceAlert.configureAlert(config);
-            System.assert(false, 'Should throw exception for missing name');
+            Assert.fail( 'Should throw exception for missing name');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('name'), 'Should mention name requirement');
         }
@@ -109,7 +109,7 @@ private class ElaroComplianceAlertTest {
         Test.startTest();
         try {
             ElaroComplianceAlert.configureAlert(config);
-            System.assert(false, 'Should throw exception for invalid threshold');
+            Assert.fail( 'Should throw exception for invalid threshold');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Threshold'), 'Should mention threshold requirement');
         }
@@ -126,7 +126,7 @@ private class ElaroComplianceAlertTest {
         Test.startTest();
         try {
             ElaroComplianceAlert.configureAlert(config);
-            System.assert(false, 'Should throw exception for empty channels');
+            Assert.fail( 'Should throw exception for empty channels');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('channel'), 'Should mention channel requirement');
         }
@@ -153,11 +153,11 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.processAlert(eventData);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return alert result');
-        System.assertEquals(true, result.processed, 'Should be processed');
-        System.assertNotEquals(null, result.severity, 'Should have severity');
-        System.assertEquals(85, result.riskScore, 'Risk score should match');
-        System.assertNotEquals(null, result.timestamp, 'Should have timestamp');
+        Assert.areNotEqual(null, result, 'Should return alert result');
+        Assert.areEqual(true, result.processed, 'Should be processed');
+        Assert.areNotEqual(null, result.severity, 'Should have severity');
+        Assert.areEqual(85, result.riskScore, 'Risk score should match');
+        Assert.areNotEqual(null, result.timestamp, 'Should have timestamp');
     }
     
     @isTest
@@ -176,8 +176,8 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.processAlert(eventData);
         Test.stopTest();
         
-        System.assertEquals(true, result.alertTriggered, 'Alert should be triggered');
-        System.assertNotEquals(null, result.alertId, 'Should have alert ID');
+        Assert.areEqual(true, result.alertTriggered, 'Alert should be triggered');
+        Assert.areNotEqual(null, result.alertId, 'Should have alert ID');
     }
     
     @isTest
@@ -196,7 +196,7 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.processAlert(eventData);
         Test.stopTest();
         
-        System.assertEquals(false, result.alertTriggered, 'Alert should not be triggered');
+        Assert.areEqual(false, result.alertTriggered, 'Alert should not be triggered');
     }
     
     @isTest
@@ -215,8 +215,8 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.processAlert(eventData);
         Test.stopTest();
         
-        System.assertEquals(true, result.alertTriggered, 'Alert should be triggered');
-        System.assertEquals('CRITICAL', result.severity, 'Severity should be CRITICAL');
+        Assert.areEqual(true, result.alertTriggered, 'Alert should be triggered');
+        Assert.areEqual('CRITICAL', result.severity, 'Severity should be CRITICAL');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -239,7 +239,7 @@ private class ElaroComplianceAlertTest {
         Test.stopTest();
         
         // Verify email was sent (in test context, email limits are checked)
-        System.assert(true, 'Email alert should be sent');
+        Assert.isTrue(true, 'Email alert should be sent');
     }
     
     @isTest
@@ -259,7 +259,7 @@ private class ElaroComplianceAlertTest {
         ElaroComplianceAlert.sendAlertNotification('SLACK', JSON.serialize(alertData));
         Test.stopTest();
         
-        System.assert(true, 'Slack alert should be sent');
+        Assert.isTrue(true, 'Slack alert should be sent');
     }
     
     @isTest
@@ -279,7 +279,7 @@ private class ElaroComplianceAlertTest {
         ElaroComplianceAlert.sendAlertNotification('PAGERDUTY', JSON.serialize(alertData));
         Test.stopTest();
         
-        System.assert(true, 'PagerDuty alert should be sent');
+        Assert.isTrue(true, 'PagerDuty alert should be sent');
     }
     
     @isTest
@@ -299,7 +299,7 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.sendAlertNotification('INVALID', JSON.serialize(alertData));
         } catch (Exception e) {
             // May or may not throw exception depending on implementation
-            System.assert(true, 'Should handle invalid channel');
+            Assert.isTrue(true, 'Should handle invalid channel');
         }
         Test.stopTest();
     }
@@ -315,15 +315,15 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.getActiveAlerts();
         Test.stopTest();
         
-        System.assertNotEquals(null, alerts, 'Should return alerts list');
+        Assert.areNotEqual(null, alerts, 'Should return alerts list');
         
         // Should include evidence items with 'Pending Review' status
         for (ElaroComplianceAlert.AlertSummary alert : alerts) {
-            System.assertNotEquals(null, alert.id, 'Alert should have ID');
-            System.assertNotEquals(null, alert.title, 'Alert should have title');
-            System.assertNotEquals(null, alert.description, 'Alert should have description');
-            System.assertNotEquals(null, alert.severity, 'Alert should have severity');
-            System.assertNotEquals(null, alert.timestamp, 'Alert should have timestamp');
+            Assert.areNotEqual(null, alert.id, 'Alert should have ID');
+            Assert.areNotEqual(null, alert.title, 'Alert should have title');
+            Assert.areNotEqual(null, alert.description, 'Alert should have description');
+            Assert.areNotEqual(null, alert.severity, 'Alert should have severity');
+            Assert.areNotEqual(null, alert.timestamp, 'Alert should have timestamp');
         }
     }
     
@@ -366,7 +366,7 @@ private class ElaroComplianceAlertTest {
         Test.stopTest();
         
         // Verify queue items were created (async processing)
-        System.assert(true, 'Alert should be queued');
+        Assert.isTrue(true, 'Alert should be queued');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -396,7 +396,7 @@ private class ElaroComplianceAlertTest {
         }
         Test.stopTest();
         
-        System.assert(true, 'Bulk alerts should be sent without governor limit errors');
+        Assert.isTrue(true, 'Bulk alerts should be sent without governor limit errors');
     }
     
     @isTest
@@ -423,7 +423,7 @@ private class ElaroComplianceAlertTest {
         }
         Test.stopTest();
         
-        System.assertEquals(100, results.size(), 'Should process all events');
+        Assert.areEqual(100, results.size(), 'Should process all events');
         
         // Verify some alerts were triggered (those with riskScore >= 80)
         Integer triggeredCount = 0;
@@ -465,7 +465,7 @@ private class ElaroComplianceAlertTest {
                 ElaroComplianceAlert.processAlert(eventData);
             Test.stopTest();
             
-            System.assertEquals(expectedSeverities.get(riskScore), result.severity, 
+            Assert.areEqual(expectedSeverities.get(riskScore), result.severity, 
                 'Severity should match for risk score ' + riskScore);
         }
     }

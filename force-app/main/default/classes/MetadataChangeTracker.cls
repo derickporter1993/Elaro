@@ -77,7 +77,7 @@ public with sharing class MetadataChangeTracker {
             SELECT Id, Change_Type__c, Metadata_Type__c, Metadata_Name__c, 
                    Changed_By__c, Change_Date__c, Risk_Level__c, Impact_Analysis__c
             FROM Metadata_Change__c
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Change_Date__c DESC
             LIMIT :recordLimit
         ];

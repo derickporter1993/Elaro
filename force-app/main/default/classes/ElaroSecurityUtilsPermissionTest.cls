@@ -47,11 +47,11 @@ private class ElaroSecurityUtilsPermissionTest {
         System.runAs(limitedUser) {
             // Standard User should have read access to Account
             Boolean hasAccess = ElaroSecurityUtils.hasReadAccess('Account');
-            System.assertEquals(true, hasAccess, 'Standard User should have read access to Account');
+            Assert.areEqual(true, hasAccess, 'Standard User should have read access to Account');
             
             // Test with invalid object
             Boolean invalidAccess = ElaroSecurityUtils.hasReadAccess('InvalidObject__c');
-            System.assertEquals(false, invalidAccess, 'Should return false for invalid object');
+            Assert.areEqual(false, invalidAccess, 'Should return false for invalid object');
         }
         Test.stopTest();
     }
@@ -67,7 +67,7 @@ private class ElaroSecurityUtilsPermissionTest {
         System.runAs(limitedUser) {
             // Standard User should have create access to Account
             Boolean hasAccess = ElaroSecurityUtils.hasCreateAccess('Account');
-            System.assertEquals(true, hasAccess, 'Standard User should have create access to Account');
+            Assert.areEqual(true, hasAccess, 'Standard User should have create access to Account');
         }
         Test.stopTest();
     }
@@ -83,15 +83,15 @@ private class ElaroSecurityUtilsPermissionTest {
         Test.startTest();
         System.runAs(limitedUser) {
             Boolean hasAccess = ElaroSecurityUtils.hasUpdateAccess('Account');
-            System.assertEquals(true, hasAccess, 'Standard User should have update access to Account');
+            Assert.areEqual(true, hasAccess, 'Standard User should have update access to Account');
             
             // Attempt to update without proper validation
             try {
                 ElaroSecurityUtils.validateCRUDAccess('Account', ElaroSecurityUtils.DmlOperation.DML_UPDATE);
                 // Should pass validation
-                System.assert(true, 'Validation should pass for Standard User');
+                Assert.isTrue(true, 'Validation should pass for Standard User');
             } catch (ElaroSecurityUtils.SecurityException e) {
-                System.assert(false, 'Should not throw exception for Standard User: ' + e.getMessage());
+                Assert.fail( 'Should not throw exception for Standard User: ' + e.getMessage());
             }
         }
         Test.stopTest();
@@ -107,7 +107,7 @@ private class ElaroSecurityUtilsPermissionTest {
         Test.startTest();
         System.runAs(limitedUser) {
             Boolean hasAccess = ElaroSecurityUtils.hasDeleteAccess('Account');
-            System.assertEquals(true, hasAccess, 'Standard User should have delete access to Account');
+            Assert.areEqual(true, hasAccess, 'Standard User should have delete access to Account');
         }
         Test.stopTest();
     }
@@ -122,10 +122,10 @@ private class ElaroSecurityUtilsPermissionTest {
         Test.startTest();
         System.runAs(limitedUser) {
             Boolean hasAccess = ElaroSecurityUtils.hasFieldReadAccess('Account', 'Name');
-            System.assertEquals(true, hasAccess, 'Standard User should have read access to Account.Name');
+            Assert.areEqual(true, hasAccess, 'Standard User should have read access to Account.Name');
             
             Boolean invalidAccess = ElaroSecurityUtils.hasFieldReadAccess('Account', 'InvalidField__c');
-            System.assertEquals(false, invalidAccess, 'Should return false for invalid field');
+            Assert.areEqual(false, invalidAccess, 'Should return false for invalid field');
         }
         Test.stopTest();
     }
@@ -140,7 +140,7 @@ private class ElaroSecurityUtilsPermissionTest {
         Test.startTest();
         System.runAs(limitedUser) {
             Boolean hasAccess = ElaroSecurityUtils.hasFieldWriteAccess('Account', 'Name');
-            System.assertEquals(true, hasAccess, 'Standard User should have write access to Account.Name');
+            Assert.areEqual(true, hasAccess, 'Standard User should have write access to Account.Name');
         }
         Test.stopTest();
     }
@@ -157,7 +157,7 @@ private class ElaroSecurityUtilsPermissionTest {
             // Test with a custom object that may not have permissions
             try {
                 ElaroSecurityUtils.validateCRUDAccess('InvalidObject__c', ElaroSecurityUtils.DmlOperation.DML_INSERT);
-                System.assert(false, 'Should have thrown SecurityException');
+                Assert.fail( 'Should have thrown SecurityException');
             } catch (ElaroSecurityUtils.SecurityException e) {
                 System.assert(e.getMessage().contains('Insufficient'), 
                     'Should throw SecurityException with insufficient access message: ' + e.getMessage());
@@ -181,8 +181,8 @@ private class ElaroSecurityUtilsPermissionTest {
                 accounts
             );
             
-            System.assertNotEquals(null, stripped, 'Stripped list should not be null');
-            System.assertEquals(accounts.size(), stripped.size(), 'Should return same number of records');
+            Assert.areNotEqual(null, stripped, 'Stripped list should not be null');
+            Assert.areEqual(accounts.size(), stripped.size(), 'Should return same number of records');
         }
         Test.stopTest();
     }
@@ -199,7 +199,7 @@ private class ElaroSecurityUtilsPermissionTest {
             try {
                 ElaroSecurityUtils.validateFLSAccess('Account', new List<String>{'InvalidField__c'}, false);
                 // May not throw if field doesn't exist
-                System.assert(true, 'Validation may pass for non-existent field');
+                Assert.isTrue(true, 'Validation may pass for non-existent field');
             } catch (ElaroSecurityUtils.SecurityException e) {
                 System.assert(e.getMessage().contains('Insufficient FLS'), 
                     'Should throw SecurityException for insufficient FLS: ' + e.getMessage());

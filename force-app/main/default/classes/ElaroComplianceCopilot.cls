@@ -276,7 +276,7 @@ public with sharing class ElaroComplianceCopilot {
             SELECT CreatedDate, CreatedById, CreatedBy.Name, Action, Section, Display
             FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:7
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT 10
         ];
@@ -370,7 +370,7 @@ public with sharing class ElaroComplianceCopilot {
         String framework = classification.framework != null ? classification.framework : ElaroConstants.FRAMEWORK_SOC2;
 
         // Get audit trail stats
-        Integer totalChanges = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30 WITH SECURITY_ENFORCED];
+        Integer totalChanges = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE];
 
         response.answer = '📊 *' + Label.Copilot_Evidence_Summary.replace('{0}', framework) + '*\n\n' +
             '• Configuration changes (30 days): ' + totalChanges + '\n' +
@@ -401,7 +401,7 @@ public with sharing class ElaroComplianceCopilot {
             FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
             AND (Action LIKE '%permission%' OR Action LIKE '%delete%' OR Action LIKE '%removed%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT 20
         ];
@@ -627,7 +627,7 @@ public with sharing class ElaroComplianceCopilot {
             FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
             AND (Action LIKE '%permission%' OR Action LIKE '%delete%' OR Action LIKE '%removed%' OR Action LIKE '%field%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT 20
         ];

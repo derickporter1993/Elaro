@@ -45,10 +45,10 @@ private class BlockchainVerificationTest {
         BlockchainVerification.AnchorResult result = BlockchainVerification.anchorEvidence(cv.Id);
         Test.stopTest();
 
-        System.assertEquals('ANCHORED', result.status, 'Status should be ANCHORED');
-        System.assertNotEquals(null, result.contentHash, 'Content hash should be generated');
-        System.assertNotEquals(null, result.transactionId, 'Transaction ID should be generated');
-        System.assertEquals('Ethereum', result.blockchainNetwork, 'Network should be Ethereum');
+        Assert.areEqual('ANCHORED', result.status, 'Status should be ANCHORED');
+        Assert.areNotEqual(null, result.contentHash, 'Content hash should be generated');
+        Assert.areNotEqual(null, result.transactionId, 'Transaction ID should be generated');
+        Assert.areEqual('Ethereum', result.blockchainNetwork, 'Network should be Ethereum');
     }
 
     @isTest
@@ -66,8 +66,8 @@ private class BlockchainVerificationTest {
         BlockchainVerification.VerificationResult result = BlockchainVerification.verifyEvidence(cv.Id);
         Test.stopTest();
 
-        System.assertEquals(false, result.isVerified, 'Should not be verified');
-        System.assertEquals('NOT_ANCHORED', result.status, 'Status should be NOT_ANCHORED');
+        Assert.areEqual(false, result.isVerified, 'Should not be verified');
+        Assert.areEqual('NOT_ANCHORED', result.status, 'Status should be NOT_ANCHORED');
     }
 
     @isTest
@@ -81,9 +81,9 @@ private class BlockchainVerificationTest {
         BlockchainVerification.VerificationResult result = BlockchainVerification.verifyEvidence(cv.Id);
         Test.stopTest();
 
-        System.assertEquals(true, result.isVerified, 'Should be verified');
-        System.assertEquals('VERIFIED', result.status, 'Status should be VERIFIED');
-        System.assertNotEquals(null, result.transactionId, 'Transaction ID should be present');
+        Assert.areEqual(true, result.isVerified, 'Should be verified');
+        Assert.areEqual('VERIFIED', result.status, 'Status should be VERIFIED');
+        Assert.areNotEqual(null, result.transactionId, 'Transaction ID should be present');
     }
 
     @isTest
@@ -109,9 +109,9 @@ private class BlockchainVerificationTest {
         List<BlockchainVerification.AnchorResult> results = BlockchainVerification.batchAnchorEvidence(cvIds);
         Test.stopTest();
 
-        System.assertEquals(cvIds.size(), results.size(), 'Should return result for each document');
+        Assert.areEqual(cvIds.size(), results.size(), 'Should return result for each document');
         for (BlockchainVerification.AnchorResult result : results) {
-            System.assertEquals('ANCHORED', result.status, 'All should be anchored');
+            Assert.areEqual('ANCHORED', result.status, 'All should be anchored');
         }
     }
 
@@ -159,7 +159,7 @@ private class BlockchainVerificationTest {
         Test.startTest();
         try {
             BlockchainVerification.generateCertificate(cv.Id);
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('not verified'), 'Error should indicate not verified');
         }

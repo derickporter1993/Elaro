@@ -17,11 +17,11 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('Login', parsed.get('eventType'), 'Event type should be Login');
-        System.assertEquals(raw.get('USER_ID'), parsed.get('userId'), 'User ID should be mapped');
-        System.assertEquals(raw.get('SOURCE_IP'), parsed.get('sourceIp'), 'Source IP should be mapped');
-        System.assertEquals(raw.get('LOGIN_STATUS'), parsed.get('loginStatus'), 'Login status should be mapped');
-        System.assertNotEquals(null, parsed.get('geoLocation'), 'Geo location should be built');
+        Assert.areEqual('Login', parsed.get('eventType'), 'Event type should be Login');
+        Assert.areEqual(raw.get('USER_ID'), parsed.get('userId'), 'User ID should be mapped');
+        Assert.areEqual(raw.get('SOURCE_IP'), parsed.get('sourceIp'), 'Source IP should be mapped');
+        Assert.areEqual(raw.get('LOGIN_STATUS'), parsed.get('loginStatus'), 'Login status should be mapped');
+        Assert.areNotEqual(null, parsed.get('geoLocation'), 'Geo location should be built');
     }
     
     @isTest
@@ -50,8 +50,8 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('Login', parsed.get('eventType'), 'Event type should be Login');
-        System.assertEquals('', parsed.get('userId'), 'Empty fields should be empty string');
+        Assert.areEqual('Login', parsed.get('eventType'), 'Event type should be Login');
+        Assert.areEqual('', parsed.get('userId'), 'Empty fields should be empty string');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -66,12 +66,12 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginAsEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('LoginAs', parsed.get('eventType'), 'Event type should be LoginAs');
-        System.assertEquals(raw.get('DELEGATED_USER_ID'), parsed.get('delegatedUserId'), 
+        Assert.areEqual('LoginAs', parsed.get('eventType'), 'Event type should be LoginAs');
+        Assert.areEqual(raw.get('DELEGATED_USER_ID'), parsed.get('delegatedUserId'), 
             'Delegated user should be mapped');
-        System.assertEquals(raw.get('USER_ID'), parsed.get('targetUserId'), 
+        Assert.areEqual(raw.get('USER_ID'), parsed.get('targetUserId'), 
             'Target user should be mapped');
-        System.assertEquals(true, parsed.get('isHighRisk'), 'Should be flagged as high risk');
+        Assert.areEqual(true, parsed.get('isHighRisk'), 'Should be flagged as high risk');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -86,10 +86,10 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseReportExportEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('ReportExport', parsed.get('eventType'), 'Event type should be ReportExport');
-        System.assertEquals(raw.get('REPORT_ID'), parsed.get('reportId'), 'Report ID should be mapped');
-        System.assertEquals(raw.get('REPORT_NAME'), parsed.get('reportName'), 'Report name should be mapped');
-        System.assertEquals(raw.get('EXPORT_TYPE'), parsed.get('exportFormat'), 'Export format should be mapped');
+        Assert.areEqual('ReportExport', parsed.get('eventType'), 'Event type should be ReportExport');
+        Assert.areEqual(raw.get('REPORT_ID'), parsed.get('reportId'), 'Report ID should be mapped');
+        Assert.areEqual(raw.get('REPORT_NAME'), parsed.get('reportName'), 'Report name should be mapped');
+        Assert.areEqual(raw.get('EXPORT_TYPE'), parsed.get('exportFormat'), 'Export format should be mapped');
     }
     
     @isTest
@@ -102,8 +102,8 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseReportExportEvent(raw);
         Test.stopTest();
         
-        System.assertEquals(true, parsed.get('isLargeExport'), 'Should be flagged as large export');
-        System.assertEquals(false, parsed.get('isCriticalExport'), 'Should not be critical yet');
+        Assert.areEqual(true, parsed.get('isLargeExport'), 'Should be flagged as large export');
+        Assert.areEqual(false, parsed.get('isCriticalExport'), 'Should not be critical yet');
     }
     
     @isTest
@@ -116,8 +116,8 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseReportExportEvent(raw);
         Test.stopTest();
         
-        System.assertEquals(true, parsed.get('isLargeExport'), 'Should be flagged as large export');
-        System.assertEquals(true, parsed.get('isCriticalExport'), 'Should be flagged as critical');
+        Assert.areEqual(true, parsed.get('isLargeExport'), 'Should be flagged as large export');
+        Assert.areEqual(true, parsed.get('isCriticalExport'), 'Should be flagged as critical');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -132,9 +132,9 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApiEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('API', parsed.get('eventType'), 'Event type should be API');
-        System.assertEquals(raw.get('API_TYPE'), parsed.get('apiType'), 'API type should be mapped');
-        System.assertEquals(raw.get('ENTITY_NAME'), parsed.get('entityName'), 'Entity name should be mapped');
+        Assert.areEqual('API', parsed.get('eventType'), 'Event type should be API');
+        Assert.areEqual(raw.get('API_TYPE'), parsed.get('apiType'), 'API type should be mapped');
+        Assert.areEqual(raw.get('ENTITY_NAME'), parsed.get('entityName'), 'Entity name should be mapped');
     }
     
     @isTest
@@ -147,7 +147,7 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApiEvent(raw);
         Test.stopTest();
         
-        System.assertEquals(true, parsed.get('isBulkOperation'), 'Should be flagged as bulk operation');
+        Assert.areEqual(true, parsed.get('isBulkOperation'), 'Should be flagged as bulk operation');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -162,11 +162,11 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseContentDistributionEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('ContentDistribution', parsed.get('eventType'), 
+        Assert.areEqual('ContentDistribution', parsed.get('eventType'), 
             'Event type should be ContentDistribution');
-        System.assertEquals(raw.get('CONTENT_DOCUMENT_ID'), parsed.get('contentDocumentId'), 
+        Assert.areEqual(raw.get('CONTENT_DOCUMENT_ID'), parsed.get('contentDocumentId'), 
             'Content doc ID should be mapped');
-        System.assertEquals(raw.get('DISTRIBUTION_TYPE'), parsed.get('distributionType'), 
+        Assert.areEqual(raw.get('DISTRIBUTION_TYPE'), parsed.get('distributionType'), 
             'Distribution type should be mapped');
     }
     
@@ -181,7 +181,7 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseContentDistributionEvent(raw);
         Test.stopTest();
         
-        System.assertEquals(true, parsed.get('isUnprotectedPublic'), 
+        Assert.areEqual(true, parsed.get('isUnprotectedPublic'), 
             'Should be flagged as unprotected public');
     }
     
@@ -197,9 +197,9 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApexExecutionEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('ApexExecution', parsed.get('eventType'), 
+        Assert.areEqual('ApexExecution', parsed.get('eventType'), 
             'Event type should be ApexExecution');
-        System.assertEquals(raw.get('ENTRY_POINT'), parsed.get('entryPoint'), 
+        Assert.areEqual(raw.get('ENTRY_POINT'), parsed.get('entryPoint'), 
             'Entry point should be mapped');
     }
     
@@ -214,7 +214,7 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApexExecutionEvent(raw);
         Test.stopTest();
         
-        System.assertEquals(true, parsed.get('isResourceIntensive'), 
+        Assert.areEqual(true, parsed.get('isResourceIntensive'), 
             'Should be flagged as resource intensive');
     }
     
@@ -230,11 +230,11 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parsePermissionSetEvent(raw);
         Test.stopTest();
         
-        System.assertEquals('PermissionSetEventLog', parsed.get('eventType'), 
+        Assert.areEqual('PermissionSetEventLog', parsed.get('eventType'), 
             'Event type should be PermissionSetEventLog');
-        System.assertEquals(raw.get('PERMISSION_SET_ID'), parsed.get('permissionSetId'), 
+        Assert.areEqual(raw.get('PERMISSION_SET_ID'), parsed.get('permissionSetId'), 
             'Permission set ID should be mapped');
-        System.assertEquals(true, parsed.get('isAssignment'), 
+        Assert.areEqual(true, parsed.get('isAssignment'), 
             'Should be flagged as assignment');
     }
     
@@ -250,8 +250,8 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('Login', raw);
         Test.stopTest();
         
-        System.assertEquals('Login', parsed.get('eventType'), 'Should use Login parser');
-        System.assertNotEquals(null, parsed.get('riskLevel'), 'Should have risk level');
+        Assert.areEqual('Login', parsed.get('eventType'), 'Should use Login parser');
+        Assert.areNotEqual(null, parsed.get('riskLevel'), 'Should have risk level');
     }
     
     @isTest
@@ -262,7 +262,7 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('LoginAs', raw);
         Test.stopTest();
         
-        System.assertEquals('LoginAs', parsed.get('eventType'), 'Should use LoginAs parser');
+        Assert.areEqual('LoginAs', parsed.get('eventType'), 'Should use LoginAs parser');
     }
     
     @isTest
@@ -275,9 +275,9 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('UnknownType', raw);
         Test.stopTest();
         
-        System.assertEquals('UnknownType', parsed.get('eventType'), 
+        Assert.areEqual('UnknownType', parsed.get('eventType'), 
             'Should add event type to raw data');
-        System.assertEquals('someValue', parsed.get('SOME_FIELD'), 
+        Assert.areEqual('someValue', parsed.get('SOME_FIELD'), 
             'Should preserve original fields');
     }
     
@@ -292,7 +292,7 @@ private class ElaroEventParserTest {
         for (String eventType : supportedTypes) {
             Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{'TEST' =&gt; 'value'};
             Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent(eventType, raw);
-            System.assertEquals(eventType, parsed.get('eventType'), 
+            Assert.areEqual(eventType, parsed.get('eventType'), 
                 eventType + ' should be parsed correctly');
         }
         Test.stopTest();
@@ -304,7 +304,7 @@ private class ElaroEventParserTest {
         Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('Login', null);
         Test.stopTest();
         
-        System.assertEquals('Login', parsed.get('eventType'), 'Should handle null input');
+        Assert.areEqual('Login', parsed.get('eventType'), 'Should handle null input');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -324,7 +324,7 @@ private class ElaroEventParserTest {
             'Login', rawEvents);
         Test.stopTest();
         
-        System.assertEquals(3, parsedEvents.size(), 'Should parse all events');
+        Assert.areEqual(3, parsedEvents.size(), 'Should parse all events');
     }
     
     @isTest
@@ -334,7 +334,7 @@ private class ElaroEventParserTest {
             'Login', new List&lt;Map&lt;String, Object&gt;&gt;());
         Test.stopTest();
         
-        System.assertEquals(0, parsedEvents.size(), 'Should return empty list');
+        Assert.areEqual(0, parsedEvents.size(), 'Should return empty list');
     }
     
     @isTest
@@ -344,6 +344,6 @@ private class ElaroEventParserTest {
             'Login', null);
         Test.stopTest();
         
-        System.assertEquals(0, parsedEvents.size(), 'Should return empty list for null');
+        Assert.areEqual(0, parsedEvents.size(), 'Should return empty list for null');
     }
 }

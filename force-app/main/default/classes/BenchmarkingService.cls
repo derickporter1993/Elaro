@@ -219,7 +219,7 @@ public with sharing class BenchmarkingService {
     
     private static Decimal calculateTechnologyMaturity() {
         // Check for automation and tooling
-        Integer auditTrailEntries = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30 WITH SECURITY_ENFORCED LIMIT 10000];
+        Integer auditTrailEntries = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE LIMIT 10000];
         return Math.min(100, 70 + (auditTrailEntries > 1000 ? 30 : auditTrailEntries / 33));
     }
     
@@ -230,7 +230,7 @@ public with sharing class BenchmarkingService {
     
     private static Decimal calculateGovernanceMaturity() {
         // Check for governance structures
-        Integer adminUsers = [SELECT COUNT() FROM User WHERE Profile.Name LIKE '%Admin%' AND IsActive = true WITH SECURITY_ENFORCED];
+        Integer adminUsers = [SELECT COUNT() FROM User WHERE Profile.Name LIKE '%Admin%' AND IsActive = true WITH USER_MODE];
         return adminUsers < 10 ? 80 : 60; // Fewer admins = better governance
     }
     

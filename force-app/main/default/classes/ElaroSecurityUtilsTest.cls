@@ -24,7 +24,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasReadAccess('Account');
         Test.stopTest();
         
-        System.assertEquals(true, hasAccess, 'Should have read access to Account');
+        Assert.areEqual(true, hasAccess, 'Should have read access to Account');
     }
     
     @IsTest
@@ -33,7 +33,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasCreateAccess('Account');
         Test.stopTest();
         
-        System.assertEquals(true, hasAccess, 'Should have create access to Account');
+        Assert.areEqual(true, hasAccess, 'Should have create access to Account');
     }
     
     @IsTest
@@ -42,7 +42,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasUpdateAccess('Account');
         Test.stopTest();
         
-        System.assertEquals(true, hasAccess, 'Should have update access to Account');
+        Assert.areEqual(true, hasAccess, 'Should have update access to Account');
     }
     
     @IsTest
@@ -51,7 +51,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasDeleteAccess('Account');
         Test.stopTest();
         
-        System.assertEquals(true, hasAccess, 'Should have delete access to Account');
+        Assert.areEqual(true, hasAccess, 'Should have delete access to Account');
     }
     
     @IsTest
@@ -60,7 +60,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasFieldReadAccess('Account', 'Name');
         Test.stopTest();
         
-        System.assertEquals(true, hasAccess, 'Should have read access to Account.Name');
+        Assert.areEqual(true, hasAccess, 'Should have read access to Account.Name');
     }
     
     @IsTest
@@ -69,7 +69,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasFieldWriteAccess('Account', 'Name');
         Test.stopTest();
         
-        System.assertEquals(true, hasAccess, 'Should have write access to Account.Name');
+        Assert.areEqual(true, hasAccess, 'Should have write access to Account.Name');
     }
     
     @IsTest
@@ -78,7 +78,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasFieldReadAccess('Account', 'InvalidField__c');
         Test.stopTest();
         
-        System.assertEquals(false, hasAccess, 'Should not have access to invalid field');
+        Assert.areEqual(false, hasAccess, 'Should not have access to invalid field');
     }
     
     @IsTest
@@ -87,7 +87,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasFieldWriteAccess('Account', 'InvalidField__c');
         Test.stopTest();
         
-        System.assertEquals(false, hasAccess, 'Should not have write access to invalid field');
+        Assert.areEqual(false, hasAccess, 'Should not have write access to invalid field');
     }
     
     @IsTest
@@ -101,7 +101,7 @@ private class ElaroSecurityUtilsTest {
         );
         Test.stopTest();
         
-        System.assertEquals(1, stripped.size(), 'Should return accessible records');
+        Assert.areEqual(1, stripped.size(), 'Should return accessible records');
     }
     
     @IsTest
@@ -115,7 +115,7 @@ private class ElaroSecurityUtilsTest {
         );
         Test.stopTest();
         
-        System.assertEquals(0, stripped.size(), 'Should return empty list');
+        Assert.areEqual(0, stripped.size(), 'Should return empty list');
     }
     
     @IsTest
@@ -129,7 +129,7 @@ private class ElaroSecurityUtilsTest {
             );
             validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
 
@@ -147,7 +147,7 @@ private class ElaroSecurityUtilsTest {
             );
             validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
 
@@ -165,7 +165,7 @@ private class ElaroSecurityUtilsTest {
             );
             validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
 
@@ -183,7 +183,7 @@ private class ElaroSecurityUtilsTest {
             );
             validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
 
@@ -200,7 +200,7 @@ private class ElaroSecurityUtilsTest {
             ElaroSecurityUtils.validateFLSAccess('Account', fields, false);
             validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
 
@@ -217,7 +217,7 @@ private class ElaroSecurityUtilsTest {
             ElaroSecurityUtils.validateFLSAccess('Account', fields, true);
             validationPassed = true;
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
 
@@ -232,23 +232,23 @@ private class ElaroSecurityUtilsTest {
         String secureQuery = ElaroSecurityUtils.buildSecureQuery(baseQuery);
         Test.stopTest();
         
-        System.assert(secureQuery.contains('WITH SECURITY_ENFORCED'), 
-            'Should add WITH SECURITY_ENFORCED');
+        System.assert(secureQuery.contains('WITH USER_MODE'), 
+            'Should add WITH USER_MODE');
         System.assert(secureQuery.contains('SELECT Id, Name FROM Account'), 
             'Should preserve original query');
     }
     
     @IsTest
     static void testBuildSecureQuery_AlreadyHasSecurityEnforced() {
-        String baseQuery = 'SELECT Id, Name FROM Account WITH SECURITY_ENFORCED';
+        String baseQuery = 'SELECT Id, Name FROM Account WITH USER_MODE';
 
         Test.startTest();
         String secureQuery = ElaroSecurityUtils.buildSecureQuery(baseQuery);
         Test.stopTest();
 
-        // Should only have one WITH SECURITY_ENFORCED
-        Integer count = secureQuery.split('WITH SECURITY_ENFORCED', -1).size() - 1;
-        System.assertEquals(1, count, 'Should have exactly one WITH SECURITY_ENFORCED');
+        // Should only have one WITH USER_MODE
+        Integer count = secureQuery.split('WITH USER_MODE', -1).size() - 1;
+        Assert.areEqual(1, count, 'Should have exactly one WITH USER_MODE');
     }
 
     @IsTest
@@ -257,7 +257,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasReadAccess('InvalidObject__c');
         Test.stopTest();
 
-        System.assertEquals(false, hasAccess, 'Should not have read access to invalid object');
+        Assert.areEqual(false, hasAccess, 'Should not have read access to invalid object');
     }
 
     @IsTest
@@ -266,7 +266,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasCreateAccess('InvalidObject__c');
         Test.stopTest();
 
-        System.assertEquals(false, hasAccess, 'Should not have create access to invalid object');
+        Assert.areEqual(false, hasAccess, 'Should not have create access to invalid object');
     }
 
     @IsTest
@@ -275,7 +275,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasUpdateAccess('InvalidObject__c');
         Test.stopTest();
 
-        System.assertEquals(false, hasAccess, 'Should not have update access to invalid object');
+        Assert.areEqual(false, hasAccess, 'Should not have update access to invalid object');
     }
 
     @IsTest
@@ -284,7 +284,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasDeleteAccess('InvalidObject__c');
         Test.stopTest();
 
-        System.assertEquals(false, hasAccess, 'Should not have delete access to invalid object');
+        Assert.areEqual(false, hasAccess, 'Should not have delete access to invalid object');
     }
 
     @IsTest
@@ -293,7 +293,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasFieldReadAccess('InvalidObject__c', 'Name');
         Test.stopTest();
 
-        System.assertEquals(false, hasAccess, 'Should not have field access on invalid object');
+        Assert.areEqual(false, hasAccess, 'Should not have field access on invalid object');
     }
 
     @IsTest
@@ -302,7 +302,7 @@ private class ElaroSecurityUtilsTest {
         Boolean hasAccess = ElaroSecurityUtils.hasFieldWriteAccess('InvalidObject__c', 'Name');
         Test.stopTest();
 
-        System.assertEquals(false, hasAccess, 'Should not have field write access on invalid object');
+        Assert.areEqual(false, hasAccess, 'Should not have field write access on invalid object');
     }
 
     @IsTest
@@ -314,7 +314,7 @@ private class ElaroSecurityUtilsTest {
         );
         Test.stopTest();
 
-        System.assertEquals(0, stripped.size(), 'Should return empty list for null input');
+        Assert.areEqual(0, stripped.size(), 'Should return empty list for null input');
     }
 
     @IsTest
@@ -324,7 +324,7 @@ private class ElaroSecurityUtilsTest {
         Test.startTest();
         try {
             ElaroSecurityUtils.validateFLSAccess('Account', fields, false);
-            System.assert(false, 'Should throw exception for invalid field');
+            Assert.fail( 'Should throw exception for invalid field');
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(e.getMessage().contains('Insufficient FLS access'),
                 'Exception should mention FLS access');
@@ -339,7 +339,7 @@ private class ElaroSecurityUtilsTest {
         Test.startTest();
         try {
             ElaroSecurityUtils.validateFLSAccess('Account', fields, true);
-            System.assert(false, 'Should throw exception for invalid field write');
+            Assert.fail( 'Should throw exception for invalid field write');
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(e.getMessage().contains('Insufficient FLS access'),
                 'Exception should mention FLS access');
@@ -355,7 +355,7 @@ private class ElaroSecurityUtilsTest {
                 'InvalidObject__c',
                 ElaroSecurityUtils.DmlOperation.DML_INSERT
             );
-            System.assert(false, 'Should throw exception for invalid object');
+            Assert.fail( 'Should throw exception for invalid object');
         } catch (ElaroSecurityUtils.SecurityException e) {
             System.assert(e.getMessage().contains('Insufficient CRUD access'),
                 'Exception should mention CRUD access');
@@ -374,7 +374,7 @@ private class ElaroSecurityUtilsTest {
         );
         Test.stopTest();
 
-        System.assertEquals(1, stripped.size(), 'Should return updateable records');
+        Assert.areEqual(1, stripped.size(), 'Should return updateable records');
     }
 
     @IsTest
@@ -389,7 +389,7 @@ private class ElaroSecurityUtilsTest {
         );
         Test.stopTest();
 
-        System.assertEquals(1, stripped.size(), 'Should return creatable records');
+        Assert.areEqual(1, stripped.size(), 'Should return creatable records');
     }
 
     @IsTest
@@ -400,8 +400,8 @@ private class ElaroSecurityUtilsTest {
         String secureQuery = ElaroSecurityUtils.buildSecureQuery(baseQuery);
         Test.stopTest();
 
-        System.assert(secureQuery.contains('WITH SECURITY_ENFORCED'),
-            'Should add WITH SECURITY_ENFORCED');
+        System.assert(secureQuery.contains('WITH USER_MODE'),
+            'Should add WITH USER_MODE');
         System.assert(secureQuery.contains('WHERE Name != null'),
             'Should preserve WHERE clause');
     }
@@ -416,7 +416,7 @@ private class ElaroSecurityUtilsTest {
 
         // Should handle case-insensitive removal
         Integer count = secureQuery.toLowerCase().split('with security_enforced', -1).size() - 1;
-        System.assertEquals(1, count, 'Should have exactly one WITH SECURITY_ENFORCED');
+        Assert.areEqual(1, count, 'Should have exactly one WITH USER_MODE');
     }
 
     @IsTest
@@ -425,7 +425,7 @@ private class ElaroSecurityUtilsTest {
         try {
             throw new ElaroSecurityUtils.SecurityException('Test exception message');
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assertEquals('Test exception message', e.getMessage(),
+            Assert.areEqual('Test exception message', e.getMessage(),
                 'Exception message should match');
         }
         Test.stopTest();

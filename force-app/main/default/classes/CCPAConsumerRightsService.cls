@@ -197,7 +197,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
                 SELECT Id, Email, Phone, LastName
                 FROM Contact
                 WHERE Id = :dataSubjectId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -252,7 +252,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             SELECT Id, FirstName, LastName, Email, Phone, MailingAddress
             FROM Contact
             WHERE Id = :dataSubjectId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
         

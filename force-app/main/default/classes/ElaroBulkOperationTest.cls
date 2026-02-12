@@ -31,9 +31,9 @@ private class ElaroBulkOperationTest {
         // Verify all records were inserted
         List<Account> insertedAccounts = [
             SELECT Id, Name FROM Account WHERE Name LIKE 'Bulk Test Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
-        System.assertEquals(200, insertedAccounts.size(), 'Should have inserted all 200 accounts');
+        Assert.areEqual(200, insertedAccounts.size(), 'Should have inserted all 200 accounts');
     }
     
     /**
@@ -62,11 +62,11 @@ private class ElaroBulkOperationTest {
         // Verify all records were updated
         List<Account> updatedAccounts = [
             SELECT Id, BillingCity FROM Account WHERE Name LIKE 'Bulk Update Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
-        System.assertEquals(200, updatedAccounts.size(), 'Should have updated all 200 accounts');
+        Assert.areEqual(200, updatedAccounts.size(), 'Should have updated all 200 accounts');
         for (Account acc : updatedAccounts) {
-            System.assertEquals('Updated City', acc.BillingCity, 'BillingCity should be updated');
+            Assert.areEqual('Updated City', acc.BillingCity, 'BillingCity should be updated');
         }
     }
     
@@ -91,10 +91,10 @@ private class ElaroBulkOperationTest {
         // Verify all records were deleted
         List<Account> deletedAccounts = [
             SELECT Id FROM Account WHERE Name LIKE 'Bulk Delete Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ALL ROWS
         ];
-        System.assertEquals(0, deletedAccounts.size(), 'All accounts should be deleted');
+        Assert.areEqual(0, deletedAccounts.size(), 'All accounts should be deleted');
     }
     
     /**
@@ -114,11 +114,11 @@ private class ElaroBulkOperationTest {
         Test.startTest();
         List<Account> queriedAccounts = [
             SELECT Id, Name FROM Account WHERE Name LIKE 'Bulk SOQL Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         Test.stopTest();
         
-        System.assertEquals(200, queriedAccounts.size(), 'Should query all 200 accounts');
+        Assert.areEqual(200, queriedAccounts.size(), 'Should query all 200 accounts');
     }
     
     /**
@@ -136,10 +136,10 @@ private class ElaroBulkOperationTest {
         Test.startTest();
         insert accounts;
         
-        // Query with WITH SECURITY_ENFORCED
+        // Query with WITH USER_MODE
         List<Account> queriedAccounts = [
             SELECT Id, Name FROM Account WHERE Name LIKE 'Bulk Security Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         // Strip inaccessible fields
@@ -149,7 +149,7 @@ private class ElaroBulkOperationTest {
         );
         Test.stopTest();
         
-        System.assertEquals(200, stripped.size(), 'Should return all 200 accounts after security enforcement');
+        Assert.areEqual(200, stripped.size(), 'Should return all 200 accounts after security enforcement');
     }
     
     /**
@@ -172,7 +172,7 @@ private class ElaroBulkOperationTest {
         
         List<Account> queriedAccounts = [
             SELECT Id, Name FROM Account WHERE Name LIKE 'Bulk Limits Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         Integer endQueries = Limits.getQueries();
@@ -180,7 +180,7 @@ private class ElaroBulkOperationTest {
         
         Test.stopTest();
         
-        System.assertEquals(200, queriedAccounts.size(), 'Should query all 200 accounts');
+        Assert.areEqual(200, queriedAccounts.size(), 'Should query all 200 accounts');
         System.assert(endQueries - startQueries < 10, 'Should use reasonable number of queries');
         System.assert(endDml - startDml == 1, 'Should use single DML statement for bulk insert');
     }
@@ -216,13 +216,13 @@ private class ElaroBulkOperationTest {
         List<Account> accountsWithContacts = [
             SELECT Id, Name, (SELECT Id, LastName FROM Contacts)
             FROM Account WHERE Name LIKE 'Bulk Contact Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         Test.stopTest();
         
-        System.assertEquals(200, accountsWithContacts.size(), 'Should query all 200 accounts');
+        Assert.areEqual(200, accountsWithContacts.size(), 'Should query all 200 accounts');
         for (Account acc : accountsWithContacts) {
-            System.assertEquals(1, acc.Contacts.size(), 'Each account should have one contact');
+            Assert.areEqual(1, acc.Contacts.size(), 'Each account should have one contact');
         }
     }
     
@@ -243,16 +243,16 @@ private class ElaroBulkOperationTest {
         try {
             ElaroSecurityUtils.validateCRUDAccess('Account', ElaroSecurityUtils.DmlOperation.DML_INSERT);
             insert accounts;
-            System.assert(true, 'Bulk insert should succeed with proper validation');
+            Assert.isTrue(true, 'Bulk insert should succeed with proper validation');
         } catch (ElaroSecurityUtils.SecurityException e) {
-            System.assert(false, 'Should not throw SecurityException: ' + e.getMessage());
+            Assert.fail( 'Should not throw SecurityException: ' + e.getMessage());
         }
         Test.stopTest();
         
         List<Account> insertedAccounts = [
             SELECT Id FROM Account WHERE Name LIKE 'Bulk Negative Account%'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
-        System.assertEquals(200, insertedAccounts.size(), 'Should have inserted all 200 accounts');
+        Assert.areEqual(200, insertedAccounts.size(), 'Should have inserted all 200 accounts');
     }
 }

@@ -28,7 +28,7 @@ private class ElaroHIPAAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should calculate risk score
-        System.assertNotEquals(null, score, 'Risk score should not be null');
+        Assert.areNotEqual(null, score, 'Risk score should not be null');
         System.assert(score >= 0 && score <= 10, 'Risk score should be between 0 and 10');
         System.assert(score > 3.0, 'High permission count should increase risk score');
     }
@@ -57,7 +57,7 @@ private class ElaroHIPAAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return compliance score
-        System.assertNotEquals(null, score, 'Compliance score should not be null');
+        Assert.areNotEqual(null, score, 'Compliance score should not be null');
     }
     
     @IsTest
@@ -68,7 +68,7 @@ private class ElaroHIPAAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return violations list (may be empty)
-        System.assertNotEquals(null, violations, 'Violations list should not be null');
+        Assert.areNotEqual(null, violations, 'Violations list should not be null');
     }
     
     @IsTest
@@ -79,6 +79,6 @@ private class ElaroHIPAAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return HIPAA framework name
-        System.assertEquals('HIPAA', framework, 'Should return HIPAA framework name');
+        Assert.areEqual('HIPAA', framework, 'Should return HIPAA framework name');
     }
 }

@@ -30,7 +30,7 @@ public with sharing class ComplianceFrameworkService {
             FROM Compliance_Policy__mdt
             WHERE Framework__c = :framework
             AND Is_Active__c = true
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         result.totalPolicies = policies.size();
@@ -54,7 +54,7 @@ public with sharing class ComplianceFrameworkService {
             FROM Compliance_Gap__c
             WHERE Policy_Reference__c IN :policyNames
             AND Status__c != 'VERIFIED'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]) {
             if (!gapsByPolicy.containsKey(gap.Policy_Reference__c)) {
                 gapsByPolicy.put(gap.Policy_Reference__c, new List<Compliance_Gap__c>());
@@ -138,7 +138,7 @@ public with sharing class ComplianceFrameworkService {
             SELECT Framework__c
             FROM Compliance_Policy__mdt
             WHERE Is_Active__c = true
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         for (Compliance_Policy__mdt policy : policies) {

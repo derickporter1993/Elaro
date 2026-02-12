@@ -7,7 +7,7 @@ private class SlackNotifierTest {
     @isTest
     static void testNotifyAsyncQueueable() {
         String testMessage = 'Test notification';
-        System.assertNotEquals(null, testMessage, 'Test message should not be null');
+        Assert.areNotEqual(null, testMessage, 'Test message should not be null');
 
         Test.startTest();
         Exception caughtException = null;
@@ -18,7 +18,7 @@ private class SlackNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyAsyncQueueable should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyAsyncQueueable should not throw exception');
     }
 
     @isTest
@@ -33,7 +33,7 @@ private class SlackNotifierTest {
         Test.stopTest();
 
         // Empty notifications should be skipped without error
-        System.assertEquals(null, caughtException, 'Empty notification should not throw exception');
+        Assert.areEqual(null, caughtException, 'Empty notification should not throw exception');
     }
 
     @isTest
@@ -42,7 +42,7 @@ private class SlackNotifierTest {
             'text' => 'Test rich notification'
         };
         String jsonPayload = JSON.serialize(payload);
-        System.assertNotEquals(null, jsonPayload, 'JSON payload should not be null');
+        Assert.areNotEqual(null, jsonPayload, 'JSON payload should not be null');
 
         Test.startTest();
         Exception caughtException = null;
@@ -53,7 +53,7 @@ private class SlackNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyRichAsyncQueueable should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyRichAsyncQueueable should not throw exception');
     }
 
     @isTest
@@ -61,7 +61,7 @@ private class SlackNotifierTest {
         String metric = 'CPU';
         Decimal value = 9500;
         Decimal threshold = 10000;
-        System.assertEquals('CPU', metric, 'Metric should be CPU');
+        Assert.areEqual('CPU', metric, 'Metric should be CPU');
 
         Test.startTest();
         Exception caughtException = null;
@@ -72,14 +72,14 @@ private class SlackNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyPerformanceAlert should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyPerformanceAlert should not throw exception');
     }
 
     @isTest
     static void testNotifyFlowPerformance() {
         String flowName = 'Test_Flow';
         Integer cpuTime = 5000;
-        System.assertNotEquals(null, flowName, 'Flow name should not be null');
+        Assert.areNotEqual(null, flowName, 'Flow name should not be null');
 
         Test.startTest();
         Exception caughtException = null;
@@ -90,7 +90,7 @@ private class SlackNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyFlowPerformance should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyFlowPerformance should not throw exception');
     }
 
     @isTest
@@ -105,6 +105,6 @@ private class SlackNotifierTest {
         Test.stopTest();
 
         // Empty flow name should be handled gracefully
-        System.assertEquals(null, caughtException, 'Empty flow name should not throw exception');
+        Assert.areEqual(null, caughtException, 'Empty flow name should not throw exception');
     }
 }

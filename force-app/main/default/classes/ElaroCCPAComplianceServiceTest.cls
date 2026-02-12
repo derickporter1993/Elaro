@@ -17,7 +17,7 @@ private class ElaroCCPAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should calculate risk score
-        System.assertNotEquals(null, score, 'Risk score should not be null');
+        Assert.areNotEqual(null, score, 'Risk score should not be null');
         System.assert(score >= 0 && score <= 10, 'Risk score should be between 0 and 10');
     }
     
@@ -29,7 +29,7 @@ private class ElaroCCPAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return compliance score
-        System.assertNotEquals(null, score, 'Compliance score should not be null');
+        Assert.areNotEqual(null, score, 'Compliance score should not be null');
     }
     
     @IsTest
@@ -40,7 +40,7 @@ private class ElaroCCPAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return violations list (may be empty)
-        System.assertNotEquals(null, violations, 'Violations list should not be null');
+        Assert.areNotEqual(null, violations, 'Violations list should not be null');
     }
     
     @IsTest
@@ -51,6 +51,6 @@ private class ElaroCCPAComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return CCPA framework name
-        System.assertEquals('CCPA', framework, 'Should return CCPA framework name');
+        Assert.areEqual('CCPA', framework, 'Should return CCPA framework name');
     }
 }

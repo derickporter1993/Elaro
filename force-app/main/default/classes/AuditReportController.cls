@@ -43,7 +43,7 @@ public with sharing class AuditReportController {
             WHERE Framework__c = :framework
             AND Detected_Date__c >= :startDate
             AND Detected_Date__c <= :endDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Risk_Score__c DESC NULLS LAST
         ];
         report.gaps = (List<Compliance_Gap__c>) ElaroSecurityUtils.stripInaccessibleFields(
@@ -59,7 +59,7 @@ public with sharing class AuditReportController {
             WHERE Framework__c = :framework
             AND Evidence_Date__c >= :startDate
             AND Evidence_Date__c <= :endDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Evidence_Date__c DESC
         ];
         report.evidence = (List<Compliance_Evidence__c>) ElaroSecurityUtils.stripInaccessibleFields(
@@ -112,7 +112,7 @@ public with sharing class AuditReportController {
         
         try {
             insert cv;
-            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
             return cv.ContentDocumentId;
         } catch (Exception e) {
             throw new AuraHandledException('Error exporting report: ' + e.getMessage());

@@ -19,7 +19,7 @@ private class EvidenceCollectionServiceTest {
             EvidenceCollectionService.collectEvidence('SOX', startDate, endDate);
         Test.stopTest();
         
-        System.assertNotEquals(null, evidence, 'Evidence list should not be null');
+        Assert.areNotEqual(null, evidence, 'Evidence list should not be null');
         System.assert(!evidence.isEmpty(), 'Should have collected evidence');
         
         // Verify evidence was inserted
@@ -27,7 +27,7 @@ private class EvidenceCollectionServiceTest {
             SELECT Id, Framework__c, Evidence_Type__c
             FROM Compliance_Evidence__c
             WHERE Framework__c = 'SOX'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         System.assert(!insertedEvidence.isEmpty(), 'Evidence should be inserted');
     }
@@ -40,9 +40,9 @@ private class EvidenceCollectionServiceTest {
         Test.startTest();
         try {
             EvidenceCollectionService.collectEvidence('', startDate, endDate);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank framework');
+            Assert.isTrue(true, 'Expected exception for blank framework');
         }
         Test.stopTest();
     }
@@ -52,9 +52,9 @@ private class EvidenceCollectionServiceTest {
         Test.startTest();
         try {
             EvidenceCollectionService.collectEvidence('SOX', null, null);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null dates');
+            Assert.isTrue(true, 'Expected exception for null dates');
         }
         Test.stopTest();
     }
@@ -67,9 +67,9 @@ private class EvidenceCollectionServiceTest {
         Test.startTest();
         try {
             EvidenceCollectionService.collectEvidence('SOX', startDate, endDate);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for invalid date range');
+            Assert.isTrue(true, 'Expected exception for invalid date range');
         }
         Test.stopTest();
     }
@@ -114,7 +114,7 @@ private class EvidenceCollectionServiceTest {
             EvidenceCollectionService.collectEvidence('HIPAA', startDate, endDate);
         Test.stopTest();
 
-        System.assertNotEquals(null, evidence, 'Evidence list should not be null');
+        Assert.areNotEqual(null, evidence, 'Evidence list should not be null');
         System.assert(!evidence.isEmpty(), 'Should collect evidence for large date range');
     }
 
@@ -137,7 +137,7 @@ private class EvidenceCollectionServiceTest {
             EvidenceCollectionService.collectEvidence('SOC2', startDate, endDate);
         Test.stopTest();
 
-        System.assertNotEquals(null, evidence, 'Evidence list should not be null');
+        Assert.areNotEqual(null, evidence, 'Evidence list should not be null');
 
         // Verify governor limits were not exceeded
         System.assert(Limits.getQueries() < 100,
@@ -164,7 +164,7 @@ private class EvidenceCollectionServiceTest {
 
         // Verify all evidence records were created
         Integer insertedCount = [SELECT COUNT() FROM Compliance_Evidence__c];
-        System.assertEquals(totalEvidence, insertedCount,
+        Assert.areEqual(totalEvidence, insertedCount,
             'All evidence records should be inserted');
     }
 }

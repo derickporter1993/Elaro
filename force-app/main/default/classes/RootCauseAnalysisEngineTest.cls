@@ -28,9 +28,9 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.analyzeRootCause(item.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return result');
-        System.assertEquals('SUCCESS', result.status, 'Status should be SUCCESS');
-        System.assertNotEquals(null, result.rootCause, 'Should have root cause');
+        Assert.areNotEqual(null, result, 'Should return result');
+        Assert.areEqual('SUCCESS', result.status, 'Status should be SUCCESS');
+        Assert.areNotEqual(null, result.rootCause, 'Should have root cause');
         System.assert(result.confidence &gt;= 0 &amp;&amp; result.confidence &lt;= 100, 'Confidence should be 0-100');
     }
     
@@ -41,7 +41,7 @@ private class RootCauseAnalysisEngineTest {
         Test.startTest();
         try {
             RootCauseAnalysisEngine.analyzeRootCause(null);
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required');
         }
@@ -55,7 +55,7 @@ private class RootCauseAnalysisEngineTest {
         Test.startTest();
         try {
             RootCauseAnalysisEngine.analyzeRootCause('');
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required');
         }
@@ -69,7 +69,7 @@ private class RootCauseAnalysisEngineTest {
         Test.startTest();
         try {
             RootCauseAnalysisEngine.analyzeRootCause('a0x000000000001AAA');
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('not found'), 'Should mention not found');
         }
@@ -98,7 +98,7 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.batchAnalyze(eventIds);
         Test.stopTest();
         
-        System.assertEquals(eventIds.size(), results.size(), 'Should return result for each event');
+        Assert.areEqual(eventIds.size(), results.size(), 'Should return result for each event');
     }
     
     @isTest
@@ -110,7 +110,7 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.batchAnalyze(new List&lt;String&gt;());
         Test.stopTest();
         
-        System.assertEquals(0, results.size(), 'Should return empty list for empty input');
+        Assert.areEqual(0, results.size(), 'Should return empty list for empty input');
     }
     
     @isTest
@@ -122,7 +122,7 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.batchAnalyze(null);
         Test.stopTest();
         
-        System.assertEquals(0, results.size(), 'Should return empty list for null input');
+        Assert.areEqual(0, results.size(), 'Should return empty list for null input');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -143,8 +143,8 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.getAnalysisSummary(eventIds);
         Test.stopTest();
         
-        System.assertNotEquals(null, summary, 'Should return summary');
-        System.assertEquals(eventIds.size(), summary.totalEvents, 'Should have correct total');
+        Assert.areNotEqual(null, summary, 'Should return summary');
+        Assert.areEqual(eventIds.size(), summary.totalEvents, 'Should have correct total');
     }
     
     @isTest
@@ -154,7 +154,7 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.getAnalysisSummary(new List&lt;String&gt;());
         Test.stopTest();
         
-        System.assertEquals(0, summary.totalEvents, 'Should have 0 total events');
+        Assert.areEqual(0, summary.totalEvents, 'Should have 0 total events');
     }
     
     @isTest
@@ -164,7 +164,7 @@ private class RootCauseAnalysisEngineTest {
             RootCauseAnalysisEngine.getAnalysisSummary(null);
         Test.stopTest();
         
-        System.assertEquals(0, summary.totalEvents, 'Should have 0 total events for null');
+        Assert.areEqual(0, summary.totalEvents, 'Should have 0 total events for null');
     }
     
     // ═══════════════════════════════════════════════════════════════

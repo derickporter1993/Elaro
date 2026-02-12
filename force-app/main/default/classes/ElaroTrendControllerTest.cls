@@ -23,8 +23,8 @@ private class ElaroTrendControllerTest {
             ElaroTrendController.getDateFields('Account');
         Test.stopTest();
 
-        System.assertNotEquals(null, fields, 'Should return date fields');
-        System.assertEquals(true, !fields.isEmpty(), 'Should return at least some date fields');
+        Assert.areNotEqual(null, fields, 'Should return date fields');
+        Assert.areEqual(true, !fields.isEmpty(), 'Should return at least some date fields');
     }
 
     @isTest
@@ -47,8 +47,8 @@ private class ElaroTrendControllerTest {
             ElaroTrendController.getMetricFields('Account');
         Test.stopTest();
 
-        System.assertNotEquals(null, fields, 'Should return metric fields');
-        System.assertEquals(true, !fields.isEmpty(), 'Should return at least COUNT option');
+        Assert.areNotEqual(null, fields, 'Should return metric fields');
+        Assert.areEqual(true, !fields.isEmpty(), 'Should return at least COUNT option');
     }
 
     @isTest
@@ -77,10 +77,10 @@ private class ElaroTrendControllerTest {
                     12,
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to no data, which is acceptable
-            System.assert(true, 'Query may fail with no data');
+            Assert.isTrue(true, 'Query may fail with no data');
         }
         Test.stopTest();
     }
@@ -98,9 +98,9 @@ private class ElaroTrendControllerTest {
                     1,
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -118,9 +118,9 @@ private class ElaroTrendControllerTest {
                     3,
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -138,9 +138,9 @@ private class ElaroTrendControllerTest {
                     12,
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -158,9 +158,9 @@ private class ElaroTrendControllerTest {
                     24,
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -298,9 +298,9 @@ private class ElaroTrendControllerTest {
                     6,
                     'Name LIKE \'Test%\''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -318,9 +318,9 @@ private class ElaroTrendControllerTest {
                     null,
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -338,9 +338,9 @@ private class ElaroTrendControllerTest {
                     100, // Should be bounded to MAX_MONTHS_BACK
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -358,9 +358,9 @@ private class ElaroTrendControllerTest {
                     0, // Should be bounded to MIN_MONTHS_BACK
                     ''
                 );
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -422,10 +422,10 @@ private class ElaroTrendControllerTest {
         result.overallPercentChange = 25.0;
         result.trendDirection = 'up';
 
-        System.assertNotEquals(null, result.buckets, 'Buckets should be set');
-        System.assertEquals('month', result.granularity, 'Granularity should be set');
-        System.assertEquals(500, result.total, 'Total should be set');
-        System.assertEquals('up', result.trendDirection, 'Trend direction should be set');
+        Assert.areNotEqual(null, result.buckets, 'Buckets should be set');
+        Assert.areEqual('month', result.granularity, 'Granularity should be set');
+        Assert.areEqual(500, result.total, 'Total should be set');
+        Assert.areEqual('up', result.trendDirection, 'Trend direction should be set');
     }
 
     @isTest
@@ -440,9 +440,9 @@ private class ElaroTrendControllerTest {
         bucket.changeFromPrevious = 10;
         bucket.percentChange = 11.1;
 
-        System.assertEquals('Jan 2026', bucket.bucketDate, 'Bucket date should be set');
-        System.assertEquals(100, bucket.metricValue, 'Metric value should be set');
-        System.assertEquals(10, bucket.changeFromPrevious, 'Change from previous should be set');
+        Assert.areEqual('Jan 2026', bucket.bucketDate, 'Bucket date should be set');
+        Assert.areEqual(100, bucket.metricValue, 'Metric value should be set');
+        Assert.areEqual(10, bucket.changeFromPrevious, 'Change from previous should be set');
     }
 
     @isTest
@@ -454,9 +454,9 @@ private class ElaroTrendControllerTest {
         opt.label = 'Amount';
         opt.fieldType = 'CURRENCY';
 
-        System.assertEquals('Amount', opt.apiName, 'API name should be set');
-        System.assertEquals('Amount', opt.label, 'Label should be set');
-        System.assertEquals('CURRENCY', opt.fieldType, 'Field type should be set');
+        Assert.areEqual('Amount', opt.apiName, 'API name should be set');
+        Assert.areEqual('Amount', opt.label, 'Label should be set');
+        Assert.areEqual('CURRENCY', opt.fieldType, 'Field type should be set');
     }
 
     @isTest
@@ -468,8 +468,8 @@ private class ElaroTrendControllerTest {
         opt.label = 'Created Date';
         opt.fieldType = 'DATETIME';
 
-        System.assertEquals('CreatedDate', opt.apiName, 'API name should be set');
-        System.assertEquals('Created Date', opt.label, 'Label should be set');
-        System.assertEquals('DATETIME', opt.fieldType, 'Field type should be set');
+        Assert.areEqual('CreatedDate', opt.apiName, 'API name should be set');
+        Assert.areEqual('Created Date', opt.label, 'Label should be set');
+        Assert.areEqual('DATETIME', opt.fieldType, 'Field type should be set');
     }
 }

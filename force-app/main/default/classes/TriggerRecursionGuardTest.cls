@@ -12,8 +12,8 @@ private class TriggerRecursionGuardTest {
         Boolean secondRun = TriggerRecursionGuard.isFirstRun(triggerName);
         Test.stopTest();
 
-        System.assertEquals(true, firstRun, 'First call should return true');
-        System.assertEquals(false, secondRun, 'Second call should return false');
+        Assert.areEqual(true, firstRun, 'First call should return true');
+        Assert.areEqual(false, secondRun, 'Second call should return false');
     }
 
     @IsTest
@@ -29,7 +29,7 @@ private class TriggerRecursionGuardTest {
         Boolean isFirst = TriggerRecursionGuard.isFirstRun(triggerName);
         Test.stopTest();
 
-        System.assertEquals(true, isFirst, 'After reset, should be first run again');
+        Assert.areEqual(true, isFirst, 'After reset, should be first run again');
     }
 
     @IsTest
@@ -47,9 +47,9 @@ private class TriggerRecursionGuardTest {
         Boolean notRunningAfterReset = TriggerRecursionGuard.isRunning(triggerName);
         Test.stopTest();
 
-        System.assertEquals(false, notRunning, 'Should not be running initially');
-        System.assertEquals(true, isRunning, 'Should be running after isFirstRun');
-        System.assertEquals(false, notRunningAfterReset, 'Should not be running after reset');
+        Assert.areEqual(false, notRunning, 'Should not be running initially');
+        Assert.areEqual(true, isRunning, 'Should be running after isFirstRun');
+        Assert.areEqual(false, notRunningAfterReset, 'Should not be running after reset');
     }
 
     @IsTest
@@ -66,10 +66,10 @@ private class TriggerRecursionGuardTest {
         Boolean second2 = TriggerRecursionGuard.isFirstRun(trigger2);
         Test.stopTest();
 
-        System.assertEquals(true, first1, 'First trigger should be first run');
-        System.assertEquals(true, first2, 'Second trigger should be first run');
-        System.assertEquals(false, second1, 'First trigger should not be first run');
-        System.assertEquals(false, second2, 'Second trigger should not be first run');
+        Assert.areEqual(true, first1, 'First trigger should be first run');
+        Assert.areEqual(true, first2, 'Second trigger should be first run');
+        Assert.areEqual(false, second1, 'First trigger should not be first run');
+        Assert.areEqual(false, second2, 'Second trigger should not be first run');
     }
 
     @IsTest
@@ -88,8 +88,8 @@ private class TriggerRecursionGuardTest {
         Boolean trigger2Running = TriggerRecursionGuard.isRunning(trigger2);
         Test.stopTest();
 
-        System.assertEquals(false, trigger1Running, 'Trigger1 should not be running after reset');
-        System.assertEquals(true, trigger2Running, 'Trigger2 should still be running');
+        Assert.areEqual(false, trigger1Running, 'Trigger1 should not be running after reset');
+        Assert.areEqual(true, trigger2Running, 'Trigger2 should still be running');
     }
 
     @IsTest
@@ -102,6 +102,6 @@ private class TriggerRecursionGuardTest {
         Test.stopTest();
 
         // Null is treated as a valid key in Set<String>
-        System.assertNotEquals(null, result, 'Should return a value for null');
+        Assert.areNotEqual(null, result, 'Should return a value for null');
     }
 }

@@ -114,26 +114,52 @@ public with sharing class ElaroComplianceAlert {
     }
     
     /**
-     * @description Send alert notification to specified channel
+     * @description Send alert notification to specified channel using Queueable
      * @param channel The notification channel
-     * @param alertData The alert data
+     * @param alertDataJson The alert data as JSON string
      */
-    @future(callout=true)
     public static void sendAlertNotification(String channel, String alertDataJson) {
-        Map<String, Object> alertData = (Map<String, Object>)JSON.deserializeUntyped(alertDataJson);
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new AlertNotificationQueueable(channel, alertDataJson));
+        }
+    }
+    
+    /**
+     * @description Queueable implementation for alert notifications
+     */
+    public class AlertNotificationQueueable implements Queueable, Database.AllowsCallouts {
+        private String channel;
+        private String alertDataJson;
         
-        switch on channel.toUpperCase() {
-            when 'EMAIL' {
-                sendEmailAlert(alertData);
-            }
-            when 'SLACK' {
-                sendSlackAlert(alertData);
-            }
-            when 'PAGERDUTY' {
-                sendPagerDutyAlert(alertData);
-            }
-            when 'BELL' {
-                createBellNotification(alertData);
+        public AlertNotificationQueueable(String channel, String alertDataJson) {
+            this.channel = channel;
+            this.alertDataJson = alertDataJson;
+        }
+        
+        public void execute(QueueableContext context) {
+            try {
+                Map<String, Object> alertData = (Map<String, Object>)JSON.deserializeUntyped(alertDataJson);
+                
+                switch on channel.toUpperCase() {
+                    when 'EMAIL' {
+                        sendEmailAlert(alertData);
+                    }
+                    when 'SLACK' {
+                        sendSlackAlert(alertData);
+                    }
+                    when 'PAGERDUTY' {
+                        sendPagerDutyAlert(alertData);
+                    }
+                    when 'BELL' {
+                        createBellNotification(alertData);
+                    }
+                }
+                
+                ElaroLogger.info('ElaroComplianceAlert.AlertNotificationQueueable', 
+                    'Successfully sent alert notification via ' + channel);
+            } catch (Exception e) {
+                ElaroLogger.error('ElaroComplianceAlert.AlertNotificationQueueable', 
+                    e.getMessage(), e.getStackTraceString());
             }
         }
     }
@@ -152,7 +178,7 @@ public with sharing class ElaroComplianceAlert {
             FROM Elaro_Evidence_Item__c
             WHERE CreatedDate >= LAST_N_DAYS:7
             AND Status__c = 'Pending Review'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT 50
         ];
@@ -206,9 +232,10 @@ public with sharing class ElaroComplianceAlert {
         String query = 'SELECT Id, Name, Alert_Type__c, Threshold__c, Channels__c, Severity__c, Framework__c ' +
                        'FROM Elaro_Alert_Config__c ' +
                        'WHERE Is_Active__c = true AND Threshold__c <= :riskScore ' +
-                       'WITH SECURITY_ENFORCED';
+                       'WITH USER_MODE';
 
-        return Database.query(query);
+        Map<String, Object> binds = new Map<String, Object>{ 'riskScore' => riskScore };
+        return Database.queryWithBinds(query, binds, AccessLevel.USER_MODE);
     }
     
     private static void sendEmailAlert(Map<String, Object> alertData) {
@@ -276,7 +303,7 @@ public with sharing class ElaroComplianceAlert {
             SELECT Id, DeveloperName
             FROM CustomNotificationType
             WHERE DeveloperName = 'Elaro_Alert'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
         
@@ -344,7 +371,7 @@ public with sharing class ElaroComplianceAlert {
             SELECT Email FROM User
             WHERE IsActive = true
             AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.Name = 'Elaro_Admin')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 10
         ]) {
             recipients.add(u.Email);

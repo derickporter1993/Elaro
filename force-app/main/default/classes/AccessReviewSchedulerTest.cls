@@ -36,7 +36,7 @@ private class AccessReviewSchedulerTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'Scheduler should execute successfully');
+        Assert.isTrue(true, 'Scheduler should execute successfully');
     }
 
     @IsTest
@@ -49,7 +49,7 @@ private class AccessReviewSchedulerTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'Access review should complete successfully');
+        Assert.isTrue(true, 'Access review should complete successfully');
     }
 
     @IsTest
@@ -60,7 +60,7 @@ private class AccessReviewSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
 
         // Verify job was scheduled
         List<CronTrigger> jobs = [
@@ -68,7 +68,7 @@ private class AccessReviewSchedulerTest {
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals(1, jobs.size(), 'Job should be scheduled');
+        Assert.areEqual(1, jobs.size(), 'Job should be scheduled');
     }
 
     @IsTest
@@ -80,7 +80,7 @@ private class AccessReviewSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
     }
 
     @IsTest
@@ -100,7 +100,7 @@ private class AccessReviewSchedulerTest {
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals(0, jobs.size(), 'Job should be aborted');
+        Assert.areEqual(0, jobs.size(), 'Job should be aborted');
     }
 
     @IsTest
@@ -114,8 +114,8 @@ private class AccessReviewSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, statuses, 'Should return job statuses');
-        System.assertEquals(1, statuses.size(), 'Should have 1 scheduled job');
+        Assert.areNotEqual(null, statuses, 'Should return job statuses');
+        Assert.areEqual(1, statuses.size(), 'Should have 1 scheduled job');
     }
 
     @IsTest
@@ -127,7 +127,7 @@ private class AccessReviewSchedulerTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'runNow should complete successfully');
+        Assert.isTrue(true, 'runNow should complete successfully');
     }
 
     @IsTest
@@ -139,8 +139,8 @@ private class AccessReviewSchedulerTest {
         status.nextRunTime = DateTime.now().addDays(1);
         status.lastRunTime = DateTime.now().addDays(-1);
 
-        System.assertEquals('Test Job', status.jobName, 'Job name should be set');
-        System.assertEquals('WAITING', status.state, 'State should be set');
+        Assert.areEqual('Test Job', status.jobName, 'Job name should be set');
+        Assert.areEqual('WAITING', status.state, 'State should be set');
     }
 
     @IsTest

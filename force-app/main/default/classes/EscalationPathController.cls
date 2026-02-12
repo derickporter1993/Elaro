@@ -18,7 +18,7 @@ public with sharing class EscalationPathController {
                    Level__c, Role__c, Notification_Method__c,
                    Escalation_Delay_Minutes__c, Active__c
             FROM Elaro_Escalation_Path__c
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Level__c ASC, Role__c ASC
             LIMIT 100
         ];

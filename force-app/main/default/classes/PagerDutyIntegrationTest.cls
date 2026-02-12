@@ -60,7 +60,7 @@ private class PagerDutyIntegrationTest {
 
         // Verify HTTP callout was made (indicated by no exception)
         // Mock returns 202 Accepted - verify method completed successfully
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for callout');
     }
     
     @isTest
@@ -84,7 +84,7 @@ private class PagerDutyIntegrationTest {
 
         // Verify error was handled without throwing exception
         // With 500 status, method should catch and log error internally
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML on error');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML on error');
     }
     
     @isTest
@@ -101,7 +101,7 @@ private class PagerDutyIntegrationTest {
         Test.stopTest();
 
         // Verify method completes without exception even with minimal data
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML with invalid data');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML with invalid data');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -119,7 +119,7 @@ private class PagerDutyIntegrationTest {
         Test.stopTest();
 
         // Verify resolve callout completed successfully (202 Accepted)
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for resolve callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for resolve callout');
     }
     
     @isTest
@@ -133,7 +133,7 @@ private class PagerDutyIntegrationTest {
         Test.stopTest();
 
         // Verify 404 error is handled without throwing exception
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML on error');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML on error');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -151,7 +151,7 @@ private class PagerDutyIntegrationTest {
         Test.stopTest();
 
         // Verify acknowledge callout completed successfully (202 Accepted)
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for acknowledge callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for acknowledge callout');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -171,7 +171,7 @@ private class PagerDutyIntegrationTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, dedupKey, 'Should return dedup key');
+        Assert.areNotEqual(null, dedupKey, 'Should return dedup key');
         System.assert(dedupKey.startsWith('elaro-'), 'Dedup key should start with elaro-');
     }
     
@@ -188,7 +188,7 @@ private class PagerDutyIntegrationTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, dedupKey, 'Should return dedup key even without alert ID');
+        Assert.areNotEqual(null, dedupKey, 'Should return dedup key even without alert ID');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -201,9 +201,9 @@ private class PagerDutyIntegrationTest {
         List<Map<String, Object>> incidents = PagerDutyIntegration.getRecentIncidents();
         Test.stopTest();
         
-        System.assertNotEquals(null, incidents, 'Should return list');
+        Assert.areNotEqual(null, incidents, 'Should return list');
         // Currently returns empty list as per implementation
-        System.assertEquals(0, incidents.size(), 'Should return empty list (mock implementation)');
+        Assert.areEqual(0, incidents.size(), 'Should return empty list (mock implementation)');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -240,7 +240,7 @@ private class PagerDutyIntegrationTest {
         }
 
         // Verify all severity mappings processed without exception
-        System.assertEquals(severityMap.size(), 6, 'Should test all 6 severity levels');
+        Assert.areEqual(severityMap.size(), 6, 'Should test all 6 severity levels');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -273,7 +273,7 @@ private class PagerDutyIntegrationTest {
         Test.stopTest();
 
         // Verify bulk operations completed within governor limits
-        System.assertEquals(200, alertDataList.size(), 'Should process 200 incidents');
+        Assert.areEqual(200, alertDataList.size(), 'Should process 200 incidents');
         System.assert(Limits.getCallouts() <= Limits.getLimitCallouts(), 'Should stay within callout limits');
     }
     
@@ -301,9 +301,9 @@ private class PagerDutyIntegrationTest {
         try {
             PagerDutyIntegration.triggerIncident(JSON.serialize(alertData));
             // If no exception thrown, method handled it internally
-            System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML on exception');
+            Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML on exception');
         } catch (Exception e) {
-            System.assert(false, 'Should not throw unhandled exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw unhandled exception: ' + e.getMessage());
         }
         Test.stopTest();
     }

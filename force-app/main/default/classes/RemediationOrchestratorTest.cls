@@ -36,10 +36,10 @@ private class RemediationOrchestratorTest {
         Id caseId = RemediationOrchestrator.createRemediationCase(evidence.Id, 'High');
         Test.stopTest();
 
-        System.assertNotEquals(null, caseId, 'Case should be created');
+        Assert.areNotEqual(null, caseId, 'Case should be created');
         Case remedCase = [SELECT Subject, Priority, Status FROM Case WHERE Id = :caseId];
-        System.assertEquals('High', remedCase.Priority, 'Priority should match');
-        System.assertEquals('New', remedCase.Status, 'Status should be New');
+        Assert.areEqual('High', remedCase.Priority, 'Priority should match');
+        Assert.areEqual('New', remedCase.Status, 'Status should be New');
     }
 
     @isTest
@@ -51,7 +51,7 @@ private class RemediationOrchestratorTest {
         Test.stopTest();
 
         Case remedCase = [SELECT Priority FROM Case WHERE Id = :caseId];
-        System.assertEquals('High', remedCase.Priority, 'Default priority should be High');
+        Assert.areEqual('High', remedCase.Priority, 'Default priority should be High');
     }
 
     @isTest
@@ -59,7 +59,7 @@ private class RemediationOrchestratorTest {
         Test.startTest();
         try {
             RemediationOrchestrator.createRemediationCase('', 'Medium');
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Error message should indicate missing ID');
         }
@@ -109,8 +109,8 @@ private class RemediationOrchestratorTest {
         );
         Test.stopTest();
 
-        System.assertEquals(true, result.success, 'Action should succeed');
-        System.assertNotEquals(null, result.resultId, 'Case ID should be returned');
+        Assert.areEqual(true, result.success, 'Action should succeed');
+        Assert.areNotEqual(null, result.resultId, 'Case ID should be returned');
     }
 
     @isTest
@@ -121,7 +121,7 @@ private class RemediationOrchestratorTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result.message, 'Message should be set');
+        Assert.areNotEqual(null, result.message, 'Message should be set');
     }
 
     @isTest
@@ -129,7 +129,7 @@ private class RemediationOrchestratorTest {
         Test.startTest();
         try {
             RemediationOrchestrator.executeRemediationAction('INVALID_ACTION', null, new Map<String, Object>());
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Invalid'), 'Error should indicate invalid action');
         }
@@ -144,7 +144,7 @@ private class RemediationOrchestratorTest {
         );
         Test.stopTest();
 
-        System.assertEquals(true, result.success, 'Quarantine action should succeed');
+        Assert.areEqual(true, result.success, 'Quarantine action should succeed');
     }
 
     @isTest
@@ -155,6 +155,6 @@ private class RemediationOrchestratorTest {
         List<RemediationOrchestrator.RemediationResult> history = RemediationOrchestrator.getRemediationHistory(evidence.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, history, 'History should not be null');
+        Assert.areNotEqual(null, history, 'History should not be null');
     }
 }

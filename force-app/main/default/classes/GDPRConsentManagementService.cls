@@ -101,7 +101,7 @@ public with sharing class GDPRConsentManagementService extends ComplianceService
                 AND Consent_Type__c = :consentType
                 AND Consent_Given__c = true
                 AND Consent_Withdrawn__c = false
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             if (consents.isEmpty()) {
@@ -162,7 +162,7 @@ public with sharing class GDPRConsentManagementService extends ComplianceService
                        Consent_Version__c
                 FROM Consent__c
                 WHERE Contact__c = :dataSubjectId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY Consent_Date__c DESC
             ];
             
@@ -193,7 +193,7 @@ public with sharing class GDPRConsentManagementService extends ComplianceService
                 SELECT Id, Legal_Basis__c, Activity_Name__c
                 FROM Data_Processing_Activity__c
                 WHERE Id = :activityId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -214,7 +214,7 @@ public with sharing class GDPRConsentManagementService extends ComplianceService
                     WHERE Contact__c = :dataSubjectId
                     AND Consent_Given__c = true
                     AND Consent_Withdrawn__c = false
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                 ];
                 
                 Boolean hasActiveConsent = !activeConsents.isEmpty();

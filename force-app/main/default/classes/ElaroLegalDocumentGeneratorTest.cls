@@ -13,10 +13,10 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.stopTest();
 
         // Then: Should create a ContentVersion and return ContentDocumentId
-        System.assertNotEquals(null, contentDocId, 'Should return a ContentDocumentId');
+        Assert.areNotEqual(null, contentDocId, 'Should return a ContentDocumentId');
 
         List<ContentDocument> docs = [SELECT Id, Title FROM ContentDocument WHERE Id = :contentDocId];
-        System.assertEquals(1, docs.size(), 'Should create one ContentDocument');
+        Assert.areEqual(1, docs.size(), 'Should create one ContentDocument');
         System.assert(docs[0].Title.contains('SOC2'), 'Document title should contain framework name');
         System.assert(docs[0].Title.contains('Evidence_Pack'), 'Document title should contain Evidence_Pack');
     }
@@ -34,7 +34,7 @@ private class ElaroLegalDocumentGeneratorTest {
 
         // Then: Should create document with GDPR in title
         List<ContentDocument> docs = [SELECT Id, Title FROM ContentDocument WHERE Id = :contentDocId];
-        System.assertEquals(1, docs.size(), 'Should create one ContentDocument');
+        Assert.areEqual(1, docs.size(), 'Should create one ContentDocument');
         System.assert(docs[0].Title.contains('GDPR'), 'Document title should contain GDPR');
     }
 
@@ -71,8 +71,8 @@ private class ElaroLegalDocumentGeneratorTest {
             FROM ContentVersion
             WHERE ContentDocumentId = :contentDocId
         ];
-        System.assertEquals(1, versions.size(), 'Should have one version');
-        System.assertEquals(true, versions[0].IsMajorVersion, 'Should be a major version');
+        Assert.areEqual(1, versions.size(), 'Should have one version');
+        Assert.areEqual(true, versions[0].IsMajorVersion, 'Should be a major version');
         System.assert(versions[0].PathOnClient.endsWith('.txt'), 'File should be .txt');
     }
 
@@ -112,7 +112,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.stopTest();
 
         // Then: Should still create document
-        System.assertNotEquals(null, contentDocId, 'Should create document for single day range');
+        Assert.areNotEqual(null, contentDocId, 'Should create document for single day range');
     }
 
     @IsTest
@@ -179,7 +179,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.startTest();
         try {
             ElaroLegalDocumentGenerator.generateLegalAttestation(null, startDate, endDate);
-            System.assert(false, 'Should have thrown exception for null framework');
+            Assert.fail( 'Should have thrown exception for null framework');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Framework cannot be blank'),
                 'Should throw validation error for null framework');
@@ -196,7 +196,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.startTest();
         try {
             ElaroLegalDocumentGenerator.generateLegalAttestation('', startDate, endDate);
-            System.assert(false, 'Should have thrown exception for blank framework');
+            Assert.fail( 'Should have thrown exception for blank framework');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Framework cannot be blank'),
                 'Should throw validation error for blank framework');
@@ -213,7 +213,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.startTest();
         try {
             ElaroLegalDocumentGenerator.generateLegalAttestation('INVALID_FRAMEWORK', startDate, endDate);
-            System.assert(false, 'Should have thrown exception for invalid framework');
+            Assert.fail( 'Should have thrown exception for invalid framework');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Unsupported framework'),
                 'Should throw validation error for invalid framework');
@@ -227,7 +227,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.startTest();
         try {
             ElaroLegalDocumentGenerator.generateLegalAttestation('SOC2', null, Date.today());
-            System.assert(false, 'Should have thrown exception for null start date');
+            Assert.fail( 'Should have thrown exception for null start date');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Start date cannot be null'),
                 'Should throw validation error for null start date');
@@ -241,7 +241,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.startTest();
         try {
             ElaroLegalDocumentGenerator.generateLegalAttestation('SOC2', Date.today(), null);
-            System.assert(false, 'Should have thrown exception for null end date');
+            Assert.fail( 'Should have thrown exception for null end date');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('End date cannot be null'),
                 'Should throw validation error for null end date');
@@ -255,7 +255,7 @@ private class ElaroLegalDocumentGeneratorTest {
         Test.startTest();
         try {
             ElaroLegalDocumentGenerator.generateLegalAttestation('SOC2', Date.today(), Date.today().addDays(-30));
-            System.assert(false, 'Should have thrown exception for invalid date range');
+            Assert.fail( 'Should have thrown exception for invalid date range');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Start date cannot be after end date'),
                 'Should throw validation error for invalid date range');

@@ -69,13 +69,13 @@ private class JiraIntegrationServiceTest {
         JiraIntegrationService.JiraIssue result = JiraIntegrationService.createIssue(gap.Id, null);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should return issue');
-        System.assertEquals(MOCK_JIRA_KEY, result.key, 'Should have correct key');
+        Assert.areNotEqual(null, result, 'Should return issue');
+        Assert.areEqual(MOCK_JIRA_KEY, result.key, 'Should have correct key');
 
         // Verify gap was updated
         Compliance_Gap__c updatedGap = [SELECT Jira_Issue_Key__c, Jira_Issue_URL__c FROM Compliance_Gap__c WHERE Id = :gap.Id];
-        System.assertEquals(MOCK_JIRA_KEY, updatedGap.Jira_Issue_Key__c, 'Gap should be linked to Jira');
-        System.assertNotEquals(null, updatedGap.Jira_Issue_URL__c, 'Gap should have Jira URL');
+        Assert.areEqual(MOCK_JIRA_KEY, updatedGap.Jira_Issue_Key__c, 'Gap should be linked to Jira');
+        Assert.areNotEqual(null, updatedGap.Jira_Issue_URL__c, 'Gap should have Jira URL');
     }
 
     @isTest
@@ -88,7 +88,7 @@ private class JiraIntegrationServiceTest {
         JiraIntegrationService.JiraIssue result = JiraIntegrationService.createIssue(gap.Id, 'Highest');
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should return issue');
+        Assert.areNotEqual(null, result, 'Should return issue');
     }
 
     @isTest
@@ -98,7 +98,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.createIssue(gap.Id, null);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('already exists'), 'Should mention existing issue');
         }
@@ -114,7 +114,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.createIssue(gap.Id, null);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('Failed'), 'Should indicate failure');
         }
@@ -126,7 +126,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.createIssue('001000000000000AAA', null);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('not found'), 'Should indicate not found');
         }
@@ -144,7 +144,7 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
 
         // Future method execution - verify no exception thrown
-        System.assert(true, 'Async method should complete');
+        Assert.isTrue(true, 'Async method should complete');
     }
 
     // ============================================
@@ -159,9 +159,9 @@ private class JiraIntegrationServiceTest {
         JiraIntegrationService.JiraIssue result = JiraIntegrationService.getIssueStatus(MOCK_JIRA_KEY);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should return issue');
-        System.assertEquals(MOCK_JIRA_KEY, result.key, 'Should have correct key');
-        System.assertEquals('In Progress', result.status, 'Should have status');
+        Assert.areNotEqual(null, result, 'Should return issue');
+        Assert.areEqual(MOCK_JIRA_KEY, result.key, 'Should have correct key');
+        Assert.areEqual('In Progress', result.status, 'Should have status');
     }
 
     @isTest
@@ -171,7 +171,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.getIssueStatus('INVALID-999');
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('not found'), 'Should indicate not found');
         }
@@ -183,7 +183,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.getIssueStatus('');
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('required'), 'Should indicate key required');
         }
@@ -205,8 +205,8 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
 
         Compliance_Gap__c updatedGap = [SELECT Jira_Status__c, Jira_Last_Sync__c FROM Compliance_Gap__c WHERE Id = :gap.Id];
-        System.assertEquals('In Progress', updatedGap.Jira_Status__c, 'Status should be synced');
-        System.assertNotEquals(null, updatedGap.Jira_Last_Sync__c, 'Sync timestamp should be set');
+        Assert.areEqual('In Progress', updatedGap.Jira_Status__c, 'Status should be synced');
+        Assert.areNotEqual(null, updatedGap.Jira_Last_Sync__c, 'Sync timestamp should be set');
     }
 
     @isTest
@@ -216,7 +216,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.syncIssueStatus(gap.Id);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('No Jira issue'), 'Should indicate no link');
         }
@@ -253,7 +253,7 @@ private class JiraIntegrationServiceTest {
         List<JiraIntegrationService.JiraIssue> results = JiraIntegrationService.createBulkIssues(gapIds);
         Test.stopTest();
 
-        System.assertEquals(3, results.size(), 'Should create issues for all gaps');
+        Assert.areEqual(3, results.size(), 'Should create issues for all gaps');
     }
 
     // ============================================
@@ -269,7 +269,7 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
 
         // No exception = success
-        System.assert(true, 'Comment should be added');
+        Assert.isTrue(true, 'Comment should be added');
     }
 
     @isTest
@@ -277,7 +277,7 @@ private class JiraIntegrationServiceTest {
         Test.startTest();
         try {
             JiraIntegrationService.addComment('', '');
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (JiraIntegrationService.JiraIntegrationException e) {
             System.assert(e.getMessage().contains('required'), 'Should indicate required params');
         }
@@ -296,7 +296,7 @@ private class JiraIntegrationServiceTest {
         List<JiraIntegrationService.JiraTransition> transitions = JiraIntegrationService.getAvailableTransitions(MOCK_JIRA_KEY);
         Test.stopTest();
 
-        System.assertNotEquals(null, transitions, 'Should return transitions');
+        Assert.areNotEqual(null, transitions, 'Should return transitions');
         System.assert(transitions.size() > 0, 'Should have at least one transition');
     }
 
@@ -308,7 +308,7 @@ private class JiraIntegrationServiceTest {
         JiraIntegrationService.transitionIssue(MOCK_JIRA_KEY, '21');
         Test.stopTest();
 
-        System.assert(true, 'Transition should complete');
+        Assert.isTrue(true, 'Transition should complete');
     }
 
     // ============================================
@@ -323,7 +323,7 @@ private class JiraIntegrationServiceTest {
         Boolean configured = JiraIntegrationService.isConfigured();
         Test.stopTest();
 
-        System.assertEquals(true, configured, 'Should be configured');
+        Assert.areEqual(true, configured, 'Should be configured');
     }
 
     @isTest
@@ -335,7 +335,7 @@ private class JiraIntegrationServiceTest {
         Boolean configured = JiraIntegrationService.isConfigured();
         Test.stopTest();
 
-        System.assertEquals(false, configured, 'Should not be configured');
+        Assert.areEqual(false, configured, 'Should not be configured');
     }
 
     @isTest
@@ -344,8 +344,8 @@ private class JiraIntegrationServiceTest {
         List<Compliance_Gap__c> linkedGaps = JiraIntegrationService.getLinkedGaps();
         Test.stopTest();
 
-        System.assertEquals(1, linkedGaps.size(), 'Should find one linked gap');
-        System.assertEquals(MOCK_JIRA_KEY, linkedGaps[0].Jira_Issue_Key__c, 'Should have correct Jira key');
+        Assert.areEqual(1, linkedGaps.size(), 'Should find one linked gap');
+        Assert.areEqual(MOCK_JIRA_KEY, linkedGaps[0].Jira_Issue_Key__c, 'Should have correct Jira key');
     }
 
     // ============================================

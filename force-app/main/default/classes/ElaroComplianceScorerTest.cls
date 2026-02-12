@@ -16,11 +16,11 @@ private class ElaroComplianceScorerTest {
         ElaroComplianceScorer.ScoreResult result = ElaroComplianceScorer.calculateReadinessScore();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should return a result');
-        System.assertNotEquals(null, result.overallScore, 'Should have an overall score');
+        Assert.areNotEqual(null, result, 'Should return a result');
+        Assert.areNotEqual(null, result.overallScore, 'Should have an overall score');
         System.assert(result.overallScore >= 0 && result.overallScore <= 100, 'Score should be between 0 and 100');
-        System.assertNotEquals(null, result.rating, 'Should have a rating');
-        System.assertNotEquals(null, result.frameworkScores, 'Should have framework scores');
+        Assert.areNotEqual(null, result.rating, 'Should have a rating');
+        Assert.areNotEqual(null, result.frameworkScores, 'Should have framework scores');
     }
 
     @IsTest
@@ -41,7 +41,7 @@ private class ElaroComplianceScorerTest {
         Test.stopTest();
 
         System.assert(result.overallScore > 0, 'Should have positive score with documented permission sets');
-        System.assertNotEquals(null, result.factors, 'Should have score factors');
+        Assert.areNotEqual(null, result.factors, 'Should have score factors');
         System.assert(!result.factors.isEmpty(), 'Should have at least one factor');
     }
     
@@ -62,7 +62,7 @@ private class ElaroComplianceScorerTest {
         ElaroComplianceScorer.ScoreResult result = ElaroComplianceScorer.calculateReadinessScore();
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Should return a result even with bulk data');
+        Assert.areNotEqual(null, result, 'Should return a result even with bulk data');
         System.assert(result.overallScore >= 0 && result.overallScore <= 100, 'Score should be valid');
     }
     
@@ -72,9 +72,9 @@ private class ElaroComplianceScorerTest {
         Test.startTest();
         try {
             ElaroComplianceScorer.ScoreResult result = ElaroComplianceScorer.calculateReadinessScore();
-            System.assertNotEquals(null, result, 'Should return a result even on error');
+            Assert.areNotEqual(null, result, 'Should return a result even on error');
         } catch (Exception e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
     }

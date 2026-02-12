@@ -25,11 +25,11 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('HIPAA compliance');
         Test.stopTest();
         
-        System.assertNotEquals(null, response, 'Response should not be null');
-        System.assertEquals('DEEP_ANALYSIS', response.queryType, 'Query type should be DEEP_ANALYSIS');
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
+        Assert.areEqual('DEEP_ANALYSIS', response.queryType, 'Query type should be DEEP_ANALYSIS');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
         System.assert(response.answer.length() > 0, 'Answer should not be empty');
-        System.assertNotEquals(null, response.confidence, 'Confidence should not be null');
+        Assert.areNotEqual(null, response.confidence, 'Confidence should not be null');
         System.assert(response.confidence >= 0 && response.confidence <= 1, 'Confidence should be between 0 and 1');
     }
     
@@ -40,9 +40,9 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('SOC2 compliance status');
         Test.stopTest();
         
-        System.assertNotEquals(null, response, 'Response should not be null');
-        System.assertEquals('DEEP_ANALYSIS', response.queryType, 'Query type should be DEEP_ANALYSIS');
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
+        Assert.areEqual('DEEP_ANALYSIS', response.queryType, 'Query type should be DEEP_ANALYSIS');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
         System.assert(response.answer.length() > 0, 'Answer should not be empty');
     }
     
@@ -53,11 +53,11 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('permission sprawl');
         Test.stopTest();
         
-        System.assertNotEquals(null, response, 'Response should not be null');
-        System.assertEquals('DEEP_ANALYSIS', response.queryType, 'Query type should be DEEP_ANALYSIS');
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
-        System.assertNotEquals(null, response.evidence, 'Evidence list should not be null');
-        System.assertNotEquals(null, response.actions, 'Actions list should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
+        Assert.areEqual('DEEP_ANALYSIS', response.queryType, 'Query type should be DEEP_ANALYSIS');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response.evidence, 'Evidence list should not be null');
+        Assert.areNotEqual(null, response.actions, 'Actions list should not be null');
     }
     
     @IsTest
@@ -67,10 +67,10 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis(null);
         Test.stopTest();
         
-        System.assertNotEquals(null, response, 'Response should not be null');
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
         System.assert(response.answer.contains('Please provide a topic'), 'Should request topic input');
-        System.assertEquals(0.0, response.confidence, 'Confidence should be 0 for invalid input');
+        Assert.areEqual(0.0, response.confidence, 'Confidence should be 0 for invalid input');
     }
     
     @IsTest
@@ -80,10 +80,10 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('');
         Test.stopTest();
         
-        System.assertNotEquals(null, response, 'Response should not be null');
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
         System.assert(response.answer.contains('Please provide a topic'), 'Should request topic input');
-        System.assertEquals(0.0, response.confidence, 'Confidence should be 0 for invalid input');
+        Assert.areEqual(0.0, response.confidence, 'Confidence should be 0 for invalid input');
     }
     
     @IsTest
@@ -97,7 +97,7 @@ private class ElaroComplianceCopilotTest {
         Test.stopTest();
         
         // Response should indicate error
-        System.assertNotEquals(null, response, 'Response should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
         // The method may catch the exception and return an error response
         // Check that response indicates an issue
         System.assert(response.answer != null, 'Answer should not be null');
@@ -110,7 +110,7 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('HIPAA compliance');
         Test.stopTest();
         
-        System.assertNotEquals(null, response.evidence, 'Evidence should not be null');
+        Assert.areNotEqual(null, response.evidence, 'Evidence should not be null');
         // Evidence may be empty if no violations exist, but list should exist
     }
     
@@ -121,7 +121,7 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('compliance analysis');
         Test.stopTest();
         
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
         System.assert(response.answer.contains('Recommendations'), 'Answer should include recommendations');
     }
     
@@ -132,7 +132,7 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.deepAnalysis('GDPR compliance');
         Test.stopTest();
         
-        System.assertNotEquals(null, response.actions, 'Actions should not be null');
+        Assert.areNotEqual(null, response.actions, 'Actions should not be null');
         // Export action is added in the method, verify actions list exists
         // May be empty if method fails, but list should exist
         System.assert(response.actions.size() >= 0, 'Actions list should exist');
@@ -149,8 +149,8 @@ private class ElaroComplianceCopilotTest {
         for (String framework : frameworks) {
             ElaroComplianceCopilot.CopilotResponse response = 
                 ElaroComplianceCopilot.deepAnalysis(framework + ' compliance');
-            System.assertNotEquals(null, response, 'Response should not be null for ' + framework);
-            System.assertNotEquals(null, response.answer, 'Answer should not be null for ' + framework);
+            Assert.areNotEqual(null, response, 'Response should not be null for ' + framework);
+            Assert.areNotEqual(null, response.answer, 'Answer should not be null for ' + framework);
         }
         Test.stopTest();
     }
@@ -162,8 +162,8 @@ private class ElaroComplianceCopilotTest {
             ElaroComplianceCopilot.askCopilot('What is compliance?');
         Test.stopTest();
         
-        System.assertNotEquals(null, response, 'Response should not be null');
-        System.assertNotEquals(null, response.answer, 'Answer should not be null');
+        Assert.areNotEqual(null, response, 'Response should not be null');
+        Assert.areNotEqual(null, response.answer, 'Answer should not be null');
     }
     
     @IsTest
@@ -172,7 +172,7 @@ private class ElaroComplianceCopilotTest {
         List<Map<String, String>> commands = ElaroComplianceCopilot.getQuickCommands();
         Test.stopTest();
         
-        System.assertNotEquals(null, commands, 'Commands should not be null');
+        Assert.areNotEqual(null, commands, 'Commands should not be null');
         System.assert(!commands.isEmpty(), 'Should return at least one command');
         
         for (Map<String, String> cmd : commands) {

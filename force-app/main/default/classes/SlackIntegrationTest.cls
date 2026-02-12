@@ -67,7 +67,7 @@ private class SlackIntegrationTest {
         Test.stopTest();
 
         // Assert - Verify HTTP callout was made successfully (mock returns 200 OK)
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for webhook callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for webhook callout');
     }
 
     @isTest
@@ -90,7 +90,7 @@ private class SlackIntegrationTest {
         Test.stopTest();
 
         // Assert - Verify critical severity alert processed successfully
-        System.assertEquals('CRITICAL', (String)alertData.get('severity'), 'Alert should be critical severity');
+        Assert.areEqual('CRITICAL', (String)alertData.get('severity'), 'Alert should be critical severity');
     }
 
     @isTest
@@ -105,7 +105,7 @@ private class SlackIntegrationTest {
         Test.stopTest();
 
         // Assert - Verify notification sent for valid package ID
-        System.assertNotEquals(null, pkg.Id, 'Package ID should not be null');
+        Assert.areNotEqual(null, pkg.Id, 'Package ID should not be null');
     }
 
     @isTest
@@ -129,8 +129,8 @@ private class SlackIntegrationTest {
         Test.stopTest();
 
         // Assert - Verify digest data structure and delivery
-        System.assertEquals(87, digestData.get('complianceScore'), 'Compliance score should be 87');
-        System.assertNotEquals(null, digestData.get('statistics'), 'Statistics should be included');
+        Assert.areEqual(87, digestData.get('complianceScore'), 'Compliance score should be 87');
+        Assert.areNotEqual(null, digestData.get('statistics'), 'Statistics should be included');
     }
 
     @isTest
@@ -144,7 +144,7 @@ private class SlackIntegrationTest {
         Test.stopTest();
 
         // Assert - Verify message callout completed successfully
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for message callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for message callout');
     }
 
     @isTest
@@ -168,7 +168,7 @@ private class SlackIntegrationTest {
 
         // Assert - Verify 500 error is handled without throwing exception
         // Method should catch and log error internally
-        System.assertEquals('LOW', (String)alertData.get('severity'), 'Alert should be low severity');
+        Assert.areEqual('LOW', (String)alertData.get('severity'), 'Alert should be low severity');
     }
 
     @isTest
@@ -193,7 +193,7 @@ private class SlackIntegrationTest {
         Test.stopTest();
 
         // Assert - Verify all 6 severity levels processed without exception
-        System.assertEquals(6, severities.size(), 'Should test all 6 severity levels');
+        Assert.areEqual(6, severities.size(), 'Should test all 6 severity levels');
         System.assert(Limits.getCallouts() <= Limits.getLimitCallouts(), 'Should stay within callout limits');
     }
 }

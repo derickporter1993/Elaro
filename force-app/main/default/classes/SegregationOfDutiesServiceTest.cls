@@ -37,7 +37,7 @@ private class SegregationOfDutiesServiceTest {
         Test.stopTest();
         
         // Should return empty list if no violations (permission sets don't have object permissions in test)
-        System.assertNotEquals(null, violations, 'Violations list should not be null');
+        Assert.areNotEqual(null, violations, 'Violations list should not be null');
     }
     
     @IsTest
@@ -45,9 +45,9 @@ private class SegregationOfDutiesServiceTest {
         Test.startTest();
         try {
             SegregationOfDutiesService.detectViolations(null);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null user ID');
+            Assert.isTrue(true, 'Expected exception for null user ID');
         }
         Test.stopTest();
     }
@@ -62,7 +62,7 @@ private class SegregationOfDutiesServiceTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
         System.assert(result.contains('remediated'), 'Result should indicate remediation');
     }
 }

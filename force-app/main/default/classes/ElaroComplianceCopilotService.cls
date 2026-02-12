@@ -54,7 +54,7 @@ public with sharing class ElaroComplianceCopilotService {
                 SELECT Id, Name, Evidence_Type__c, Evidence_Date__c, Description__c, Status__c
                 FROM Elaro_Evidence_Item__c
                 WHERE Id IN :eventIds
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 100
             ];
             
@@ -110,7 +110,7 @@ public with sharing class ElaroComplianceCopilotService {
                        Audit_Period_Start__c, Audit_Period_End__c
                 FROM Elaro_Audit_Package__c
                 WHERE Id = :packageId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -118,7 +118,7 @@ public with sharing class ElaroComplianceCopilotService {
                 SELECT COUNT()
                 FROM Elaro_Evidence_Item__c
                 WHERE Audit_Package__c = :packageId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             // Get event type distribution with security enforcement
@@ -126,7 +126,7 @@ public with sharing class ElaroComplianceCopilotService {
                 SELECT Evidence_Type__c, COUNT(Id) cnt
                 FROM Elaro_Evidence_Item__c
                 WHERE Audit_Package__c = :packageId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 GROUP BY Evidence_Type__c
             ];
             

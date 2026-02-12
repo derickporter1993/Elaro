@@ -65,7 +65,7 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
         List<CronTrigger> jobs = [
             SELECT Id FROM CronTrigger
             WHERE CronJobDetail.Name = :JOB_NAME
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         for (CronTrigger job : jobs) {
@@ -89,7 +89,7 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
                 SELECT Action, CreatedBy.Username, CreatedDate, Display, Section
                 FROM SetupAuditTrail
                 WHERE CreatedDate >= :startTime AND CreatedDate <= :endTime
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY CreatedDate DESC
                 LIMIT :BATCH_SIZE
             ]) {

@@ -63,12 +63,12 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
 
         // Verify gap was updated
         Compliance_Gap__c updatedGap = [SELECT Jira_Status__c, Status__c FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = :MOCK_JIRA_KEY];
-        System.assertEquals('In Progress', updatedGap.Jira_Status__c, 'Jira status should be updated');
-        System.assertEquals('IN_PROGRESS', updatedGap.Status__c, 'Salesforce status should be mapped');
+        Assert.areEqual('In Progress', updatedGap.Jira_Status__c, 'Jira status should be updated');
+        Assert.areEqual('IN_PROGRESS', updatedGap.Status__c, 'Salesforce status should be mapped');
     }
 
     @isTest
@@ -90,10 +90,10 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
 
         Compliance_Gap__c updatedGap = [SELECT Status__c FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = :MOCK_JIRA_KEY];
-        System.assertEquals('REMEDIATED', updatedGap.Status__c, 'Should map Done to REMEDIATED');
+        Assert.areEqual('REMEDIATED', updatedGap.Status__c, 'Should map Done to REMEDIATED');
     }
 
     @isTest
@@ -115,7 +115,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200 even if no linked gap');
+        Assert.areEqual(200, res.statusCode, 'Should return 200 even if no linked gap');
     }
 
     @isTest
@@ -142,7 +142,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
         // Response should indicate status unchanged
     }
 
@@ -169,13 +169,13 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
 
         // Verify Jira link was cleared
         Compliance_Gap__c updatedGap = [SELECT Jira_Issue_Key__c, Jira_Issue_URL__c, Jira_Status__c FROM Compliance_Gap__c LIMIT 1];
-        System.assertEquals(null, updatedGap.Jira_Issue_Key__c, 'Jira key should be cleared');
-        System.assertEquals(null, updatedGap.Jira_Issue_URL__c, 'Jira URL should be cleared');
-        System.assertEquals(null, updatedGap.Jira_Status__c, 'Jira status should be cleared');
+        Assert.areEqual(null, updatedGap.Jira_Issue_Key__c, 'Jira key should be cleared');
+        Assert.areEqual(null, updatedGap.Jira_Issue_URL__c, 'Jira URL should be cleared');
+        Assert.areEqual(null, updatedGap.Jira_Status__c, 'Jira status should be cleared');
     }
 
     @isTest
@@ -197,7 +197,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
     }
 
     // ============================================
@@ -223,7 +223,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
 
         // Verify comment was added to notes
         Compliance_Gap__c updatedGap = [SELECT Notes__c FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = :MOCK_JIRA_KEY];
@@ -250,7 +250,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200');
+        Assert.areEqual(200, res.statusCode, 'Should return 200');
     }
 
     // ============================================
@@ -276,7 +276,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(401, res.statusCode, 'Should return 401 for invalid secret');
+        Assert.areEqual(401, res.statusCode, 'Should return 401 for invalid secret');
     }
 
     @isTest
@@ -303,7 +303,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should allow if no secret configured');
+        Assert.areEqual(200, res.statusCode, 'Should allow if no secret configured');
     }
 
     @isTest
@@ -325,7 +325,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should accept lowercase header');
+        Assert.areEqual(200, res.statusCode, 'Should accept lowercase header');
     }
 
     // ============================================
@@ -351,7 +351,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(400, res.statusCode, 'Should return 400 for missing event');
+        Assert.areEqual(400, res.statusCode, 'Should return 400 for missing event');
     }
 
     @isTest
@@ -373,7 +373,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(200, res.statusCode, 'Should return 200 for unsupported events');
+        Assert.areEqual(200, res.statusCode, 'Should return 200 for unsupported events');
     }
 
     @isTest
@@ -395,7 +395,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(500, res.statusCode, 'Should return 500 for missing issue data');
+        Assert.areEqual(500, res.statusCode, 'Should return 500 for missing issue data');
     }
 
     @isTest
@@ -415,7 +415,7 @@ private class JiraWebhookHandlerTest {
         JiraWebhookHandler.handleWebhook();
         Test.stopTest();
 
-        System.assertEquals(500, res.statusCode, 'Should return 500 for invalid JSON');
+        Assert.areEqual(500, res.statusCode, 'Should return 500 for invalid JSON');
     }
 
     // ============================================

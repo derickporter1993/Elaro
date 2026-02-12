@@ -207,7 +207,7 @@ public with sharing class SOC2DataRetentionService extends ComplianceServiceBase
             SELECT COUNT()
             FROM Compliance_Evidence__c
             WHERE Evidence_Date__c < :Date.today().addDays(-staleDataThreshold)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 10000
         ];
 

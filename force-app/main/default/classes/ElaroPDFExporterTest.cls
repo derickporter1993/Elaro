@@ -24,11 +24,11 @@ private class ElaroPDFExporterTest {
         Id contentVersionId = ElaroPDFExporter.generateAuditPackagePDF(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, contentVersionId, 'Should return ContentVersion ID');
+        Assert.areNotEqual(null, contentVersionId, 'Should return ContentVersion ID');
         
         ContentVersion cv = [SELECT Title, FileExtension FROM ContentVersion WHERE Id = :contentVersionId];
         System.assert(cv.Title.contains('Audit Package'), 'Title should contain Audit Package');
-        System.assertEquals('pdf', cv.FileExtension, 'Should be PDF file');
+        Assert.areEqual('pdf', cv.FileExtension, 'Should be PDF file');
     }
     
     @isTest
@@ -41,7 +41,7 @@ private class ElaroPDFExporterTest {
         Test.stopTest();
         
         pkg = [SELECT Last_Generated__c FROM Elaro_Audit_Package__c WHERE Id = :pkg.Id];
-        System.assertNotEquals(beforeGeneration, pkg.Last_Generated__c, 'Timestamp should be updated');
+        Assert.areNotEqual(beforeGeneration, pkg.Last_Generated__c, 'Timestamp should be updated');
     }
     
     @isTest
@@ -49,7 +49,7 @@ private class ElaroPDFExporterTest {
         Test.startTest();
         try {
             ElaroPDFExporter.generateAuditPackagePDF(null);
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required');
         }
@@ -61,9 +61,9 @@ private class ElaroPDFExporterTest {
         Test.startTest();
         try {
             ElaroPDFExporter.generateAuditPackagePDF('001000000000000AAA');
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
-            System.assert(true, 'Should throw exception for invalid ID');
+            Assert.isTrue(true, 'Should throw exception for invalid ID');
         }
         Test.stopTest();
     }
@@ -80,7 +80,7 @@ private class ElaroPDFExporterTest {
         Id contentVersionId = ElaroPDFExporter.generateExecutiveSummary(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, contentVersionId, 'Should return ContentVersion ID');
+        Assert.areNotEqual(null, contentVersionId, 'Should return ContentVersion ID');
         
         ContentVersion cv = [SELECT Title FROM ContentVersion WHERE Id = :contentVersionId];
         System.assert(cv.Title.contains('Executive Summary'), 'Title should contain Executive Summary');
@@ -99,7 +99,7 @@ private class ElaroPDFExporterTest {
         Id contentVersionId = ElaroPDFExporter.generateEvidenceReport(pkg.Id, controlIds);
         Test.stopTest();
         
-        System.assertNotEquals(null, contentVersionId, 'Should return ContentVersion ID');
+        Assert.areNotEqual(null, contentVersionId, 'Should return ContentVersion ID');
         
         ContentVersion cv = [SELECT Title FROM ContentVersion WHERE Id = :contentVersionId];
         System.assert(cv.Title.contains('Evidence Report'), 'Title should contain Evidence Report');
@@ -113,7 +113,7 @@ private class ElaroPDFExporterTest {
         Id contentVersionId = ElaroPDFExporter.generateEvidenceReport(pkg.Id, null);
         Test.stopTest();
         
-        System.assertNotEquals(null, contentVersionId, 'Should return ContentVersion ID');
+        Assert.areNotEqual(null, contentVersionId, 'Should return ContentVersion ID');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -128,7 +128,7 @@ private class ElaroPDFExporterTest {
         String csvContent = ElaroPDFExporter.generateCSVExport(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, csvContent, 'Should return CSV content');
+        Assert.areNotEqual(null, csvContent, 'Should return CSV content');
         System.assert(csvContent.contains('Evidence ID'), 'Should contain header row');
         System.assert(csvContent.contains(','), 'Should be comma-separated');
     }
@@ -144,7 +144,7 @@ private class ElaroPDFExporterTest {
         
         // Count lines (header + data rows)
         List&lt;String&gt; lines = csvContent.split('\n');
-        System.assertEquals(evidenceCount + 1, lines.size(), 'Should have header + all evidence rows');
+        Assert.areEqual(evidenceCount + 1, lines.size(), 'Should have header + all evidence rows');
     }
     
     @isTest
@@ -158,7 +158,7 @@ private class ElaroPDFExporterTest {
         
         // Should only have header
         List&lt;String&gt; lines = csvContent.split('\n');
-        System.assertEquals(1, lines.size(), 'Should only have header for empty package');
+        Assert.areEqual(1, lines.size(), 'Should only have header for empty package');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -173,7 +173,7 @@ private class ElaroPDFExporterTest {
         String jsonContent = ElaroPDFExporter.generateJSONExport(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, jsonContent, 'Should return JSON content');
+        Assert.areNotEqual(null, jsonContent, 'Should return JSON content');
         
         // Verify it's valid JSON
         Map&lt;String, Object&gt; parsed = (Map&lt;String, Object&gt;)JSON.deserializeUntyped(jsonContent);
@@ -209,10 +209,10 @@ private class ElaroPDFExporterTest {
         Id contentVersionId = ElaroPDFExporter.saveCSVExport(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, contentVersionId, 'Should return ContentVersion ID');
+        Assert.areNotEqual(null, contentVersionId, 'Should return ContentVersion ID');
         
         ContentVersion cv = [SELECT FileExtension FROM ContentVersion WHERE Id = :contentVersionId];
-        System.assertEquals('csv', cv.FileExtension, 'Should be CSV file');
+        Assert.areEqual('csv', cv.FileExtension, 'Should be CSV file');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -227,10 +227,10 @@ private class ElaroPDFExporterTest {
         Id contentVersionId = ElaroPDFExporter.saveJSONExport(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, contentVersionId, 'Should return ContentVersion ID');
+        Assert.areNotEqual(null, contentVersionId, 'Should return ContentVersion ID');
         
         ContentVersion cv = [SELECT FileExtension FROM ContentVersion WHERE Id = :contentVersionId];
-        System.assertEquals('json', cv.FileExtension, 'Should be JSON file');
+        Assert.areEqual('json', cv.FileExtension, 'Should be JSON file');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -253,6 +253,6 @@ private class ElaroPDFExporterTest {
         List&lt;Id&gt; contentVersionIds = ElaroPDFExporter.batchGeneratePDFs(packageIds);
         Test.stopTest();
         
-        System.assertEquals(packageIds.size(), contentVersionIds.size(), 'Should generate PDF for each package');
+        Assert.areEqual(packageIds.size(), contentVersionIds.size(), 'Should generate PDF for each package');
     }
 }

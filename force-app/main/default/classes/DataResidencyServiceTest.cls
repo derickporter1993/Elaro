@@ -24,9 +24,9 @@ private class DataResidencyServiceTest {
         DataResidencyService.ResidencyConfig config = DataResidencyService.getResidencyConfig();
         Test.stopTest();
 
-        System.assertNotEquals(null, config, 'Config should not be null');
-        System.assertNotEquals(null, config.orgInstance, 'Org instance should be set');
-        System.assertNotEquals(null, config.primaryRegion, 'Primary region should be set');
+        Assert.areNotEqual(null, config, 'Config should not be null');
+        Assert.areNotEqual(null, config.orgInstance, 'Org instance should be set');
+        Assert.areNotEqual(null, config.primaryRegion, 'Primary region should be set');
         System.assert(config.allowedRegions.size() > 0, 'Allowed regions should be populated');
     }
 
@@ -36,8 +36,8 @@ private class DataResidencyServiceTest {
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'US');
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.targetRegion, 'Target region should be set');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.targetRegion, 'Target region should be set');
     }
 
     @isTest
@@ -46,8 +46,8 @@ private class DataResidencyServiceTest {
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'EU');
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('EU', result.targetRegion, 'Target region should be EU');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('EU', result.targetRegion, 'Target region should be EU');
     }
 
     @isTest
@@ -56,7 +56,7 @@ private class DataResidencyServiceTest {
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'APAC');
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -65,9 +65,9 @@ private class DataResidencyServiceTest {
         DataResidencyService.LocationSummary summary = DataResidencyService.getLocationSummary();
         Test.stopTest();
 
-        System.assertNotEquals(null, summary, 'Summary should not be null');
+        Assert.areNotEqual(null, summary, 'Summary should not be null');
         System.assert(summary.totalRecords >= 0, 'Total records should be non-negative');
-        System.assertNotEquals(null, summary.primaryRegion, 'Primary region should be set');
+        Assert.areNotEqual(null, summary.primaryRegion, 'Primary region should be set');
     }
 
     @isTest
@@ -76,8 +76,8 @@ private class DataResidencyServiceTest {
         DataResidencyService.GDPRComplianceStatus status = DataResidencyService.checkGDPRCompliance();
         Test.stopTest();
 
-        System.assertNotEquals(null, status, 'Status should not be null');
-        System.assertNotEquals(null, status.transferMechanism, 'Transfer mechanism should be set');
+        Assert.areNotEqual(null, status, 'Status should not be null');
+        Assert.areNotEqual(null, status.transferMechanism, 'Transfer mechanism should be set');
         System.assert(status.euDataSubjectsCount >= 0, 'EU data subjects count should be non-negative');
     }
 
@@ -87,6 +87,6 @@ private class DataResidencyServiceTest {
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'INVALID');
         Test.stopTest();
 
-        System.assertEquals(false, result.isAllowed, 'Invalid region should not be allowed');
+        Assert.areEqual(false, result.isAllowed, 'Invalid region should not be allowed');
     }
 }

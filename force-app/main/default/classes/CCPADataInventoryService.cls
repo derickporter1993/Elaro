@@ -35,7 +35,7 @@ public with sharing class CCPADataInventoryService extends ComplianceServiceBase
                 FROM Compliance_Control__mdt
                 WHERE Control_Id__c = :controlId
                 AND Framework__c = :framework
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -180,7 +180,7 @@ public with sharing class CCPADataInventoryService extends ComplianceServiceBase
             List<Contact> contacts = [
                 SELECT Id, FirstName, LastName, Email, Phone
                 FROM Contact
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 100
             ];
             
@@ -224,7 +224,7 @@ public with sharing class CCPADataInventoryService extends ComplianceServiceBase
             List<Third_Party_Recipient__c> recipients = [
                 SELECT Id, Recipient_Name__c, Country__c, Data_Categories_Shared__c
                 FROM Third_Party_Recipient__c
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             List<Map<String, Object>> sales = new List<Map<String, Object>>();
@@ -260,7 +260,7 @@ public with sharing class CCPADataInventoryService extends ComplianceServiceBase
             List<Third_Party_Recipient__c> recipients = [
                 SELECT Id, Recipient_Name__c, Country__c, DPA_Signed__c, Data_Categories_Shared__c
                 FROM Third_Party_Recipient__c
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             Integer totalRecipients = recipients.size();

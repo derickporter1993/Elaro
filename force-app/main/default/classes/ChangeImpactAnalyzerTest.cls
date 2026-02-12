@@ -30,10 +30,10 @@ private class ChangeImpactAnalyzerTest {
             ChangeImpactAnalyzer.analyzeImpact(changes);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(2, result.totalChanges, 'Should have 2 changes');
-        System.assertNotEquals(null, result.overallRiskLevel, 'Overall risk level should not be null');
-        System.assertNotEquals(null, result.risks, 'Risks should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(2, result.totalChanges, 'Should have 2 changes');
+        Assert.areNotEqual(null, result.overallRiskLevel, 'Overall risk level should not be null');
+        Assert.areNotEqual(null, result.risks, 'Risks should not be null');
     }
     
     @IsTest
@@ -41,9 +41,9 @@ private class ChangeImpactAnalyzerTest {
         Test.startTest();
         try {
             ChangeImpactAnalyzer.analyzeImpact(null);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null changes');
+            Assert.isTrue(true, 'Expected exception for null changes');
         }
         Test.stopTest();
     }
@@ -53,9 +53,9 @@ private class ChangeImpactAnalyzerTest {
         Test.startTest();
         try {
             ChangeImpactAnalyzer.analyzeImpact(new List<ChangeImpactAnalyzer.MetadataChange>());
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for empty changes');
+            Assert.isTrue(true, 'Expected exception for empty changes');
         }
         Test.stopTest();
     }

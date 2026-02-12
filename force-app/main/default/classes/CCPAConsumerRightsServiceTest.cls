@@ -44,9 +44,9 @@ private class CCPAConsumerRightsServiceTest {
         Map<String, Object> result = service.handleKnowRequest(request.Id, testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Know request should succeed');
-        System.assertNotEquals(null, result.get('personalInformation'), 'Personal information should be returned');
-        System.assertNotEquals(null, result.get('dataSales'), 'Data sales should be returned');
+        Assert.areEqual(true, result.get('success'), 'Know request should succeed');
+        Assert.areNotEqual(null, result.get('personalInformation'), 'Personal information should be returned');
+        Assert.areNotEqual(null, result.get('dataSales'), 'Data sales should be returned');
     }
     
     @IsTest
@@ -85,7 +85,7 @@ private class CCPAConsumerRightsServiceTest {
         Map<String, Object> result = service.handleDeleteRequest(request.Id, testContact.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Delete result should not be null');
+        Assert.areNotEqual(null, result, 'Delete result should not be null');
     }
     
     @IsTest
@@ -103,7 +103,7 @@ private class CCPAConsumerRightsServiceTest {
         Map<String, Object> result = service.handleOptOutRequest(request.Id, testContact.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Opt-out result should not be null');
+        Assert.areNotEqual(null, result, 'Opt-out result should not be null');
     }
     
     @IsTest
@@ -118,7 +118,7 @@ private class CCPAConsumerRightsServiceTest {
         Boolean verified = service.verifyIdentity(testContact.Id, verificationData);
         Test.stopTest();
         
-        System.assertEquals(true, verified, 'Identity should be verified');
+        Assert.areEqual(true, verified, 'Identity should be verified');
     }
     
     @IsTest
@@ -133,7 +133,7 @@ private class CCPAConsumerRightsServiceTest {
         Boolean verified = service.verifyIdentity(testContact.Id, verificationData);
         Test.stopTest();
         
-        System.assertEquals(false, verified, 'Identity should not be verified');
+        Assert.areEqual(false, verified, 'Identity should not be verified');
     }
     
     @IsTest
@@ -146,7 +146,7 @@ private class CCPAConsumerRightsServiceTest {
         Map<String, Object> result = service.handleAccessRequest(request.Id, testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Access request should succeed');
+        Assert.areEqual(true, result.get('success'), 'Access request should succeed');
     }
     
     @IsTest
@@ -164,7 +164,7 @@ private class CCPAConsumerRightsServiceTest {
         Map<String, Object> result = service.handleErasureRequest(request.Id, testContact.Id, 'Consumer request');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Erasure result should not be null');
+        Assert.areNotEqual(null, result, 'Erasure result should not be null');
     }
     
     @IsTest
@@ -173,7 +173,7 @@ private class CCPAConsumerRightsServiceTest {
         CCPAConsumerRightsService service = new CCPAConsumerRightsService();
         try {
             service.handleKnowRequest(null, null);
-            System.assert(false, 'Should throw exception for null parameters');
+            Assert.fail( 'Should throw exception for null parameters');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }

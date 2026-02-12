@@ -49,7 +49,7 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
             FROM Compliance_Policy__mdt
             WHERE Framework__c = :framework
             AND Active__c = true
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         policyCache.put(framework, policies);
@@ -69,7 +69,7 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
             FROM Compliance_Gap__c
             WHERE Framework__c = :getFrameworkName()
             AND Status__c NOT IN ('VERIFIED', 'ACCEPTED_RISK')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Risk_Score__c DESC NULLS LAST
         ];
     }

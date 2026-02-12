@@ -67,7 +67,7 @@ public with sharing class ElaroPDFController {
                    CreatedBy.Name
             FROM Elaro_Audit_Package__c
             WHERE Id = :packageId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -103,7 +103,7 @@ public with sharing class ElaroPDFController {
         // Note: Control filtering would require a Control_Reference__c field
         // For now, we'll load all evidence
         
-        query += 'WITH SECURITY_ENFORCED ORDER BY Evidence_Date__c DESC LIMIT 5000';
+        query += 'WITH USER_MODE ORDER BY Evidence_Date__c DESC LIMIT 5000';
 
         evidenceItems = Database.query(query);
 

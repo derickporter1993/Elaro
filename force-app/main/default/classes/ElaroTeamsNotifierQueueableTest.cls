@@ -45,7 +45,7 @@ private class ElaroTeamsNotifierQueueableTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, job, 'Job should be created');
+        Assert.areNotEqual(null, job, 'Job should be created');
     }
 
     @IsTest
@@ -59,7 +59,7 @@ private class ElaroTeamsNotifierQueueableTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, job, 'Job should be created with two parameters');
+        Assert.areNotEqual(null, job, 'Job should be created with two parameters');
     }
 
     @IsTest
@@ -74,7 +74,7 @@ private class ElaroTeamsNotifierQueueableTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, job, 'Job should handle null parameters');
+        Assert.areNotEqual(null, job, 'Job should handle null parameters');
     }
 
     // ========================================
@@ -95,7 +95,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'Successful notification should complete');
+        Assert.isTrue(true, 'Successful notification should complete');
     }
 
     @IsTest
@@ -110,7 +110,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should skip sending for empty payload
-        System.assert(true, 'Empty payload should be skipped');
+        Assert.isTrue(true, 'Empty payload should be skipped');
     }
 
     @IsTest
@@ -125,7 +125,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should skip sending for blank payload
-        System.assert(true, 'Blank payload should be skipped');
+        Assert.isTrue(true, 'Blank payload should be skipped');
     }
 
     @IsTest
@@ -152,7 +152,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should truncate and send successfully
-        System.assert(true, 'Large payload should be truncated');
+        Assert.isTrue(true, 'Large payload should be truncated');
     }
 
     // ========================================
@@ -174,7 +174,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should handle server error (will attempt retry in production)
-        System.assert(true, 'Server error should be handled');
+        Assert.isTrue(true, 'Server error should be handled');
     }
 
     @IsTest
@@ -192,7 +192,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should handle rate limiting (will attempt retry)
-        System.assert(true, 'Rate limiting should be handled');
+        Assert.isTrue(true, 'Rate limiting should be handled');
     }
 
     @IsTest
@@ -210,7 +210,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should not retry on client errors
-        System.assert(true, 'Client error should not trigger retry');
+        Assert.isTrue(true, 'Client error should not trigger retry');
     }
 
     @IsTest
@@ -228,7 +228,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should not retry when max is reached
-        System.assert(true, 'Max retries should prevent further attempts');
+        Assert.isTrue(true, 'Max retries should prevent further attempts');
     }
 
     // ========================================
@@ -267,7 +267,7 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should truncate attachment content
-        System.assert(true, 'Attachment content should be truncated');
+        Assert.isTrue(true, 'Attachment content should be truncated');
     }
 
     // ========================================
@@ -307,6 +307,6 @@ private class ElaroTeamsNotifierQueueableTest {
         Test.stopTest();
 
         // Should complete full workflow successfully
-        System.assert(true, 'Full workflow should complete');
+        Assert.isTrue(true, 'Full workflow should complete');
     }
 }

@@ -62,7 +62,7 @@ private class ElaroIntegrationTest {
         Test.stopTest();
         
         // Verify alerts were created
-        System.assertEquals(true, result.warning, 'Should trigger warning');
+        Assert.areEqual(true, result.warning, 'Should trigger warning');
         System.assert(result.eventsPublished > 0, 'Should have published alerts');
         
         // Verify Performance_Alert_History__c records were created
@@ -95,12 +95,12 @@ private class ElaroIntegrationTest {
             FROM Elaro_Compliance_Graph__b
             WHERE Graph_Node_Id__c = :nodeHash
         ];
-        System.assertEquals(1, nodes.size(), 'Graph node should be created');
-        System.assertEquals('PERMISSION_SET', nodes[0].Entity_Type__c);
-        System.assertEquals('SOC2', nodes[0].Compliance_Framework__c);
+        Assert.areEqual(1, nodes.size(), 'Graph node should be created');
+        Assert.areEqual('PERMISSION_SET', nodes[0].Entity_Type__c);
+        Assert.areEqual('SOC2', nodes[0].Compliance_Framework__c);
         
         // Verify score calculation succeeded
-        System.assertNotEquals(null, scoreResult, 'Score result should not be null');
+        Assert.areNotEqual(null, scoreResult, 'Score result should not be null');
         System.assert(scoreResult.overallScore >= 0 && scoreResult.overallScore <= 100, 
                      'Score should be between 0 and 100');
     }
@@ -144,7 +144,7 @@ private class ElaroIntegrationTest {
         System.assert(nodes.size() >= 2, 'Should have created nodes for both frameworks');
         
         // Verify score calculation reflects settings
-        System.assertNotEquals(null, scoreResult, 'Score result should not be null');
-        System.assertNotEquals(null, scoreResult.frameworkScores, 'Should have framework scores');
+        Assert.areNotEqual(null, scoreResult, 'Score result should not be null');
+        Assert.areNotEqual(null, scoreResult.frameworkScores, 'Should have framework scores');
     }
 }

@@ -50,7 +50,7 @@ private class ElaroConsentWithdrawalHandlerTest {
             SELECT Id, Contact__c, Consent_Type__c
             FROM Consent__c
             WHERE Consent_Type__c = 'Marketing'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 3
         ];
         
@@ -71,11 +71,11 @@ private class ElaroConsentWithdrawalHandlerTest {
             SELECT Id, HasOptedOutOfEmail
             FROM Contact
             WHERE Id IN (SELECT Contact__c FROM Consent__c WHERE Id IN :consents)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         for (Contact c : updatedContacts) {
-            System.assertEquals(true, c.HasOptedOutOfEmail, 
+            Assert.areEqual(true, c.HasOptedOutOfEmail, 
                 'Contact should have email opt-out set');
         }
     }
@@ -87,7 +87,7 @@ private class ElaroConsentWithdrawalHandlerTest {
             SELECT Id, Contact__c, Consent_Type__c
             FROM Consent__c
             WHERE Consent_Type__c = 'Data Processing'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 2
         ];
         
@@ -108,13 +108,13 @@ private class ElaroConsentWithdrawalHandlerTest {
             SELECT Id, HasOptedOutOfEmail, DoNotCall
             FROM Contact
             WHERE Id IN (SELECT Contact__c FROM Consent__c WHERE Id IN :consents)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         for (Contact c : updatedContacts) {
-            System.assertEquals(true, c.HasOptedOutOfEmail, 
+            Assert.areEqual(true, c.HasOptedOutOfEmail, 
                 'Contact should have email opt-out set');
-            System.assertEquals(true, c.DoNotCall, 
+            Assert.areEqual(true, c.DoNotCall, 
                 'Contact should have DoNotCall set');
         }
     }
@@ -122,7 +122,7 @@ private class ElaroConsentWithdrawalHandlerTest {
     @IsTest
     static void testProcessWithdrawalsAllDataProcessing() {
         // Create consent for full data processing withdrawal
-        Contact testContact = [SELECT Id FROM Contact LIMIT 1 WITH SECURITY_ENFORCED];
+        Contact testContact = [SELECT Id FROM Contact LIMIT 1 WITH USER_MODE];
         Consent__c fullConsent = new Consent__c(
             Contact__c = testContact.Id,
             Consent_Type__c = 'All Data Processing',
@@ -142,12 +142,12 @@ private class ElaroConsentWithdrawalHandlerTest {
             SELECT Id, Contact__c, Status__c, Request_Reason__c
             FROM GDPR_Erasure_Request__c
             WHERE Contact__c = :testContact.Id
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
-        System.assertEquals(1, erasureRequests.size(), 
+        Assert.areEqual(1, erasureRequests.size(), 
             'Erasure request should be created');
-        System.assertEquals('Pending', erasureRequests[0].Status__c,
+        Assert.areEqual('Pending', erasureRequests[0].Status__c,
             'Erasure request should be pending');
     }
     
@@ -186,10 +186,10 @@ private class ElaroConsentWithdrawalHandlerTest {
             SELECT Id, HasOptedOutOfEmail
             FROM Contact
             WHERE Id IN (SELECT Contact__c FROM Consent__c WHERE Id IN :consents)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
-        System.assertEquals(200, updatedContacts.size(), 
+        Assert.areEqual(200, updatedContacts.size(), 
             'Should process all 200 contacts');
     }
     
@@ -203,7 +203,7 @@ private class ElaroConsentWithdrawalHandlerTest {
         Test.stopTest();
 
         // Verify empty list processed without exception or DML
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML with empty list');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML with empty list');
     }
     
     @IsTest
@@ -212,7 +212,7 @@ private class ElaroConsentWithdrawalHandlerTest {
         List<Consent__c> consents = [
             SELECT Id, Contact__c, Consent_Type__c
             FROM Consent__c
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 2
         ];
         

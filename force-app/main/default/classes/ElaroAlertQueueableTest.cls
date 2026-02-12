@@ -25,7 +25,7 @@ private class ElaroAlertQueueableTest {
         System.enqueueJob(queueable);
         Test.stopTest();
 
-        System.assert(true, 'Queueable should execute without errors');
+        Assert.isTrue(true, 'Queueable should execute without errors');
     }
 
     @isTest
@@ -35,7 +35,7 @@ private class ElaroAlertQueueableTest {
         System.enqueueJob(queueable);
         Test.stopTest();
 
-        System.assert(true, 'Should handle null queue item gracefully');
+        Assert.isTrue(true, 'Should handle null queue item gracefully');
     }
 
     @isTest
@@ -51,7 +51,7 @@ private class ElaroAlertQueueableTest {
         System.enqueueJob(queueable);
         Test.stopTest();
 
-        System.assert(true, 'Should handle minimal data');
+        Assert.isTrue(true, 'Should handle minimal data');
     }
 
     @isTest
@@ -70,6 +70,6 @@ private class ElaroAlertQueueableTest {
         System.enqueueJob(queueable);
         Test.stopTest();
 
-        System.assert(true, 'Should process critical alerts');
+        Assert.isTrue(true, 'Should process critical alerts');
     }
 }

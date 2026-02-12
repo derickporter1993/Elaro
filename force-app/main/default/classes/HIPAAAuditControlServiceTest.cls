@@ -31,7 +31,7 @@ public class HIPAAAuditControlServiceTest {
         String frameworkName = service.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('HIPAA', frameworkName, 'Framework name should be HIPAA');
+        Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
     @isTest
@@ -42,7 +42,7 @@ public class HIPAAAuditControlServiceTest {
         List<ComplianceServiceBase.Violation> violations = service.getViolations();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations should not be null');
+        Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
     @isTest
@@ -63,11 +63,11 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.evaluateAuditCompliance();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.evaluationDate, 'Evaluation date should be set');
-        System.assertNotEquals(null, result.coverageResult, 'Coverage result should not be null');
-        System.assertNotEquals(null, result.accessPatternResult, 'Access pattern result should not be null');
-        System.assertNotEquals(null, result.overallScore, 'Overall score should be set');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.evaluationDate, 'Evaluation date should be set');
+        Assert.areNotEqual(null, result.coverageResult, 'Coverage result should not be null');
+        Assert.areNotEqual(null, result.accessPatternResult, 'Access pattern result should not be null');
+        Assert.areNotEqual(null, result.overallScore, 'Overall score should be set');
     }
 
     @isTest
@@ -80,7 +80,7 @@ public class HIPAAAuditControlServiceTest {
             );
         Test.stopTest();
 
-        System.assertNotEquals(null, logs, 'Logs should not be null');
+        Assert.areNotEqual(null, logs, 'Logs should not be null');
     }
 
     @isTest
@@ -90,7 +90,7 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.getUserAccessStats(30);
         Test.stopTest();
 
-        System.assertNotEquals(null, stats, 'Stats should not be null');
+        Assert.areNotEqual(null, stats, 'Stats should not be null');
     }
 
     @isTest
@@ -100,7 +100,7 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.getUserAccessStats(null);
         Test.stopTest();
 
-        System.assertNotEquals(null, stats, 'Stats should not be null with null days');
+        Assert.areNotEqual(null, stats, 'Stats should not be null with null days');
     }
 
     @isTest
@@ -110,7 +110,7 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.getUserAccessStats(-5);
         Test.stopTest();
 
-        System.assertNotEquals(null, stats, 'Stats should not be null with negative days');
+        Assert.areNotEqual(null, stats, 'Stats should not be null with negative days');
     }
 
     @isTest
@@ -120,7 +120,7 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.detectSuspiciousAccessPatterns();
         Test.stopTest();
 
-        System.assertNotEquals(null, suspicious, 'Suspicious list should not be null');
+        Assert.areNotEqual(null, suspicious, 'Suspicious list should not be null');
     }
 
     @isTest
@@ -132,7 +132,7 @@ public class HIPAAAuditControlServiceTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, docId, 'Document ID should not be null');
+        Assert.areNotEqual(null, docId, 'Document ID should not be null');
 
         ContentDocument doc = [SELECT Title FROM ContentDocument WHERE Id = :docId];
         System.assert(doc.Title.contains('HIPAA_Audit_Report'), 'Title should contain HIPAA_Audit_Report');
@@ -144,7 +144,7 @@ public class HIPAAAuditControlServiceTest {
         Id docId = HIPAAAuditControlService.generateAuditReport(null, null);
         Test.stopTest();
 
-        System.assertNotEquals(null, docId, 'Document ID should not be null with default dates');
+        Assert.areNotEqual(null, docId, 'Document ID should not be null with default dates');
     }
 
     @isTest
@@ -154,9 +154,9 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.getRetentionStatus();
         Test.stopTest();
 
-        System.assertNotEquals(null, status, 'Status should not be null');
-        System.assertEquals(6, status.requiredYears, 'Required years should be 6');
-        System.assertNotEquals(null, status.recommendation, 'Recommendation should be set');
+        Assert.areNotEqual(null, status, 'Status should not be null');
+        Assert.areEqual(6, status.requiredYears, 'Required years should be 6');
+        Assert.areNotEqual(null, status.recommendation, 'Recommendation should be set');
     }
 
     @isTest
@@ -167,10 +167,10 @@ public class HIPAAAuditControlServiceTest {
         Test.stopTest();
 
         HIPAAAuditControlService.AuditCoverageResult coverage = result.coverageResult;
-        System.assertNotEquals(null, coverage, 'Coverage should not be null');
-        System.assertNotEquals(null, coverage.totalPHIObjects, 'Total PHI objects should be set');
-        System.assertNotEquals(null, coverage.objectsWithTracking, 'Objects with tracking should be set');
-        System.assertNotEquals(null, coverage.gaps, 'Gaps should not be null');
+        Assert.areNotEqual(null, coverage, 'Coverage should not be null');
+        Assert.areNotEqual(null, coverage.totalPHIObjects, 'Total PHI objects should be set');
+        Assert.areNotEqual(null, coverage.objectsWithTracking, 'Objects with tracking should be set');
+        Assert.areNotEqual(null, coverage.gaps, 'Gaps should not be null');
     }
 
     @isTest
@@ -181,9 +181,9 @@ public class HIPAAAuditControlServiceTest {
         Test.stopTest();
 
         HIPAAAuditControlService.AccessPatternResult patterns = result.accessPatternResult;
-        System.assertNotEquals(null, patterns, 'Patterns should not be null');
-        System.assertNotEquals(null, patterns.totalAccessEvents, 'Total access events should be set');
-        System.assertNotEquals(null, patterns.suspiciousCount, 'Suspicious count should be set');
+        Assert.areNotEqual(null, patterns, 'Patterns should not be null');
+        Assert.areNotEqual(null, patterns.totalAccessEvents, 'Total access events should be set');
+        Assert.areNotEqual(null, patterns.suspiciousCount, 'Suspicious count should be set');
     }
 
     @isTest
@@ -204,7 +204,7 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.evaluateAuditCompliance();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should handle bulk data');
+        Assert.areNotEqual(null, result, 'Should handle bulk data');
     }
 
     @isTest
@@ -221,8 +221,8 @@ public class HIPAAAuditControlServiceTest {
             HIPAAAuditControlService.evaluateAuditCompliance();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations should not be null');
+        Assert.areNotEqual(null, violations, 'Violations should not be null');
         System.assert(score >= 0, 'Score should be non-negative');
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 }

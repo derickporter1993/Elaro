@@ -51,7 +51,7 @@ private class MultiOrgManagerTest {
         Id orgId = MultiOrgManager.registerOrg(orgConfig);
         Test.stopTest();
         
-        System.assertNotEquals(null, orgId, 'Should return org ID');
+        Assert.areNotEqual(null, orgId, 'Should return org ID');
         
         Elaro_Connected_Org__c org = [
             SELECT Id, Name, Org_Id__c, Instance_URL__c, Is_Active__c, Connection_Status__c
@@ -59,9 +59,9 @@ private class MultiOrgManagerTest {
             WHERE Id = :orgId
         ];
         
-        System.assertEquals('New Test Org', org.Name, 'Org name should match');
-        System.assertEquals('00D1234567890123', org.Org_Id__c, 'Org ID should match');
-        System.assertEquals(true, org.Is_Active__c, 'Org should be active');
+        Assert.areEqual('New Test Org', org.Name, 'Org name should match');
+        Assert.areEqual('00D1234567890123', org.Org_Id__c, 'Org ID should match');
+        Assert.areEqual(true, org.Is_Active__c, 'Org should be active');
     }
     
     @isTest
@@ -74,7 +74,7 @@ private class MultiOrgManagerTest {
         Test.startTest();
         try {
             MultiOrgManager.registerOrg(orgConfig);
-            System.assert(false, 'Should throw exception for missing name');
+            Assert.fail( 'Should throw exception for missing name');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('name'), 'Should mention name requirement');
         }
@@ -91,7 +91,7 @@ private class MultiOrgManagerTest {
         Test.startTest();
         try {
             MultiOrgManager.registerOrg(orgConfig);
-            System.assert(false, 'Should throw exception for missing org ID');
+            Assert.fail( 'Should throw exception for missing org ID');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Org ID'), 'Should mention org ID requirement');
         }
@@ -108,7 +108,7 @@ private class MultiOrgManagerTest {
         Test.startTest();
         try {
             MultiOrgManager.registerOrg(orgConfig);
-            System.assert(false, 'Should throw exception for missing instance URL');
+            Assert.fail( 'Should throw exception for missing instance URL');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Instance URL'), 'Should mention instance URL requirement');
         }
@@ -125,9 +125,9 @@ private class MultiOrgManagerTest {
         MultiOrgManager.MultiOrgStatus status = MultiOrgManager.getMultiOrgStatus();
         Test.stopTest();
         
-        System.assertNotEquals(null, status, 'Should return status');
-        System.assertNotEquals(null, status.currentOrg, 'Should have current org');
-        System.assertNotEquals(null, status.connectedOrgs, 'Should have connected orgs list');
+        Assert.areNotEqual(null, status, 'Should return status');
+        Assert.areNotEqual(null, status.currentOrg, 'Should have current org');
+        Assert.areNotEqual(null, status.connectedOrgs, 'Should have connected orgs list');
         System.assert(status.totalOrgs > 0, 'Should have at least one org');
         System.assert(status.aggregateScore >= 0, 'Aggregate score should be non-negative');
     }
@@ -143,9 +143,9 @@ private class MultiOrgManagerTest {
         
         // Verify org details
         for (MultiOrgManager.OrgStatus os : status.connectedOrgs) {
-            System.assertNotEquals(null, os.orgId, 'Org should have ID');
-            System.assertNotEquals(null, os.name, 'Org should have name');
-            System.assertNotEquals(null, os.instanceUrl, 'Org should have instance URL');
+            Assert.areNotEqual(null, os.orgId, 'Org should have ID');
+            Assert.areNotEqual(null, os.name, 'Org should have name');
+            Assert.areNotEqual(null, os.instanceUrl, 'Org should have instance URL');
         }
     }
     
@@ -164,7 +164,7 @@ private class MultiOrgManagerTest {
         Test.stopTest();
         
         // Verify no exceptions (async method)
-        System.assert(true, 'Policy sync should be queued');
+        Assert.isTrue(true, 'Policy sync should be queued');
     }
     
     @isTest
@@ -187,7 +187,7 @@ private class MultiOrgManagerTest {
         Test.stopTest();
         
         // Should handle gracefully with no active orgs
-        System.assert(true, 'Should handle no active orgs gracefully');
+        Assert.isTrue(true, 'Should handle no active orgs gracefully');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -209,7 +209,7 @@ private class MultiOrgManagerTest {
             SELECT Id FROM Elaro_Connected_Org__c WHERE Id = :org.Id
         ];
         
-        System.assertEquals(0, remainingOrgs.size(), 'Org should be deleted');
+        Assert.areEqual(0, remainingOrgs.size(), 'Org should be deleted');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -225,7 +225,7 @@ private class MultiOrgManagerTest {
         Test.stopTest();
         
         // Verify connections were refreshed (async method)
-        System.assert(true, 'Connections should be refreshed');
+        Assert.isTrue(true, 'Connections should be refreshed');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -238,7 +238,7 @@ private class MultiOrgManagerTest {
         MultiOrgManager.AggregateMetrics metrics = MultiOrgManager.getAggregateMetrics();
         Test.stopTest();
         
-        System.assertNotEquals(null, metrics, 'Should return metrics');
+        Assert.areNotEqual(null, metrics, 'Should return metrics');
         System.assert(metrics.totalEvents >= 0, 'Total events should be non-negative');
         System.assert(metrics.totalAlerts >= 0, 'Total alerts should be non-negative');
         System.assert(metrics.avgComplianceScore >= 0, 'Average score should be non-negative');
@@ -282,7 +282,7 @@ private class MultiOrgManagerTest {
         }
         Test.stopTest();
         
-        System.assertEquals(10, orgIds.size(), 'Should create 10 orgs');
+        Assert.areEqual(10, orgIds.size(), 'Should create 10 orgs');
         
         // Verify all orgs were created
         List<Elaro_Connected_Org__c> createdOrgs = [
@@ -290,7 +290,7 @@ private class MultiOrgManagerTest {
             WHERE Name LIKE 'Bulk Org%'
         ];
         
-        System.assertEquals(10, createdOrgs.size(), 'Should have 10 bulk orgs');
+        Assert.areEqual(10, createdOrgs.size(), 'Should have 10 bulk orgs');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -307,7 +307,7 @@ private class MultiOrgManagerTest {
             MultiOrgManager.MultiOrgStatus status = MultiOrgManager.getMultiOrgStatus();
             Test.stopTest();
             
-            System.assertNotEquals(null, status, 'Should return status with sharing');
+            Assert.areNotEqual(null, status, 'Should return status with sharing');
         }
     }
     

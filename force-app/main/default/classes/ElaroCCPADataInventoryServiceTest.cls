@@ -74,15 +74,15 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
         
         // Then: Report should be generated
-        System.assertNotEquals(null, report, 'Report should be generated');
-        System.assertEquals(testContact.Email, report.dataSubject, 'Should match contact email');
-        System.assertNotEquals(null, report.reportDate, 'Report date should be set');
-        System.assertNotEquals(null, report.responseDeadline, 'Response deadline should be set');
-        System.assertEquals(true, report.doNotSellStatus, 'Should reflect opt-out status');
+        Assert.areNotEqual(null, report, 'Report should be generated');
+        Assert.areEqual(testContact.Email, report.dataSubject, 'Should match contact email');
+        Assert.areNotEqual(null, report.reportDate, 'Report date should be set');
+        Assert.areNotEqual(null, report.responseDeadline, 'Response deadline should be set');
+        Assert.areEqual(true, report.doNotSellStatus, 'Should reflect opt-out status');
         System.assert(!report.categoriesCollected.isEmpty(), 'Should have categories');
         System.assert(!report.sources.isEmpty(), 'Should have sources');
         System.assert(!report.businessPurposes.isEmpty(), 'Should have business purposes');
-        System.assertNotEquals(null, report.requestId, 'Request ID should be set');
+        Assert.areNotEqual(null, report.requestId, 'Request ID should be set');
         
         // Verify audit log created
         List<CCPA_Request__c> auditLogs = [
@@ -90,8 +90,8 @@ private class ElaroCCPADataInventoryServiceTest {
             FROM CCPA_Request__c
             WHERE Id = :report.requestId
         ];
-        System.assertEquals(1, auditLogs.size(), 'Audit log should exist');
-        System.assertEquals('Completed', auditLogs[0].Status__c, 'Status should be Completed');
+        Assert.areEqual(1, auditLogs.size(), 'Audit log should exist');
+        Assert.areEqual('Completed', auditLogs[0].Status__c, 'Status should be Completed');
     }
     
     @IsTest
@@ -102,7 +102,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.startTest();
         try {
             ElaroCCPADataInventoryService.generateInventoryReport(invalidContactId);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (ElaroCCPADataInventoryService.CCPAException e) {
             // Then: Exception should be thrown
             System.assert(e.getMessage().contains('Contact not found'), 
@@ -115,19 +115,19 @@ private class ElaroCCPADataInventoryServiceTest {
     static void testProcessDoNotSellRequest_PositivePath() {
         // Given: Contact without opt-out
         Contact testContact = [SELECT Id, CCPA_Do_Not_Sell__c FROM Contact WHERE LastName = 'Contact 1' LIMIT 1];
-        System.assertEquals(false, testContact.CCPA_Do_Not_Sell__c, 'Should not be opted out initially');
+        Assert.areEqual(false, testContact.CCPA_Do_Not_Sell__c, 'Should not be opted out initially');
         
         Test.startTest();
         Boolean result = ElaroCCPADataInventoryService.processDoNotSellRequest(testContact.Id);
         Test.stopTest();
         
         // Then: Opt-out should succeed
-        System.assertEquals(true, result, 'Opt-out should succeed');
+        Assert.areEqual(true, result, 'Opt-out should succeed');
         
         // Verify contact updated
         Contact updatedContact = [SELECT CCPA_Do_Not_Sell__c, CCPA_OptOut_Date__c FROM Contact WHERE Id = :testContact.Id];
-        System.assertEquals(true, updatedContact.CCPA_Do_Not_Sell__c, 'Should be opted out');
-        System.assertEquals(Date.today(), updatedContact.CCPA_OptOut_Date__c, 'Opt-out date should be set');
+        Assert.areEqual(true, updatedContact.CCPA_Do_Not_Sell__c, 'Should be opted out');
+        Assert.areEqual(Date.today(), updatedContact.CCPA_OptOut_Date__c, 'Opt-out date should be set');
         
         // Verify audit log created
         List<CCPA_Request__c> auditLogs = [
@@ -136,7 +136,7 @@ private class ElaroCCPADataInventoryServiceTest {
             WHERE Contact__c = :testContact.Id
             AND Request_Type__c = 'Do Not Sell'
         ];
-        System.assertEquals(1, auditLogs.size(), 'Audit log should exist');
+        Assert.areEqual(1, auditLogs.size(), 'Audit log should exist');
     }
     
     @IsTest
@@ -149,7 +149,7 @@ private class ElaroCCPADataInventoryServiceTest {
         System.runAs(limitedUser) {
             try {
                 ElaroCCPADataInventoryService.processDoNotSellRequest(testContact.Id);
-                System.assert(false, 'Should have thrown InsufficientAccessException');
+                Assert.fail( 'Should have thrown InsufficientAccessException');
             } catch (Exception e) {
                 // Then: Permission exception should be thrown
                 // Note: InsufficientAccessException may not be available, catch generic Exception
@@ -194,7 +194,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
         
         // Then: Should be overdue
-        System.assertEquals(true, isOverdue, 'Request should be overdue');
+        Assert.areEqual(true, isOverdue, 'Request should be overdue');
     }
     
     @IsTest
@@ -212,7 +212,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
         
         // Then: Should not be overdue
-        System.assertEquals(false, isOverdue, 'Request should not be overdue');
+        Assert.areEqual(false, isOverdue, 'Request should not be overdue');
     }
     
     @IsTest
@@ -231,7 +231,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
         
         // Then: Should not be overdue (completed requests are not overdue)
-        System.assertEquals(false, isOverdue, 'Completed request should not be overdue');
+        Assert.areEqual(false, isOverdue, 'Completed request should not be overdue');
     }
     
     @IsTest
@@ -251,10 +251,10 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
         
         // Then: All should succeed
-        System.assertEquals(testContacts.size(), reports.size(), 'Should process all contacts');
+        Assert.areEqual(testContacts.size(), reports.size(), 'Should process all contacts');
         for (ElaroCCPADataInventoryService.DataInventoryReport report : reports) {
-            System.assertNotEquals(null, report, 'Each report should be generated');
-            System.assertNotEquals(null, report.requestId, 'Each should have request ID');
+            Assert.areNotEqual(null, report, 'Each report should be generated');
+            Assert.areNotEqual(null, report.requestId, 'Each should have request ID');
         }
     }
     
@@ -274,8 +274,8 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
 
         // Then: Report should still be generated with available data
-        System.assertNotEquals(null, report, 'Report should be generated');
-        System.assertEquals('minimal@test.com', report.dataSubject, 'Should have email');
+        Assert.areNotEqual(null, report, 'Report should be generated');
+        Assert.areEqual('minimal@test.com', report.dataSubject, 'Should have email');
         System.assert(report.specificData.containsKey('Email Address'), 'Should have email data point');
         System.assert(!report.specificData.containsKey('Mailing Address'), 'Should not have mailing address');
     }
@@ -320,10 +320,10 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
 
         // Then: Related data counts should be populated
-        System.assertNotEquals(null, report.relatedDataCounts, 'Should have related data counts');
-        System.assertEquals(5, report.relatedDataCounts.get('Tasks'), 'Should count 5 tasks');
-        System.assertEquals(3, report.relatedDataCounts.get('Events'), 'Should count 3 events');
-        System.assertEquals(1, report.relatedDataCounts.get('Cases'), 'Should count 1 case');
+        Assert.areNotEqual(null, report.relatedDataCounts, 'Should have related data counts');
+        Assert.areEqual(5, report.relatedDataCounts.get('Tasks'), 'Should count 5 tasks');
+        Assert.areEqual(3, report.relatedDataCounts.get('Events'), 'Should count 3 events');
+        Assert.areEqual(1, report.relatedDataCounts.get('Cases'), 'Should count 1 case');
     }
 
     @IsTest
@@ -337,7 +337,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
 
         // Then: Third parties should be populated
-        System.assertNotEquals(null, report.thirdParties, 'Should have third parties list');
+        Assert.areNotEqual(null, report.thirdParties, 'Should have third parties list');
         System.assert(!report.thirdParties.isEmpty(), 'Third parties should not be empty');
         System.assert(report.thirdParties.size() >= 3, 'Should have at least 3 third parties');
     }
@@ -360,10 +360,10 @@ private class ElaroCCPADataInventoryServiceTest {
         report.requestId = null;
         Test.stopTest();
 
-        System.assertEquals('test@example.com', report.dataSubject, 'dataSubject should match');
-        System.assertEquals(true, report.doNotSellStatus, 'doNotSellStatus should match');
-        System.assertEquals(1, report.categoriesCollected.size(), 'Should have 1 category');
-        System.assertEquals(5, report.relatedDataCounts.get('Cases'), 'Should have 5 cases');
+        Assert.areEqual('test@example.com', report.dataSubject, 'dataSubject should match');
+        Assert.areEqual(true, report.doNotSellStatus, 'doNotSellStatus should match');
+        Assert.areEqual(1, report.categoriesCollected.size(), 'Should have 1 category');
+        Assert.areEqual(5, report.relatedDataCounts.get('Cases'), 'Should have 5 cases');
     }
 
     @IsTest
@@ -372,7 +372,7 @@ private class ElaroCCPADataInventoryServiceTest {
         try {
             throw new ElaroCCPADataInventoryService.CCPAException('Test CCPA error');
         } catch (ElaroCCPADataInventoryService.CCPAException e) {
-            System.assertEquals('Test CCPA error', e.getMessage(),
+            Assert.areEqual('Test CCPA error', e.getMessage(),
                 'Exception message should match');
         }
         Test.stopTest();
@@ -393,7 +393,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
 
         // Then: Should return empty list
-        System.assertEquals(0, requests.size(), 'Should return empty list');
+        Assert.areEqual(0, requests.size(), 'Should return empty list');
     }
 
     @IsTest
@@ -404,7 +404,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.startTest();
         try {
             ElaroCCPADataInventoryService.processDoNotSellRequest(invalidContactId);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (ElaroCCPADataInventoryService.CCPAException e) {
             System.assert(e.getMessage().contains('Contact not found'),
                 'Error message should indicate contact not found');
@@ -454,7 +454,7 @@ private class ElaroCCPADataInventoryServiceTest {
         Test.stopTest();
 
         // Then: Should be overdue
-        System.assertEquals(true, isOverdue, 'Request older than 45 days should be overdue');
+        Assert.areEqual(true, isOverdue, 'Request older than 45 days should be overdue');
     }
 
     // Helper method to create limited user for permission testing

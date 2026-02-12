@@ -32,7 +32,7 @@ public class SOC2AccessReviewServiceTest {
         String frameworkName = service.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('SOC2', frameworkName, 'Framework name should be SOC2');
+        Assert.areEqual('SOC2', frameworkName, 'Framework name should be SOC2');
     }
 
     @isTest
@@ -58,7 +58,7 @@ public class SOC2AccessReviewServiceTest {
         IAccessControlService.AccessReviewStatus status = service.getReviewStatus(existingReview.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, status, 'Status should not be null');
+        Assert.areNotEqual(null, status, 'Status should not be null');
     }
 
     @isTest
@@ -69,7 +69,7 @@ public class SOC2AccessReviewServiceTest {
         List<IAccessControlService.ExcessiveAccessUser> users = service.getExcessiveAccessUsers();
         Test.stopTest();
 
-        System.assertNotEquals(null, users, 'Users list should not be null');
+        Assert.areNotEqual(null, users, 'Users list should not be null');
     }
 
     @isTest
@@ -81,8 +81,8 @@ public class SOC2AccessReviewServiceTest {
         IAccessControlService.RevokeAccessResult result = service.revokeAccess(new List<Id>(), 'Test revocation');
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(false, result.success, 'Should fail with empty user list');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(false, result.success, 'Should fail with empty user list');
     }
 
     @isTest
@@ -93,7 +93,7 @@ public class SOC2AccessReviewServiceTest {
         List<IAccessControlService.StalePermission> stalePerms = service.getStalePermissions(90);
         Test.stopTest();
 
-        System.assertNotEquals(null, stalePerms, 'Stale permissions list should not be null');
+        Assert.areNotEqual(null, stalePerms, 'Stale permissions list should not be null');
     }
 
     @isTest
@@ -104,8 +104,8 @@ public class SOC2AccessReviewServiceTest {
         IAccessControlService.NeedToKnowResult result = service.validateNeedToKnow(UserInfo.getUserId());
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(UserInfo.getUserId(), result.userId, 'User ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(UserInfo.getUserId(), result.userId, 'User ID should match');
     }
 
     @isTest
@@ -116,7 +116,7 @@ public class SOC2AccessReviewServiceTest {
         List<ComplianceServiceBase.Violation> violations = service.getViolations();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations should not be null');
+        Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
     @isTest
@@ -172,6 +172,6 @@ public class SOC2AccessReviewServiceTest {
         List<IAccessControlService.ExcessiveAccessUser> users = service.getExcessiveAccessUsers();
         Test.stopTest();
 
-        System.assertNotEquals(null, users, 'Users list should not be null for bulk test');
+        Assert.areNotEqual(null, users, 'Users list should not be null for bulk test');
     }
 }

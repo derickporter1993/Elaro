@@ -23,11 +23,11 @@ private class ComplianceFrameworkServiceTest {
             ComplianceFrameworkService.evaluateFramework('SOX');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('SOX', result.framework, 'Framework should match');
-        System.assertNotEquals(null, result.overallScore, 'Overall score should not be null');
-        System.assertNotEquals(null, result.status, 'Status should not be null');
-        System.assertNotEquals(null, result.totalPolicies, 'Total policies should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('SOX', result.framework, 'Framework should match');
+        Assert.areNotEqual(null, result.overallScore, 'Overall score should not be null');
+        Assert.areNotEqual(null, result.status, 'Status should not be null');
+        Assert.areNotEqual(null, result.totalPolicies, 'Total policies should not be null');
     }
     
     @IsTest
@@ -35,9 +35,9 @@ private class ComplianceFrameworkServiceTest {
         Test.startTest();
         try {
             ComplianceFrameworkService.evaluateFramework('');
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank framework');
+            Assert.isTrue(true, 'Expected exception for blank framework');
         }
         Test.stopTest();
     }
@@ -47,9 +47,9 @@ private class ComplianceFrameworkServiceTest {
         Test.startTest();
         try {
             ComplianceFrameworkService.evaluateFramework(null);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null framework');
+            Assert.isTrue(true, 'Expected exception for null framework');
         }
         Test.stopTest();
     }
@@ -63,8 +63,8 @@ private class ComplianceFrameworkServiceTest {
             ComplianceFrameworkService.evaluateMultipleFrameworks(frameworks);
         Test.stopTest();
         
-        System.assertNotEquals(null, results, 'Results should not be null');
-        System.assertEquals(frameworks.size(), results.size(), 'Should have results for all frameworks');
+        Assert.areNotEqual(null, results, 'Results should not be null');
+        Assert.areEqual(frameworks.size(), results.size(), 'Should have results for all frameworks');
     }
     
     @IsTest
@@ -73,7 +73,7 @@ private class ComplianceFrameworkServiceTest {
         List<String> frameworks = ComplianceFrameworkService.getSupportedFrameworks();
         Test.stopTest();
         
-        System.assertNotEquals(null, frameworks, 'Frameworks list should not be null');
+        Assert.areNotEqual(null, frameworks, 'Frameworks list should not be null');
         System.assert(!frameworks.isEmpty(), 'Should have at least one framework');
     }
 }

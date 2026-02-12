@@ -46,7 +46,7 @@ private class AnomalyDetectionServiceTest {
             AnomalyDetectionService.detectAnomalies('SOX', 30);
         Test.stopTest();
 
-        System.assertNotEquals(null, anomalies, 'Anomalies list should not be null');
+        Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
     @IsTest
@@ -54,9 +54,9 @@ private class AnomalyDetectionServiceTest {
         Test.startTest();
         try {
             AnomalyDetectionService.detectAnomalies('', 30);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank framework');
+            Assert.isTrue(true, 'Expected exception for blank framework');
         }
         Test.stopTest();
     }
@@ -66,7 +66,7 @@ private class AnomalyDetectionServiceTest {
         Test.startTest();
         try {
             AnomalyDetectionService.detectAnomalies(null, 30);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
             System.assert(e.getMessage().contains('Framework is required'),
                 'Exception should mention framework');
@@ -81,7 +81,7 @@ private class AnomalyDetectionServiceTest {
             AnomalyDetectionService.detectAnomalies('SOX', null);
         Test.stopTest();
 
-        System.assertNotEquals(null, anomalies, 'Anomalies list should not be null');
+        Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
     @IsTest
@@ -92,7 +92,7 @@ private class AnomalyDetectionServiceTest {
         Test.stopTest();
 
         // Should default to 30 days when negative
-        System.assertNotEquals(null, anomalies, 'Anomalies list should not be null');
+        Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
     @IsTest
@@ -103,7 +103,7 @@ private class AnomalyDetectionServiceTest {
         Test.stopTest();
 
         // Should default to 30 days when zero
-        System.assertNotEquals(null, anomalies, 'Anomalies list should not be null');
+        Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
     @IsTest
@@ -121,7 +121,7 @@ private class AnomalyDetectionServiceTest {
                 break;
             }
         }
-        System.assertEquals(true, foundCritical, 'Should detect critical metadata changes');
+        Assert.areEqual(true, foundCritical, 'Should detect critical metadata changes');
     }
 
     @IsTest
@@ -135,9 +135,9 @@ private class AnomalyDetectionServiceTest {
             AnomalyDetectionService.detectAnomalies('HIPAA', 30);
         Test.stopTest();
 
-        System.assertNotEquals(null, soxAnomalies, 'SOX anomalies should not be null');
-        System.assertNotEquals(null, gdprAnomalies, 'GDPR anomalies should not be null');
-        System.assertNotEquals(null, hipaaAnomalies, 'HIPAA anomalies should not be null');
+        Assert.areNotEqual(null, soxAnomalies, 'SOX anomalies should not be null');
+        Assert.areNotEqual(null, gdprAnomalies, 'GDPR anomalies should not be null');
+        Assert.areNotEqual(null, hipaaAnomalies, 'HIPAA anomalies should not be null');
     }
 
     @IsTest
@@ -147,7 +147,7 @@ private class AnomalyDetectionServiceTest {
             AnomalyDetectionService.detectAnomalies('SOX', 365);
         Test.stopTest();
 
-        System.assertNotEquals(null, anomalies, 'Anomalies list should not be null');
+        Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
     @IsTest
@@ -160,11 +160,11 @@ private class AnomalyDetectionServiceTest {
         anomaly.entityId = '001000000000000AAA';
         Test.stopTest();
 
-        System.assertEquals('TEST_TYPE', anomaly.type, 'Type should match');
-        System.assertEquals('HIGH', anomaly.severity, 'Severity should match');
-        System.assertEquals('Test description', anomaly.description, 'Description should match');
-        System.assertEquals('001000000000000AAA', anomaly.entityId, 'EntityId should match');
-        System.assertNotEquals(null, anomaly.detectedDate, 'DetectedDate should be set');
+        Assert.areEqual('TEST_TYPE', anomaly.type, 'Type should match');
+        Assert.areEqual('HIGH', anomaly.severity, 'Severity should match');
+        Assert.areEqual('Test description', anomaly.description, 'Description should match');
+        Assert.areEqual('001000000000000AAA', anomaly.entityId, 'EntityId should match');
+        Assert.areNotEqual(null, anomaly.detectedDate, 'DetectedDate should be set');
     }
 
     @IsTest
@@ -186,7 +186,7 @@ private class AnomalyDetectionServiceTest {
             AnomalyDetectionService.detectAnomalies('SOX', 1);
         Test.stopTest();
 
-        System.assertNotEquals(null, anomalies, 'Anomalies list should not be null');
+        Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
     @IsTest
@@ -198,9 +198,9 @@ private class AnomalyDetectionServiceTest {
 
         for (AnomalyDetectionService.Anomaly anomaly : anomalies) {
             if (anomaly.type == 'HIGH_RISK_CHANGE') {
-                System.assertNotEquals(null, anomaly.description, 'Description should not be null');
-                System.assertNotEquals(null, anomaly.entityId, 'EntityId should not be null');
-                System.assertEquals('CRITICAL', anomaly.severity, 'Severity should be CRITICAL');
+                Assert.areNotEqual(null, anomaly.description, 'Description should not be null');
+                Assert.areNotEqual(null, anomaly.entityId, 'EntityId should not be null');
+                Assert.areEqual('CRITICAL', anomaly.severity, 'Severity should be CRITICAL');
             }
         }
     }

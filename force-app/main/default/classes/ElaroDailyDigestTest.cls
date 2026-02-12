@@ -38,7 +38,7 @@ private class ElaroDailyDigestTest {
         Test.stopTest();
         
         // Verify no exceptions thrown
-        System.assert(true, 'Digest should execute successfully');
+        Assert.isTrue(true, 'Digest should execute successfully');
     }
     
     @isTest
@@ -52,7 +52,7 @@ private class ElaroDailyDigestTest {
         Test.stopTest();
         
         // Verify digest was generated
-        System.assert(true, 'Digest should be generated with test data');
+        Assert.isTrue(true, 'Digest should be generated with test data');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -67,7 +67,7 @@ private class ElaroDailyDigestTest {
         Id jobId = ElaroDailyDigest.scheduleDigest(cronExpression);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         // Verify job was scheduled
         CronTrigger ct = [
@@ -76,7 +76,7 @@ private class ElaroDailyDigestTest {
             WHERE Id = :jobId
         ];
         
-        System.assertEquals(cronExpression, ct.CronExpression, 'Cron expression should match');
+        Assert.areEqual(cronExpression, ct.CronExpression, 'Cron expression should match');
         System.assert(ct.CronJobDetail.Name.contains('Elaro_Daily_Digest_'), 
             'Job name should contain Elaro_Daily_Digest_');
     }
@@ -87,7 +87,7 @@ private class ElaroDailyDigestTest {
         Id jobId = ElaroDailyDigest.scheduleDigest(null);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID with default cron');
+        Assert.areNotEqual(null, jobId, 'Should return job ID with default cron');
         
         CronTrigger ct = [
             SELECT Id, CronExpression
@@ -96,7 +96,7 @@ private class ElaroDailyDigestTest {
         ];
         
         // Default: '0 0 6 * * ?'
-        System.assertEquals('0 0 6 * * ?', ct.CronExpression, 'Should use default cron expression');
+        Assert.areEqual('0 0 6 * * ?', ct.CronExpression, 'Should use default cron expression');
     }
     
     @isTest
@@ -110,7 +110,7 @@ private class ElaroDailyDigestTest {
         Id secondJobId = ElaroDailyDigest.scheduleDigest(cronExpression);
         Test.stopTest();
         
-        System.assertNotEquals(null, secondJobId, 'Should return new job ID');
+        Assert.areNotEqual(null, secondJobId, 'Should return new job ID');
         
         // Verify first job was removed
         List<CronTrigger> oldJobs = [
@@ -118,7 +118,7 @@ private class ElaroDailyDigestTest {
         ];
         
         // In test context, jobs may not be immediately removed
-        System.assert(true, 'Old job should be removed or replaced');
+        Assert.isTrue(true, 'Old job should be removed or replaced');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -134,7 +134,7 @@ private class ElaroDailyDigestTest {
         Test.stopTest();
         
         // Verify no exceptions
-        System.assert(true, 'Digest should be generated and sent');
+        Assert.isTrue(true, 'Digest should be generated and sent');
     }
     
     @isTest
@@ -146,7 +146,7 @@ private class ElaroDailyDigestTest {
         ElaroDailyDigest.generateAndSendDigest();
         Test.stopTest();
         
-        System.assert(true, 'Should handle Slack errors gracefully');
+        Assert.isTrue(true, 'Should handle Slack errors gracefully');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -159,14 +159,14 @@ private class ElaroDailyDigestTest {
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
         Test.stopTest();
         
-        System.assertNotEquals(null, digest, 'Should return digest data');
-        System.assertNotEquals(null, digest.generatedAt, 'Should have generated timestamp');
-        System.assertNotEquals(null, digest.periodStart, 'Should have period start');
-        System.assertNotEquals(null, digest.periodEnd, 'Should have period end');
-        System.assertNotEquals(null, digest.statistics, 'Should have statistics');
-        System.assertNotEquals(null, digest.topRisks, 'Should have top risks');
-        System.assertNotEquals(null, digest.complianceScore, 'Should have compliance score');
-        System.assertNotEquals(null, digest.aiSummary, 'Should have AI summary');
+        Assert.areNotEqual(null, digest, 'Should return digest data');
+        Assert.areNotEqual(null, digest.generatedAt, 'Should have generated timestamp');
+        Assert.areNotEqual(null, digest.periodStart, 'Should have period start');
+        Assert.areNotEqual(null, digest.periodEnd, 'Should have period end');
+        Assert.areNotEqual(null, digest.statistics, 'Should have statistics');
+        Assert.areNotEqual(null, digest.topRisks, 'Should have top risks');
+        Assert.areNotEqual(null, digest.complianceScore, 'Should have compliance score');
+        Assert.areNotEqual(null, digest.aiSummary, 'Should have AI summary');
     }
     
     @isTest
@@ -175,10 +175,10 @@ private class ElaroDailyDigestTest {
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
         Test.stopTest();
         
-        System.assertNotEquals(null, digest.statistics, 'Should have statistics');
-        System.assertNotEquals(null, digest.statistics.totalEvents, 'Should have total events');
+        Assert.areNotEqual(null, digest.statistics, 'Should have statistics');
+        Assert.areNotEqual(null, digest.statistics.totalEvents, 'Should have total events');
         System.assert(digest.statistics.totalEvents >= 0, 'Total events should be non-negative');
-        System.assertNotEquals(null, digest.statistics.eventsByType, 'Should have events by type');
+        Assert.areNotEqual(null, digest.statistics.eventsByType, 'Should have events by type');
     }
     
     @isTest
@@ -187,12 +187,12 @@ private class ElaroDailyDigestTest {
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
         Test.stopTest();
         
-        System.assertNotEquals(null, digest.topRisks, 'Should have top risks list');
+        Assert.areNotEqual(null, digest.topRisks, 'Should have top risks list');
         
         for (ElaroDailyDigest.RiskItem risk : digest.topRisks) {
-            System.assertNotEquals(null, risk.id, 'Risk should have ID');
-            System.assertNotEquals(null, risk.title, 'Risk should have title');
-            System.assertNotEquals(null, risk.severity, 'Risk should have severity');
+            Assert.areNotEqual(null, risk.id, 'Risk should have ID');
+            Assert.areNotEqual(null, risk.title, 'Risk should have title');
+            Assert.areNotEqual(null, risk.severity, 'Risk should have severity');
         }
     }
     
@@ -203,9 +203,9 @@ private class ElaroDailyDigestTest {
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
         Test.stopTest();
         
-        System.assertNotEquals(null, digest, 'Should return digest even with minimal data');
-        System.assertNotEquals(null, digest.complianceScore, 'Should have compliance score');
-        System.assertNotEquals(null, digest.aiSummary, 'Should have AI summary');
+        Assert.areNotEqual(null, digest, 'Should return digest even with minimal data');
+        Assert.areNotEqual(null, digest.complianceScore, 'Should have compliance score');
+        Assert.areNotEqual(null, digest.aiSummary, 'Should have AI summary');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -242,11 +242,11 @@ private class ElaroDailyDigestTest {
         try {
             ElaroDailyDigest.generateAndSendDigest();
         } catch (Exception e) {
-            System.assert(false, 'Should not throw unhandled exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw unhandled exception: ' + e.getMessage());
         }
         Test.stopTest();
         
-        System.assert(true, 'Should handle exceptions gracefully');
+        Assert.isTrue(true, 'Should handle exceptions gracefully');
     }
     
     @isTest
@@ -255,9 +255,9 @@ private class ElaroDailyDigestTest {
         // Should handle exceptions in data compilation
         try {
             ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
-            System.assertNotEquals(null, digest, 'Should return digest even on errors');
+            Assert.areNotEqual(null, digest, 'Should return digest even on errors');
         } catch (Exception e) {
-            System.assert(false, 'Should not throw exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception: ' + e.getMessage());
         }
         Test.stopTest();
     }
@@ -273,12 +273,12 @@ private class ElaroDailyDigestTest {
         Test.stopTest();
         
         // Verify all required fields are present
-        System.assertNotEquals(null, digest.generatedAt, 'Should have generatedAt');
-        System.assertNotEquals(null, digest.periodStart, 'Should have periodStart');
-        System.assertNotEquals(null, digest.periodEnd, 'Should have periodEnd');
+        Assert.areNotEqual(null, digest.generatedAt, 'Should have generatedAt');
+        Assert.areNotEqual(null, digest.periodStart, 'Should have periodStart');
+        Assert.areNotEqual(null, digest.periodEnd, 'Should have periodEnd');
         System.assert(digest.periodStart <= digest.periodEnd, 'Period start should be before end');
-        System.assertNotEquals(null, digest.trendingUp, 'Should have trendingUp');
-        System.assertNotEquals(null, digest.trendingDown, 'Should have trendingDown');
+        Assert.areNotEqual(null, digest.trendingUp, 'Should have trendingUp');
+        Assert.areNotEqual(null, digest.trendingDown, 'Should have trendingDown');
     }
     
     @isTest
@@ -288,11 +288,11 @@ private class ElaroDailyDigestTest {
         Test.stopTest();
         
         ElaroDailyDigest.EventStatistics stats = digest.statistics;
-        System.assertNotEquals(null, stats.totalEvents, 'Should have totalEvents');
-        System.assertNotEquals(null, stats.criticalEvents, 'Should have criticalEvents');
-        System.assertNotEquals(null, stats.highRiskEvents, 'Should have highRiskEvents');
-        System.assertNotEquals(null, stats.resolvedEvents, 'Should have resolvedEvents');
-        System.assertNotEquals(null, stats.eventsByType, 'Should have eventsByType');
+        Assert.areNotEqual(null, stats.totalEvents, 'Should have totalEvents');
+        Assert.areNotEqual(null, stats.criticalEvents, 'Should have criticalEvents');
+        Assert.areNotEqual(null, stats.highRiskEvents, 'Should have highRiskEvents');
+        Assert.areNotEqual(null, stats.resolvedEvents, 'Should have resolvedEvents');
+        Assert.areNotEqual(null, stats.eventsByType, 'Should have eventsByType');
     }
     
     // ═══════════════════════════════════════════════════════════════

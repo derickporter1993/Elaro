@@ -51,7 +51,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'Scheduler should execute successfully');
+        Assert.isTrue(true, 'Scheduler should execute successfully');
     }
 
     @IsTest
@@ -81,7 +81,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
 
         // Verify job was scheduled
         List<CronTrigger> jobs = [
@@ -89,7 +89,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals(1, jobs.size(), 'Job should be scheduled');
+        Assert.areEqual(1, jobs.size(), 'Job should be scheduled');
     }
 
     @IsTest
@@ -101,7 +101,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
     }
 
     @IsTest
@@ -121,7 +121,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals(0, jobs.size(), 'Job should be aborted');
+        Assert.areEqual(0, jobs.size(), 'Job should be aborted');
     }
 
     @IsTest
@@ -133,7 +133,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'runNow should complete successfully');
+        Assert.isTrue(true, 'runNow should complete successfully');
     }
 
     @IsTest
@@ -145,7 +145,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, trends, 'Should return trend data');
+        Assert.areNotEqual(null, trends, 'Should return trend data');
     }
 
     @IsTest
@@ -157,7 +157,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, trends, 'Should handle null days parameter');
+        Assert.areNotEqual(null, trends, 'Should handle null days parameter');
     }
 
     @IsTest
@@ -169,7 +169,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, trends, 'Should handle zero days parameter');
+        Assert.areNotEqual(null, trends, 'Should handle zero days parameter');
     }
 
     @IsTest
@@ -182,10 +182,10 @@ private class ComplianceScoreSnapshotSchedulerTest {
         trend.status = 'Compliant';
         trend.gapCount = 3;
 
-        System.assertEquals(Date.today(), trend.date, 'Date should be set');
-        System.assertEquals(85.5, trend.score, 'Score should be set');
-        System.assertEquals('Compliant', trend.status, 'Status should be set');
-        System.assertEquals(3, trend.gapCount, 'Gap count should be set');
+        Assert.areEqual(Date.today(), trend.date, 'Date should be set');
+        Assert.areEqual(85.5, trend.score, 'Score should be set');
+        Assert.areEqual('Compliant', trend.status, 'Status should be set');
+        Assert.areEqual(3, trend.gapCount, 'Gap count should be set');
     }
 
     @IsTest
@@ -207,7 +207,7 @@ private class ComplianceScoreSnapshotSchedulerTest {
         Test.stopTest();
 
         // Should complete and potentially create alerts for score drops
-        System.assert(true, 'Should handle score comparisons');
+        Assert.isTrue(true, 'Should handle score comparisons');
     }
 
     @IsTest

@@ -26,17 +26,17 @@ private class MetadataChangeTrackerTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, changeId, 'Change ID should not be null');
+        Assert.areNotEqual(null, changeId, 'Change ID should not be null');
         
         // Verify change was inserted
         List<Metadata_Change__c> changes = [
             SELECT Id, Change_Type__c, Metadata_Type__c, Metadata_Name__c
             FROM Metadata_Change__c
             WHERE Id = :changeId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
-        System.assertEquals(1, changes.size(), 'Change should be inserted');
-        System.assertEquals('UPDATE', changes[0].Change_Type__c, 'Change type should match');
+        Assert.areEqual(1, changes.size(), 'Change should be inserted');
+        Assert.areEqual('UPDATE', changes[0].Change_Type__c, 'Change type should match');
     }
     
     @IsTest
@@ -44,9 +44,9 @@ private class MetadataChangeTrackerTest {
         Test.startTest();
         try {
             MetadataChangeTracker.trackChange('', 'ApexClass', 'TestClass', null, '{}');
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank parameters');
+            Assert.isTrue(true, 'Expected exception for blank parameters');
         }
         Test.stopTest();
     }
@@ -61,7 +61,7 @@ private class MetadataChangeTrackerTest {
         List<Metadata_Change__c> recentChanges = MetadataChangeTracker.getRecentChanges(10);
         Test.stopTest();
         
-        System.assertNotEquals(null, recentChanges, 'Recent changes should not be null');
+        Assert.areNotEqual(null, recentChanges, 'Recent changes should not be null');
         System.assert(!recentChanges.isEmpty(), 'Should have recent changes');
     }
 }

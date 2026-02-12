@@ -15,7 +15,7 @@ private class ViolationTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, v, 'Violation should be instantiated');
+        Assert.areNotEqual(null, v, 'Violation should be instantiated');
     }
 
     @IsTest
@@ -33,12 +33,12 @@ private class ViolationTest {
 
         Test.stopTest();
 
-        System.assertEquals('Test Violation', v.title, 'Title should be set');
-        System.assertEquals('This is a test violation description', v.description, 'Description should be set');
-        System.assertEquals('High', v.severity, 'Severity should be set');
-        System.assertEquals('Fix the issue by updating configuration', v.remediation, 'Remediation should be set');
-        System.assertEquals('001XXXXXXXXXXXX', v.entityId, 'EntityId should be set');
-        System.assertEquals(8.5, v.riskScore, 'RiskScore should be set');
+        Assert.areEqual('Test Violation', v.title, 'Title should be set');
+        Assert.areEqual('This is a test violation description', v.description, 'Description should be set');
+        Assert.areEqual('High', v.severity, 'Severity should be set');
+        Assert.areEqual('Fix the issue by updating configuration', v.remediation, 'Remediation should be set');
+        Assert.areEqual('001XXXXXXXXXXXX', v.entityId, 'EntityId should be set');
+        Assert.areEqual(8.5, v.riskScore, 'RiskScore should be set');
     }
 
     @IsTest
@@ -48,12 +48,12 @@ private class ViolationTest {
         Test.startTest();
 
         // All properties should be null by default
-        System.assertEquals(null, v.title, 'Title should be null by default');
-        System.assertEquals(null, v.description, 'Description should be null by default');
-        System.assertEquals(null, v.severity, 'Severity should be null by default');
-        System.assertEquals(null, v.remediation, 'Remediation should be null by default');
-        System.assertEquals(null, v.entityId, 'EntityId should be null by default');
-        System.assertEquals(null, v.riskScore, 'RiskScore should be null by default');
+        Assert.areEqual(null, v.title, 'Title should be null by default');
+        Assert.areEqual(null, v.description, 'Description should be null by default');
+        Assert.areEqual(null, v.severity, 'Severity should be null by default');
+        Assert.areEqual(null, v.remediation, 'Remediation should be null by default');
+        Assert.areEqual(null, v.entityId, 'EntityId should be null by default');
+        Assert.areEqual(null, v.riskScore, 'RiskScore should be null by default');
 
         Test.stopTest();
     }
@@ -74,9 +74,9 @@ private class ViolationTest {
 
         Test.stopTest();
 
-        System.assertEquals(5, violations.size(), 'Should have 5 violations');
-        System.assertEquals('Violation 0', violations[0].title, 'First violation title should match');
-        System.assertEquals('High', violations[0].severity, 'First violation severity should be High');
+        Assert.areEqual(5, violations.size(), 'Should have 5 violations');
+        Assert.areEqual('Violation 0', violations[0].title, 'First violation title should match');
+        Assert.areEqual('High', violations[0].severity, 'First violation severity should be High');
     }
 
     @IsTest
@@ -96,8 +96,8 @@ private class ViolationTest {
 
         Test.stopTest();
 
-        System.assertEquals(v.title, deserialized.title, 'Title should survive serialization');
-        System.assertEquals(v.severity, deserialized.severity, 'Severity should survive serialization');
-        System.assertEquals(v.riskScore, deserialized.riskScore, 'RiskScore should survive serialization');
+        Assert.areEqual(v.title, deserialized.title, 'Title should survive serialization');
+        Assert.areEqual(v.severity, deserialized.severity, 'Severity should survive serialization');
+        Assert.areEqual(v.riskScore, deserialized.riskScore, 'RiskScore should survive serialization');
     }
 }

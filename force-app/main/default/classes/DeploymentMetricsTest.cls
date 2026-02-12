@@ -22,7 +22,7 @@ private class DeploymentMetricsTest {
         List<DeploymentMetrics.Row> rows = DeploymentMetrics.recent(5);
         Test.stopTest();
 
-        System.assertEquals(5, rows.size(), 'Should return 5 records');
+        Assert.areEqual(5, rows.size(), 'Should return 5 records');
     }
 
     @IsTest
@@ -31,7 +31,7 @@ private class DeploymentMetricsTest {
         List<DeploymentMetrics.Row> rows = DeploymentMetrics.getRecentDeployments(3);
         Test.stopTest();
 
-        System.assertEquals(3, rows.size(), 'Should return 3 records');
+        Assert.areEqual(3, rows.size(), 'Should return 3 records');
         // Verify ordering (most recent first)
         System.assert(rows[0].startedOn >= rows[1].startedOn, 'Should be ordered by startedOn DESC');
     }
@@ -45,7 +45,7 @@ private class DeploymentMetricsTest {
         List<DeploymentMetrics.Row> rows = DeploymentMetrics.recent(5);
         Test.stopTest();
 
-        System.assertEquals(0, rows.size(), 'Should return 0 when no data');
+        Assert.areEqual(0, rows.size(), 'Should return 0 when no data');
     }
 
     @IsTest
@@ -55,7 +55,7 @@ private class DeploymentMetricsTest {
         Test.stopTest();
 
         // With limit 0, Math.max(1, 0) = 1, so should return 1 record
-        System.assertEquals(1, rows.size(), 'Should handle zero limit gracefully');
+        Assert.areEqual(1, rows.size(), 'Should handle zero limit gracefully');
     }
 
     @IsTest
@@ -65,7 +65,7 @@ private class DeploymentMetricsTest {
         Test.stopTest();
 
         // With limit -5, Math.max(1, -5) = 1, so should return 1 record
-        System.assertEquals(1, rows.size(), 'Should handle negative limit gracefully');
+        Assert.areEqual(1, rows.size(), 'Should handle negative limit gracefully');
     }
 
     @IsTest
@@ -74,13 +74,13 @@ private class DeploymentMetricsTest {
         List<DeploymentMetrics.Row> rows = DeploymentMetrics.recent(1);
         Test.stopTest();
 
-        System.assertEquals(1, rows.size(), 'Should return 1 record');
+        Assert.areEqual(1, rows.size(), 'Should return 1 record');
         DeploymentMetrics.Row row = rows[0];
 
-        System.assertNotEquals(null, row.status, 'Status should not be null');
-        System.assertNotEquals(null, row.startedOn, 'StartedOn should not be null');
-        System.assertNotEquals(null, row.testsPassed, 'TestsPassed should not be null');
-        System.assertNotEquals(null, row.testsFailed, 'TestsFailed should not be null');
+        Assert.areNotEqual(null, row.status, 'Status should not be null');
+        Assert.areNotEqual(null, row.startedOn, 'StartedOn should not be null');
+        Assert.areNotEqual(null, row.testsPassed, 'TestsPassed should not be null');
+        Assert.areNotEqual(null, row.testsFailed, 'TestsFailed should not be null');
     }
 
     @IsTest
@@ -101,10 +101,10 @@ private class DeploymentMetricsTest {
         DeploymentMetrics.Row row = new DeploymentMetrics.Row(job);
         Test.stopTest();
 
-        System.assertEquals(job.Name, row.name, 'Name should match');
-        System.assertEquals('Success', row.status, 'Status should match');
-        System.assertEquals(100, row.testsPassed, 'TestsPassed should match');
-        System.assertEquals(5, row.testsFailed, 'TestsFailed should match');
+        Assert.areEqual(job.Name, row.name, 'Name should match');
+        Assert.areEqual('Success', row.status, 'Status should match');
+        Assert.areEqual(100, row.testsPassed, 'TestsPassed should match');
+        Assert.areEqual(5, row.testsFailed, 'TestsFailed should match');
     }
 
     @IsTest
@@ -115,6 +115,6 @@ private class DeploymentMetricsTest {
         Test.stopTest();
 
         // Should return all 10 records from @TestSetup
-        System.assertEquals(10, rows.size(), 'Should return all available records');
+        Assert.areEqual(10, rows.size(), 'Should return all available records');
     }
 }

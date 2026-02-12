@@ -7,7 +7,7 @@
  * - Operator whitelisting
  * - Field validation against schema
  * - SOQL injection prevention
- * - WITH SECURITY_ENFORCED
+ * - WITH USER_MODE
  * - Platform Cache for metadata
  *
  * @author Derick Porter
@@ -384,7 +384,7 @@ public with sharing class ElaroDynamicReportController {
         }
 
         // Add security enforcement
-        soql += ' WITH SECURITY_ENFORCED';
+        soql += ' WITH USER_MODE';
 
         // Add ORDER BY if specified
         if (String.isNotBlank(cfg.orderBy)) {

@@ -17,7 +17,7 @@ private class ElaroLoggerTest {
         Test.stopTest();
 
         // Logger should not throw exceptions
-        System.assert(true, 'Debug logging completed without errors');
+        Assert.isTrue(true, 'Debug logging completed without errors');
     }
 
     @isTest
@@ -27,7 +27,7 @@ private class ElaroLoggerTest {
         ElaroLogger.info('Info with context', new Map<String, Object>{'accountId' => 'test123'});
         Test.stopTest();
 
-        System.assert(true, 'Info logging completed without errors');
+        Assert.isTrue(true, 'Info logging completed without errors');
     }
 
     @isTest
@@ -37,7 +37,7 @@ private class ElaroLoggerTest {
         ElaroLogger.warn('Warning with context', new Map<String, Object>{'threshold' => 80});
         Test.stopTest();
 
-        System.assert(true, 'Warn logging completed without errors');
+        Assert.isTrue(true, 'Warn logging completed without errors');
     }
 
     @isTest
@@ -47,7 +47,7 @@ private class ElaroLoggerTest {
         ElaroLogger.error('Error with context', new Map<String, Object>{'errorCode' => 500});
         Test.stopTest();
 
-        System.assert(true, 'Error logging completed without errors');
+        Assert.isTrue(true, 'Error logging completed without errors');
     }
 
     @isTest
@@ -60,7 +60,7 @@ private class ElaroLoggerTest {
         }
         Test.stopTest();
 
-        System.assert(true, 'Exception logging completed without errors');
+        Assert.isTrue(true, 'Exception logging completed without errors');
     }
 
     @isTest
@@ -72,7 +72,7 @@ private class ElaroLoggerTest {
         ElaroLogger.log(ElaroLogger.Level.ERROR, 'Test error', null);
         Test.stopTest();
 
-        System.assert(true, 'All log levels processed successfully');
+        Assert.isTrue(true, 'All log levels processed successfully');
     }
 
     @isTest
@@ -81,7 +81,7 @@ private class ElaroLoggerTest {
         ElaroLogger.log(ElaroLogger.Level.INFO, 'Null context test', null);
         Test.stopTest();
 
-        System.assert(true, 'Null context handled without errors');
+        Assert.isTrue(true, 'Null context handled without errors');
     }
 
     @isTest
@@ -100,7 +100,7 @@ private class ElaroLoggerTest {
         ElaroLogger.info('Complex context test', complexContext);
         Test.stopTest();
 
-        System.assert(true, 'Complex context serialized successfully');
+        Assert.isTrue(true, 'Complex context serialized successfully');
     }
 
     @isTest

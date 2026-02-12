@@ -119,7 +119,7 @@ public with sharing class ComplianceServiceFactory {
                    Evidence_Retention_Days__c, Service_Class__c
             FROM Framework_Config__mdt
             WHERE Framework_Code__c = :framework
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 

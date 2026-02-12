@@ -46,7 +46,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyAsync should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyAsync should not throw exception');
     }
     
     /**
@@ -61,7 +61,7 @@ private class TeamsNotifierTest {
             'text' => 'Test Adaptive Card'
         };
         String payload = JSON.serialize(cardPayload);
-        System.assertNotEquals(null, payload, 'Payload should not be null');
+        Assert.areNotEqual(null, payload, 'Payload should not be null');
 
         Test.startTest();
         Exception caughtException = null;
@@ -72,7 +72,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyRichAsync should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyRichAsync should not throw exception');
     }
     
     /**
@@ -98,7 +98,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyComplianceAlert should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyComplianceAlert should not throw exception');
     }
     
     /**
@@ -115,7 +115,7 @@ private class TeamsNotifierTest {
             ElaroConstants.SEVERITY_LOW
         };
         
-        System.assertEquals(4, severities.size(), 'Should test 4 severity levels');
+        Assert.areEqual(4, severities.size(), 'Should test 4 severity levels');
 
         Test.startTest();
         Exception caughtException = null;
@@ -135,7 +135,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'All severity levels should send without exception');
+        Assert.areEqual(null, caughtException, 'All severity levels should send without exception');
     }
     
     /**
@@ -153,7 +153,7 @@ private class TeamsNotifierTest {
             ElaroConstants.FRAMEWORK_GDPR
         };
         
-        System.assertEquals(5, frameworks.size(), 'Should test 5 frameworks');
+        Assert.areEqual(5, frameworks.size(), 'Should test 5 frameworks');
 
         Test.startTest();
         Exception caughtException = null;
@@ -173,7 +173,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'All frameworks should send without exception');
+        Assert.areEqual(null, caughtException, 'All frameworks should send without exception');
     }
     
     /**
@@ -192,7 +192,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'sendWeeklyScorecard should not throw exception');
+        Assert.areEqual(null, caughtException, 'sendWeeklyScorecard should not throw exception');
     }
     
     /**
@@ -213,7 +213,7 @@ private class TeamsNotifierTest {
         Test.stopTest();
 
         // Should not throw exception, but log error internally
-        System.assertEquals(null, caughtException, 'Should handle server errors gracefully without throwing');
+        Assert.areEqual(null, caughtException, 'Should handle server errors gracefully without throwing');
     }
     
     /**
@@ -233,7 +233,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'Should handle null/empty messages without throwing');
+        Assert.areEqual(null, caughtException, 'Should handle null/empty messages without throwing');
     }
     
     /**
@@ -252,7 +252,7 @@ private class TeamsNotifierTest {
         result.remediationId = 'remediation123';
         result.reviewDeadline = Datetime.now().addDays(7);
         
-        System.assertNotEquals(null, result, 'Remediation result should not be null');
+        Assert.areNotEqual(null, result, 'Remediation result should not be null');
 
         Test.startTest();
         Exception caughtException = null;
@@ -263,7 +263,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'notifyRemediation should not throw exception');
+        Assert.areEqual(null, caughtException, 'notifyRemediation should not throw exception');
     }
     
     /**
@@ -284,7 +284,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'Multiple notifications should complete without exception');
+        Assert.areEqual(null, caughtException, 'Multiple notifications should complete without exception');
     }
     
     /**
@@ -296,7 +296,7 @@ private class TeamsNotifierTest {
 
         // Create a large payload
         String largeMessage = 'A'.repeat(10000);
-        System.assertEquals(10000, largeMessage.length(), 'Large message should be 10000 chars');
+        Assert.areEqual(10000, largeMessage.length(), 'Large message should be 10000 chars');
 
         Test.startTest();
         Exception caughtException = null;
@@ -307,7 +307,7 @@ private class TeamsNotifierTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'Should handle large payloads without exception');
+        Assert.areEqual(null, caughtException, 'Should handle large payloads without exception');
     }
 }
 

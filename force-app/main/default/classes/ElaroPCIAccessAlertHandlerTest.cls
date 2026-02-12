@@ -22,7 +22,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should log warning level (not critical) for single failure
-        System.assert(true, 'Single failed access should be handled without error');
+        Assert.isTrue(true, 'Single failed access should be handled without error');
     }
 
     @IsTest
@@ -39,7 +39,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should trigger critical alert for repeated failures
-        System.assert(true, 'Multiple failed accesses should trigger critical alert');
+        Assert.isTrue(true, 'Multiple failed accesses should trigger critical alert');
     }
 
     @IsTest
@@ -56,7 +56,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should handle multiple users without errors
-        System.assert(true, 'Multiple users should be handled separately');
+        Assert.isTrue(true, 'Multiple users should be handled separately');
     }
 
     // ========================================
@@ -74,7 +74,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should send warning alert for after-hours access
-        System.assert(true, 'After-hours access should trigger warning alert');
+        Assert.isTrue(true, 'After-hours access should trigger warning alert');
     }
 
     @IsTest
@@ -90,7 +90,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should process all after-hours events
-        System.assert(true, 'Multiple after-hours events should be processed');
+        Assert.isTrue(true, 'Multiple after-hours events should be processed');
     }
 
     // ========================================
@@ -108,7 +108,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should log event but not trigger alert (under 50 threshold)
-        System.assert(true, 'Under-threshold bulk access should be logged without high alert');
+        Assert.isTrue(true, 'Under-threshold bulk access should be logged without high alert');
     }
 
     @IsTest
@@ -122,7 +122,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should trigger high priority alert
-        System.assert(true, 'Over-threshold bulk access should trigger high alert');
+        Assert.isTrue(true, 'Over-threshold bulk access should trigger high alert');
     }
 
     @IsTest
@@ -136,7 +136,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should handle invalid action format gracefully
-        System.assert(true, 'Invalid action format should be handled gracefully');
+        Assert.isTrue(true, 'Invalid action format should be handled gracefully');
     }
 
     // ========================================
@@ -156,7 +156,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should create security incident without error
-        System.assert(true, 'Security incident should be created');
+        Assert.isTrue(true, 'Security incident should be created');
     }
 
     // ========================================
@@ -176,7 +176,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should handle empty lists gracefully
-        System.assert(true, 'Empty event lists should be handled gracefully');
+        Assert.isTrue(true, 'Empty event lists should be handled gracefully');
     }
 
     @IsTest
@@ -196,7 +196,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should handle null event data gracefully
-        System.assert(true, 'Null event data should be handled gracefully');
+        Assert.isTrue(true, 'Null event data should be handled gracefully');
     }
 
     @IsTest
@@ -216,7 +216,7 @@ private class ElaroPCIAccessAlertHandlerTest {
         Test.stopTest();
 
         // Should handle malformed JSON gracefully
-        System.assert(true, 'Malformed JSON should be handled gracefully');
+        Assert.isTrue(true, 'Malformed JSON should be handled gracefully');
     }
 
     // ========================================

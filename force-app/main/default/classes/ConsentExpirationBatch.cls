@@ -29,7 +29,7 @@ public with sharing class ConsentExpirationBatch implements Database.Batchable<S
             FROM Consent__c
             WHERE Consent_Given__c = true
             AND Consent_Withdrawn__c = false
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]);
     }
     

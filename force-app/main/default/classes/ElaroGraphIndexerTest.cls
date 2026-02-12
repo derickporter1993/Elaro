@@ -13,22 +13,22 @@ private class ElaroGraphIndexerTest {
         String nodeHash = ElaroGraphIndexer.indexChange('PERMISSION_SET', ps.Id, null, 'SOC2');
         Test.stopTest();
 
-        System.assertNotEquals(null, nodeHash, 'Should return node hash');
+        Assert.areNotEqual(null, nodeHash, 'Should return node hash');
 
         List<Elaro_Compliance_Graph__b> nodes = [
             SELECT Graph_Node_Id__c, Risk_Score__c, Entity_Type__c
             FROM Elaro_Compliance_Graph__b
             WHERE Graph_Node_Id__c = :nodeHash
         ];
-        System.assertEquals(1, nodes.size(), 'Should create one node');
-        System.assertEquals('PERMISSION_SET', nodes[0].Entity_Type__c);
+        Assert.areEqual(1, nodes.size(), 'Should create one node');
+        Assert.areEqual('PERMISSION_SET', nodes[0].Entity_Type__c);
     }
 
     @IsTest
     static void testGenerateDeterministicHash_IsUnique() {
         String hash1 = ElaroGraphIndexer.generateDeterministicHash('FLOW', '123', 'SOC2');
         String hash2 = ElaroGraphIndexer.generateDeterministicHash('FLOW', '456', 'SOC2');
-        System.assertNotEquals(hash1, hash2, 'Hash should be unique for different entities');
+        Assert.areNotEqual(hash1, hash2, 'Hash should be unique for different entities');
     }
 
     @IsTest
@@ -36,9 +36,9 @@ private class ElaroGraphIndexerTest {
         Test.startTest();
         try {
             ElaroGraphIndexer.indexChange('INVALID', 'badid', null, 'SOC2');
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (Exception e) {
-            System.assert(true, 'Expected exception for invalid entity');
+            Assert.isTrue(true, 'Expected exception for invalid entity');
         }
         Test.stopTest();
     }
@@ -49,7 +49,7 @@ private class ElaroGraphIndexerTest {
         Test.startTest();
         try {
             ElaroGraphIndexer.indexChange('PERMISSION_SET', ps.Id, null, 'INVALID_FRAMEWORK');
-            System.assert(false, 'Should have thrown exception for invalid framework');
+            Assert.fail( 'Should have thrown exception for invalid framework');
         } catch (Exception e) {
             System.assert(e.getMessage().contains('Unsupported framework'), 'Expected framework validation error');
         }
@@ -82,14 +82,14 @@ private class ElaroGraphIndexerTest {
         Map<String, String> results = ElaroGraphIndexer.indexChangeBulk(inputs);
         Test.stopTest();
         
-        System.assertEquals(200, results.size(), 'Should process all 200 records');
+        Assert.areEqual(200, results.size(), 'Should process all 200 records');
         
         // Verify nodes were created
         List<Elaro_Compliance_Graph__b> nodes = [
             SELECT Graph_Node_Id__c FROM Elaro_Compliance_Graph__b
             WHERE Entity_Type__c = 'PERMISSION_SET'
         ];
-        System.assertEquals(200, nodes.size(), 'Should create 200 graph nodes');
+        Assert.areEqual(200, nodes.size(), 'Should create 200 graph nodes');
     }
     
     @IsTest
@@ -120,7 +120,7 @@ private class ElaroGraphIndexerTest {
         Map<String, String> results = ElaroGraphIndexer.indexChangeBulk(inputs);
         Test.stopTest();
         
-        System.assertEquals(30, results.size(), 'Should process all 30 records with mixed frameworks');
+        Assert.areEqual(30, results.size(), 'Should process all 30 records with mixed frameworks');
     }
     
     @IsTest
@@ -139,7 +139,7 @@ private class ElaroGraphIndexerTest {
             Test.startTest();
             try {
                 ElaroGraphIndexer.indexChange('FLOW', 'NonExistentFlowId', null, 'SOC2');
-                System.assert(false, 'Should have thrown exception for non-existent flow');
+                Assert.fail( 'Should have thrown exception for non-existent flow');
             } catch (Exception e) {
                 System.assert(e.getMessage().contains('FlowDefinitionView not found') || 
                              e.getMessage().contains('failed'), 
@@ -153,15 +153,15 @@ private class ElaroGraphIndexerTest {
             String nodeHash = ElaroGraphIndexer.indexChange('FLOW', testFlow.DurableId, null, 'SOC2');
             Test.stopTest();
             
-            System.assertNotEquals(null, nodeHash, 'Should return node hash for FLOW entity');
+            Assert.areNotEqual(null, nodeHash, 'Should return node hash for FLOW entity');
             
             List<Elaro_Compliance_Graph__b> nodes = [
                 SELECT Graph_Node_Id__c, Entity_Type__c, Risk_Score__c
                 FROM Elaro_Compliance_Graph__b
                 WHERE Graph_Node_Id__c = :nodeHash
             ];
-            System.assertEquals(1, nodes.size(), 'Should create one node for FLOW');
-            System.assertEquals('FLOW', nodes[0].Entity_Type__c, 'Entity type should be FLOW');
+            Assert.areEqual(1, nodes.size(), 'Should create one node for FLOW');
+            Assert.areEqual('FLOW', nodes[0].Entity_Type__c, 'Entity type should be FLOW');
         }
     }
     
@@ -194,7 +194,7 @@ private class ElaroGraphIndexerTest {
             WHERE Graph_Node_Id__c IN :new Set<String>{nodeHash1, nodeHash2, nodeHash3}
         ];
         
-        System.assertEquals(3, nodes.size(), 'Should create 3 nodes');
+        Assert.areEqual(3, nodes.size(), 'Should create 3 nodes');
         
         // Verify all nodes have valid drift categories
         Set<String> validCategories = new Set<String>{
@@ -203,7 +203,7 @@ private class ElaroGraphIndexerTest {
         for (Elaro_Compliance_Graph__b node : nodes) {
             System.assert(validCategories.contains(node.Drift_Category__c), 
                          'Node should have valid drift category: ' + node.Drift_Category__c);
-            System.assertNotEquals(null, node.Risk_Score__c, 'Risk score should not be null');
+            Assert.areNotEqual(null, node.Risk_Score__c, 'Risk score should not be null');
         }
     }
     
@@ -231,7 +231,7 @@ private class ElaroGraphIndexerTest {
             WHERE Graph_Node_Id__c = :nodeHash
         ];
         
-        System.assertEquals(1, nodes.size(), 'Should create one node');
+        Assert.areEqual(1, nodes.size(), 'Should create one node');
         
         // Fallback risk score should be BASE_RISK_SCORE (3.0) or higher
         // Since objectPermissionCount is added, score should be at least 3.0

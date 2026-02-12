@@ -33,7 +33,7 @@ public class SOC2DataRetentionServiceTest {
         String frameworkName = service.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('SOC2', frameworkName, 'Framework name should be SOC2');
+        Assert.areEqual('SOC2', frameworkName, 'Framework name should be SOC2');
     }
 
     @isTest
@@ -43,9 +43,9 @@ public class SOC2DataRetentionServiceTest {
             SOC2DataRetentionService.evaluateRetentionPolicies();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(null, result.evaluationDate, 'Evaluation date should be set');
-        System.assertNotEquals(null, result.objectResults, 'Object results should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result.evaluationDate, 'Evaluation date should be set');
+        Assert.areNotEqual(null, result.objectResults, 'Object results should not be null');
         System.assert(result.totalObjects > 0, 'Should evaluate at least one object');
     }
 
@@ -55,7 +55,7 @@ public class SOC2DataRetentionServiceTest {
         List<String> objectsWithoutRetention = SOC2DataRetentionService.getObjectsWithoutRetention();
         Test.stopTest();
 
-        System.assertNotEquals(null, objectsWithoutRetention, 'Result should not be null');
+        Assert.areNotEqual(null, objectsWithoutRetention, 'Result should not be null');
         // The result depends on org configuration
     }
 
@@ -66,7 +66,7 @@ public class SOC2DataRetentionServiceTest {
             SOC2DataRetentionService.getRetentionViolations();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations list should not be null');
+        Assert.areNotEqual(null, violations, 'Violations list should not be null');
     }
 
     @isTest
@@ -77,7 +77,7 @@ public class SOC2DataRetentionServiceTest {
         List<ComplianceServiceBase.Violation> violations = service.getViolations();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations should not be null');
+        Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
     @isTest
@@ -115,7 +115,7 @@ public class SOC2DataRetentionServiceTest {
         Test.stopTest();
 
         // Currently returns null as placeholder
-        System.assertEquals(null, jobId, 'Job ID should be null (placeholder implementation)');
+        Assert.areEqual(null, jobId, 'Job ID should be null (placeholder implementation)');
     }
 
     @isTest
@@ -138,6 +138,6 @@ public class SOC2DataRetentionServiceTest {
             SOC2DataRetentionService.evaluateRetentionPolicies();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null for bulk test');
+        Assert.areNotEqual(null, result, 'Result should not be null for bulk test');
     }
 }

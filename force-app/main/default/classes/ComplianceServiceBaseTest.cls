@@ -196,7 +196,7 @@ private class ComplianceServiceBaseTest {
         String name = service.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('HIPAA', name, 'Framework name should be HIPAA for HIPAASecurityRuleService');
+        Assert.areEqual('HIPAA', name, 'Framework name should be HIPAA for HIPAASecurityRuleService');
     }
 
     // =============================================
@@ -216,12 +216,12 @@ private class ComplianceServiceBaseTest {
         );
         Test.stopTest();
 
-        System.assertEquals('Test Title', violation.title, 'Title should match');
-        System.assertEquals('Test Description', violation.description, 'Description should match');
-        System.assertEquals('HIGH', violation.severity, 'Severity should match');
-        System.assertEquals('164.312(a)', violation.policyReference, 'Policy reference should match');
-        System.assertEquals('Fix the issue', violation.remediation, 'Remediation should match');
-        System.assertEquals(8.5, violation.riskScore, 'Risk score should match');
+        Assert.areEqual('Test Title', violation.title, 'Title should match');
+        Assert.areEqual('Test Description', violation.description, 'Description should match');
+        Assert.areEqual('HIGH', violation.severity, 'Severity should match');
+        Assert.areEqual('164.312(a)', violation.policyReference, 'Policy reference should match');
+        Assert.areEqual('Fix the issue', violation.remediation, 'Remediation should match');
+        Assert.areEqual(8.5, violation.riskScore, 'Risk score should match');
     }
 
     @IsTest
@@ -235,8 +235,8 @@ private class ComplianceServiceBaseTest {
         violation.entityId = '0PSxx000000test';
         Test.stopTest();
 
-        System.assertEquals('PERMISSION_SET', violation.entityType, 'Entity type should match');
-        System.assertEquals('0PSxx000000test', violation.entityId, 'Entity ID should match');
+        Assert.areEqual('PERMISSION_SET', violation.entityType, 'Entity type should match');
+        Assert.areEqual('0PSxx000000test', violation.entityId, 'Entity ID should match');
     }
 
     // =============================================
@@ -249,7 +249,7 @@ private class ComplianceServiceBaseTest {
         try {
             throw new ComplianceServiceBase.ComplianceServiceException('Test error message');
         } catch (ComplianceServiceBase.ComplianceServiceException e) {
-            System.assertEquals('Test error message', e.getMessage(), 'Exception message should match');
+            Assert.areEqual('Test error message', e.getMessage(), 'Exception message should match');
         }
         Test.stopTest();
     }

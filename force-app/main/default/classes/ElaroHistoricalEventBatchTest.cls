@@ -16,7 +16,7 @@ private class ElaroHistoricalEventBatchTest {
         Id batchId = Database.executeBatch(batch, 10);
         Test.stopTest();
         
-        System.assertNotEquals(null, batchId, 'Batch should return job ID');
+        Assert.areNotEqual(null, batchId, 'Batch should return job ID');
         
         // Verify batch completed
         AsyncApexJob job = [
@@ -24,7 +24,7 @@ private class ElaroHistoricalEventBatchTest {
             FROM AsyncApexJob
             WHERE Id = :batchId
         ];
-        System.assertEquals('Completed', job.Status, 'Batch should complete');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete');
     }
     
     @isTest
@@ -43,7 +43,7 @@ private class ElaroHistoricalEventBatchTest {
             FROM AsyncApexJob
             WHERE Id = :batchId
         ];
-        System.assertEquals('Completed', job.Status, 'Batch should complete even with no data');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete even with no data');
     }
     
     @isTest
@@ -91,7 +91,7 @@ private class ElaroHistoricalEventBatchTest {
             FROM AsyncApexJob
             WHERE Id = :batchId
         ];
-        System.assertEquals(0, job.NumberOfErrors, 'Batch should have no errors');
+        Assert.areEqual(0, job.NumberOfErrors, 'Batch should have no errors');
     }
     
     @isTest
@@ -106,10 +106,10 @@ private class ElaroHistoricalEventBatchTest {
         Map&lt;String, Object&gt; stats = batch.getStatistics();
         Test.stopTest();
         
-        System.assertEquals('Login', stats.get('eventType'), 'Should return event type');
-        System.assertEquals(0, stats.get('filesProcessed'), 'Should have 0 files processed initially');
-        System.assertEquals(0, stats.get('eventsProcessed'), 'Should have 0 events processed initially');
-        System.assertEquals(0, stats.get('errors'), 'Should have 0 errors initially');
+        Assert.areEqual('Login', stats.get('eventType'), 'Should return event type');
+        Assert.areEqual(0, stats.get('filesProcessed'), 'Should have 0 files processed initially');
+        Assert.areEqual(0, stats.get('eventsProcessed'), 'Should have 0 events processed initially');
+        Assert.areEqual(0, stats.get('errors'), 'Should have 0 errors initially');
     }
     
     @isTest
@@ -124,7 +124,7 @@ private class ElaroHistoricalEventBatchTest {
         Database.QueryLocator locator = batch.start(null);
         Test.stopTest();
         
-        System.assertNotEquals(null, locator, 'Should return query locator');
+        Assert.areNotEqual(null, locator, 'Should return query locator');
     }
     
     @isTest
@@ -142,7 +142,7 @@ private class ElaroHistoricalEventBatchTest {
         
         // Should not throw exception
         Map&lt;String, Object&gt; stats = batch.getStatistics();
-        System.assertEquals(0, stats.get('filesProcessed'), 'Should handle empty scope');
+        Assert.areEqual(0, stats.get('filesProcessed'), 'Should handle empty scope');
     }
     
     @isTest
@@ -158,7 +158,7 @@ private class ElaroHistoricalEventBatchTest {
         Test.stopTest();
         
         // Should not throw exception
-        System.assert(true, 'Finish method should complete');
+        Assert.isTrue(true, 'Finish method should complete');
     }
     
     @isTest
@@ -180,7 +180,7 @@ private class ElaroHistoricalEventBatchTest {
             FROM AsyncApexJob
             WHERE Id = :batchId
         ];
-        System.assertEquals('Completed', job.Status, 'Batch should complete');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete');
     }
     
     @isTest
@@ -213,7 +213,7 @@ private class ElaroHistoricalEventBatchTest {
         ];
         
         for (AsyncApexJob job : jobs) {
-            System.assertEquals('Completed', job.Status, 'All batches should complete');
+            Assert.areEqual('Completed', job.Status, 'All batches should complete');
         }
     }
     
@@ -240,6 +240,6 @@ private class ElaroHistoricalEventBatchTest {
         }
         Test.stopTest();
         
-        System.assert(true, 'Should handle all event types');
+        Assert.isTrue(true, 'Should handle all event types');
     }
 }

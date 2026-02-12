@@ -16,7 +16,7 @@ public with sharing class RetentionEnforcementBatch implements Database.Batchabl
             SELECT Id, Activity_Name__c, Retention_Period__c, Legal_Basis__c
             FROM Data_Processing_Activity__c
             WHERE Retention_Period__c != null
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]);
     }
     

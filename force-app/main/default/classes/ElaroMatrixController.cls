@@ -6,7 +6,7 @@
  * - Object whitelisting
  * - Field validation against schema
  * - Aggregate function whitelisting
- * - WITH SECURITY_ENFORCED
+ * - WITH USER_MODE
  * - Group count estimation to prevent limit errors
  * - Automatic fallback to summary objects
  *
@@ -304,14 +304,14 @@ public with sharing class ElaroMatrixController {
             // Count distinct row values
             String rowCountQuery = 'SELECT COUNT_DISTINCT(' + rowField + ') distinctCount ' +
                                    'FROM ' + cfg.objectName + baseFilter +
-                                   ' WITH SECURITY_ENFORCED';
+                                   ' WITH USER_MODE';
             List<AggregateResult> rowResults = Database.query(rowCountQuery);
             Integer rowCount = rowResults.isEmpty() ? 0 : (Integer)rowResults[0].get('distinctCount');
 
             // Count distinct column values
             String colCountQuery = 'SELECT COUNT_DISTINCT(' + colField + ') distinctCount ' +
                                    'FROM ' + cfg.objectName + baseFilter +
-                                   ' WITH SECURITY_ENFORCED';
+                                   ' WITH USER_MODE';
             List<AggregateResult> colResults = Database.query(colCountQuery);
             Integer colCount = colResults.isEmpty() ? 0 : (Integer)colResults[0].get('distinctCount');
 
@@ -345,7 +345,7 @@ public with sharing class ElaroMatrixController {
         }
 
         soql += ' GROUP BY ' + rowField + ', ' + colField +
-                ' WITH SECURITY_ENFORCED' +
+                ' WITH USER_MODE' +
                 ' LIMIT ' + MAX_QUERY_ROWS;
 
         List<AggregateResult> results;
@@ -384,7 +384,7 @@ public with sharing class ElaroMatrixController {
                              'Metric_Value__c metricValue ' +
                       'FROM ' + summaryObjectName +
                       ' WHERE Summary_Type__c = :summaryType' +
-                      ' WITH SECURITY_ENFORCED' +
+                      ' WITH USER_MODE' +
                       ' LIMIT ' + MAX_QUERY_ROWS;
 
         String summaryType = cfg.rowField + '_' + cfg.columnField;

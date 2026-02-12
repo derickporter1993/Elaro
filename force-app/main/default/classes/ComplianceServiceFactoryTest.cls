@@ -17,7 +17,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return HIPAA service');
+        Assert.areNotEqual(null, service, 'Should return HIPAA service');
         System.assert(service instanceof ElaroHIPAAComplianceService,
             'Should return correct service type');
     }
@@ -30,7 +30,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return SOC2 service');
+        Assert.areNotEqual(null, service, 'Should return SOC2 service');
         System.assert(service instanceof ElaroSOC2ComplianceService,
             'Should return correct service type');
     }
@@ -43,7 +43,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return GDPR service');
+        Assert.areNotEqual(null, service, 'Should return GDPR service');
         System.assert(service instanceof ElaroGDPRComplianceService,
             'Should return correct service type');
     }
@@ -56,7 +56,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return CCPA service');
+        Assert.areNotEqual(null, service, 'Should return CCPA service');
         System.assert(service instanceof ElaroCCPAComplianceService,
             'Should return correct service type');
     }
@@ -69,7 +69,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return PCI-DSS service');
+        Assert.areNotEqual(null, service, 'Should return PCI-DSS service');
         System.assert(service instanceof ElaroPCIDSSComplianceService,
             'Should return correct service type');
     }
@@ -85,7 +85,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(service1, service2, 'Should return same cached instance');
+        Assert.areEqual(service1, service2, 'Should return same cached instance');
     }
 
     @IsTest
@@ -94,7 +94,7 @@ private class ComplianceServiceFactoryTest {
 
         try {
             ComplianceServiceFactory.getService('');
-            System.assert(false, 'Should throw exception for blank framework');
+            Assert.fail( 'Should throw exception for blank framework');
         } catch (ComplianceServiceFactory.ComplianceServiceException e) {
             System.assert(e.getMessage().contains('blank'),
                 'Should mention blank in error message');
@@ -109,9 +109,9 @@ private class ComplianceServiceFactoryTest {
 
         try {
             ComplianceServiceFactory.getService(null);
-            System.assert(false, 'Should throw exception for null framework');
+            Assert.fail( 'Should throw exception for null framework');
         } catch (ComplianceServiceFactory.ComplianceServiceException e) {
-            System.assertNotEquals(null, e, 'Should throw exception');
+            Assert.areNotEqual(null, e, 'Should throw exception');
         }
 
         Test.stopTest();
@@ -125,7 +125,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return SOC2 access service');
+        Assert.areNotEqual(null, service, 'Should return SOC2 access service');
     }
 
     @IsTest
@@ -136,7 +136,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return HIPAA access service adapter');
+        Assert.areNotEqual(null, service, 'Should return HIPAA access service adapter');
     }
 
     @IsTest
@@ -147,7 +147,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(null, service, 'Should return null for unsupported framework');
+        Assert.areEqual(null, service, 'Should return null for unsupported framework');
     }
 
     @IsTest
@@ -158,7 +158,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return HIPAA breach service');
+        Assert.areNotEqual(null, service, 'Should return HIPAA breach service');
     }
 
     @IsTest
@@ -169,7 +169,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, service, 'Should return SOC2 incident service');
+        Assert.areNotEqual(null, service, 'Should return SOC2 incident service');
     }
 
     @IsTest
@@ -180,7 +180,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(null, service, 'Should return null for unsupported framework');
+        Assert.areEqual(null, service, 'Should return null for unsupported framework');
     }
 
     @IsTest
@@ -191,7 +191,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, frameworks, 'Should return supported frameworks');
+        Assert.areNotEqual(null, frameworks, 'Should return supported frameworks');
         System.assert(frameworks.contains('HIPAA'), 'Should include HIPAA');
         System.assert(frameworks.contains('SOC2'), 'Should include SOC2');
         System.assert(frameworks.contains('GDPR'), 'Should include GDPR');
@@ -207,7 +207,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(true, isSupported, 'HIPAA should be supported');
+        Assert.areEqual(true, isSupported, 'HIPAA should be supported');
     }
 
     @IsTest
@@ -218,7 +218,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(false, isSupported, 'Invalid framework should not be supported');
+        Assert.areEqual(false, isSupported, 'Invalid framework should not be supported');
     }
 
     @IsTest
@@ -229,7 +229,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(false, isSupported, 'Null framework should not be supported');
+        Assert.areEqual(false, isSupported, 'Null framework should not be supported');
     }
 
     @IsTest
@@ -240,7 +240,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals(true, isSupported, 'Framework check should be case-insensitive');
+        Assert.areEqual(true, isSupported, 'Framework check should be case-insensitive');
     }
 
     @IsTest
@@ -252,8 +252,8 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, config, 'Should return framework config');
-        System.assertEquals('HIPAA', config.frameworkCode, 'Framework code should be set');
+        Assert.areNotEqual(null, config, 'Should return framework config');
+        Assert.areEqual('HIPAA', config.frameworkCode, 'Framework code should be set');
     }
 
     @IsTest
@@ -261,11 +261,11 @@ private class ComplianceServiceFactoryTest {
         ComplianceServiceFactory.FrameworkConfig config =
             new ComplianceServiceFactory.FrameworkConfig('TEST');
 
-        System.assertEquals('TEST', config.frameworkCode, 'Framework code should be set');
-        System.assertEquals('TEST', config.displayName, 'Display name should default to code');
-        System.assertEquals(1.0, config.scoreMultiplier, 'Score multiplier should default to 1.0');
-        System.assertEquals(30, config.responseDeadlineDays, 'Response deadline should default to 30');
-        System.assertEquals(365, config.evidenceRetentionDays, 'Evidence retention should default to 365');
+        Assert.areEqual('TEST', config.frameworkCode, 'Framework code should be set');
+        Assert.areEqual('TEST', config.displayName, 'Display name should default to code');
+        Assert.areEqual(1.0, config.scoreMultiplier, 'Score multiplier should default to 1.0');
+        Assert.areEqual(30, config.responseDeadlineDays, 'Response deadline should default to 30');
+        Assert.areEqual(365, config.evidenceRetentionDays, 'Evidence retention should default to 365');
     }
 
     @IsTest
@@ -277,7 +277,7 @@ private class ComplianceServiceFactoryTest {
 
         Test.stopTest();
 
-        System.assertEquals('Test error', ex.getMessage(), 'Exception message should be set');
+        Assert.areEqual('Test error', ex.getMessage(), 'Exception message should be set');
     }
 
     @IsTest
@@ -291,7 +291,7 @@ private class ComplianceServiceFactoryTest {
 
         for (String framework : frameworks) {
             IRiskScoringService service = ComplianceServiceFactory.getService(framework);
-            System.assertNotEquals(null, service,
+            Assert.areNotEqual(null, service,
                 'Should return service for framework: ' + framework);
         }
 
@@ -313,6 +313,6 @@ private class ComplianceServiceFactoryTest {
 
         // Service should still work after cache operations
         IRiskScoringService service2 = ComplianceServiceFactory.getService('HIPAA');
-        System.assertNotEquals(null, service2, 'Should return service after cache operations');
+        Assert.areNotEqual(null, service2, 'Should return service after cache operations');
     }
 }

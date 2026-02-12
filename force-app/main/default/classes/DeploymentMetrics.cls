@@ -25,7 +25,7 @@ public with sharing class DeploymentMetrics {
         for (Deployment_Job__c r : [
             SELECT Name, Status__c, Started_On__c, Finished_On__c, Tests_Passed__c, Tests_Failed__c
             FROM Deployment_Job__c
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Started_On__c DESC
             LIMIT :recordLimit
         ]) {

@@ -29,7 +29,7 @@ public with sharing class ElaroDashboardController {
             soql += 'WHERE Framework__c = :framework ';
         }
 
-        soql += 'WITH SECURITY_ENFORCED ORDER BY CreatedDate DESC LIMIT 10';
+        soql += 'WITH USER_MODE ORDER BY CreatedDate DESC LIMIT 10';
 
         List<Elaro_Audit_Package__c> packages = new List<Elaro_Audit_Package__c>();
 
@@ -74,7 +74,7 @@ public with sharing class ElaroDashboardController {
                    Created_By__r.Name, LastModifiedDate
             FROM Elaro_Audit_Package__c
             WHERE Id = :packageId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 

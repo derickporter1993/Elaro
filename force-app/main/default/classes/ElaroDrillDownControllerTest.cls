@@ -31,9 +31,9 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(0, result.totalCount, 'Should return records');
-        System.assertNotEquals(null, result.columns, 'Columns should be set');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(0, result.totalCount, 'Should return records');
+        Assert.areNotEqual(null, result.columns, 'Columns should be set');
     }
 
     @isTest
@@ -57,7 +57,7 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -75,9 +75,9 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(5, result.currentOffset, 'Offset should match');
-        System.assertEquals(5, result.pageSize, 'Page size should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(5, result.currentOffset, 'Offset should match');
+        Assert.areEqual(5, result.pageSize, 'Page size should match');
     }
 
     @isTest
@@ -95,9 +95,9 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
         if (result.totalCount > 10) {
-            System.assertEquals(true, result.hasMore, 'Should indicate more records available');
+            Assert.areEqual(true, result.hasMore, 'Should indicate more records available');
         }
     }
 
@@ -176,7 +176,7 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -194,8 +194,8 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(0, result.currentOffset, 'Offset should default to 0');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(0, result.currentOffset, 'Offset should default to 0');
     }
 
     @isTest
@@ -215,7 +215,7 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -239,7 +239,7 @@ private class ElaroDrillDownControllerTest {
             ElaroDrillDownController.getRecords(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -256,7 +256,7 @@ private class ElaroDrillDownControllerTest {
         String csv = ElaroDrillDownController.exportToCSV(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, csv, 'CSV should not be null');
+        Assert.areNotEqual(null, csv, 'CSV should not be null');
         System.assert(csv.contains('Name'), 'CSV should contain headers');
     }
 
@@ -319,7 +319,7 @@ private class ElaroDrillDownControllerTest {
         String csv = ElaroDrillDownController.exportToCSV(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, csv, 'CSV should not be null');
+        Assert.areNotEqual(null, csv, 'CSV should not be null');
     }
 
     @isTest
@@ -341,7 +341,7 @@ private class ElaroDrillDownControllerTest {
         String csv = ElaroDrillDownController.exportToCSV(contextJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, csv, 'CSV should not be null');
+        Assert.areNotEqual(null, csv, 'CSV should not be null');
     }
 
     @isTest
@@ -357,10 +357,10 @@ private class ElaroDrillDownControllerTest {
         result.hasMore = true;
         result.objectLabel = 'Account';
 
-        System.assertNotEquals(null, result.records, 'Records should be set');
-        System.assertNotEquals(null, result.columns, 'Columns should be set');
-        System.assertEquals(10, result.totalCount, 'Total count should be set');
-        System.assertEquals(5, result.pageSize, 'Page size should be set');
+        Assert.areNotEqual(null, result.records, 'Records should be set');
+        Assert.areNotEqual(null, result.columns, 'Columns should be set');
+        Assert.areEqual(10, result.totalCount, 'Total count should be set');
+        Assert.areEqual(5, result.pageSize, 'Page size should be set');
     }
 
     @isTest
@@ -373,10 +373,10 @@ private class ElaroDrillDownControllerTest {
         col.type = 'text';
         col.sortable = true;
 
-        System.assertEquals('Name', col.fieldName, 'Field name should be set');
-        System.assertEquals('Account Name', col.label, 'Label should be set');
-        System.assertEquals('text', col.type, 'Type should be set');
-        System.assertEquals(true, col.sortable, 'Sortable should be set');
+        Assert.areEqual('Name', col.fieldName, 'Field name should be set');
+        Assert.areEqual('Account Name', col.label, 'Label should be set');
+        Assert.areEqual('text', col.type, 'Type should be set');
+        Assert.areEqual(true, col.sortable, 'Sortable should be set');
     }
 
     @isTest
@@ -392,7 +392,7 @@ private class ElaroDrillDownControllerTest {
         ctx.pageSize = 10;
         ctx.offset = 0;
 
-        System.assertEquals('Account', ctx.objectApiName, 'Object API name should be set');
+        Assert.areEqual('Account', ctx.objectApiName, 'Object API name should be set');
     }
 
     @isTest
@@ -404,8 +404,8 @@ private class ElaroDrillDownControllerTest {
         f.operator = '=';
         f.value = 'Test';
 
-        System.assertEquals('Name', f.field, 'Field should be set');
-        System.assertEquals('=', f.operator, 'Operator should be set');
-        System.assertEquals('Test', f.value, 'Value should be set');
+        Assert.areEqual('Name', f.field, 'Field should be set');
+        Assert.areEqual('=', f.operator, 'Operator should be set');
+        Assert.areEqual('Test', f.value, 'Value should be set');
     }
 }

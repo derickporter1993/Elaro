@@ -135,7 +135,7 @@ public with sharing class FINRAModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :pkgId
             AND (Evidence_Type__c = 'Supervision' OR Description__c LIKE '%supervis%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
         
@@ -157,7 +157,7 @@ public with sharing class FINRAModule implements IComplianceModule {
             SELECT COUNT() FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
             AND (Action LIKE '%email%' OR Action LIKE '%message%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
         
@@ -188,7 +188,7 @@ public with sharing class FINRAModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :pkgId
             AND (Evidence_Type__c = 'BCP' OR Description__c LIKE '%continuity%' OR Description__c LIKE '%disaster%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
         

@@ -26,7 +26,7 @@ public with sharing class SegregationOfDutiesService {
             SELECT PermissionSetId, PermissionSet.Name, PermissionSet.Label
             FROM PermissionSetAssignment
             WHERE AssigneeId = :userId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         Set<Id> permSetIds = new Set<Id>();
@@ -43,7 +43,7 @@ public with sharing class SegregationOfDutiesService {
                    PermissionsDelete, PermissionsModifyAllRecords, ParentId
             FROM ObjectPermissions
             WHERE ParentId IN :permSetIds
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         // Check for SoD conflicts (simplified - in production, use a rules engine)

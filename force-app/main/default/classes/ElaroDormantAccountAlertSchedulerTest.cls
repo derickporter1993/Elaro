@@ -19,8 +19,8 @@ private class ElaroDormantAccountAlertSchedulerTest {
 
         // Assert
         CronTrigger ct = [SELECT Id, CronExpression, State FROM CronTrigger WHERE Id = :jobId];
-        System.assertEquals(cronExpression, ct.CronExpression, 'Cron expression should match');
-        System.assertEquals('WAITING', ct.State, 'Job should be in WAITING state');
+        Assert.areEqual(cronExpression, ct.CronExpression, 'Cron expression should match');
+        Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
     @isTest
@@ -31,9 +31,9 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
         List<CronTrigger> jobs = [SELECT Id FROM CronTrigger WHERE Id = :jobId];
-        System.assertEquals(1, jobs.size(), 'Scheduled job should exist');
+        Assert.areEqual(1, jobs.size(), 'Scheduled job should exist');
     }
 
     @isTest
@@ -47,7 +47,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Test.stopTest();
 
         // Assert - method should complete without error
-        System.assert(true, 'Execute method should complete successfully');
+        Assert.isTrue(true, 'Execute method should complete successfully');
     }
 
     @isTest
@@ -61,7 +61,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assert(true, 'Scheduler should handle case with no dormant users');
+        Assert.isTrue(true, 'Scheduler should handle case with no dormant users');
     }
 
     @isTest
@@ -89,10 +89,10 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Test.startTest();
         try {
             scheduler.execute(null);
-            System.assert(true, 'Scheduler executed without throwing exception');
+            Assert.isTrue(true, 'Scheduler executed without throwing exception');
         } catch (Exception e) {
             // Error handling is expected to log and notify
-            System.assert(true, 'Scheduler handles errors gracefully');
+            Assert.isTrue(true, 'Scheduler handles errors gracefully');
         }
         Test.stopTest();
     }

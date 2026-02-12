@@ -90,16 +90,16 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation(suggestion.Id);
         Test.stopTest();
 
-        System.assertEquals(true, result.success, 'Execution should succeed');
-        System.assertNotEquals(null, result.message, 'Message should be set');
-        System.assertEquals(true, result.requiresDeployment, 'Should require deployment');
+        Assert.areEqual(true, result.success, 'Execution should succeed');
+        Assert.areNotEqual(null, result.message, 'Message should be set');
+        Assert.areEqual(true, result.requiresDeployment, 'Should require deployment');
 
         // Verify suggestion status updated
         Remediation_Suggestion__c updated = [SELECT Status__c, Applied_At__c, Applied_By__c
                                               FROM Remediation_Suggestion__c WHERE Id = :suggestion.Id];
-        System.assertEquals('APPLIED', updated.Status__c, 'Status should be APPLIED');
-        System.assertNotEquals(null, updated.Applied_At__c, 'Applied at should be set');
-        System.assertEquals(UserInfo.getUserId(), updated.Applied_By__c, 'Applied by should be current user');
+        Assert.areEqual('APPLIED', updated.Status__c, 'Status should be APPLIED');
+        Assert.areNotEqual(null, updated.Applied_At__c, 'Applied at should be set');
+        Assert.areEqual(UserInfo.getUserId(), updated.Applied_By__c, 'Applied by should be current user');
     }
 
     @isTest
@@ -114,7 +114,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation(suggestion.Id);
         Test.stopTest();
 
-        System.assertEquals(false, result.success, 'Execution should fail');
+        Assert.areEqual(false, result.success, 'Execution should fail');
         System.assert(result.errorMessage.contains('approved'), 'Error should mention approval');
     }
 
@@ -130,7 +130,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation(suggestion.Id);
         Test.stopTest();
 
-        System.assertEquals(false, result.success, 'Execution should fail');
+        Assert.areEqual(false, result.success, 'Execution should fail');
         System.assert(result.errorMessage.contains('not available'), 'Error should mention auto-remediation not available');
     }
 
@@ -140,7 +140,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation('a00000000000000AAA');
         Test.stopTest();
 
-        System.assertEquals(false, result.success, 'Execution should fail');
+        Assert.areEqual(false, result.success, 'Execution should fail');
         System.assert(result.errorMessage.contains('not found'), 'Error should mention not found');
     }
 
@@ -159,14 +159,14 @@ private class RemediationExecutorTest {
         // Verify suggestion status
         Remediation_Suggestion__c updated = [SELECT Status__c, Applied_At__c, Implementation_Steps__c
                                               FROM Remediation_Suggestion__c WHERE Id = :suggestion.Id];
-        System.assertEquals('APPLIED', updated.Status__c, 'Status should be APPLIED');
+        Assert.areEqual('APPLIED', updated.Status__c, 'Status should be APPLIED');
         System.assert(updated.Implementation_Steps__c.contains('Manual Implementation Notes'), 'Notes should be appended');
 
         // Verify gap status
         Compliance_Gap__c gap = [SELECT Status__c, Actual_Remediation_Date__c
                                   FROM Compliance_Gap__c WHERE Id = :suggestion.Compliance_Gap__c];
-        System.assertEquals('REMEDIATED', gap.Status__c, 'Gap should be remediated');
-        System.assertEquals(Date.today(), gap.Actual_Remediation_Date__c, 'Remediation date should be today');
+        Assert.areEqual('REMEDIATED', gap.Status__c, 'Gap should be remediated');
+        Assert.areEqual(Date.today(), gap.Actual_Remediation_Date__c, 'Remediation date should be today');
     }
 
     @isTest
@@ -180,7 +180,7 @@ private class RemediationExecutorTest {
         Test.startTest();
         try {
             RemediationExecutor.markAsManuallyApplied(suggestion.Id, 'Test notes');
-            System.assert(false, 'Expected exception for non-approved suggestion');
+            Assert.fail( 'Expected exception for non-approved suggestion');
         } catch (RemediationSuggestionService.RemediationException e) {
             System.assert(e.getMessage().contains('approved'), 'Error should mention approval');
         }
@@ -192,7 +192,7 @@ private class RemediationExecutorTest {
         Test.startTest();
         try {
             RemediationExecutor.markAsManuallyApplied('a00000000000000AAA', 'Test notes');
-            System.assert(false, 'Expected exception for invalid ID');
+            Assert.fail( 'Expected exception for invalid ID');
         } catch (RemediationSuggestionService.RemediationException e) {
             System.assert(e.getMessage().contains('not found'), 'Error should mention not found');
         }
@@ -216,8 +216,8 @@ private class RemediationExecutorTest {
         System.assert(history.size() > 0, 'Should have execution history');
 
         RemediationExecutor.ExecutionHistory item = history[0];
-        System.assertNotEquals(null, item.suggestionId, 'Suggestion ID should be set');
-        System.assertEquals('APPLIED', item.status, 'Status should be APPLIED');
+        Assert.areNotEqual(null, item.suggestionId, 'Suggestion ID should be set');
+        Assert.areEqual('APPLIED', item.status, 'Status should be APPLIED');
     }
 
     @isTest
@@ -255,9 +255,9 @@ private class RemediationExecutorTest {
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(suggestionIds);
         Test.stopTest();
 
-        System.assertEquals(suggestionIds.size(), result.totalProcessed, 'Total processed should match');
+        Assert.areEqual(suggestionIds.size(), result.totalProcessed, 'Total processed should match');
         System.assert(result.successCount > 0, 'Should have successes');
-        System.assertNotEquals(null, result.results, 'Results list should be set');
+        Assert.areNotEqual(null, result.results, 'Results list should be set');
     }
 
     @isTest
@@ -269,9 +269,9 @@ private class RemediationExecutorTest {
         result.errorMessage = null;
         result.requiresDeployment = true;
 
-        System.assertEquals('test123', result.suggestionId, 'Suggestion ID should match');
-        System.assertEquals(true, result.success, 'Success should match');
-        System.assertEquals(true, result.requiresDeployment, 'Requires deployment should match');
+        Assert.areEqual('test123', result.suggestionId, 'Suggestion ID should match');
+        Assert.areEqual(true, result.success, 'Success should match');
+        Assert.areEqual(true, result.requiresDeployment, 'Requires deployment should match');
     }
 
     @isTest
@@ -287,8 +287,8 @@ private class RemediationExecutorTest {
         item.framework = 'SOX';
         item.gapName = 'GAP-00001';
 
-        System.assertEquals('REM-00001', item.suggestionName, 'Suggestion name should match');
-        System.assertEquals('APPLIED', item.status, 'Status should match');
+        Assert.areEqual('REM-00001', item.suggestionName, 'Suggestion name should match');
+        Assert.areEqual('APPLIED', item.status, 'Status should match');
     }
 
     @isTest
@@ -299,9 +299,9 @@ private class RemediationExecutorTest {
         result.failureCount = 2;
         result.results = new List<RemediationExecutor.RemediationResult>();
 
-        System.assertEquals(5, result.totalProcessed, 'Total should match');
-        System.assertEquals(3, result.successCount, 'Success count should match');
-        System.assertEquals(2, result.failureCount, 'Failure count should match');
+        Assert.areEqual(5, result.totalProcessed, 'Total should match');
+        Assert.areEqual(3, result.successCount, 'Success count should match');
+        Assert.areEqual(2, result.failureCount, 'Failure count should match');
     }
 
     @isTest
@@ -329,7 +329,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation(flsSuggestion.Id);
         Test.stopTest();
 
-        System.assertEquals(true, result.success, 'FLS remediation should succeed');
+        Assert.areEqual(true, result.success, 'FLS remediation should succeed');
         System.assert(result.message.contains('Field-level security'), 'Message should mention FLS');
     }
 
@@ -357,7 +357,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation(profileSuggestion.Id);
         Test.stopTest();
 
-        System.assertEquals(true, result.success, 'Profile remediation should succeed');
+        Assert.areEqual(true, result.success, 'Profile remediation should succeed');
         System.assert(result.message.contains('Profile update'), 'Message should mention profile');
     }
 
@@ -380,7 +380,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation(badSuggestion.Id);
         Test.stopTest();
 
-        System.assertEquals(false, result.success, 'Should fail with invalid payload');
+        Assert.areEqual(false, result.success, 'Should fail with invalid payload');
         System.assert(result.errorMessage.contains('Execution failed'), 'Error should mention execution failure');
     }
 
@@ -448,17 +448,17 @@ private class RemediationExecutorTest {
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(suggestionIds);
         Test.stopTest();
 
-        System.assertEquals(recordCount, result.totalProcessed, 'Should process all records');
-        System.assertEquals(recordCount, result.successCount, 'All should succeed');
-        System.assertEquals(0, result.failureCount, 'None should fail');
-        System.assertEquals(recordCount, result.results.size(), 'Should have result for each');
+        Assert.areEqual(recordCount, result.totalProcessed, 'Should process all records');
+        Assert.areEqual(recordCount, result.successCount, 'All should succeed');
+        Assert.areEqual(0, result.failureCount, 'None should fail');
+        Assert.areEqual(recordCount, result.results.size(), 'Should have result for each');
 
         // Verify suggestions were updated
         List<Remediation_Suggestion__c> updatedSuggestions = [
             SELECT Id, Status__c FROM Remediation_Suggestion__c
             WHERE Id IN :suggestionIds AND Status__c = 'APPLIED'
         ];
-        System.assertEquals(recordCount, updatedSuggestions.size(), 'All suggestions should be APPLIED');
+        Assert.areEqual(recordCount, updatedSuggestions.size(), 'All suggestions should be APPLIED');
 
         // Verify gaps were updated
         Set<Id> gapIds = new Set<Id>();
@@ -469,7 +469,7 @@ private class RemediationExecutorTest {
             SELECT Id, Status__c FROM Compliance_Gap__c
             WHERE Id IN :gapIds AND Status__c = 'REMEDIATED'
         ];
-        System.assertEquals(recordCount, updatedGaps.size(), 'All gaps should be REMEDIATED');
+        Assert.areEqual(recordCount, updatedGaps.size(), 'All gaps should be REMEDIATED');
     }
 
     @isTest
@@ -478,9 +478,9 @@ private class RemediationExecutorTest {
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(new List<String>());
         Test.stopTest();
 
-        System.assertEquals(0, result.totalProcessed, 'Should process zero records');
-        System.assertEquals(0, result.successCount, 'No successes');
-        System.assertEquals(0, result.failureCount, 'No failures');
+        Assert.areEqual(0, result.totalProcessed, 'Should process zero records');
+        Assert.areEqual(0, result.successCount, 'No successes');
+        Assert.areEqual(0, result.failureCount, 'No failures');
     }
 
     @isTest
@@ -489,7 +489,7 @@ private class RemediationExecutorTest {
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(null);
         Test.stopTest();
 
-        System.assertEquals(0, result.totalProcessed, 'Should process zero records');
+        Assert.areEqual(0, result.totalProcessed, 'Should process zero records');
     }
 
     @isTest
@@ -553,8 +553,8 @@ private class RemediationExecutorTest {
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(suggestionIds);
         Test.stopTest();
 
-        System.assertEquals(4, result.totalProcessed, 'Should process all 4');
-        System.assertEquals(1, result.successCount, 'One should succeed');
-        System.assertEquals(3, result.failureCount, 'Three should fail');
+        Assert.areEqual(4, result.totalProcessed, 'Should process all 4');
+        Assert.areEqual(1, result.successCount, 'One should succeed');
+        Assert.areEqual(3, result.failureCount, 'Three should fail');
     }
 }

@@ -67,7 +67,7 @@ private class HIPAAModuleTest {
         String name = module.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('HIPAA', name, 'Framework name should be HIPAA');
+        Assert.areEqual('HIPAA', name, 'Framework name should be HIPAA');
     }
 
     @IsTest
@@ -78,7 +78,7 @@ private class HIPAAModuleTest {
         String version = module.getFrameworkVersion();
         Test.stopTest();
 
-        System.assertEquals('2013', version, 'Framework version should be 2013');
+        Assert.areEqual('2013', version, 'Framework version should be 2013');
     }
 
     @IsTest
@@ -89,16 +89,16 @@ private class HIPAAModuleTest {
         List<IComplianceModule.Control> controls = module.getControls();
         Test.stopTest();
 
-        System.assertNotEquals(null, controls, 'Controls list should not be null');
+        Assert.areNotEqual(null, controls, 'Controls list should not be null');
         System.assert(controls.size() > 0, 'Should have at least one control');
 
         // Verify controls cover Administrative, Physical, and Technical safeguards
         Set<String> categories = new Set<String>();
         for (IComplianceModule.Control ctrl : controls) {
             categories.add(ctrl.category);
-            System.assertNotEquals(null, ctrl.code, 'Control code should not be null');
-            System.assertNotEquals(null, ctrl.name, 'Control name should not be null');
-            System.assertNotEquals(null, ctrl.severity, 'Control severity should not be null');
+            Assert.areNotEqual(null, ctrl.code, 'Control code should not be null');
+            Assert.areNotEqual(null, ctrl.name, 'Control name should not be null');
+            Assert.areNotEqual(null, ctrl.severity, 'Control severity should not be null');
         }
         System.assert(categories.contains('Administrative'), 'Should include Administrative safeguards');
         System.assert(categories.contains('Physical'), 'Should include Physical safeguards');
@@ -118,7 +118,7 @@ private class HIPAAModuleTest {
         Decimal score = module.calculateScore(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, score, 'Score should not be null');
+        Assert.areNotEqual(null, score, 'Score should not be null');
         System.assert(score >= 0, 'Score should be >= 0');
     }
 
@@ -130,7 +130,7 @@ private class HIPAAModuleTest {
         Decimal score = module.calculateScore(null);
         Test.stopTest();
 
-        System.assertEquals(0, score, 'Score should be 0 for null audit package');
+        Assert.areEqual(0, score, 'Score should be 0 for null audit package');
     }
 
     // =============================================
@@ -146,14 +146,14 @@ private class HIPAAModuleTest {
         List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, gaps, 'Gaps list should not be null');
+        Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
 
         // Verify gap structure
         for (IComplianceModule.Gap gap : gaps) {
-            System.assertNotEquals(null, gap.id, 'Gap id should not be null');
-            System.assertNotEquals(null, gap.controlCode, 'Gap controlCode should not be null');
-            System.assertNotEquals(null, gap.severity, 'Gap severity should not be null');
-            System.assertNotEquals(null, gap.recommendation, 'Gap recommendation should not be null');
+            Assert.areNotEqual(null, gap.id, 'Gap id should not be null');
+            Assert.areNotEqual(null, gap.controlCode, 'Gap controlCode should not be null');
+            Assert.areNotEqual(null, gap.severity, 'Gap severity should not be null');
+            Assert.areNotEqual(null, gap.recommendation, 'Gap recommendation should not be null');
         }
     }
 
@@ -170,9 +170,9 @@ private class HIPAAModuleTest {
         Blob report = module.generateReport(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, report, 'Report should not be null');
+        Assert.areNotEqual(null, report, 'Report should not be null');
         // In test context, it returns a mock blob
-        System.assertEquals('HIPAA Compliance Report', report.toString(), 'Should return test report content');
+        Assert.areEqual('HIPAA Compliance Report', report.toString(), 'Should return test report content');
     }
 
     // =============================================
@@ -187,9 +187,9 @@ private class HIPAAModuleTest {
         IComplianceModule.Control ctrl = module.getControlById('164.312(a)');
         Test.stopTest();
 
-        System.assertNotEquals(null, ctrl, 'Should find Access Control control');
-        System.assertEquals('164.312(a)', ctrl.code, 'Control code should match');
-        System.assertEquals('Access Control', ctrl.name, 'Control name should match');
+        Assert.areNotEqual(null, ctrl, 'Should find Access Control control');
+        Assert.areEqual('164.312(a)', ctrl.code, 'Control code should match');
+        Assert.areEqual('Access Control', ctrl.name, 'Control name should match');
     }
 
     @IsTest
@@ -200,7 +200,7 @@ private class HIPAAModuleTest {
         IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
-        System.assertEquals(null, ctrl, 'Should return null for nonexistent control');
+        Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
     }
 
     @IsTest
@@ -211,7 +211,7 @@ private class HIPAAModuleTest {
         Test.startTest();
         for (IComplianceModule.Control ctrl : controls) {
             IComplianceModule.Control found = module.getControlById(ctrl.code);
-            System.assertNotEquals(null, found, 'Should find control by code: ' + ctrl.code);
+            Assert.areNotEqual(null, found, 'Should find control by code: ' + ctrl.code);
         }
         Test.stopTest();
     }
@@ -232,10 +232,10 @@ private class HIPAAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('164.312(a)', result.controlId, 'Control ID should match');
-        System.assertNotEquals(null, result.status, 'Status should not be null');
-        System.assertNotEquals(null, result.finding, 'Finding should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('164.312(a)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result.status, 'Status should not be null');
+        Assert.areNotEqual(null, result.finding, 'Finding should not be null');
         System.assert(result.score >= 0 && result.score <= 100, 'Score should be between 0 and 100');
     }
 
@@ -251,8 +251,8 @@ private class HIPAAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('164.312(b)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('164.312(b)', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -267,10 +267,10 @@ private class HIPAAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('164.312(d)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('164.312(d)', result.controlId, 'Control ID should match');
         System.assert(result.passed, 'Authentication control should pass by default');
-        System.assertEquals(85, result.score, 'Score should be 85');
+        Assert.areEqual(85, result.score, 'Score should be 85');
     }
 
     @IsTest
@@ -285,11 +285,11 @@ private class HIPAAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('164.312(e)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('164.312(e)', result.controlId, 'Control ID should match');
         System.assert(result.passed, 'Transmission security should pass (TLS enforced)');
-        System.assertEquals(100, result.score, 'Score should be 100');
-        System.assertEquals('COMPLIANT', result.status, 'Status should be COMPLIANT');
+        Assert.areEqual(100, result.score, 'Score should be 100');
+        Assert.areEqual('COMPLIANT', result.status, 'Status should be COMPLIANT');
     }
 
     @IsTest
@@ -304,8 +304,8 @@ private class HIPAAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('164.308(a)(6)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('164.308(a)(6)', result.controlId, 'Control ID should match');
         System.assert(result.passed, 'Incident procedures should pass');
     }
 
@@ -322,8 +322,8 @@ private class HIPAAModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('164.308(a)(2)', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('164.308(a)(2)', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -338,8 +338,8 @@ private class HIPAAModuleTest {
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );
-            System.assertNotEquals(null, result, 'Result should not be null for: ' + ctrl.code);
-            System.assertNotEquals(null, result.controlId, 'Control ID should be set for: ' + ctrl.code);
+            Assert.areNotEqual(null, result, 'Result should not be null for: ' + ctrl.code);
+            Assert.areNotEqual(null, result.controlId, 'Control ID should be set for: ' + ctrl.code);
         }
         Test.stopTest();
     }
@@ -366,15 +366,15 @@ private class HIPAAModuleTest {
         List<IComplianceModule.Gap> gaps = module.identifyGaps(cleanPkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, gaps, 'Gaps list should not be null');
+        Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
         // Without evidence, more gaps should be identified
         System.assert(gaps.size() > 0, 'Should identify gaps when no evidence is present');
 
         // Verify gap properties
         for (IComplianceModule.Gap gap : gaps) {
             System.assert(gap.id.startsWith('GAP-'), 'Gap ID should start with GAP-');
-            System.assertNotEquals(null, gap.description, 'Gap description should not be null');
-            System.assertNotEquals(null, gap.riskScore, 'Gap risk score should not be null');
+            Assert.areNotEqual(null, gap.description, 'Gap description should not be null');
+            Assert.areNotEqual(null, gap.riskScore, 'Gap risk score should not be null');
         }
     }
 
@@ -399,7 +399,7 @@ private class HIPAAModuleTest {
         Decimal score = module.calculateScore(cleanPkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, score, 'Score should not be null even without evidence');
+        Assert.areNotEqual(null, score, 'Score should not be null even without evidence');
         System.assert(score >= 0, 'Score should be non-negative');
     }
 
@@ -430,7 +430,7 @@ private class HIPAAModuleTest {
             System.assert(score >= 0, 'Score should be non-negative for package: ' + pkg.Id);
 
             List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
-            System.assertNotEquals(null, gaps, 'Gaps should not be null for package: ' + pkg.Id);
+            Assert.areNotEqual(null, gaps, 'Gaps should not be null for package: ' + pkg.Id);
         }
         Test.stopTest();
     }

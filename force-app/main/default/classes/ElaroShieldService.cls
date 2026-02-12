@@ -72,7 +72,7 @@ public with sharing class ElaroShieldService {
                 WHERE EventType = :eventType
                 AND LogDate &gt;= :startDate
                 AND LogDate &lt;= :endDate
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY LogDate DESC
                 LIMIT 1000
             ];
@@ -99,7 +99,7 @@ public with sharing class ElaroShieldService {
                 SELECT Id, EventType, LogFile, LogFileLength
                 FROM EventLogFile
                 WHERE Id = :logFileId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -154,7 +154,7 @@ public with sharing class ElaroShieldService {
                     SELECT EventType
                     FROM EventLogFile
                     WHERE LogDate = LAST_N_DAYS:30
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                     GROUP BY EventType
                     LIMIT 50
                 ]) {
@@ -199,7 +199,7 @@ public with sharing class ElaroShieldService {
             // Check for Platform Encryption (TenantSecret object)
             try {
                 Integer tenantSecretCount = Database.countQuery(
-                    'SELECT COUNT() FROM TenantSecret WHERE Status = \'Active\' WITH SECURITY_ENFORCED'
+                    'SELECT COUNT() FROM TenantSecret WHERE Status = \'Active\' WITH USER_MODE'
                 );
                 status.put('platformEncryption', tenantSecretCount &gt; 0);
             } catch (Exception e) {

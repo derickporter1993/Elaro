@@ -35,7 +35,7 @@ private class ComplianceReportSchedulerTest {
         String jobId = ComplianceReportScheduler.scheduleReport('WEEKLY', recipients, 'ALL');
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
 
         // Verify job was scheduled
         List<CronTrigger> jobs = [
@@ -43,7 +43,7 @@ private class ComplianceReportSchedulerTest {
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals(1, jobs.size(), 'Should have one scheduled job');
+        Assert.areEqual(1, jobs.size(), 'Should have one scheduled job');
         System.assert(jobs[0].CronJobDetail.Name.contains('WEEKLY'), 'Job name should contain WEEKLY');
     }
 
@@ -58,7 +58,7 @@ private class ComplianceReportSchedulerTest {
         String jobId = ComplianceReportScheduler.scheduleReport('DAILY', recipients, 'HIPAA');
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
 
         CronTrigger job = [SELECT CronExpression FROM CronTrigger WHERE Id = :jobId];
         System.assert(job.CronExpression.contains('8 * * ?'), 'Should run at 8 AM daily');
@@ -75,7 +75,7 @@ private class ComplianceReportSchedulerTest {
         String jobId = ComplianceReportScheduler.scheduleReport('MONTHLY', recipients, 'SOC2');
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
 
         CronTrigger job = [SELECT CronExpression FROM CronTrigger WHERE Id = :jobId];
         System.assert(job.CronExpression.contains('8 1 * ?'), 'Should run on 1st of month');
@@ -97,9 +97,9 @@ private class ComplianceReportSchedulerTest {
         System.assert(reports.size() >= 1, 'Should have at least one scheduled report');
 
         ComplianceReportScheduler.ScheduledReport report = reports[0];
-        System.assertNotEquals(null, report.jobId, 'Job ID should not be null');
-        System.assertNotEquals(null, report.name, 'Name should not be null');
-        System.assertNotEquals(null, report.nextRun, 'Next run should not be null');
+        Assert.areNotEqual(null, report.jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, report.name, 'Name should not be null');
+        Assert.areNotEqual(null, report.nextRun, 'Next run should not be null');
     }
 
     /**
@@ -119,7 +119,7 @@ private class ComplianceReportSchedulerTest {
         List<CronTrigger> jobs = [
             SELECT Id FROM CronTrigger WHERE Id = :jobId
         ];
-        System.assertEquals(0, jobs.size(), 'Job should be cancelled');
+        Assert.areEqual(0, jobs.size(), 'Job should be cancelled');
     }
 
     /**
@@ -134,7 +134,7 @@ private class ComplianceReportSchedulerTest {
         ComplianceReportScheduler.sendTestReport('ALL', new List<String>{ 'test@example.com' });
         Test.stopTest();
 
-        System.assert(true, 'Test report should send without errors');
+        Assert.isTrue(true, 'Test report should send without errors');
     }
 
     /**
@@ -154,7 +154,7 @@ private class ComplianceReportSchedulerTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Job should be scheduled');
+        Assert.areNotEqual(null, jobId, 'Job should be scheduled');
     }
 
     /**
@@ -179,7 +179,7 @@ private class ComplianceReportSchedulerTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Parameterized scheduler should work');
+        Assert.areNotEqual(null, jobId, 'Parameterized scheduler should work');
     }
 
     /**
@@ -192,7 +192,7 @@ private class ComplianceReportSchedulerTest {
         Test.startTest();
         try {
             ComplianceReportScheduler.scheduleReport('INVALID', recipients, 'ALL');
-            System.assert(false, 'Should throw exception for invalid frequency');
+            Assert.fail( 'Should throw exception for invalid frequency');
         } catch (IllegalArgumentException e) {
             System.assert(e.getMessage().contains('Invalid frequency'), 'Should mention invalid frequency');
         }
@@ -207,7 +207,7 @@ private class ComplianceReportSchedulerTest {
         Test.startTest();
         try {
             ComplianceReportScheduler.scheduleReport('WEEKLY', new List<String>(), 'ALL');
-            System.assert(false, 'Should throw exception for no recipients');
+            Assert.fail( 'Should throw exception for no recipients');
         } catch (IllegalArgumentException e) {
             System.assert(e.getMessage().contains('recipient'), 'Should mention recipients');
         }
@@ -224,7 +224,7 @@ private class ComplianceReportSchedulerTest {
         Test.startTest();
         try {
             ComplianceReportScheduler.scheduleReport('WEEKLY', badEmails, 'ALL');
-            System.assert(false, 'Should throw exception for invalid emails');
+            Assert.fail( 'Should throw exception for invalid emails');
         } catch (IllegalArgumentException e) {
             System.assert(e.getMessage().contains('recipient'), 'Should mention recipients');
         }
@@ -241,7 +241,7 @@ private class ComplianceReportSchedulerTest {
         Test.startTest();
         try {
             ComplianceReportScheduler.scheduleReport('WEEKLY', recipients, 'INVALID_FRAMEWORK');
-            System.assert(false, 'Should throw exception for invalid framework');
+            Assert.fail( 'Should throw exception for invalid framework');
         } catch (IllegalArgumentException e) {
             System.assert(e.getMessage().contains('Invalid framework'), 'Should mention invalid framework');
         }
@@ -256,7 +256,7 @@ private class ComplianceReportSchedulerTest {
         Test.startTest();
         try {
             ComplianceReportScheduler.cancelScheduledReport(null);
-            System.assert(false, 'Should throw exception for null job ID');
+            Assert.fail( 'Should throw exception for null job ID');
         } catch (IllegalArgumentException e) {
             System.assert(e.getMessage().contains('Job ID'), 'Should mention job ID');
         }
@@ -288,7 +288,7 @@ private class ComplianceReportSchedulerTest {
 
         // Verify gaps exist
         Integer gapCount = [SELECT COUNT() FROM Compliance_Gap__c WHERE Name LIKE 'Bulk Gap%'];
-        System.assertEquals(200, gapCount, 'Should have 200 bulk gaps');
+        Assert.areEqual(200, gapCount, 'Should have 200 bulk gaps');
     }
 
     /**
@@ -297,7 +297,7 @@ private class ComplianceReportSchedulerTest {
     @IsTest
     static void testDefaultConstructor() {
         ComplianceReportScheduler scheduler = new ComplianceReportScheduler();
-        System.assertNotEquals(null, scheduler, 'Default constructor should work');
+        Assert.areNotEqual(null, scheduler, 'Default constructor should work');
     }
 
     /**

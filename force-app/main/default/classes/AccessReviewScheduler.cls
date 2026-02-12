@@ -19,17 +19,32 @@ public with sharing class AccessReviewScheduler implements Schedulable {
      * Schedulable execute method
      */
     public void execute(SchedulableContext ctx) {
-        // Run in future context to avoid governor limits
-        runAccessReviewAsync();
+        // Run in Queueable context for better error handling and monitoring
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new AccessReviewQueueable());
+        } else {
+            // Run synchronously in tests
+            performAccessReview();
+        }
     }
 
     /**
-     * Async method to perform access review
+     * Queueable implementation for access review processing
+     * Provides better error handling, chaining, and monitoring than @future
      */
-    @future
-    private static void runAccessReviewAsync() {
-        AccessReviewScheduler scheduler = new AccessReviewScheduler();
-        scheduler.performAccessReview();
+    public class AccessReviewQueueable implements Queueable {
+        public void execute(QueueableContext context) {
+            try {
+                AccessReviewScheduler scheduler = new AccessReviewScheduler();
+                scheduler.performAccessReview();
+                
+                ElaroLogger.info('AccessReviewScheduler.AccessReviewQueueable',
+                    'Successfully completed access review processing');
+            } catch (Exception e) {
+                ElaroLogger.error('AccessReviewScheduler.AccessReviewQueueable',
+                    e.getMessage(), e.getStackTraceString());
+            }
+        }
     }
 
     /**
@@ -79,7 +94,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             FROM Access_Review__c
             WHERE Review_Date__c >= :reviewCutoff
             AND Status__c IN ('Completed', 'Approved')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]) {
             if (review.User__c != null) {
                 recentlyReviewedUserIds.add(review.User__c);
@@ -95,7 +110,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             AND Id NOT IN :recentlyReviewedUserIds
             AND Profile.Name != 'Chatter Free User'
             AND Profile.Name != 'Chatter External User'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY LastLoginDate DESC NULLS LAST
             LIMIT 500
         ];
@@ -146,7 +161,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             FROM PermissionSetAssignment
             WHERE AssigneeId IN :userIds
             AND PermissionSet.IsOwnedByProfile = false
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         // Log permission set counts for review
@@ -248,7 +263,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             SELECT Id, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + JOB_NAME + '%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         for (CronTrigger job : jobs) {
@@ -266,7 +281,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             SELECT Id, CronJobDetail.Name, State, NextFireTime, PreviousFireTime
             FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + JOB_NAME + '%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         for (CronTrigger job : jobs) {

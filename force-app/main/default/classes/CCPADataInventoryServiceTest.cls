@@ -32,7 +32,7 @@ private class CCPADataInventoryServiceTest {
         Map<String, Object> result = service.categorizePersonalInfo(parameters);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Categorization should not be null');
+        Assert.areNotEqual(null, result, 'Categorization should not be null');
         System.assert(result.containsKey('categories'), 'Should include categories');
     }
     
@@ -49,7 +49,7 @@ private class CCPADataInventoryServiceTest {
         List<Map<String, Object>> sales = service.identifyDataSales(testContact.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, sales, 'Sales list should not be null');
+        Assert.areNotEqual(null, sales, 'Sales list should not be null');
     }
     
     @IsTest
@@ -59,7 +59,7 @@ private class CCPADataInventoryServiceTest {
         Map<String, Object> result = service.trackThirdPartySharing();
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Sharing data should not be null');
+        Assert.areNotEqual(null, result, 'Sharing data should not be null');
         System.assert(result.containsKey('totalRecipients'), 'Should include recipient count');
         System.assert(result.containsKey('recipientsWithDPA'), 'Should include DPA count');
     }
@@ -73,7 +73,7 @@ private class CCPADataInventoryServiceTest {
         CCPADataInventoryService service = new CCPADataInventoryService();
         try {
             Map<String, Object> evidence = service.collectEvidence(controlId, framework);
-            System.assertNotEquals(null, evidence, 'Evidence should not be null');
+            Assert.areNotEqual(null, evidence, 'Evidence should not be null');
         } catch (Exception e) {
             // May fail if control doesn't exist
             System.assert(e.getMessage().contains('Control not found') || e.getMessage().contains('required'), 
@@ -93,8 +93,8 @@ private class CCPADataInventoryServiceTest {
         Map<String, Object> classification = service.classifyDataCategories(dataFields);
         Test.stopTest();
         
-        System.assertNotEquals(null, classification, 'Classification should not be null');
-        System.assertEquals(4, classification.get('totalFields'), 'Should classify all fields');
+        Assert.areNotEqual(null, classification, 'Classification should not be null');
+        Assert.areEqual(4, classification.get('totalFields'), 'Should classify all fields');
     }
     
     @IsTest
@@ -107,7 +107,7 @@ private class CCPADataInventoryServiceTest {
         Map<String, Object> flowMap = service.mapDataFlows(sourceSystem, targetSystem);
         Test.stopTest();
         
-        System.assertEquals(sourceSystem, flowMap.get('sourceSystem'), 'Source system should match');
+        Assert.areEqual(sourceSystem, flowMap.get('sourceSystem'), 'Source system should match');
     }
     
     @IsTest
@@ -119,7 +119,7 @@ private class CCPADataInventoryServiceTest {
         Map<String, Object> report = (Map<String, Object>)service.generateEvidenceReport('Data Inventory', parameters);
         Test.stopTest();
         
-        System.assertNotEquals(null, report, 'Report should not be null');
+        Assert.areNotEqual(null, report, 'Report should not be null');
     }
     
     @IsTest
@@ -130,7 +130,7 @@ private class CCPADataInventoryServiceTest {
         CCPADataInventoryService service = new CCPADataInventoryService();
         try {
             service.generateEvidenceReport('INVALID', parameters);
-            System.assert(false, 'Should throw exception for invalid report type');
+            Assert.fail( 'Should throw exception for invalid report type');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Unsupported'), 'Should throw unsupported error');
         }
@@ -149,6 +149,6 @@ private class CCPADataInventoryServiceTest {
         Map<String, Object> classification = service.classifyDataCategories(dataFields);
         Test.stopTest();
         
-        System.assertEquals(200, classification.get('totalFields'), 'Should classify all fields');
+        Assert.areEqual(200, classification.get('totalFields'), 'Should classify all fields');
     }
 }

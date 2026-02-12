@@ -63,7 +63,7 @@ public with sharing class NaturalLanguageQueryService {
                 return result;
             }
             
-            // Add WITH SECURITY_ENFORCED to ensure FLS/CRUD enforcement
+            // Add WITH USER_MODE to ensure FLS/CRUD enforcement
             String secureSOQL = addSecurityEnforced(generatedSOQL);
             
             // Execute query with security enforcement
@@ -323,7 +323,7 @@ public with sharing class NaturalLanguageQueryService {
             countQuery = countQuery.replaceFirst('(?i)LIMIT\\s+\\d+', '');
             countQuery = countQuery.replaceFirst('(?i)ORDER BY.*', '');
             
-            // Add WITH SECURITY_ENFORCED for security
+            // Add WITH USER_MODE for security
             countQuery = addSecurityEnforced(countQuery);
             
             return Database.countQuery(countQuery);
@@ -333,7 +333,7 @@ public with sharing class NaturalLanguageQueryService {
     }
     
     /**
-     * @description Add WITH SECURITY_ENFORCED to SOQL query if not present
+     * @description Add WITH USER_MODE to SOQL query if not present
      */
     private static String addSecurityEnforced(String soql) {
         if (String.isBlank(soql)) {
@@ -342,16 +342,16 @@ public with sharing class NaturalLanguageQueryService {
         
         String upperSOQL = soql.toUpperCase();
         
-        // Remove existing WITH SECURITY_ENFORCED if present (case-insensitive)
+        // Remove existing WITH USER_MODE if present (case-insensitive)
         String cleaned = soql.replaceAll('(?i)\\s+WITH\\s+SECURITY_ENFORCED', '');
         
-        // Add WITH SECURITY_ENFORCED before any ORDER BY, LIMIT, or at end
+        // Add WITH USER_MODE before any ORDER BY, LIMIT, or at end
         if (cleaned.toUpperCase().contains('ORDER BY')) {
-            cleaned = cleaned.replaceFirst('(?i)(\\s+ORDER\\s+BY[^\\s]+(?:\\s+ASC|\\s+DESC)?(?:\\s*,\\s*[^\\s]+(?:\\s+ASC|\\s+DESC)?)*)', ' WITH SECURITY_ENFORCED$1');
+            cleaned = cleaned.replaceFirst('(?i)(\\s+ORDER\\s+BY[^\\s]+(?:\\s+ASC|\\s+DESC)?(?:\\s*,\\s*[^\\s]+(?:\\s+ASC|\\s+DESC)?)*)', ' WITH USER_MODE$1');
         } else if (cleaned.toUpperCase().contains('LIMIT')) {
-            cleaned = cleaned.replaceFirst('(?i)(\\s+LIMIT\\s+\\d+)', ' WITH SECURITY_ENFORCED$1');
+            cleaned = cleaned.replaceFirst('(?i)(\\s+LIMIT\\s+\\d+)', ' WITH USER_MODE$1');
         } else {
-            cleaned = cleaned + ' WITH SECURITY_ENFORCED';
+            cleaned = cleaned + ' WITH USER_MODE';
         }
         
         return cleaned;

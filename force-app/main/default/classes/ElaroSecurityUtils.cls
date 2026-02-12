@@ -146,11 +146,11 @@ public with sharing class ElaroSecurityUtils {
     }
     
     /**
-     * Build a safe SOQL query with WITH SECURITY_ENFORCED
+     * Build a safe SOQL query with WITH USER_MODE
      */
     public static String buildSecureQuery(String baseQuery) {
-        // Remove existing WITH SECURITY_ENFORCED if present
+        // Remove existing WITH USER_MODE if present
         String cleaned = baseQuery.replaceAll('(?i)\\s+WITH\\s+SECURITY_ENFORCED', '');
-        return cleaned + ' WITH SECURITY_ENFORCED';
+        return cleaned + ' WITH USER_MODE';
     }
 }

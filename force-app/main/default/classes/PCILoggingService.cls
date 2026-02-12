@@ -68,7 +68,7 @@ public with sharing class PCILoggingService extends ComplianceServiceBase {
                 SELECT Id, Action__c, Entity_Type__c, Timestamp__c, User__c
                 FROM Elaro_Audit_Log__c
                 WHERE Timestamp__c >= LAST_N_DAYS:7
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY Timestamp__c DESC
                 LIMIT 1000
             ];
@@ -145,7 +145,7 @@ public with sharing class PCILoggingService extends ComplianceServiceBase {
                 SELECT Id, Action__c, Timestamp__c
                 FROM Elaro_Audit_Log__c
                 WHERE Timestamp__c < :cutoffDate
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 10000
             ];
             

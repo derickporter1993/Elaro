@@ -115,7 +115,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             SELECT Id, UserId, LoginTime, SourceIp, Status, Application, Browser
             FROM LoginHistory
             WHERE LoginTime >= :startDate AND LoginTime <= :endDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY LoginTime DESC
             LIMIT 1000
         ];
@@ -150,7 +150,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             SELECT UserId, COUNT(Id) cnt, MAX(LoginTime) lastAccess
             FROM LoginHistory
             WHERE LoginTime >= :startTime
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             GROUP BY UserId
             ORDER BY COUNT(Id) DESC
             LIMIT 100
@@ -169,7 +169,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             SELECT Id, Name, Username, Profile.Name
             FROM User
             WHERE Id IN :userIds
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]);
 
         for (Id userId : userIds) {
@@ -269,7 +269,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
         insert cv;
 
         // Get ContentDocumentId
-        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
 
         service.logAuditEntry('HIPAA_Audit_Report_Generated', cv.ContentDocumentId,
             'Audit report generated for ' + startDate.format() + ' to ' + endDate.format());
@@ -292,7 +292,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
         List<SetupAuditTrail> oldest = [
             SELECT CreatedDate
             FROM SetupAuditTrail
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY CreatedDate ASC
             LIMIT 1
         ];
@@ -362,7 +362,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             SELECT UserId, COUNT(Id) cnt
             FROM LoginHistory
             WHERE LoginTime >= :last30Days
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             GROUP BY UserId
             HAVING COUNT(Id) > :SUSPICIOUS_ACCESS_THRESHOLD
         ];
@@ -372,7 +372,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             SELECT COUNT()
             FROM LoginHistory
             WHERE LoginTime >= :last30Days
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         return result;
@@ -388,7 +388,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             SELECT UserId, COUNT(Id) cnt
             FROM LoginHistory
             WHERE LoginTime >= :last7Days
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             GROUP BY UserId
             HAVING COUNT(Id) > :SUSPICIOUS_ACCESS_THRESHOLD
         ];
@@ -401,7 +401,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
         Map<Id, User> users = new Map<Id, User>();
         if (!userIds.isEmpty()) {
             users = new Map<Id, User>([
-                SELECT Id, Name FROM User WHERE Id IN :userIds WITH SECURITY_ENFORCED
+                SELECT Id, Name FROM User WHERE Id IN :userIds WITH USER_MODE
             ]);
         }
 
@@ -426,7 +426,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             FROM LoginHistory
             WHERE LoginTime >= :last7Days
             AND (HOUR_IN_DAY(LoginTime) < 6 OR HOUR_IN_DAY(LoginTime) > 22)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
 
@@ -441,7 +441,7 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
 
         // Get additional user names
         if (!userIds.isEmpty()) {
-            for (User u : [SELECT Id, Name FROM User WHERE Id IN :userIds WITH SECURITY_ENFORCED]) {
+            for (User u : [SELECT Id, Name FROM User WHERE Id IN :userIds WITH USER_MODE]) {
                 if (!users.containsKey(u.Id)) {
                     users.put(u.Id, u);
                 }

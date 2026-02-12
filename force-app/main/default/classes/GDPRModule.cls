@@ -155,7 +155,7 @@ public with sharing class GDPRModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :pkgId
             AND (Evidence_Type__c = 'DSR' OR Evidence_Type__c = 'Erasure' OR Description__c LIKE '%deletion%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
         
@@ -176,7 +176,7 @@ public with sharing class GDPRModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :pkgId
             AND (Evidence_Type__c = 'ROPA' OR Description__c LIKE '%record of processing%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
         
@@ -209,7 +209,7 @@ public with sharing class GDPRModule implements IComplianceModule {
             SELECT COUNT() FROM Elaro_Evidence_Item__c
             WHERE Audit_Package__c = :pkgId
             AND (Evidence_Type__c = 'BreachProcedure' OR Description__c LIKE '%breach notification%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 100
         ];
         

@@ -34,10 +34,10 @@ private class ElaroMatrixControllerTest {
         try {
             ElaroMatrixController.MatrixResult result =
                 ElaroMatrixController.executeMatrixQuery(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to security enforcement in test context
-            System.assert(true, 'Query may fail in test context');
+            Assert.isTrue(true, 'Query may fail in test context');
         }
         Test.stopTest();
     }
@@ -56,10 +56,10 @@ private class ElaroMatrixControllerTest {
         try {
             ElaroMatrixController.MatrixResult result =
                 ElaroMatrixController.executeMatrixQuery(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to security enforcement in test context
-            System.assert(true, 'Query may fail in test context');
+            Assert.isTrue(true, 'Query may fail in test context');
         }
         Test.stopTest();
     }
@@ -264,10 +264,10 @@ private class ElaroMatrixControllerTest {
         try {
             ElaroMatrixController.MatrixResult result =
                 ElaroMatrixController.executeMatrixQuery(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to security enforcement in test context
-            System.assert(true, 'Query may fail in test context');
+            Assert.isTrue(true, 'Query may fail in test context');
         }
         Test.stopTest();
     }
@@ -286,10 +286,10 @@ private class ElaroMatrixControllerTest {
         try {
             ElaroMatrixController.MatrixResult result =
                 ElaroMatrixController.executeMatrixQuery(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to security enforcement in test context
-            System.assert(true, 'Query may fail in test context');
+            Assert.isTrue(true, 'Query may fail in test context');
         }
         Test.stopTest();
     }
@@ -308,10 +308,10 @@ private class ElaroMatrixControllerTest {
         try {
             ElaroMatrixController.MatrixResult result =
                 ElaroMatrixController.executeMatrixQuery(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to security enforcement in test context
-            System.assert(true, 'Query may fail in test context');
+            Assert.isTrue(true, 'Query may fail in test context');
         }
         Test.stopTest();
     }
@@ -330,10 +330,10 @@ private class ElaroMatrixControllerTest {
         try {
             ElaroMatrixController.MatrixResult result =
                 ElaroMatrixController.executeMatrixQuery(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Query may fail due to security enforcement in test context
-            System.assert(true, 'Query may fail in test context');
+            Assert.isTrue(true, 'Query may fail in test context');
         }
         Test.stopTest();
     }
@@ -366,7 +366,7 @@ private class ElaroMatrixControllerTest {
             ElaroMatrixController.getDimensionFields('Account');
         Test.stopTest();
 
-        System.assertNotEquals(0, dimensions.size(), 'Should return dimension fields');
+        Assert.areNotEqual(0, dimensions.size(), 'Should return dimension fields');
     }
 
     @isTest
@@ -412,8 +412,8 @@ private class ElaroMatrixControllerTest {
         result.estimatedGroups = 5;
         result.usedSummaryFallback = false;
 
-        System.assertNotEquals(null, result.matrix, 'Matrix should be set');
-        System.assertEquals(100, result.grandTotal, 'Grand total should be set');
+        Assert.areNotEqual(null, result.matrix, 'Matrix should be set');
+        Assert.areEqual(100, result.grandTotal, 'Grand total should be set');
     }
 
     @isTest
@@ -425,9 +425,9 @@ private class ElaroMatrixControllerTest {
         field.label = 'Test Field';
         field.fieldType = 'PICKLIST';
 
-        System.assertEquals('TestField__c', field.apiName, 'API name should be set');
-        System.assertEquals('Test Field', field.label, 'Label should be set');
-        System.assertEquals('PICKLIST', field.fieldType, 'Field type should be set');
+        Assert.areEqual('TestField__c', field.apiName, 'API name should be set');
+        Assert.areEqual('Test Field', field.label, 'Label should be set');
+        Assert.areEqual('PICKLIST', field.fieldType, 'Field type should be set');
     }
 
     @isTest
@@ -441,7 +441,7 @@ private class ElaroMatrixControllerTest {
         cfg.aggregateExpression = 'COUNT(Id)';
         cfg.filters = '';
 
-        System.assertEquals('Account', cfg.objectName, 'Object name should be set');
-        System.assertEquals('Type', cfg.rowField, 'Row field should be set');
+        Assert.areEqual('Account', cfg.objectName, 'Object name should be set');
+        Assert.areEqual('Type', cfg.rowField, 'Row field should be set');
     }
 }

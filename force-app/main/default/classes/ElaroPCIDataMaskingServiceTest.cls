@@ -14,7 +14,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String masked = ElaroPCIDataMaskingService.maskCreditCard('4111111111111111');
         Test.stopTest();
 
-        System.assertEquals('****-****-****-1111', masked, 'Should show only last 4 digits');
+        Assert.areEqual('****-****-****-1111', masked, 'Should show only last 4 digits');
     }
 
     @IsTest
@@ -23,7 +23,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String masked = ElaroPCIDataMaskingService.maskCreditCard('4111-1111-1111-1111');
         Test.stopTest();
 
-        System.assertEquals('****-****-****-1111', masked, 'Should handle dashes');
+        Assert.areEqual('****-****-****-1111', masked, 'Should handle dashes');
     }
 
     @IsTest
@@ -32,7 +32,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String masked = ElaroPCIDataMaskingService.maskCreditCard('4111 1111 1111 1111');
         Test.stopTest();
 
-        System.assertEquals('****-****-****-1111', masked, 'Should handle spaces');
+        Assert.areEqual('****-****-****-1111', masked, 'Should handle spaces');
     }
 
     @IsTest
@@ -41,7 +41,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String masked = ElaroPCIDataMaskingService.maskCreditCard(null);
         Test.stopTest();
 
-        System.assertEquals('****-****-****-****', masked, 'Should return full mask for null');
+        Assert.areEqual('****-****-****-****', masked, 'Should return full mask for null');
     }
 
     @IsTest
@@ -50,7 +50,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String masked = ElaroPCIDataMaskingService.maskCreditCard('');
         Test.stopTest();
 
-        System.assertEquals('****-****-****-****', masked, 'Should return full mask for empty');
+        Assert.areEqual('****-****-****-****', masked, 'Should return full mask for empty');
     }
 
     @IsTest
@@ -59,7 +59,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String masked = ElaroPCIDataMaskingService.maskCreditCard('123');
         Test.stopTest();
 
-        System.assertEquals('****-****-****-****', masked, 'Should return full mask for short input');
+        Assert.areEqual('****-****-****-****', masked, 'Should return full mask for short input');
     }
 
     @IsTest
@@ -71,7 +71,7 @@ private class ElaroPCIDataMaskingServiceTest {
         );
         Test.stopTest();
 
-        System.assertEquals('****-******-*8431', masked, 'Should use Amex format');
+        Assert.areEqual('****-******-*8431', masked, 'Should use Amex format');
     }
 
     @IsTest
@@ -83,7 +83,7 @@ private class ElaroPCIDataMaskingServiceTest {
         );
         Test.stopTest();
 
-        System.assertEquals('****-****-****-1111', masked, 'Should use standard format');
+        Assert.areEqual('****-****-****-1111', masked, 'Should use standard format');
     }
 
     @IsTest
@@ -91,7 +91,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Test.startTest();
         try {
             ElaroPCIDataMaskingService.validateNoCVVStorage('123');
-            System.assert(false, 'Should throw PCIViolationException');
+            Assert.fail( 'Should throw PCIViolationException');
         } catch (ElaroPCIDataMaskingService.PCIViolationException e) {
             System.assert(e.getMessage().contains('PCI DSS Requirement 3.2'),
                 'Should mention PCI requirement');
@@ -104,9 +104,9 @@ private class ElaroPCIDataMaskingServiceTest {
         Test.startTest();
         try {
             ElaroPCIDataMaskingService.validateNoCVVStorage(null);
-            System.assert(true, 'Should not throw exception for null');
+            Assert.isTrue(true, 'Should not throw exception for null');
         } catch (ElaroPCIDataMaskingService.PCIViolationException e) {
-            System.assert(false, 'Should not throw for null CVV');
+            Assert.fail( 'Should not throw for null CVV');
         }
         Test.stopTest();
     }
@@ -116,9 +116,9 @@ private class ElaroPCIDataMaskingServiceTest {
         Test.startTest();
         try {
             ElaroPCIDataMaskingService.validateNoCVVStorage('');
-            System.assert(true, 'Should not throw exception for empty');
+            Assert.isTrue(true, 'Should not throw exception for empty');
         } catch (ElaroPCIDataMaskingService.PCIViolationException e) {
-            System.assert(false, 'Should not throw for empty CVV');
+            Assert.fail( 'Should not throw for empty CVV');
         }
         Test.stopTest();
     }
@@ -129,7 +129,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String truncated = ElaroPCIDataMaskingService.truncatePAN('4111111111111111');
         Test.stopTest();
 
-        System.assertEquals('1111', truncated, 'Should return last 4 digits only');
+        Assert.areEqual('1111', truncated, 'Should return last 4 digits only');
     }
 
     @IsTest
@@ -138,7 +138,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String truncated = ElaroPCIDataMaskingService.truncatePAN(null);
         Test.stopTest();
 
-        System.assertEquals(null, truncated, 'Should return null for null input');
+        Assert.areEqual(null, truncated, 'Should return null for null input');
     }
 
     @IsTest
@@ -147,7 +147,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String bin = ElaroPCIDataMaskingService.getBIN('4111111111111111');
         Test.stopTest();
 
-        System.assertEquals('411111', bin, 'Should return first 6 digits');
+        Assert.areEqual('411111', bin, 'Should return first 6 digits');
     }
 
     @IsTest
@@ -156,7 +156,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String bin = ElaroPCIDataMaskingService.getBIN(null);
         Test.stopTest();
 
-        System.assertEquals(null, bin, 'Should return null for null input');
+        Assert.areEqual(null, bin, 'Should return null for null input');
     }
 
     @IsTest
@@ -165,7 +165,7 @@ private class ElaroPCIDataMaskingServiceTest {
         String bin = ElaroPCIDataMaskingService.getBIN('41111');
         Test.stopTest();
 
-        System.assertEquals(null, bin, 'Should return null for short input');
+        Assert.areEqual(null, bin, 'Should return null for short input');
     }
 
     @IsTest
@@ -174,7 +174,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Boolean isValid = ElaroPCIDataMaskingService.validateLuhnChecksum('4111111111111111');
         Test.stopTest();
 
-        System.assertEquals(true, isValid, 'Should validate valid Visa test number');
+        Assert.areEqual(true, isValid, 'Should validate valid Visa test number');
     }
 
     @IsTest
@@ -183,7 +183,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Boolean isValid = ElaroPCIDataMaskingService.validateLuhnChecksum('5500000000000004');
         Test.stopTest();
 
-        System.assertEquals(true, isValid, 'Should validate valid Mastercard test number');
+        Assert.areEqual(true, isValid, 'Should validate valid Mastercard test number');
     }
 
     @IsTest
@@ -192,7 +192,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Boolean isValid = ElaroPCIDataMaskingService.validateLuhnChecksum('4111111111111112');
         Test.stopTest();
 
-        System.assertEquals(false, isValid, 'Should fail for invalid checksum');
+        Assert.areEqual(false, isValid, 'Should fail for invalid checksum');
     }
 
     @IsTest
@@ -201,7 +201,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Boolean isValid = ElaroPCIDataMaskingService.validateLuhnChecksum('411111111');
         Test.stopTest();
 
-        System.assertEquals(false, isValid, 'Should fail for too short');
+        Assert.areEqual(false, isValid, 'Should fail for too short');
     }
 
     @IsTest
@@ -210,7 +210,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Boolean isValid = ElaroPCIDataMaskingService.validateLuhnChecksum('41111111111111111111');
         Test.stopTest();
 
-        System.assertEquals(false, isValid, 'Should fail for too long');
+        Assert.areEqual(false, isValid, 'Should fail for too long');
     }
 
     @IsTest
@@ -220,7 +220,7 @@ private class ElaroPCIDataMaskingServiceTest {
         Test.stopTest();
 
         // In test context, returns true as placeholder
-        System.assertNotEquals(null, isEnabled, 'Should return boolean');
+        Assert.areNotEqual(null, isEnabled, 'Should return boolean');
     }
 
     @IsTest
@@ -237,7 +237,7 @@ private class ElaroPCIDataMaskingServiceTest {
         }
         Test.stopTest();
 
-        System.assertEquals(200, maskedCards.size(), 'Should mask all 200 cards');
+        Assert.areEqual(200, maskedCards.size(), 'Should mask all 200 cards');
         for (String masked : maskedCards) {
             System.assert(masked.startsWith('****-****-****-'), 'All should be properly masked');
         }
@@ -249,7 +249,7 @@ private class ElaroPCIDataMaskingServiceTest {
         try {
             ElaroPCIDataMaskingService.validateEncryptionEnabled();
             // In dev/test, this passes as encryption check returns true
-            System.assert(true, 'Encryption validation passed');
+            Assert.isTrue(true, 'Encryption validation passed');
         } catch (ElaroPCIDataMaskingService.PCIViolationException e) {
             // This may throw in environments without Shield
             System.assert(e.getMessage().contains('Platform Encryption'),

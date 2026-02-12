@@ -17,7 +17,7 @@ private class ElaroExecutiveKPIControllerTest {
             ElaroExecutiveKPIController.getKPIMetrics('');
         Test.stopTest();
 
-        System.assertNotEquals(null, metrics, 'Should return metrics list (even if empty)');
+        Assert.areNotEqual(null, metrics, 'Should return metrics list (even if empty)');
     }
 
     @isTest
@@ -27,7 +27,7 @@ private class ElaroExecutiveKPIControllerTest {
             ElaroExecutiveKPIController.getKPIMetrics(null);
         Test.stopTest();
 
-        System.assertNotEquals(null, metrics, 'Should return metrics list');
+        Assert.areNotEqual(null, metrics, 'Should return metrics list');
     }
 
     @isTest
@@ -37,7 +37,7 @@ private class ElaroExecutiveKPIControllerTest {
             ElaroExecutiveKPIController.getKPIMetrics('record1,record2');
         Test.stopTest();
 
-        System.assertNotEquals(null, metrics, 'Should return metrics list');
+        Assert.areNotEqual(null, metrics, 'Should return metrics list');
     }
 
     @isTest
@@ -128,21 +128,21 @@ private class ElaroExecutiveKPIControllerTest {
         metric.hasError = false;
         metric.errorMessage = null;
 
-        System.assertEquals('test', metric.kpiName, 'KPI name should be set');
-        System.assertEquals('Test Label', metric.label, 'Label should be set');
-        System.assertEquals('Test Description', metric.description, 'Description should be set');
-        System.assertEquals(100, metric.currentValue, 'Current value should be set');
-        System.assertEquals(150, metric.targetValue, 'Target value should be set');
-        System.assertEquals(100, metric.greenThreshold, 'Green threshold should be set');
-        System.assertEquals(75, metric.yellowThreshold, 'Yellow threshold should be set');
-        System.assertEquals(50, metric.redThreshold, 'Red threshold should be set');
-        System.assertEquals('number', metric.formatType, 'Format type should be set');
-        System.assertEquals('higher_is_better', metric.trendDirection, 'Trend direction should be set');
-        System.assertEquals('green', metric.status, 'Status should be set');
-        System.assertEquals(66.7, metric.percentOfTarget, 'Percent of target should be set');
-        System.assertEquals(10, metric.trendValue, 'Trend value should be set');
-        System.assertEquals(false, metric.hasError, 'Has error should be false');
-        System.assertEquals(null, metric.errorMessage, 'Error message should be null');
+        Assert.areEqual('test', metric.kpiName, 'KPI name should be set');
+        Assert.areEqual('Test Label', metric.label, 'Label should be set');
+        Assert.areEqual('Test Description', metric.description, 'Description should be set');
+        Assert.areEqual(100, metric.currentValue, 'Current value should be set');
+        Assert.areEqual(150, metric.targetValue, 'Target value should be set');
+        Assert.areEqual(100, metric.greenThreshold, 'Green threshold should be set');
+        Assert.areEqual(75, metric.yellowThreshold, 'Yellow threshold should be set');
+        Assert.areEqual(50, metric.redThreshold, 'Red threshold should be set');
+        Assert.areEqual('number', metric.formatType, 'Format type should be set');
+        Assert.areEqual('higher_is_better', metric.trendDirection, 'Trend direction should be set');
+        Assert.areEqual('green', metric.status, 'Status should be set');
+        Assert.areEqual(66.7, metric.percentOfTarget, 'Percent of target should be set');
+        Assert.areEqual(10, metric.trendValue, 'Trend value should be set');
+        Assert.areEqual(false, metric.hasError, 'Has error should be false');
+        Assert.areEqual(null, metric.errorMessage, 'Error message should be null');
     }
 
     @isTest
@@ -155,9 +155,9 @@ private class ElaroExecutiveKPIControllerTest {
         metric.hasError = true;
         metric.errorMessage = 'Unable to calculate metric';
 
-        System.assertEquals('error_kpi', metric.kpiName, 'KPI name should be set');
-        System.assertEquals(true, metric.hasError, 'Has error should be true');
-        System.assertEquals('Unable to calculate metric', metric.errorMessage, 'Error message should be set');
+        Assert.areEqual('error_kpi', metric.kpiName, 'KPI name should be set');
+        Assert.areEqual(true, metric.hasError, 'Has error should be true');
+        Assert.areEqual('Unable to calculate metric', metric.errorMessage, 'Error message should be set');
     }
 
     @isTest
@@ -170,7 +170,7 @@ private class ElaroExecutiveKPIControllerTest {
         metric.currentValue = 1500000;
         metric.formatType = 'currency';
 
-        System.assertEquals('currency', metric.formatType, 'Format type should be currency');
+        Assert.areEqual('currency', metric.formatType, 'Format type should be currency');
     }
 
     @isTest
@@ -183,7 +183,7 @@ private class ElaroExecutiveKPIControllerTest {
         metric.currentValue = 25.5;
         metric.formatType = 'percent';
 
-        System.assertEquals('percent', metric.formatType, 'Format type should be percent');
+        Assert.areEqual('percent', metric.formatType, 'Format type should be percent');
     }
 
     @isTest
@@ -197,8 +197,8 @@ private class ElaroExecutiveKPIControllerTest {
         metric.formatType = 'days';
         metric.trendDirection = 'lower_is_better';
 
-        System.assertEquals('days', metric.formatType, 'Format type should be days');
-        System.assertEquals('lower_is_better', metric.trendDirection, 'Trend direction should be lower_is_better');
+        Assert.areEqual('days', metric.formatType, 'Format type should be days');
+        Assert.areEqual('lower_is_better', metric.trendDirection, 'Trend direction should be lower_is_better');
     }
 
     @isTest
@@ -207,25 +207,25 @@ private class ElaroExecutiveKPIControllerTest {
         ElaroExecutiveKPIController.KPIMetric greenMetric =
             new ElaroExecutiveKPIController.KPIMetric();
         greenMetric.status = 'green';
-        System.assertEquals('green', greenMetric.status, 'Status should be green');
+        Assert.areEqual('green', greenMetric.status, 'Status should be green');
 
         // Test yellow status
         ElaroExecutiveKPIController.KPIMetric yellowMetric =
             new ElaroExecutiveKPIController.KPIMetric();
         yellowMetric.status = 'yellow';
-        System.assertEquals('yellow', yellowMetric.status, 'Status should be yellow');
+        Assert.areEqual('yellow', yellowMetric.status, 'Status should be yellow');
 
         // Test red status
         ElaroExecutiveKPIController.KPIMetric redMetric =
             new ElaroExecutiveKPIController.KPIMetric();
         redMetric.status = 'red';
-        System.assertEquals('red', redMetric.status, 'Status should be red');
+        Assert.areEqual('red', redMetric.status, 'Status should be red');
 
         // Test unknown status
         ElaroExecutiveKPIController.KPIMetric unknownMetric =
             new ElaroExecutiveKPIController.KPIMetric();
         unknownMetric.status = 'unknown';
-        System.assertEquals('unknown', unknownMetric.status, 'Status should be unknown');
+        Assert.areEqual('unknown', unknownMetric.status, 'Status should be unknown');
     }
 
     @isTest
@@ -240,8 +240,8 @@ private class ElaroExecutiveKPIControllerTest {
         metric.percentOfTarget = null;
         metric.trendValue = null;
 
-        System.assertEquals('null_test', metric.kpiName, 'KPI name should be set');
-        System.assertEquals(null, metric.currentValue, 'Current value should be null');
-        System.assertEquals(null, metric.targetValue, 'Target value should be null');
+        Assert.areEqual('null_test', metric.kpiName, 'KPI name should be set');
+        Assert.areEqual(null, metric.currentValue, 'Current value should be null');
+        Assert.areEqual(null, metric.targetValue, 'Target value should be null');
     }
 }

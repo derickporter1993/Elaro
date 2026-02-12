@@ -60,10 +60,10 @@ private class ElaroPDFControllerTest {
         ElaroPDFController controller = new ElaroPDFController(stdController);
         Test.stopTest();
 
-        System.assertNotEquals(null, controller.auditPackage, 'Audit package should be loaded');
+        Assert.areNotEqual(null, controller.auditPackage, 'Audit package should be loaded');
         System.assert(controller.evidenceCount > 0, 'Evidence should be loaded');
-        System.assertNotEquals(null, controller.generatedAt, 'Generated timestamp should be set');
-        System.assertNotEquals(null, controller.documentHash, 'Document hash should be generated');
+        Assert.areNotEqual(null, controller.generatedAt, 'Generated timestamp should be set');
+        Assert.areNotEqual(null, controller.documentHash, 'Document hash should be generated');
     }
 
     @isTest
@@ -75,10 +75,10 @@ private class ElaroPDFControllerTest {
         ElaroPDFController controller = new ElaroPDFController(stdController);
         Test.stopTest();
 
-        System.assertEquals(1, controller.criticalCount, 'Should have 1 critical event (LoginAs)');
-        System.assertEquals(1, controller.highCount, 'Should have 1 high event (API)');
-        System.assertEquals(1, controller.mediumCount, 'Should have 1 medium event (Login)');
-        System.assertEquals(1, controller.lowCount, 'Should have 1 low event (Logout)');
+        Assert.areEqual(1, controller.criticalCount, 'Should have 1 critical event (LoginAs)');
+        Assert.areEqual(1, controller.highCount, 'Should have 1 high event (API)');
+        Assert.areEqual(1, controller.mediumCount, 'Should have 1 medium event (Login)');
+        Assert.areEqual(1, controller.lowCount, 'Should have 1 low event (Logout)');
     }
 
     @isTest
@@ -114,11 +114,11 @@ private class ElaroPDFControllerTest {
         ElaroPDFController controller = new ElaroPDFController(stdController);
 
         Test.startTest();
-        System.assertEquals('risk-critical', controller.getRiskColorClass('CRITICAL'), 'Critical should map correctly');
-        System.assertEquals('risk-high', controller.getRiskColorClass('HIGH'), 'High should map correctly');
-        System.assertEquals('risk-medium', controller.getRiskColorClass('MEDIUM'), 'Medium should map correctly');
-        System.assertEquals('risk-low', controller.getRiskColorClass('LOW'), 'Low should map correctly');
-        System.assertEquals('risk-medium', controller.getRiskColorClass('UNKNOWN'), 'Unknown should default to medium');
+        Assert.areEqual('risk-critical', controller.getRiskColorClass('CRITICAL'), 'Critical should map correctly');
+        Assert.areEqual('risk-high', controller.getRiskColorClass('HIGH'), 'High should map correctly');
+        Assert.areEqual('risk-medium', controller.getRiskColorClass('MEDIUM'), 'Medium should map correctly');
+        Assert.areEqual('risk-low', controller.getRiskColorClass('LOW'), 'Low should map correctly');
+        Assert.areEqual('risk-medium', controller.getRiskColorClass('UNKNOWN'), 'Unknown should default to medium');
         Test.stopTest();
     }
 
@@ -150,7 +150,7 @@ private class ElaroPDFControllerTest {
         ElaroPDFController controller = new ElaroPDFController(stdController);
         Test.stopTest();
 
-        System.assertNotEquals(null, controller.selectedControls, 'Selected controls should be set');
+        Assert.areNotEqual(null, controller.selectedControls, 'Selected controls should be set');
     }
 
     @isTest
@@ -162,7 +162,7 @@ private class ElaroPDFControllerTest {
         Test.stopTest();
 
         // Should handle gracefully without errors
-        System.assert(true, 'Controller should handle null package');
+        Assert.isTrue(true, 'Controller should handle null package');
     }
 
     @isTest
@@ -181,6 +181,6 @@ private class ElaroPDFControllerTest {
         Decimal score = controller.getComplianceScore();
         Test.stopTest();
 
-        System.assertEquals(0, score, 'Score should be 0 with no evidence');
+        Assert.areEqual(0, score, 'Score should be 0 with no evidence');
     }
 }

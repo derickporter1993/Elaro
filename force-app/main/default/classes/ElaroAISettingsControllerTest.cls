@@ -10,12 +10,12 @@ private class ElaroAISettingsControllerTest {
         Test.stopTest();
 
         // Then: Should return default values
-        System.assertNotEquals(null, settings, 'Settings should not be null');
-        System.assertEquals(true, settings.Enable_AI_Reasoning__c, 'AI reasoning should be enabled by default');
-        System.assertEquals(0.85, settings.Confidence_Threshold__c, 'Confidence threshold should default to 0.85');
-        System.assertEquals(true, settings.Require_Human_Approval__c, 'Human approval should be required by default');
-        System.assertEquals(false, settings.Auto_Remediation_Enabled__c, 'Auto remediation should be disabled by default');
-        System.assertEquals('', settings.Blacklisted_Users__c, 'Blacklisted users should be empty by default');
+        Assert.areNotEqual(null, settings, 'Settings should not be null');
+        Assert.areEqual(true, settings.Enable_AI_Reasoning__c, 'AI reasoning should be enabled by default');
+        Assert.areEqual(0.85, settings.Confidence_Threshold__c, 'Confidence threshold should default to 0.85');
+        Assert.areEqual(true, settings.Require_Human_Approval__c, 'Human approval should be required by default');
+        Assert.areEqual(false, settings.Auto_Remediation_Enabled__c, 'Auto remediation should be disabled by default');
+        Assert.areEqual('', settings.Blacklisted_Users__c, 'Blacklisted users should be empty by default');
     }
 
     @IsTest
@@ -36,10 +36,10 @@ private class ElaroAISettingsControllerTest {
         Test.stopTest();
 
         // Then: Should return existing settings
-        System.assertEquals(false, settings.Enable_AI_Reasoning__c, 'Should return existing AI reasoning setting');
-        System.assertEquals(0.75, settings.Confidence_Threshold__c, 'Should return existing threshold');
-        System.assertEquals(false, settings.Require_Human_Approval__c, 'Should return existing human approval setting');
-        System.assertEquals(true, settings.Auto_Remediation_Enabled__c, 'Should return existing auto remediation setting');
+        Assert.areEqual(false, settings.Enable_AI_Reasoning__c, 'Should return existing AI reasoning setting');
+        Assert.areEqual(0.75, settings.Confidence_Threshold__c, 'Should return existing threshold');
+        Assert.areEqual(false, settings.Require_Human_Approval__c, 'Should return existing human approval setting');
+        Assert.areEqual(true, settings.Auto_Remediation_Enabled__c, 'Should return existing auto remediation setting');
     }
 
     @IsTest
@@ -60,7 +60,7 @@ private class ElaroAISettingsControllerTest {
 
         // Then: Settings should be saved
         Elaro_AI_Settings__c savedSettings = Elaro_AI_Settings__c.getOrgDefaults();
-        System.assertEquals(0.90, savedSettings.Confidence_Threshold__c, 'Threshold should be updated');
+        Assert.areEqual(0.90, savedSettings.Confidence_Threshold__c, 'Threshold should be updated');
     }
 
     @IsTest
@@ -82,7 +82,7 @@ private class ElaroAISettingsControllerTest {
 
         // Then: Settings should be updated
         Elaro_AI_Settings__c updated = Elaro_AI_Settings__c.getOrgDefaults();
-        System.assertEquals(0.95, updated.Confidence_Threshold__c, 'Threshold should be updated to 0.95');
+        Assert.areEqual(0.95, updated.Confidence_Threshold__c, 'Threshold should be updated to 0.95');
     }
 
     @IsTest
@@ -110,9 +110,9 @@ private class ElaroAISettingsControllerTest {
         Test.startTest();
         try {
             ElaroAISettingsController.saveSettings(null);
-            System.assert(false, 'Expected exception for null settings');
+            Assert.fail( 'Expected exception for null settings');
         } catch (Exception e) {
-            System.assertNotEquals(null, e, 'Should throw exception for null settings');
+            Assert.areNotEqual(null, e, 'Should throw exception for null settings');
         }
         Test.stopTest();
     }
@@ -141,7 +141,7 @@ private class ElaroAISettingsControllerTest {
             Elaro_AI_Settings__c settings = ElaroAISettingsController.getSettings();
 
             // Then: Should still return defaults (custom settings are accessible)
-            System.assertNotEquals(null, settings, 'Should return settings even for limited user');
+            Assert.areNotEqual(null, settings, 'Should return settings even for limited user');
         }
         Test.stopTest();
     }

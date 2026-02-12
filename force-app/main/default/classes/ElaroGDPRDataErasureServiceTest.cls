@@ -77,14 +77,14 @@ private class ElaroGDPRDataErasureServiceTest {
         
         // Then: Erasure should succeed
         System.assert(result.success, 'Erasure should succeed');
-        System.assertNotEquals(null, result.auditLogId, 'Audit log should be created');
-        System.assertNotEquals(null, result.message, 'Message should be provided');
+        Assert.areNotEqual(null, result.auditLogId, 'Audit log should be created');
+        Assert.areNotEqual(null, result.message, 'Message should be provided');
         
         // Verify contact is deleted
         List<Contact> deletedContacts = [
             SELECT Id FROM Contact WHERE Id = :testContact.Id
         ];
-        System.assertEquals(0, deletedContacts.size(), 'Contact should be deleted');
+        Assert.areEqual(0, deletedContacts.size(), 'Contact should be deleted');
         
         // Verify audit log exists
         List<GDPR_Erasure_Request__c> auditLogs = [
@@ -92,8 +92,8 @@ private class ElaroGDPRDataErasureServiceTest {
             FROM GDPR_Erasure_Request__c
             WHERE Id = :result.auditLogId
         ];
-        System.assertEquals(1, auditLogs.size(), 'Audit log should exist');
-        System.assertEquals('Completed', auditLogs[0].Status__c, 'Status should be Completed');
+        Assert.areEqual(1, auditLogs.size(), 'Audit log should exist');
+        Assert.areEqual('Completed', auditLogs[0].Status__c, 'Status should be Completed');
     }
     
     @IsTest
@@ -107,7 +107,7 @@ private class ElaroGDPRDataErasureServiceTest {
                 invalidContactId,
                 'Test reason'
             );
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (ElaroGDPRDataErasureService.GDPRException e) {
             // Then: Exception should be thrown
             System.assert(e.getMessage().contains('Contact not found'), 
@@ -127,8 +127,8 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
         
         // Then: Should be able to erase
-        System.assertEquals(true, result.canErase, 'Should be able to erase');
-        System.assertEquals(0, result.blockers.size(), 'No blockers should exist');
+        Assert.areEqual(true, result.canErase, 'Should be able to erase');
+        Assert.areEqual(0, result.blockers.size(), 'No blockers should exist');
     }
     
     @IsTest
@@ -142,7 +142,7 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
         
         // Then: Should not be able to erase
-        System.assertEquals(false, result.canErase, 'Should not be able to erase');
+        Assert.areEqual(false, result.canErase, 'Should not be able to erase');
         System.assert(!result.blockers.isEmpty(), 'Blockers should exist');
         System.assert(result.blockers[0].contains('open case'), 
             'Blocker should mention open case');
@@ -161,7 +161,7 @@ private class ElaroGDPRDataErasureServiceTest {
                     testContact.Id,
                     'Test reason'
                 );
-                System.assert(false, 'Should have thrown InsufficientAccessException');
+                Assert.fail( 'Should have thrown InsufficientAccessException');
             } catch (Exception e) {
                 // Then: Permission exception should be thrown
                 // Note: InsufficientAccessException may not be available, catch generic Exception
@@ -190,7 +190,7 @@ private class ElaroGDPRDataErasureServiceTest {
         
         // Then: Should return requests
         System.assert(!requests.isEmpty(), 'Should return at least one request');
-        System.assertEquals(testContact.Email, requests[0].Contact_Email__c, 
+        Assert.areEqual(testContact.Email, requests[0].Contact_Email__c, 
             'Should match contact email');
     }
     
@@ -226,16 +226,16 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
         
         // Then: All should succeed
-        System.assertEquals(200, results.size(), 'Should process all contacts');
+        Assert.areEqual(200, results.size(), 'Should process all contacts');
         for (ElaroGDPRDataErasureService.ErasureResult result : results) {
-            System.assertEquals(true, result.success, 'Each erasure should succeed');
+            Assert.areEqual(true, result.success, 'Each erasure should succeed');
         }
         
         // Verify all contacts deleted
         List<Contact> remainingContacts = [
             SELECT Id FROM Contact WHERE Id IN :bulkContacts
         ];
-        System.assertEquals(0, remainingContacts.size(), 'All contacts should be deleted');
+        Assert.areEqual(0, remainingContacts.size(), 'All contacts should be deleted');
     }
     
     @IsTest
@@ -254,10 +254,10 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
 
         // Then: Should return request with all fields
-        System.assertNotEquals(null, request, 'Request should be returned');
-        System.assertEquals('Completed', request.Status__c, 'Status should be Completed');
-        System.assertNotEquals(null, request.Request_Date__c, 'Request date should be set');
-        System.assertNotEquals(null, request.Completion_Date__c, 'Completion date should be set');
+        Assert.areNotEqual(null, request, 'Request should be returned');
+        Assert.areEqual('Completed', request.Status__c, 'Status should be Completed');
+        Assert.areNotEqual(null, request.Request_Date__c, 'Request date should be set');
+        Assert.areNotEqual(null, request.Completion_Date__c, 'Completion date should be set');
     }
 
     @IsTest
@@ -277,7 +277,7 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
 
         // Then: Should return null
-        System.assertEquals(null, request, 'Should return null for deleted ID');
+        Assert.areEqual(null, request, 'Should return null for deleted ID');
     }
 
     @IsTest
@@ -310,13 +310,13 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
 
         // Then: All related records should be deleted
-        System.assertEquals(true, result.success, 'Erasure should succeed');
+        Assert.areEqual(true, result.success, 'Erasure should succeed');
 
         List<Task> remainingTasks = [SELECT Id FROM Task WHERE Id = :testTask.Id];
-        System.assertEquals(0, remainingTasks.size(), 'Task should be deleted');
+        Assert.areEqual(0, remainingTasks.size(), 'Task should be deleted');
 
         List<Event> remainingEvents = [SELECT Id FROM Event WHERE Id = :testEvent.Id];
-        System.assertEquals(0, remainingEvents.size(), 'Event should be deleted');
+        Assert.areEqual(0, remainingEvents.size(), 'Event should be deleted');
 
         // Verify audit log has correct count
         GDPR_Erasure_Request__c auditLog = [
@@ -339,9 +339,9 @@ private class ElaroGDPRDataErasureServiceTest {
             );
         Test.stopTest();
 
-        System.assertEquals(true, result.success, 'Success should match');
-        System.assertEquals(null, result.auditLogId, 'AuditLogId should be null');
-        System.assertEquals('Test message', result.message, 'Message should match');
+        Assert.areEqual(true, result.success, 'Success should match');
+        Assert.areEqual(null, result.auditLogId, 'AuditLogId should be null');
+        Assert.areEqual('Test message', result.message, 'Message should match');
     }
 
     @IsTest
@@ -353,8 +353,8 @@ private class ElaroGDPRDataErasureServiceTest {
         result.blockers = new List<String>{'Blocker 1', 'Blocker 2'};
         Test.stopTest();
 
-        System.assertEquals(false, result.canErase, 'CanErase should be false');
-        System.assertEquals(2, result.blockers.size(), 'Should have 2 blockers');
+        Assert.areEqual(false, result.canErase, 'CanErase should be false');
+        Assert.areEqual(2, result.blockers.size(), 'Should have 2 blockers');
     }
 
     @IsTest
@@ -378,10 +378,10 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
 
         // Then: Consent should be deleted
-        System.assertEquals(true, result.success, 'Erasure should succeed');
+        Assert.areEqual(true, result.success, 'Erasure should succeed');
 
         List<Consent__c> remainingConsents = [SELECT Id FROM Consent__c WHERE Id = :consent.Id];
-        System.assertEquals(0, remainingConsents.size(), 'Consent should be deleted');
+        Assert.areEqual(0, remainingConsents.size(), 'Consent should be deleted');
     }
 
     @IsTest
@@ -395,7 +395,7 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
 
         // Then: Should return empty list
-        System.assertEquals(0, requests.size(), 'Should return empty list');
+        Assert.areEqual(0, requests.size(), 'Should return empty list');
     }
 
     @IsTest
@@ -416,7 +416,7 @@ private class ElaroGDPRDataErasureServiceTest {
         Test.stopTest();
 
         // Then: Should respect limit
-        System.assertEquals(2, requests.size(), 'Should return only 2 requests');
+        Assert.areEqual(2, requests.size(), 'Should return only 2 requests');
     }
 
     @IsTest
@@ -441,11 +441,11 @@ private class ElaroGDPRDataErasureServiceTest {
             WHERE Id = :result.auditLogId
         ];
 
-        System.assertEquals(testContact.Email, auditLog.Contact_Email__c, 'Email should match');
-        System.assertEquals(String.valueOf(testContact.Id), auditLog.Contact_Id__c, 'Contact ID should match');
-        System.assertEquals(testReason, auditLog.Request_Reason__c, 'Reason should match');
-        System.assertEquals('Completed', auditLog.Status__c, 'Status should be Completed');
-        System.assertEquals(UserInfo.getUserId(), auditLog.Requested_By__c, 'Requested by should match current user');
+        Assert.areEqual(testContact.Email, auditLog.Contact_Email__c, 'Email should match');
+        Assert.areEqual(String.valueOf(testContact.Id), auditLog.Contact_Id__c, 'Contact ID should match');
+        Assert.areEqual(testReason, auditLog.Request_Reason__c, 'Reason should match');
+        Assert.areEqual('Completed', auditLog.Status__c, 'Status should be Completed');
+        Assert.areEqual(UserInfo.getUserId(), auditLog.Requested_By__c, 'Requested by should match current user');
         System.assert(auditLog.Records_Deleted__c >= 1, 'At least one record should be deleted');
     }
 
@@ -455,7 +455,7 @@ private class ElaroGDPRDataErasureServiceTest {
         try {
             throw new ElaroGDPRDataErasureService.GDPRException('Test GDPR error');
         } catch (ElaroGDPRDataErasureService.GDPRException e) {
-            System.assertEquals('Test GDPR error', e.getMessage(),
+            Assert.areEqual('Test GDPR error', e.getMessage(),
                 'Exception message should match');
         }
         Test.stopTest();

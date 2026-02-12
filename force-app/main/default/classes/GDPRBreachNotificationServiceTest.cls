@@ -35,11 +35,11 @@ private class GDPRBreachNotificationServiceTest {
         Id breachId = service.reportBreach(breachDate, affectedRecords, description);
         Test.stopTest();
         
-        System.assertNotEquals(null, breachId, 'Breach ID should be returned');
+        Assert.areNotEqual(null, breachId, 'Breach ID should be returned');
         
         GDPR_Breach__c breach = [SELECT Id, Affected_Records__c, Status__c FROM GDPR_Breach__c WHERE Id = :breachId];
-        System.assertEquals(100, breach.Affected_Records__c, 'Affected records should match');
-        System.assertEquals('Detected', breach.Status__c, 'Status should be Detected');
+        Assert.areEqual(100, breach.Affected_Records__c, 'Affected records should match');
+        Assert.areEqual('Detected', breach.Status__c, 'Status should be Detected');
     }
     
     @IsTest
@@ -75,8 +75,8 @@ private class GDPRBreachNotificationServiceTest {
         Map<String, Object> result = service.assessSeverity(breach.Id);
         Test.stopTest();
         
-        System.assertEquals('High', result.get('severity'), 'Severity should be High');
-        System.assertEquals(true, result.get('requiresDataSubjectNotification'), 
+        Assert.areEqual('High', result.get('severity'), 'Severity should be High');
+        Assert.areEqual(true, result.get('requiresDataSubjectNotification'), 
             'Should require data subject notification');
     }
     
@@ -94,7 +94,7 @@ private class GDPRBreachNotificationServiceTest {
         Map<String, Object> result = service.assessSeverity(breach.Id);
         Test.stopTest();
         
-        System.assertEquals('Low', result.get('severity'), 'Severity should be Low');
+        Assert.areEqual('Low', result.get('severity'), 'Severity should be Low');
     }
     
     @IsTest
@@ -112,11 +112,11 @@ private class GDPRBreachNotificationServiceTest {
         Map<String, Object> result = service.notifyDPA(breach.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'DPA notification should succeed');
+        Assert.areEqual(true, result.get('success'), 'DPA notification should succeed');
         
         GDPR_Breach__c updatedBreach = [SELECT DPA_Notified__c, Status__c FROM GDPR_Breach__c WHERE Id = :breach.Id];
-        System.assertEquals(true, updatedBreach.DPA_Notified__c, 'DPA should be marked as notified');
-        System.assertEquals('DPA Notified', updatedBreach.Status__c, 'Status should be updated');
+        Assert.areEqual(true, updatedBreach.DPA_Notified__c, 'DPA should be marked as notified');
+        Assert.areEqual('DPA Notified', updatedBreach.Status__c, 'Status should be updated');
     }
     
     @IsTest
@@ -133,10 +133,10 @@ private class GDPRBreachNotificationServiceTest {
         Map<String, Object> result = service.notifyDataSubjects(breach.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Data subject notification should succeed');
+        Assert.areEqual(true, result.get('success'), 'Data subject notification should succeed');
         
         GDPR_Breach__c updatedBreach = [SELECT Status__c FROM GDPR_Breach__c WHERE Id = :breach.Id];
-        System.assertEquals('Data Subjects Notified', updatedBreach.Status__c, 'Status should be updated');
+        Assert.areEqual('Data Subjects Notified', updatedBreach.Status__c, 'Status should be updated');
     }
     
     @IsTest
@@ -146,7 +146,7 @@ private class GDPRBreachNotificationServiceTest {
         List<GDPR_Breach__c> breaches = service.trackDeadlines();
         Test.stopTest();
         
-        System.assertNotEquals(null, breaches, 'Breaches list should not be null');
+        Assert.areNotEqual(null, breaches, 'Breaches list should not be null');
         // May be empty if no breaches are approaching deadline
     }
     
@@ -156,7 +156,7 @@ private class GDPRBreachNotificationServiceTest {
         GDPRBreachNotificationService service = new GDPRBreachNotificationService();
         try {
             service.reportBreach(null, 100, 'Test');
-            System.assert(false, 'Should throw exception for null breach date');
+            Assert.fail( 'Should throw exception for null breach date');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }
@@ -171,7 +171,7 @@ private class GDPRBreachNotificationServiceTest {
         GDPRBreachNotificationService service = new GDPRBreachNotificationService();
         try {
             service.assessSeverity(fakeId);
-            System.assert(false, 'Should throw exception for non-existent breach');
+            Assert.fail( 'Should throw exception for non-existent breach');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required') || e.getMessage().contains('not found'), 
                 'Should handle missing breach');

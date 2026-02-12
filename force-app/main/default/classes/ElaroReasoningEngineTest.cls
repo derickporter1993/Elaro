@@ -24,13 +24,13 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(true, result.isViolation, 'isViolation should be true');
-        System.assertEquals(0.95, result.confidence, 'confidence should match');
-        System.assertEquals('TEST_POLICY', result.policy, 'policy should match');
-        System.assertEquals('SOC2-1.1', result.legalCitation, 'legalCitation should match');
-        System.assertEquals('Test explanation', result.explanation, 'explanation should match');
-        System.assertEquals('audit123', result.auditTrailId, 'auditTrailId should match');
-        System.assertEquals(false, result.requiresHumanReview, 'requiresHumanReview should be false');
+        Assert.areEqual(true, result.isViolation, 'isViolation should be true');
+        Assert.areEqual(0.95, result.confidence, 'confidence should match');
+        Assert.areEqual('TEST_POLICY', result.policy, 'policy should match');
+        Assert.areEqual('SOC2-1.1', result.legalCitation, 'legalCitation should match');
+        Assert.areEqual('Test explanation', result.explanation, 'explanation should match');
+        Assert.areEqual('audit123', result.auditTrailId, 'auditTrailId should match');
+        Assert.areEqual(false, result.requiresHumanReview, 'requiresHumanReview should be false');
     }
 
     @IsTest
@@ -47,8 +47,8 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(true, result.requiresHumanReview, 'Should require human review');
-        System.assertEquals(0.50, result.confidence, 'Low confidence value should be preserved');
+        Assert.areEqual(true, result.requiresHumanReview, 'Should require human review');
+        Assert.areEqual(0.50, result.confidence, 'Low confidence value should be preserved');
     }
 
     @IsTest
@@ -61,9 +61,9 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(true, prediction.isViolation, 'isViolation should be true');
-        System.assertEquals(0.88, prediction.confidence, 'confidence should match');
-        System.assertEquals('POLICY_001', prediction.policyId, 'policyId should match');
+        Assert.areEqual(true, prediction.isViolation, 'isViolation should be true');
+        Assert.areEqual(0.88, prediction.confidence, 'confidence should match');
+        Assert.areEqual('POLICY_001', prediction.policyId, 'policyId should match');
     }
 
     @IsTest
@@ -76,9 +76,9 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(false, prediction.isViolation, 'isViolation should be false');
-        System.assertEquals(0.0, prediction.confidence, 'confidence should be zero');
-        System.assertEquals(null, prediction.policyId, 'policyId should be null');
+        Assert.areEqual(false, prediction.isViolation, 'isViolation should be false');
+        Assert.areEqual(0.0, prediction.confidence, 'confidence should be zero');
+        Assert.areEqual(null, prediction.policyId, 'policyId should be null');
     }
 
     @IsTest
@@ -87,7 +87,7 @@ private class ElaroReasoningEngineTest {
         try {
             throw new ElaroReasoningEngine.ReasoningException('Test error message');
         } catch (ElaroReasoningEngine.ReasoningException e) {
-            System.assertEquals('Test error message', e.getMessage(), 'Exception message should match');
+            Assert.areEqual('Test error message', e.getMessage(), 'Exception message should match');
         }
         Test.stopTest();
     }
@@ -97,9 +97,9 @@ private class ElaroReasoningEngineTest {
         Test.startTest();
         try {
             ElaroReasoningEngine.explainViolation('nonexistent_hash', 'SOC2');
-            System.assert(false, 'Should have thrown ReasoningException');
+            Assert.fail( 'Should have thrown ReasoningException');
         } catch (ElaroReasoningEngine.ReasoningException e) {
-            System.assertEquals('Node not found', e.getMessage(), 'Should throw node not found error');
+            Assert.areEqual('Node not found', e.getMessage(), 'Should throw node not found error');
         }
         Test.stopTest();
     }
@@ -120,13 +120,13 @@ private class ElaroReasoningEngineTest {
         Test.stopTest();
 
         // Access all AuraEnabled properties to ensure they're properly exposed
-        System.assertNotEquals(null, result.isViolation);
-        System.assertNotEquals(null, result.confidence);
-        System.assertNotEquals(null, result.policy);
-        System.assertNotEquals(null, result.legalCitation);
-        System.assertNotEquals(null, result.explanation);
-        System.assertNotEquals(null, result.auditTrailId);
-        System.assertNotEquals(null, result.requiresHumanReview);
+        Assert.areNotEqual(null, result.isViolation);
+        Assert.areNotEqual(null, result.confidence);
+        Assert.areNotEqual(null, result.policy);
+        Assert.areNotEqual(null, result.legalCitation);
+        Assert.areNotEqual(null, result.explanation);
+        Assert.areNotEqual(null, result.auditTrailId);
+        Assert.areNotEqual(null, result.requiresHumanReview);
     }
 
     @IsTest
@@ -139,8 +139,8 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(false, prediction.isViolation, 'No violation expected');
-        System.assertEquals(0.0, prediction.confidence, 'Zero confidence expected');
+        Assert.areEqual(false, prediction.isViolation, 'No violation expected');
+        Assert.areEqual(0.0, prediction.confidence, 'Zero confidence expected');
     }
 
     @IsTest
@@ -153,8 +153,8 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(true, prediction.isViolation, 'Violation expected');
-        System.assertEquals(1.0, prediction.confidence, 'Maximum confidence expected');
+        Assert.areEqual(true, prediction.isViolation, 'Violation expected');
+        Assert.areEqual(1.0, prediction.confidence, 'Maximum confidence expected');
     }
 
     @IsTest
@@ -171,8 +171,8 @@ private class ElaroReasoningEngineTest {
         );
         Test.stopTest();
 
-        System.assertEquals(false, result.isViolation, 'Should indicate no violation');
-        System.assertEquals(false, result.requiresHumanReview, 'Should not require human review');
+        Assert.areEqual(false, result.isViolation, 'Should indicate no violation');
+        Assert.areEqual(false, result.requiresHumanReview, 'Should not require human review');
     }
 
     @IsTest
@@ -186,8 +186,8 @@ private class ElaroReasoningEngineTest {
         Decimal thresholdWhenSettingMissing = ElaroReasoningEngine.getConfidenceThreshold(settingsWithNullThreshold);
         Test.stopTest();
 
-        System.assertEquals(0.85, thresholdWhenNull, 'Should fall back to minimum confidence when settings are missing');
-        System.assertEquals(
+        Assert.areEqual(0.85, thresholdWhenNull, 'Should fall back to minimum confidence when settings are missing');
+        Assert.areEqual(
             0.85,
             thresholdWhenSettingMissing,
             'Should fall back to minimum confidence when threshold is not defined'
@@ -203,7 +203,7 @@ private class ElaroReasoningEngineTest {
         Decimal threshold = ElaroReasoningEngine.getConfidenceThreshold(settings);
         Test.stopTest();
 
-        System.assertEquals(0.92, threshold, 'Should respect custom confidence threshold in settings');
+        Assert.areEqual(0.92, threshold, 'Should respect custom confidence threshold in settings');
     }
 
     @IsTest

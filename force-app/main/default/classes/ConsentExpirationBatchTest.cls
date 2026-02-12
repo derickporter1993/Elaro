@@ -48,7 +48,7 @@ private class ConsentExpirationBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete successfully');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete successfully');
     }
 
     @isTest
@@ -64,7 +64,7 @@ private class ConsentExpirationBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete successfully with custom warning days');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete successfully with custom warning days');
     }
 
     @isTest
@@ -84,7 +84,7 @@ private class ConsentExpirationBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete even with no active consents');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete even with no active consents');
     }
 
     @isTest
@@ -106,7 +106,7 @@ private class ConsentExpirationBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should handle null contacts gracefully');
+        Assert.areEqual('Completed', job.Status, 'Batch should handle null contacts gracefully');
     }
 
     @isTest
@@ -142,7 +142,7 @@ private class ConsentExpirationBatchTest {
 
         // Assert
         AsyncApexJob job = [SELECT Status, NumberOfErrors FROM AsyncApexJob WHERE Id = :batchId];
-        System.assertEquals('Completed', job.Status, 'Batch should complete bulk processing');
-        System.assertEquals(0, job.NumberOfErrors, 'Batch should complete without errors');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete bulk processing');
+        Assert.areEqual(0, job.NumberOfErrors, 'Batch should complete without errors');
     }
 }

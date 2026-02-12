@@ -23,17 +23,32 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
      * Schedulable execute method
      */
     public void execute(SchedulableContext ctx) {
-        // Run in future context for governor limits
-        captureSnapshotsAsync();
+        // Run in Queueable context for better error handling and monitoring
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new ComplianceSnapshotQueueable());
+        } else {
+            // Run synchronously in tests
+            captureSnapshots();
+        }
     }
 
     /**
-     * Async method to capture snapshots
+     * Queueable implementation for compliance snapshot processing
+     * Provides better error handling, chaining, and monitoring than @future
      */
-    @future
-    private static void captureSnapshotsAsync() {
-        ComplianceScoreSnapshotScheduler scheduler = new ComplianceScoreSnapshotScheduler();
-        scheduler.captureSnapshots();
+    public class ComplianceSnapshotQueueable implements Queueable {
+        public void execute(QueueableContext context) {
+            try {
+                ComplianceScoreSnapshotScheduler scheduler = new ComplianceScoreSnapshotScheduler();
+                scheduler.captureSnapshots();
+                
+                ElaroLogger.info('ComplianceScoreSnapshotScheduler.ComplianceSnapshotQueueable',
+                    'Successfully captured compliance score snapshots');
+            } catch (Exception e) {
+                ElaroLogger.error('ComplianceScoreSnapshotScheduler.ComplianceSnapshotQueueable',
+                    e.getMessage(), e.getStackTraceString());
+            }
+        }
     }
 
     /**
@@ -112,7 +127,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
                 FROM Compliance_Gap__c
                 WHERE Framework__c = :framework
                 AND Status__c NOT IN ('VERIFIED', 'ACCEPTED_RISK')
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
 
             // Get previous score for comparison
@@ -120,7 +135,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
                 SELECT Score__c
                 FROM Compliance_Score__c
                 WHERE Framework__c = :framework
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY Evaluation_Date__c DESC
                 LIMIT 1
             ];
@@ -335,7 +350,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             SELECT Id, CronJobDetail.Name
             FROM CronTrigger
             WHERE CronJobDetail.Name LIKE :('%' + JOB_NAME + '%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         for (CronTrigger job : jobs) {
@@ -369,7 +384,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             FROM Compliance_Score__c
             WHERE Framework__c = :framework
             AND Evaluation_Date__c >= :startDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Evaluation_Date__c ASC
         ];
 

@@ -7,7 +7,7 @@ private class ElaroAuditTrailPollerTest {
         String jobId = ElaroAuditTrailPoller.schedule();
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Job should be scheduled');
+        Assert.areNotEqual(null, jobId, 'Job should be scheduled');
         
         // Verify job was created
         List<CronTrigger> jobs = [
@@ -16,8 +16,8 @@ private class ElaroAuditTrailPollerTest {
             WHERE Id = :jobId
         ];
         
-        System.assertEquals(1, jobs.size(), 'Job should exist');
-        System.assertEquals('Elaro Audit Trail Poller', jobs[0].CronJobDetail.Name);
+        Assert.areEqual(1, jobs.size(), 'Job should exist');
+        Assert.areEqual('Elaro Audit Trail Poller', jobs[0].CronJobDetail.Name);
     }
     
     @isTest
@@ -36,7 +36,7 @@ private class ElaroAuditTrailPollerTest {
             WHERE CronJobDetail.Name = 'Elaro Audit Trail Poller'
         ];
         
-        System.assertEquals(0, jobs.size(), 'Job should be unscheduled');
+        Assert.areEqual(0, jobs.size(), 'Job should be unscheduled');
     }
     
     @isTest
@@ -50,7 +50,7 @@ private class ElaroAuditTrailPollerTest {
         
         // Verify poller executed without errors
         // Note: Actual audit trail polling would require API access
-        System.assert(true, 'Poller executed successfully');
+        Assert.isTrue(true, 'Poller executed successfully');
     }
     
     @isTest
@@ -60,7 +60,7 @@ private class ElaroAuditTrailPollerTest {
         Test.stopTest();
         
         // Verify method executed without errors
-        System.assert(true, 'Audit trail polling executed successfully');
+        Assert.isTrue(true, 'Audit trail polling executed successfully');
     }
 }
 

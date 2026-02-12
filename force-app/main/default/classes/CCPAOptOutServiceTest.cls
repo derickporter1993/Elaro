@@ -31,8 +31,8 @@ private class CCPAOptOutServiceTest {
         Map<String, Object> result = service.processOptOut(testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Opt-out should succeed');
-        System.assertNotEquals(null, result.get('optOutDate'), 'Opt-out date should be set');
+        Assert.areEqual(true, result.get('success'), 'Opt-out should succeed');
+        Assert.areNotEqual(null, result.get('optOutDate'), 'Opt-out date should be set');
     }
     
     @IsTest
@@ -65,7 +65,7 @@ private class CCPAOptOutServiceTest {
         Map<String, Object> result = service.honorGPC(testContact.Id, gpcSignal);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'GPC opt-out should succeed');
+        Assert.areEqual(true, result.get('success'), 'GPC opt-out should succeed');
     }
     
     @IsTest
@@ -78,7 +78,7 @@ private class CCPAOptOutServiceTest {
         Map<String, Object> result = service.honorGPC(testContact.Id, gpcSignal);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'GPC opt-in result should not be null');
+        Assert.areNotEqual(null, result, 'GPC opt-in result should not be null');
     }
     
     @IsTest
@@ -91,7 +91,7 @@ private class CCPAOptOutServiceTest {
         Map<String, Object> result = service.updateDoNotSellList(testContact.Id, optOut);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Should add to Do Not Sell list');
+        Assert.areEqual(true, result.get('success'), 'Should add to Do Not Sell list');
     }
     
     @IsTest
@@ -104,7 +104,7 @@ private class CCPAOptOutServiceTest {
         Map<String, Object> result = service.updateDoNotSellList(testContact.Id, optOut);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Remove result should not be null');
+        Assert.areNotEqual(null, result, 'Remove result should not be null');
     }
     
     @IsTest
@@ -126,7 +126,7 @@ private class CCPAOptOutServiceTest {
         Map<String, Object> result = service.syncWithVendors(testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Vendor sync should succeed');
+        Assert.areEqual(true, result.get('success'), 'Vendor sync should succeed');
         System.assert(result.containsKey('vendorsSynced'), 'Should include vendor count');
     }
     
@@ -136,7 +136,7 @@ private class CCPAOptOutServiceTest {
         CCPAOptOutService service = new CCPAOptOutService();
         try {
             service.processOptOut(null);
-            System.assert(false, 'Should throw exception for null contact');
+            Assert.fail( 'Should throw exception for null contact');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }
@@ -149,7 +149,7 @@ private class CCPAOptOutServiceTest {
         CCPAOptOutService service = new CCPAOptOutService();
         try {
             service.honorGPC(null, true);
-            System.assert(false, 'Should throw exception for null contact');
+            Assert.fail( 'Should throw exception for null contact');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }

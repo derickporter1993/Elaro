@@ -16,9 +16,9 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, null);
         Test.stopTest();
         
-        System.assertEquals(false, result.warning, 'Should not trigger warning');
-        System.assertEquals(false, result.critical, 'Should not trigger critical');
-        System.assertEquals(0, result.eventsPublished, 'No events should be published');
+        Assert.areEqual(false, result.warning, 'Should not trigger warning');
+        Assert.areEqual(false, result.critical, 'Should not trigger critical');
+        Assert.areEqual(0, result.eventsPublished, 'No events should be published');
     }
     
     @isTest
@@ -33,8 +33,8 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'testContext');
         Test.stopTest();
         
-        System.assertEquals(true, result.warning, 'Should trigger warning');
-        System.assertEquals(false, result.critical, 'Should not trigger critical');
+        Assert.areEqual(true, result.warning, 'Should trigger warning');
+        Assert.areEqual(false, result.critical, 'Should not trigger critical');
         System.assert(result.eventsPublished > 0, 'Should have published events');
     }
     
@@ -50,7 +50,7 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'testContext');
         Test.stopTest();
         
-        System.assertEquals(true, result.critical, 'Should trigger critical');
+        Assert.areEqual(true, result.critical, 'Should trigger critical');
         System.assert(result.eventsPublished > 0, 'Should have published events');
     }
     
@@ -75,8 +75,8 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'multiTest');
         Test.stopTest();
         
-        System.assertEquals(true, result.critical, 'Should trigger critical');
-        System.assertEquals(true, result.warning, 'Should trigger warning');
+        Assert.areEqual(true, result.critical, 'Should trigger critical');
+        Assert.areEqual(true, result.warning, 'Should trigger warning');
         System.assert(result.eventsPublished >= 4, 'Should have published multiple events');
     }
     
@@ -106,8 +106,8 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'customSettingsTest');
         Test.stopTest();
         
-        System.assertEquals(true, result.warning, 'Should trigger warning with custom CPU threshold');
-        System.assertEquals(false, result.critical, 'Should not trigger critical');
+        Assert.areEqual(true, result.warning, 'Should trigger warning with custom CPU threshold');
+        Assert.areEqual(false, result.critical, 'Should not trigger critical');
         System.assert(result.eventsPublished > 0, 'Should have published events');
     }
     
@@ -123,8 +123,8 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'heapWarningTest');
         Test.stopTest();
         
-        System.assertEquals(true, result.warning, 'Should trigger warning for HEAP');
-        System.assertEquals(false, result.critical, 'Should not trigger critical');
+        Assert.areEqual(true, result.warning, 'Should trigger warning for HEAP');
+        Assert.areEqual(false, result.critical, 'Should not trigger critical');
         System.assert(result.eventsPublished > 0, 'Should have published events');
     }
     
@@ -140,8 +140,8 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'soqlWarningTest');
         Test.stopTest();
         
-        System.assertEquals(true, result.warning, 'Should trigger warning for SOQL');
-        System.assertEquals(false, result.critical, 'Should not trigger critical');
+        Assert.areEqual(true, result.warning, 'Should trigger warning for SOQL');
+        Assert.areEqual(false, result.critical, 'Should not trigger critical');
         System.assert(result.eventsPublished > 0, 'Should have published events');
     }
     
@@ -157,8 +157,8 @@ private class PerformanceRuleEngineTest {
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(stats, 'dmlWarningTest');
         Test.stopTest();
         
-        System.assertEquals(true, result.warning, 'Should trigger warning for DML');
-        System.assertEquals(false, result.critical, 'Should not trigger critical');
+        Assert.areEqual(true, result.warning, 'Should trigger warning for DML');
+        Assert.areEqual(false, result.critical, 'Should not trigger critical');
         System.assert(result.eventsPublished > 0, 'Should have published events');
     }
 }

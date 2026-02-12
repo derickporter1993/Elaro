@@ -41,7 +41,7 @@ private class GDPRDataInventoryServiceTest {
         Map<String, Object> inventory = service.inventoryPersonalData();
         Test.stopTest();
         
-        System.assertNotEquals(null, inventory, 'Inventory should not be null');
+        Assert.areNotEqual(null, inventory, 'Inventory should not be null');
         System.assert(inventory.containsKey('totalActivities'), 'Should include activity count');
         System.assert(inventory.containsKey('totalRecipients'), 'Should include recipient count');
     }
@@ -56,7 +56,7 @@ private class GDPRDataInventoryServiceTest {
         GDPRDataInventoryService service = new GDPRDataInventoryService();
         try {
             Map<String, Object> evidence = service.collectEvidence(controlId, framework);
-            System.assertNotEquals(null, evidence, 'Evidence should not be null');
+            Assert.areNotEqual(null, evidence, 'Evidence should not be null');
         } catch (Exception e) {
             // May fail if control doesn't exist - that's expected in test
             System.assert(e.getMessage().contains('Control not found') || e.getMessage().contains('required'), 
@@ -76,9 +76,9 @@ private class GDPRDataInventoryServiceTest {
         Map<String, Object> classification = service.classifyDataCategories(dataFields);
         Test.stopTest();
         
-        System.assertNotEquals(null, classification, 'Classification should not be null');
+        Assert.areNotEqual(null, classification, 'Classification should not be null');
         System.assert(classification.containsKey('categories'), 'Should include categories');
-        System.assertEquals(6, classification.get('totalFields'), 'Should classify all fields');
+        Assert.areEqual(6, classification.get('totalFields'), 'Should classify all fields');
     }
     
     @IsTest
@@ -91,8 +91,8 @@ private class GDPRDataInventoryServiceTest {
         Map<String, Object> flowMap = service.mapDataFlows(sourceSystem, targetSystem);
         Test.stopTest();
         
-        System.assertEquals(sourceSystem, flowMap.get('sourceSystem'), 'Source system should match');
-        System.assertEquals(false, flowMap.get('isThirdPartyTransfer'), 'Should be internal flow');
+        Assert.areEqual(sourceSystem, flowMap.get('sourceSystem'), 'Source system should match');
+        Assert.areEqual(false, flowMap.get('isThirdPartyTransfer'), 'Should be internal flow');
     }
     
     @IsTest
@@ -106,7 +106,7 @@ private class GDPRDataInventoryServiceTest {
         Map<String, Object> flowMap = service.mapDataFlows(sourceSystem, targetSystem);
         Test.stopTest();
         
-        System.assertEquals(true, flowMap.get('isThirdPartyTransfer'), 'Should be third-party transfer');
+        Assert.areEqual(true, flowMap.get('isThirdPartyTransfer'), 'Should be third-party transfer');
     }
     
     @IsTest
@@ -118,8 +118,8 @@ private class GDPRDataInventoryServiceTest {
         Map<String, Object> ropa = (Map<String, Object>)service.generateEvidenceReport('ROPA', parameters);
         Test.stopTest();
         
-        System.assertEquals('ROPA', ropa.get('reportType'), 'Report type should be ROPA');
-        System.assertNotEquals(null, ropa.get('activities'), 'Should include activities');
+        Assert.areEqual('ROPA', ropa.get('reportType'), 'Report type should be ROPA');
+        Assert.areNotEqual(null, ropa.get('activities'), 'Should include activities');
     }
     
     @IsTest
@@ -130,7 +130,7 @@ private class GDPRDataInventoryServiceTest {
         GDPRDataInventoryService service = new GDPRDataInventoryService();
         try {
             service.generateEvidenceReport('INVALID', parameters);
-            System.assert(false, 'Should throw exception for invalid report type');
+            Assert.fail( 'Should throw exception for invalid report type');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Unsupported'), 'Should throw unsupported error');
         }
@@ -149,6 +149,6 @@ private class GDPRDataInventoryServiceTest {
         Map<String, Object> classification = service.classifyDataCategories(dataFields);
         Test.stopTest();
         
-        System.assertEquals(200, classification.get('totalFields'), 'Should classify all fields');
+        Assert.areEqual(200, classification.get('totalFields'), 'Should classify all fields');
     }
 }

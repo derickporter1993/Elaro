@@ -33,7 +33,7 @@ private class ElaroScheduledDeliveryTest {
         Test.stopTest();
         
         // Verify no exceptions thrown
-        System.assert(true, 'Scheduled delivery should execute successfully');
+        Assert.isTrue(true, 'Scheduled delivery should execute successfully');
     }
     
     @isTest
@@ -52,7 +52,7 @@ private class ElaroScheduledDeliveryTest {
             scheduler.execute(null);
         } catch (Exception e) {
             // Expected - package doesn't exist
-            System.assert(true, 'Should handle invalid package ID');
+            Assert.isTrue(true, 'Should handle invalid package ID');
         }
         Test.stopTest();
     }
@@ -72,7 +72,7 @@ private class ElaroScheduledDeliveryTest {
         scheduler.execute(null);
         Test.stopTest();
         
-        System.assert(true, 'Should handle empty recipients');
+        Assert.isTrue(true, 'Should handle empty recipients');
     }
     
     @isTest
@@ -94,7 +94,7 @@ private class ElaroScheduledDeliveryTest {
         Test.stopTest();
         
         // Verify error was handled (notification sent in non-test context)
-        System.assert(true, 'Should handle errors and send notification');
+        Assert.isTrue(true, 'Should handle errors and send notification');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -115,7 +115,7 @@ private class ElaroScheduledDeliveryTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         // Verify job was scheduled
         CronTrigger ct = [
@@ -124,7 +124,7 @@ private class ElaroScheduledDeliveryTest {
             WHERE Id = :jobId
         ];
         
-        System.assertEquals(cronExpression, ct.CronExpression, 'Cron expression should match');
+        Assert.areEqual(cronExpression, ct.CronExpression, 'Cron expression should match');
         System.assert(ct.CronJobDetail.Name.contains('Elaro_Delivery_'), 
             'Job name should contain Elaro_Delivery_');
     }
@@ -147,7 +147,7 @@ private class ElaroScheduledDeliveryTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should schedule with multiple recipients');
+        Assert.areNotEqual(null, jobId, 'Should schedule with multiple recipients');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -163,7 +163,7 @@ private class ElaroScheduledDeliveryTest {
         Id jobId = ElaroScheduledDelivery.scheduleWeekly(pkg.Id, recipients);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         CronTrigger ct = [
             SELECT Id, CronExpression
@@ -172,7 +172,7 @@ private class ElaroScheduledDeliveryTest {
         ];
         
         // Weekly cron: '0 0 8 ? * MON'
-        System.assertEquals('0 0 8 ? * MON', ct.CronExpression, 'Should use weekly cron expression');
+        Assert.areEqual('0 0 8 ? * MON', ct.CronExpression, 'Should use weekly cron expression');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -188,7 +188,7 @@ private class ElaroScheduledDeliveryTest {
         Id jobId = ElaroScheduledDelivery.scheduleMonthly(pkg.Id, recipients);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         CronTrigger ct = [
             SELECT Id, CronExpression
@@ -197,7 +197,7 @@ private class ElaroScheduledDeliveryTest {
         ];
         
         // Monthly cron: '0 0 8 1 * ?'
-        System.assertEquals('0 0 8 1 * ?', ct.CronExpression, 'Should use monthly cron expression');
+        Assert.areEqual('0 0 8 1 * ?', ct.CronExpression, 'Should use monthly cron expression');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -213,7 +213,7 @@ private class ElaroScheduledDeliveryTest {
         Id jobId = ElaroScheduledDelivery.scheduleQuarterly(pkg.Id, recipients);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         CronTrigger ct = [
             SELECT Id, CronExpression
@@ -222,7 +222,7 @@ private class ElaroScheduledDeliveryTest {
         ];
         
         // Quarterly cron: '0 0 8 1 1,4,7,10 ?'
-        System.assertEquals('0 0 8 1 1,4,7,10 ?', ct.CronExpression, 'Should use quarterly cron expression');
+        Assert.areEqual('0 0 8 1 1,4,7,10 ?', ct.CronExpression, 'Should use quarterly cron expression');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -248,7 +248,7 @@ private class ElaroScheduledDeliveryTest {
         scheduler.execute(null);
         Test.stopTest();
         
-        System.assert(true, 'Should handle bulk recipients without governor limit errors');
+        Assert.isTrue(true, 'Should handle bulk recipients without governor limit errors');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -270,11 +270,11 @@ private class ElaroScheduledDeliveryTest {
         try {
             scheduler.execute(null);
         } catch (Exception e) {
-            System.assert(false, 'Should not throw unhandled exception: ' + e.getMessage());
+            Assert.fail( 'Should not throw unhandled exception: ' + e.getMessage());
         }
         Test.stopTest();
         
-        System.assert(true, 'Should handle exceptions gracefully');
+        Assert.isTrue(true, 'Should handle exceptions gracefully');
     }
     
     @isTest
@@ -291,9 +291,9 @@ private class ElaroScheduledDeliveryTest {
                 invalidCron
             );
             // System.schedule will throw exception for invalid cron
-            System.assert(false, 'Should throw exception for invalid cron');
+            Assert.fail( 'Should throw exception for invalid cron');
         } catch (Exception e) {
-            System.assert(true, 'Should handle invalid cron expression: ' + e.getMessage());
+            Assert.isTrue(true, 'Should handle invalid cron expression: ' + e.getMessage());
         }
         Test.stopTest();
     }

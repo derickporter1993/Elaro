@@ -21,9 +21,9 @@ private class SchedulerErrorHandlerTest {
             WHERE Context__c = 'TestScheduler'
         ];
 
-        System.assertEquals(1, errors.size(), 'Should create one error record');
-        System.assertEquals('SCHEDULER_FAILURE', errors[0].Error_Type__c, 'Should be SCHEDULER_FAILURE type');
-        System.assertEquals('Test error message', errors[0].Error_Message__c, 'Should capture error message');
+        Assert.areEqual(1, errors.size(), 'Should create one error record');
+        Assert.areEqual('SCHEDULER_FAILURE', errors[0].Error_Type__c, 'Should be SCHEDULER_FAILURE type');
+        Assert.areEqual('Test error message', errors[0].Error_Message__c, 'Should capture error message');
     }
 
     @isTest
@@ -38,8 +38,8 @@ private class SchedulerErrorHandlerTest {
             WHERE Context__c = 'TestScheduler'
         ];
 
-        System.assertEquals(1, logs.size(), 'Should create one log record');
-        System.assertEquals('SCHEDULER_SUCCESS', logs[0].Error_Type__c, 'Should be SCHEDULER_SUCCESS type');
+        Assert.areEqual(1, logs.size(), 'Should create one log record');
+        Assert.areEqual('SCHEDULER_SUCCESS', logs[0].Error_Type__c, 'Should be SCHEDULER_SUCCESS type');
         System.assert(logs[0].Error_Message__c.contains('100 records'), 'Should capture success details');
     }
 
@@ -51,7 +51,7 @@ private class SchedulerErrorHandlerTest {
         Test.stopTest();
 
         // Should return the configured value or the default
-        System.assertNotEquals(null, cron, 'Should return a CRON expression');
+        Assert.areNotEqual(null, cron, 'Should return a CRON expression');
         System.assert(cron.contains('*'), 'Should be a valid CRON expression');
     }
 
@@ -63,7 +63,7 @@ private class SchedulerErrorHandlerTest {
         String cron = SchedulerErrorHandler.getCronExpression('NonExistentScheduler', defaultCron);
         Test.stopTest();
 
-        System.assertEquals(defaultCron, cron, 'Should return default CRON when config not found');
+        Assert.areEqual(defaultCron, cron, 'Should return default CRON when config not found');
     }
 
     @isTest
@@ -84,7 +84,7 @@ private class SchedulerErrorHandlerTest {
         Integer batchSize = SchedulerErrorHandler.getBatchSize('NonExistentScheduler', defaultSize);
         Test.stopTest();
 
-        System.assertEquals(defaultSize, batchSize, 'Should return default batch size when config not found');
+        Assert.areEqual(defaultSize, batchSize, 'Should return default batch size when config not found');
     }
 
     @isTest
@@ -94,7 +94,7 @@ private class SchedulerErrorHandlerTest {
         Test.stopTest();
 
         // Custom Metadata should indicate active or default to true
-        System.assertNotEquals(null, isActive, 'Should return a boolean value');
+        Assert.areNotEqual(null, isActive, 'Should return a boolean value');
     }
 
     @isTest
@@ -103,7 +103,7 @@ private class SchedulerErrorHandlerTest {
         Boolean isActive = SchedulerErrorHandler.isSchedulerActive('NonExistentScheduler');
         Test.stopTest();
 
-        System.assertEquals(true, isActive, 'Should default to active when config not found');
+        Assert.areEqual(true, isActive, 'Should default to active when config not found');
     }
 
     @isTest
@@ -117,7 +117,7 @@ private class SchedulerErrorHandlerTest {
         Test.stopTest();
 
         // No assertion needed - just verify no exception thrown
-        System.assert(true, 'notifyOnFailure should handle missing SlackNotifier gracefully');
+        Assert.isTrue(true, 'notifyOnFailure should handle missing SlackNotifier gracefully');
     }
 
     @isTest
@@ -136,7 +136,7 @@ private class SchedulerErrorHandlerTest {
             WHERE Context__c = 'TestScheduler'
         ];
 
-        System.assertEquals(1, errors.size(), 'Should create one error record');
+        Assert.areEqual(1, errors.size(), 'Should create one error record');
         System.assert(errors[0].Error_Message__c.length() <= 255, 'Message should be truncated to 255 chars');
     }
 }

@@ -90,14 +90,14 @@ private class ComplianceReportGeneratorTest {
         ComplianceReportGenerator.ReportData data = ComplianceReportGenerator.generateReportData('ALL');
         Test.stopTest();
 
-        System.assertNotEquals(null, data, 'Report data should not be null');
-        System.assertNotEquals(null, data.scoreResult, 'Score result should not be null');
-        System.assertNotEquals(null, data.gaps, 'Gaps list should not be null');
-        System.assertEquals('ALL', data.framework, 'Framework should be ALL');
-        System.assertNotEquals(null, data.generatedAt, 'Generated timestamp should be set');
+        Assert.areNotEqual(null, data, 'Report data should not be null');
+        Assert.areNotEqual(null, data.scoreResult, 'Score result should not be null');
+        Assert.areNotEqual(null, data.gaps, 'Gaps list should not be null');
+        Assert.areEqual('ALL', data.framework, 'Framework should be ALL');
+        Assert.areNotEqual(null, data.generatedAt, 'Generated timestamp should be set');
 
         // Verify gaps are present (excluding resolved)
-        System.assertEquals(25, data.gaps.size(), 'Should have 25 open gaps');
+        Assert.areEqual(25, data.gaps.size(), 'Should have 25 open gaps');
     }
 
     /**
@@ -109,11 +109,11 @@ private class ComplianceReportGeneratorTest {
         ComplianceReportGenerator.ReportData data = ComplianceReportGenerator.generateReportData('HIPAA');
         Test.stopTest();
 
-        System.assertEquals('HIPAA', data.framework, 'Framework should be HIPAA');
+        Assert.areEqual('HIPAA', data.framework, 'Framework should be HIPAA');
 
         // All gaps should be HIPAA
         for (Compliance_Gap__c gap : data.gaps) {
-            System.assertEquals('HIPAA', gap.Framework__c, 'All gaps should be HIPAA');
+            Assert.areEqual('HIPAA', gap.Framework__c, 'All gaps should be HIPAA');
         }
     }
 
@@ -127,11 +127,11 @@ private class ComplianceReportGeneratorTest {
         Test.stopTest();
 
         Map<String, Integer> bySeverity = data.gapsBySeverity;
-        System.assertNotEquals(null, bySeverity, 'Gaps by severity should not be null');
-        System.assertEquals(3, bySeverity.get('Critical'), 'Should have 3 critical gaps');
-        System.assertEquals(5, bySeverity.get('High'), 'Should have 5 high gaps');
-        System.assertEquals(10, bySeverity.get('Medium'), 'Should have 10 medium gaps');
-        System.assertEquals(7, bySeverity.get('Low'), 'Should have 7 low gaps');
+        Assert.areNotEqual(null, bySeverity, 'Gaps by severity should not be null');
+        Assert.areEqual(3, bySeverity.get('Critical'), 'Should have 3 critical gaps');
+        Assert.areEqual(5, bySeverity.get('High'), 'Should have 5 high gaps');
+        Assert.areEqual(10, bySeverity.get('Medium'), 'Should have 10 medium gaps');
+        Assert.areEqual(7, bySeverity.get('Low'), 'Should have 7 low gaps');
     }
 
     /**
@@ -144,10 +144,10 @@ private class ComplianceReportGeneratorTest {
         Test.stopTest();
 
         Map<String, Integer> byFramework = data.gapsByFramework;
-        System.assertNotEquals(null, byFramework, 'Gaps by framework should not be null');
-        System.assertEquals(3, byFramework.get('HIPAA'), 'Should have 3 HIPAA gaps');
-        System.assertEquals(5, byFramework.get('SOC2'), 'Should have 5 SOC2 gaps');
-        System.assertEquals(7, byFramework.get('PCI-DSS'), 'Should have 7 PCI-DSS gaps');
+        Assert.areNotEqual(null, byFramework, 'Gaps by framework should not be null');
+        Assert.areEqual(3, byFramework.get('HIPAA'), 'Should have 3 HIPAA gaps');
+        Assert.areEqual(5, byFramework.get('SOC2'), 'Should have 5 SOC2 gaps');
+        Assert.areEqual(7, byFramework.get('PCI-DSS'), 'Should have 7 PCI-DSS gaps');
     }
 
     /**
@@ -159,7 +159,7 @@ private class ComplianceReportGeneratorTest {
         ComplianceReportGenerator.ReportData data = ComplianceReportGenerator.generateReportData('ALL');
         Test.stopTest();
 
-        System.assertNotEquals(null, data.scoreTrend, 'Score trend should not be null');
+        Assert.areNotEqual(null, data.scoreTrend, 'Score trend should not be null');
         // Trend points should exist if Compliance_Score__c records exist
         System.assert(data.scoreTrend.size() >= 0, 'Score trend should be populated');
     }
@@ -175,7 +175,7 @@ private class ComplianceReportGeneratorTest {
         String summary = ComplianceReportGenerator.generateExecutiveSummary(data);
         Test.stopTest();
 
-        System.assertNotEquals(null, summary, 'Summary should not be null');
+        Assert.areNotEqual(null, summary, 'Summary should not be null');
         System.assert(summary.contains('Compliance Score'), 'Summary should contain compliance score');
         System.assert(summary.contains('Critical'), 'Summary should mention critical gaps');
     }
@@ -203,7 +203,7 @@ private class ComplianceReportGeneratorTest {
         List<String> recommendations = ComplianceReportGenerator.generateRecommendations(data);
         Test.stopTest();
 
-        System.assertNotEquals(null, recommendations, 'Recommendations should not be null');
+        Assert.areNotEqual(null, recommendations, 'Recommendations should not be null');
         System.assert(!recommendations.isEmpty(), 'Should have at least one recommendation');
     }
 
@@ -253,8 +253,8 @@ private class ComplianceReportGeneratorTest {
         ComplianceReportGenerator.ReportData data = ComplianceReportGenerator.generateReportData('ALL');
         Test.stopTest();
 
-        System.assertEquals(0, data.gaps.size(), 'Should have no gaps');
-        System.assertEquals(0, data.gapsBySeverity.get('Critical'), 'Should have 0 critical');
+        Assert.areEqual(0, data.gaps.size(), 'Should have no gaps');
+        Assert.areEqual(0, data.gapsBySeverity.get('Critical'), 'Should have 0 critical');
     }
 
     /**
@@ -266,7 +266,7 @@ private class ComplianceReportGeneratorTest {
         ComplianceReportGenerator.ReportData data = ComplianceReportGenerator.generateReportData(null);
         Test.stopTest();
 
-        System.assertEquals('ALL', data.framework, 'Null framework should default to ALL');
+        Assert.areEqual('ALL', data.framework, 'Null framework should default to ALL');
     }
 
     /**
@@ -278,7 +278,7 @@ private class ComplianceReportGeneratorTest {
         ComplianceReportGenerator.ReportData data = ComplianceReportGenerator.generateReportData('');
         Test.stopTest();
 
-        System.assertEquals('ALL', data.framework, 'Empty framework should default to ALL');
+        Assert.areEqual('ALL', data.framework, 'Empty framework should default to ALL');
     }
 
     /**
@@ -304,7 +304,7 @@ private class ComplianceReportGeneratorTest {
 
         // Should handle bulk data within limits (200 limit in query)
         System.assert(data.gaps.size() <= 200, 'Should respect query limit');
-        System.assertNotEquals(null, data.scoreResult, 'Should still calculate score');
+        Assert.areNotEqual(null, data.scoreResult, 'Should still calculate score');
     }
 
     /**
@@ -317,9 +317,9 @@ private class ComplianceReportGeneratorTest {
         point.score = 85.5;
         point.period = 'Jan 1';
 
-        System.assertEquals(Date.today(), point.reportDate, 'Report date should match');
-        System.assertEquals(85.5, point.score, 'Score should match');
-        System.assertEquals('Jan 1', point.period, 'Period should match');
+        Assert.areEqual(Date.today(), point.reportDate, 'Report date should match');
+        Assert.areEqual(85.5, point.score, 'Score should match');
+        Assert.areEqual('Jan 1', point.period, 'Period should match');
     }
 
     /**
@@ -329,10 +329,10 @@ private class ComplianceReportGeneratorTest {
     static void testReportDataClass() {
         ComplianceReportGenerator.ReportData data = new ComplianceReportGenerator.ReportData();
 
-        System.assertNotEquals(null, data.gaps, 'Gaps should be initialized');
-        System.assertNotEquals(null, data.scoreTrend, 'Score trend should be initialized');
-        System.assertNotEquals(null, data.gapsBySeverity, 'Gaps by severity should be initialized');
-        System.assertNotEquals(null, data.gapsByFramework, 'Gaps by framework should be initialized');
-        System.assertNotEquals(null, data.generatedAt, 'Generated at should be set');
+        Assert.areNotEqual(null, data.gaps, 'Gaps should be initialized');
+        Assert.areNotEqual(null, data.scoreTrend, 'Score trend should be initialized');
+        Assert.areNotEqual(null, data.gapsBySeverity, 'Gaps by severity should be initialized');
+        Assert.areNotEqual(null, data.gapsByFramework, 'Gaps by framework should be initialized');
+        Assert.areNotEqual(null, data.generatedAt, 'Generated at should be set');
     }
 }

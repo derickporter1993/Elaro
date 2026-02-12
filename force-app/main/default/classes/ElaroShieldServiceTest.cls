@@ -23,7 +23,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
         
         // Should return a list (may be empty if no Shield license)
-        System.assertNotEquals(null, eventTypes, 'Should return a list');
+        Assert.areNotEqual(null, eventTypes, 'Should return a list');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -36,7 +36,7 @@ private class ElaroShieldServiceTest {
         Map&lt;String, Object&gt; status = ElaroShieldService.getShieldStatus();
         Test.stopTest();
         
-        System.assertNotEquals(null, status, 'Should return status map');
+        Assert.areNotEqual(null, status, 'Should return status map');
         System.assert(status.containsKey('shieldEnabled'), 'Should contain shieldEnabled key');
         System.assert(status.containsKey('platformEncryption'), 'Should contain platformEncryption key');
         System.assert(status.containsKey('eventMonitoring'), 'Should contain eventMonitoring key');
@@ -52,7 +52,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('LoginAs');
         Test.stopTest();
         
-        System.assertEquals('CRITICAL', riskLevel, 'LoginAs should be CRITICAL');
+        Assert.areEqual('CRITICAL', riskLevel, 'LoginAs should be CRITICAL');
     }
     
     @isTest
@@ -61,7 +61,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('ReportExport');
         Test.stopTest();
         
-        System.assertEquals('CRITICAL', riskLevel, 'ReportExport should be CRITICAL');
+        Assert.areEqual('CRITICAL', riskLevel, 'ReportExport should be CRITICAL');
     }
     
     @isTest
@@ -70,7 +70,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('ContentDistribution');
         Test.stopTest();
         
-        System.assertEquals('CRITICAL', riskLevel, 'ContentDistribution should be CRITICAL');
+        Assert.areEqual('CRITICAL', riskLevel, 'ContentDistribution should be CRITICAL');
     }
     
     @isTest
@@ -79,7 +79,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('API');
         Test.stopTest();
         
-        System.assertEquals('HIGH', riskLevel, 'API should be HIGH');
+        Assert.areEqual('HIGH', riskLevel, 'API should be HIGH');
     }
     
     @isTest
@@ -88,7 +88,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('Login');
         Test.stopTest();
         
-        System.assertEquals('MEDIUM', riskLevel, 'Login should be MEDIUM');
+        Assert.areEqual('MEDIUM', riskLevel, 'Login should be MEDIUM');
     }
     
     @isTest
@@ -97,7 +97,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('Logout');
         Test.stopTest();
         
-        System.assertEquals('LOW', riskLevel, 'Logout should be LOW');
+        Assert.areEqual('LOW', riskLevel, 'Logout should be LOW');
     }
     
     @isTest
@@ -106,7 +106,7 @@ private class ElaroShieldServiceTest {
         String riskLevel = ElaroShieldService.getRiskLevel('UnknownEventType');
         Test.stopTest();
         
-        System.assertEquals('LOW', riskLevel, 'Unknown event type should default to LOW');
+        Assert.areEqual('LOW', riskLevel, 'Unknown event type should default to LOW');
     }
     
     @isTest
@@ -126,7 +126,7 @@ private class ElaroShieldServiceTest {
         Test.startTest();
         for (String eventType : expectedLevels.keySet()) {
             String actualLevel = ElaroShieldService.getRiskLevel(eventType);
-            System.assertEquals(
+            Assert.areEqual(
                 expectedLevels.get(eventType),
                 actualLevel,
                 eventType + ' should have correct risk level'
@@ -145,7 +145,7 @@ private class ElaroShieldServiceTest {
         Map&lt;String, String&gt; riskLevels = ElaroShieldService.getEventRiskLevels();
         Test.stopTest();
         
-        System.assertNotEquals(null, riskLevels, 'Should return risk levels map');
+        Assert.areNotEqual(null, riskLevels, 'Should return risk levels map');
         System.assert(!riskLevels.isEmpty(), 'Map should not be empty');
         System.assert(riskLevels.containsKey('Login'), 'Should contain Login');
         System.assert(riskLevels.containsKey('LoginAs'), 'Should contain LoginAs');
@@ -164,7 +164,7 @@ private class ElaroShieldServiceTest {
                 Date.today().addDays(-7),
                 Date.today()
             );
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Invalid event type'), 
                 'Should mention invalid event type');
@@ -177,7 +177,7 @@ private class ElaroShieldServiceTest {
         Test.startTest();
         try {
             ElaroShieldService.getEventLogFiles('Login', null, null);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 
                 'Should mention required dates');
@@ -194,7 +194,7 @@ private class ElaroShieldServiceTest {
                 Date.today(),
                 Date.today().addDays(-7) // End before start
             );
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('before'), 
                 'Should mention date order');
@@ -213,7 +213,7 @@ private class ElaroShieldServiceTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, results, 'Should return a list');
+        Assert.areNotEqual(null, results, 'Should return a list');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -225,7 +225,7 @@ private class ElaroShieldServiceTest {
         Test.startTest();
         try {
             ElaroShieldService.parseEventLogContent(null);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 
                 'Should mention required ID');
@@ -238,7 +238,7 @@ private class ElaroShieldServiceTest {
         Test.startTest();
         try {
             ElaroShieldService.parseEventLogContent('');
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 
                 'Should mention required ID');
@@ -251,10 +251,10 @@ private class ElaroShieldServiceTest {
         Test.startTest();
         try {
             ElaroShieldService.parseEventLogContent('invalid_id');
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             // Expected
-            System.assert(true, 'Should throw exception for invalid ID');
+            Assert.isTrue(true, 'Should throw exception for invalid ID');
         }
         Test.stopTest();
     }
@@ -272,7 +272,7 @@ private class ElaroShieldServiceTest {
                 Date.today().addDays(-30),
                 Date.today()
             );
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Invalid event type'), 
                 'Should mention invalid event type');
@@ -290,7 +290,7 @@ private class ElaroShieldServiceTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, batchId, 'Should return batch job ID');
+        Assert.areNotEqual(null, batchId, 'Should return batch job ID');
         
         // Verify batch completed
         AsyncApexJob job = [
@@ -298,6 +298,6 @@ private class ElaroShieldServiceTest {
             FROM AsyncApexJob
             WHERE Id = :batchId
         ];
-        System.assertEquals('Completed', job.Status, 'Batch should complete');
+        Assert.areEqual('Completed', job.Status, 'Batch should complete');
     }
 }

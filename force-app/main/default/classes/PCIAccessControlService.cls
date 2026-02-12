@@ -39,7 +39,7 @@ public with sharing class PCIAccessControlService extends ComplianceServiceBase 
                 SELECT Id, PermissionSet.Name
                 FROM PermissionSetAssignment
                 WHERE AssigneeId = :userId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             // Check if user has required permissions for cardholder data access
@@ -78,7 +78,7 @@ public with sharing class PCIAccessControlService extends ComplianceServiceBase 
                 SELECT Id, Name, Email, Profile.Name
                 FROM User
                 WHERE IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 100
             ];
             

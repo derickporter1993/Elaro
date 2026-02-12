@@ -41,8 +41,8 @@ private class OnCallScheduleControllerTest {
         List<Elaro_On_Call_Schedule__c> schedules = OnCallScheduleController.getSchedules();
         Test.stopTest();
 
-        System.assertEquals(1, schedules.size(), 'Should return one schedule');
-        System.assertEquals('Primary On-Call', schedules[0].Name, 'Name should match');
+        Assert.areEqual(1, schedules.size(), 'Should return one schedule');
+        Assert.areEqual('Primary On-Call', schedules[0].Name, 'Name should match');
     }
 
     @isTest
@@ -64,11 +64,11 @@ private class OnCallScheduleControllerTest {
         Id scheduleId = OnCallScheduleController.createSchedule(newSchedule);
         Test.stopTest();
 
-        System.assertNotEquals(null, scheduleId, 'Schedule ID should be returned');
+        Assert.areNotEqual(null, scheduleId, 'Schedule ID should be returned');
 
         List<Elaro_On_Call_Schedule__c> schedules = [SELECT Name FROM Elaro_On_Call_Schedule__c WHERE Id = :scheduleId];
-        System.assertEquals(1, schedules.size(), 'Schedule should exist');
-        System.assertEquals('Secondary On-Call', schedules[0].Name, 'Name should match');
+        Assert.areEqual(1, schedules.size(), 'Schedule should exist');
+        Assert.areEqual('Secondary On-Call', schedules[0].Name, 'Name should match');
     }
 
     @isTest
@@ -81,7 +81,7 @@ private class OnCallScheduleControllerTest {
         Test.stopTest();
 
         Elaro_On_Call_Schedule__c updated = [SELECT Name FROM Elaro_On_Call_Schedule__c WHERE Id = :schedule.Id];
-        System.assertEquals('Updated Schedule Name', updated.Name, 'Name should be updated');
+        Assert.areEqual('Updated Schedule Name', updated.Name, 'Name should be updated');
     }
 
     @isTest
@@ -93,7 +93,7 @@ private class OnCallScheduleControllerTest {
         Test.stopTest();
 
         List<Elaro_On_Call_Schedule__c> schedules = [SELECT Id FROM Elaro_On_Call_Schedule__c WHERE Id = :schedule.Id];
-        System.assertEquals(0, schedules.size(), 'Schedule should be deleted');
+        Assert.areEqual(0, schedules.size(), 'Schedule should be deleted');
     }
 
     @isTest
@@ -111,7 +111,7 @@ private class OnCallScheduleControllerTest {
         Test.startTest();
         try {
             OnCallScheduleController.createSchedule(schedule);
-            System.assert(false, 'Expected exception for missing start time');
+            Assert.fail( 'Expected exception for missing start time');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Start time'), 'Error message should mention start time');
         }
@@ -133,7 +133,7 @@ private class OnCallScheduleControllerTest {
         Test.startTest();
         try {
             OnCallScheduleController.createSchedule(schedule);
-            System.assert(false, 'Expected exception for missing end time');
+            Assert.fail( 'Expected exception for missing end time');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('End time'), 'Error message should mention end time');
         }
@@ -155,7 +155,7 @@ private class OnCallScheduleControllerTest {
         Test.startTest();
         try {
             OnCallScheduleController.createSchedule(schedule);
-            System.assert(false, 'Expected exception for invalid time range');
+            Assert.fail( 'Expected exception for invalid time range');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('after start'), 'Error message should mention time order');
         }
@@ -175,7 +175,7 @@ private class OnCallScheduleControllerTest {
         Test.startTest();
         try {
             OnCallScheduleController.createSchedule(schedule);
-            System.assert(false, 'Expected exception for missing user');
+            Assert.fail( 'Expected exception for missing user');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('User'), 'Error message should mention user');
         }

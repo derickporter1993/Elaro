@@ -28,11 +28,11 @@ private class AuditReportControllerTest {
             AuditReportController.generateAuditReport('SOX', startDate, endDate);
         Test.stopTest();
         
-        System.assertNotEquals(null, report, 'Report should not be null');
-        System.assertEquals('SOX', report.framework, 'Framework should match');
-        System.assertNotEquals(null, report.evaluation, 'Evaluation should not be null');
-        System.assertNotEquals(null, report.gaps, 'Gaps should not be null');
-        System.assertNotEquals(null, report.evidence, 'Evidence should not be null');
+        Assert.areNotEqual(null, report, 'Report should not be null');
+        Assert.areEqual('SOX', report.framework, 'Framework should match');
+        Assert.areNotEqual(null, report.evaluation, 'Evaluation should not be null');
+        Assert.areNotEqual(null, report.gaps, 'Gaps should not be null');
+        Assert.areNotEqual(null, report.evidence, 'Evidence should not be null');
     }
     
     @IsTest
@@ -43,9 +43,9 @@ private class AuditReportControllerTest {
         Test.startTest();
         try {
             AuditReportController.generateAuditReport('', startDate, endDate);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for blank framework');
+            Assert.isTrue(true, 'Expected exception for blank framework');
         }
         Test.stopTest();
     }
@@ -55,9 +55,9 @@ private class AuditReportControllerTest {
         Test.startTest();
         try {
             AuditReportController.generateAuditReport('SOX', null, null);
-            System.assert(false, 'Should have thrown IllegalArgumentException');
+            Assert.fail( 'Should have thrown IllegalArgumentException');
         } catch (IllegalArgumentException e) {
-            System.assert(true, 'Expected exception for null dates');
+            Assert.isTrue(true, 'Expected exception for null dates');
         }
         Test.stopTest();
     }
@@ -67,9 +67,9 @@ private class AuditReportControllerTest {
         Test.startTest();
         try {
             AuditReportController.exportReportAsPDF(null);
-            System.assert(false, 'Expected exception for null report');
+            Assert.fail( 'Expected exception for null report');
         } catch (Exception e) {
-            System.assertNotEquals(null, e, 'Should throw exception for null report');
+            Assert.areNotEqual(null, e, 'Should throw exception for null report');
         }
         Test.stopTest();
     }
@@ -85,6 +85,6 @@ private class AuditReportControllerTest {
         String result = AuditReportController.exportReportAsPDF(report);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'PDF result should not be null');
+        Assert.areNotEqual(null, result, 'PDF result should not be null');
     }
 }

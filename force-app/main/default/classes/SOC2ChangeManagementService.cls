@@ -125,7 +125,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             FROM Metadata_Change__c
             WHERE Changed_Date__c >= :cutoffDate
             AND (Ticket_Reference__c = null OR Ticket_Reference__c = '')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Changed_Date__c DESC
             LIMIT 500
         ];
@@ -161,7 +161,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             SELECT Id, Ticket_Reference__c
             FROM Metadata_Change__c
             WHERE Id = :changeId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -185,7 +185,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             FROM Metadata_Change__c
             WHERE Risk_Score__c >= 7.0
             AND (Approval_Status__c = null OR Approval_Status__c = 'PENDING')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Risk_Score__c DESC
             LIMIT 100
         ];
@@ -214,7 +214,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             FROM Metadata_Change__c
             WHERE Changed_Date__c >= :startDate
             AND Changed_Date__c <= :endDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Changed_Date__c DESC
         ];
 
@@ -232,7 +232,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
         insert cv;
 
         // Get ContentDocumentId
-        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
 
         SOC2ChangeManagementService service = new SOC2ChangeManagementService();
         service.logAuditEntry('REPORT_GENERATED', 'Generated SOC2 change report for ' + startDate + ' to ' + endDate, cv.ContentDocumentId);
@@ -257,7 +257,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             WHERE Changed_Date__c >= :cutoffDate
             AND Entity_Type__c IN ('PermissionSet', 'Profile', 'SharingRule')
             AND (Ticket_Reference__c = null OR Ticket_Reference__c = '')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         if (unauthorizedPermChanges > UNAUTHORIZED_CHANGE_THRESHOLD) {
@@ -292,7 +292,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             WHERE Changed_Date__c >= :cutoffDate
             AND Risk_Score__c >= 7.0
             AND (Approval_Status__c = null OR Approval_Status__c = 'PENDING')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         if (unapprovedHighRiskChanges > 0) {
@@ -328,7 +328,7 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
             WHERE Changed_Date__c >= :cutoffDate
             AND Entity_Type__c IN ('ApexClass', 'ApexTrigger', 'Flow')
             AND Deployment_Source__c = 'DIRECT'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         if (directProdDeployments > 0) {

@@ -75,7 +75,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             SELECT Id, Name, Email, Profile.Name, LastLoginDate, IsActive
             FROM User
             WHERE IsActive = true
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1000
         ];
 
@@ -114,7 +114,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             WHERE Id = :reviewId OR CreatedDate = (
                 SELECT CreatedDate FROM Access_Review__c WHERE Id = :reviewId
             )
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         if (reviews.isEmpty()) {
@@ -165,7 +165,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             AND (PermissionSet.PermissionsModifyAllData = true
                  OR PermissionSet.PermissionsViewAllData = true
                  OR PermissionSet.PermissionsManageUsers = true)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1000
         ];
 
@@ -242,7 +242,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
                 FROM PermissionSetAssignment
                 WHERE AssigneeId IN :userIds
                 AND PermissionSet.IsOwnedByProfile = false
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
 
             if (!toRevoke.isEmpty()) {
@@ -279,7 +279,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             FROM User
             WHERE IsActive = true
             AND (LastLoginDate < :cutoffDate OR LastLoginDate = null)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 500
         ];
 
@@ -298,7 +298,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             FROM PermissionSetAssignment
             WHERE AssigneeId IN :staleUserIds
             AND PermissionSet.IsOwnedByProfile = false
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]) {
             if (!userPermSets.containsKey(psa.AssigneeId)) {
                 userPermSets.put(psa.AssigneeId, new List<String>());
@@ -345,7 +345,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             FROM PermissionSetAssignment
             WHERE AssigneeId = :userId
             AND PermissionSet.IsOwnedByProfile = false
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         for (PermissionSetAssignment psa : assignments) {
@@ -402,7 +402,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
         List<IAccessControlService.ExcessiveAccessUser> excessiveUsers = getExcessiveAccessUsers();
 
         // Only flag if more than 10% of active users have elevated access
-        Integer activeUserCount = [SELECT COUNT() FROM User WHERE IsActive = true WITH SECURITY_ENFORCED];
+        Integer activeUserCount = [SELECT COUNT() FROM User WHERE IsActive = true WITH USER_MODE];
         Decimal threshold = activeUserCount * 0.10;
 
         if (excessiveUsers.size() > threshold) {
@@ -433,7 +433,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
             FROM PermissionSetAssignment
             WHERE AssigneeId = :userId
             AND PermissionSet.IsOwnedByProfile = false
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ]) {
             permSets.add(psa.PermissionSet.Name);
         }

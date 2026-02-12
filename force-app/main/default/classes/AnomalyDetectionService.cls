@@ -50,7 +50,7 @@ public with sharing class AnomalyDetectionService {
             SELECT AssigneeId, COUNT(Id) assignmentCount
             FROM PermissionSetAssignment
             WHERE SystemModstamp >= :startDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             GROUP BY AssigneeId
             HAVING COUNT(Id) > 10
         ];
@@ -79,7 +79,7 @@ public with sharing class AnomalyDetectionService {
             FROM Metadata_Change__c
             WHERE Change_Date__c >= :startDate
             AND Risk_Level__c = 'CRITICAL'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
         
         for (Metadata_Change__c change : highRiskChanges) {

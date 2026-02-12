@@ -5,7 +5,7 @@
  * Security Features:
  * - Custom Metadata driven configuration
  * - SOQL query validation and sanitization
- * - WITH SECURITY_ENFORCED on all queries
+ * - WITH USER_MODE on all queries
  * - Aggregate-only query enforcement
  * - Error isolation per KPI
  *
@@ -189,11 +189,11 @@ public with sharing class ElaroExecutiveKPIController {
             throw new AuraHandledException('Subqueries are not allowed in KPI queries');
         }
 
-        // Add WITH SECURITY_ENFORCED if not present
-        if (!upperQuery.contains('WITH SECURITY_ENFORCED')) {
+        // Add WITH USER_MODE if not present
+        if (!upperQuery.contains('WITH USER_MODE')) {
             // Find the right position to insert (before GROUP BY, HAVING, ORDER BY, LIMIT, or end)
             String insertPattern = '(?i)(\\s+GROUP\\s+BY|\\s+HAVING|\\s+ORDER\\s+BY|\\s+LIMIT|$)';
-            query = query.replaceFirst(insertPattern, ' WITH SECURITY_ENFORCED$1');
+            query = query.replaceFirst(insertPattern, ' WITH USER_MODE$1');
         }
 
         return query;

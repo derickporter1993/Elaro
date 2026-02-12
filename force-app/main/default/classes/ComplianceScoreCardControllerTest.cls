@@ -78,8 +78,8 @@ private class ComplianceScoreCardControllerTest {
             ComplianceScoreCardController.getFrameworkDetails('SOC2');
         Test.stopTest();
         
-        System.assertNotEquals(null, details, 'Details should not be null');
-        System.assertEquals('SOC2', details.framework, 'Framework should match');
+        Assert.areNotEqual(null, details, 'Details should not be null');
+        Assert.areEqual('SOC2', details.framework, 'Framework should match');
         System.assert(details.mappingCount >= 0, 'Mapping count should be non-negative');
         System.assert(details.evidenceCount >= 0, 'Evidence count should be non-negative');
         System.assert(details.requirementCount > 0, 'Should have requirements');
@@ -90,7 +90,7 @@ private class ComplianceScoreCardControllerTest {
         Test.startTest();
         try {
             ComplianceScoreCardController.getFrameworkDetails('');
-            System.assert(false, 'Should have thrown AuraHandledException');
+            Assert.fail( 'Should have thrown AuraHandledException');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('blank'), 'Should mention blank framework');
         }
@@ -102,7 +102,7 @@ private class ComplianceScoreCardControllerTest {
         Test.startTest();
         try {
             ComplianceScoreCardController.getFrameworkDetails('INVALID');
-            System.assert(false, 'Should have thrown AuraHandledException');
+            Assert.fail( 'Should have thrown AuraHandledException');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Unsupported'), 'Should mention unsupported framework');
         }
@@ -116,7 +116,7 @@ private class ComplianceScoreCardControllerTest {
             ComplianceScoreCardController.getFrameworkDetails('HIPAA');
         Test.stopTest();
         
-        System.assertNotEquals(null, details, 'Details should not be null');
-        System.assertEquals('HIPAA', details.framework, 'Framework should match');
+        Assert.areNotEqual(null, details, 'Details should not be null');
+        Assert.areEqual('HIPAA', details.framework, 'Framework should match');
     }
 }

@@ -33,8 +33,8 @@ private class RetentionEnforcementSchedulerTest {
 
         // Assert
         CronTrigger ct = [SELECT Id, CronExpression, State FROM CronTrigger WHERE Id = :jobId];
-        System.assertEquals(cronExpression, ct.CronExpression, 'Cron expression should match');
-        System.assertEquals('WAITING', ct.State, 'Job should be in WAITING state');
+        Assert.areEqual(cronExpression, ct.CronExpression, 'Cron expression should match');
+        Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
     @isTest
@@ -45,9 +45,9 @@ private class RetentionEnforcementSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
         List<CronTrigger> jobs = [SELECT Id FROM CronTrigger WHERE Id = :jobId];
-        System.assertEquals(1, jobs.size(), 'Scheduled job should exist');
+        Assert.areEqual(1, jobs.size(), 'Scheduled job should exist');
     }
 
     @isTest
@@ -82,6 +82,6 @@ private class RetentionEnforcementSchedulerTest {
         Test.stopTest();
 
         // Assert - should complete without error
-        System.assert(true, 'Scheduler should handle empty activity list gracefully');
+        Assert.isTrue(true, 'Scheduler should handle empty activity list gracefully');
     }
 }

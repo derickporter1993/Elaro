@@ -120,7 +120,7 @@ global without sharing class ElaroScoreCallback {
                 WHERE Org_ID__c = :orgId 
                 AND Entity_Type__c = :entityType 
                 AND Entity_Id__c = :entityId 
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             

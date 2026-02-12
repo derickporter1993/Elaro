@@ -24,7 +24,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.getAvailableObjects();
         Test.stopTest();
 
-        System.assertNotEquals(0, objects.size(), 'Should return available objects');
+        Assert.areNotEqual(0, objects.size(), 'Should return available objects');
     }
 
     @isTest
@@ -34,7 +34,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.getFieldMetadata('Account');
         Test.stopTest();
 
-        System.assertNotEquals(0, fields.size(), 'Should return field metadata');
+        Assert.areNotEqual(0, fields.size(), 'Should return field metadata');
     }
 
     @isTest
@@ -59,8 +59,8 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.getFieldMetadata('Account');
         Test.stopTest();
 
-        System.assertNotEquals(0, fields.size(), 'Should return field metadata');
-        System.assertNotEquals(0, fields2.size(), 'Should return field metadata on second call');
+        Assert.areNotEqual(0, fields.size(), 'Should return field metadata');
+        Assert.areNotEqual(0, fields2.size(), 'Should return field metadata on second call');
     }
 
     @isTest
@@ -79,9 +79,9 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertNotEquals(0, result.recordCount, 'Should return records');
-        System.assertNotEquals(null, result.queryExecuted, 'Query should be executed');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areNotEqual(0, result.recordCount, 'Should return records');
+        Assert.areNotEqual(null, result.queryExecuted, 'Query should be executed');
     }
 
     @isTest
@@ -104,7 +104,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -286,7 +286,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -303,7 +303,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -320,8 +320,8 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(true, result.hasMore, 'Should indicate more records available');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(true, result.hasMore, 'Should indicate more records available');
     }
 
     @isTest
@@ -344,8 +344,8 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(false, result.hasMore, 'Should indicate no more records');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(false, result.hasMore, 'Should indicate no more records');
     }
 
     @isTest
@@ -368,7 +368,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -391,7 +391,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -414,7 +414,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -437,7 +437,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -460,7 +460,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -483,10 +483,10 @@ private class ElaroDynamicReportControllerTest {
         try {
             ElaroDynamicReportController.ReportResult result =
                 ElaroDynamicReportController.executeReport(configJson);
-            System.assertNotEquals(null, result, 'Result should not be null');
+            Assert.areNotEqual(null, result, 'Result should not be null');
         } catch (Exception e) {
             // Field validation may fail for some fields
-            System.assert(true, 'Query may fail');
+            Assert.isTrue(true, 'Query may fail');
         }
         Test.stopTest();
     }
@@ -511,7 +511,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -530,7 +530,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -553,7 +553,7 @@ private class ElaroDynamicReportControllerTest {
             ElaroDynamicReportController.executeReport(configJson);
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
     @isTest
@@ -566,10 +566,10 @@ private class ElaroDynamicReportControllerTest {
         result.hasMore = true;
         result.queryExecuted = 'SELECT Name FROM Account';
 
-        System.assertNotEquals(null, result.data, 'Data should be set');
-        System.assertEquals(10, result.recordCount, 'Record count should be set');
-        System.assertEquals(true, result.hasMore, 'Has more should be set');
-        System.assertNotEquals(null, result.queryExecuted, 'Query executed should be set');
+        Assert.areNotEqual(null, result.data, 'Data should be set');
+        Assert.areEqual(10, result.recordCount, 'Record count should be set');
+        Assert.areEqual(true, result.hasMore, 'Has more should be set');
+        Assert.areNotEqual(null, result.queryExecuted, 'Query executed should be set');
     }
 
     @isTest
@@ -580,8 +580,8 @@ private class ElaroDynamicReportControllerTest {
         opt.label = 'Test Object';
         opt.value = 'Test__c';
 
-        System.assertEquals('Test Object', opt.label, 'Label should be set');
-        System.assertEquals('Test__c', opt.value, 'Value should be set');
+        Assert.areEqual('Test Object', opt.label, 'Label should be set');
+        Assert.areEqual('Test__c', opt.value, 'Value should be set');
     }
 
     @isTest
@@ -596,9 +596,9 @@ private class ElaroDynamicReportControllerTest {
         fm.isGroupable = false;
         fm.isSortable = true;
 
-        System.assertEquals('Test Field', fm.label, 'Label should be set');
-        System.assertEquals('TestField__c', fm.apiName, 'API name should be set');
-        System.assertEquals('TEXT', fm.fieldType, 'Field type should be set');
+        Assert.areEqual('Test Field', fm.label, 'Label should be set');
+        Assert.areEqual('TestField__c', fm.apiName, 'API name should be set');
+        Assert.areEqual('TEXT', fm.fieldType, 'Field type should be set');
     }
 
     @isTest

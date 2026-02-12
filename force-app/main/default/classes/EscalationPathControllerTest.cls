@@ -39,8 +39,8 @@ private class EscalationPathControllerTest {
         List<Elaro_Escalation_Path__c> paths = EscalationPathController.getPaths();
         Test.stopTest();
 
-        System.assertEquals(1, paths.size(), 'Should return one path');
-        System.assertEquals(1, paths[0].Level__c, 'Level should match');
+        Assert.areEqual(1, paths.size(), 'Should return one path');
+        Assert.areEqual(1, paths[0].Level__c, 'Level should match');
     }
 
     @isTest
@@ -60,11 +60,11 @@ private class EscalationPathControllerTest {
         Id pathId = EscalationPathController.createPath(newPath);
         Test.stopTest();
 
-        System.assertNotEquals(null, pathId, 'Path ID should be returned');
+        Assert.areNotEqual(null, pathId, 'Path ID should be returned');
 
         List<Elaro_Escalation_Path__c> paths = [SELECT Level__c FROM Elaro_Escalation_Path__c WHERE Id = :pathId];
-        System.assertEquals(1, paths.size(), 'Path should exist');
-        System.assertEquals(2, paths[0].Level__c, 'Level should match');
+        Assert.areEqual(1, paths.size(), 'Path should exist');
+        Assert.areEqual(2, paths[0].Level__c, 'Level should match');
     }
 
     @isTest
@@ -77,7 +77,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
 
         Elaro_Escalation_Path__c updated = [SELECT Role__c FROM Elaro_Escalation_Path__c WHERE Id = :path.Id];
-        System.assertEquals('Senior Team Lead', updated.Role__c, 'Role should be updated');
+        Assert.areEqual('Senior Team Lead', updated.Role__c, 'Role should be updated');
     }
 
     @isTest
@@ -89,7 +89,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
 
         List<Elaro_Escalation_Path__c> paths = [SELECT Id FROM Elaro_Escalation_Path__c WHERE Id = :path.Id];
-        System.assertEquals(0, paths.size(), 'Path should be deleted');
+        Assert.areEqual(0, paths.size(), 'Path should be deleted');
     }
 
     @isTest
@@ -105,7 +105,7 @@ private class EscalationPathControllerTest {
         Test.startTest();
         try {
             EscalationPathController.createPath(path);
-            System.assert(false, 'Expected exception for missing user');
+            Assert.fail( 'Expected exception for missing user');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('User'), 'Error message should mention user');
         }
@@ -127,7 +127,7 @@ private class EscalationPathControllerTest {
         Test.startTest();
         try {
             EscalationPathController.createPath(path);
-            System.assert(false, 'Expected exception for invalid level');
+            Assert.fail( 'Expected exception for invalid level');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Level'), 'Error message should mention level');
         }
@@ -149,7 +149,7 @@ private class EscalationPathControllerTest {
         Test.startTest();
         try {
             EscalationPathController.createPath(path);
-            System.assert(false, 'Expected exception for invalid level');
+            Assert.fail( 'Expected exception for invalid level');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Level'), 'Error message should mention level');
         }
@@ -171,7 +171,7 @@ private class EscalationPathControllerTest {
         Test.startTest();
         try {
             EscalationPathController.createPath(path);
-            System.assert(false, 'Expected exception for invalid delay');
+            Assert.fail( 'Expected exception for invalid delay');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('delay'), 'Error message should mention delay');
         }
@@ -193,7 +193,7 @@ private class EscalationPathControllerTest {
         Test.startTest();
         try {
             EscalationPathController.createPath(path);
-            System.assert(false, 'Expected exception for null delay');
+            Assert.fail( 'Expected exception for null delay');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('delay'), 'Error message should mention delay');
         }
@@ -228,6 +228,6 @@ private class EscalationPathControllerTest {
         Test.stopTest();
 
         List<Elaro_Escalation_Path__c> paths = EscalationPathController.getPaths();
-        System.assertEquals(3, paths.size(), 'Should have 3 paths');
+        Assert.areEqual(3, paths.size(), 'Should have 3 paths');
     }
 }

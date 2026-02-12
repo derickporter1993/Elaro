@@ -70,7 +70,7 @@ public with sharing class ElaroQuickActionsService {
                 )
                 AND Profile.Name != 'System Administrator'
                 AND IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 50 // Governor limit protection
             ];
         } catch (SecurityException e) {
@@ -105,7 +105,7 @@ public with sharing class ElaroQuickActionsService {
                 FROM PermissionSetAssignment
                 WHERE AssigneeId IN :adminUserIds
                 AND PermissionSet.PermissionsModifyAllData = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ]) {
                 if (!modAllByUser.containsKey(psa.AssigneeId)) {
                     modAllByUser.put(psa.AssigneeId, new List<PermissionSetAssignment>());
@@ -188,7 +188,7 @@ public with sharing class ElaroQuickActionsService {
                 FROM User
                 WHERE IsActive = true
                 AND (LastLoginDate = null OR LastLoginDate < LAST_N_DAYS:90)
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 100
             ];
         } catch (SecurityException e) {
@@ -259,7 +259,7 @@ public with sharing class ElaroQuickActionsService {
                     SELECT Id
                     FROM PermissionSetAssignment
                     WHERE PermissionSetId IN :new Map<Id, PermissionSet>(setsToRemove).keySet()
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                 ];
                 
                 if (!assignments.isEmpty()) {
@@ -313,7 +313,7 @@ public with sharing class ElaroQuickActionsService {
                 SELECT AssigneeId, COUNT(Id) assignmentCount
                 FROM PermissionSetAssignment
                 WHERE AssigneeId IN (SELECT Id FROM User WHERE IsActive = true)
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 GROUP BY AssigneeId
                 HAVING COUNT(Id) > 10
             ];
@@ -341,7 +341,7 @@ public with sharing class ElaroQuickActionsService {
                     SELECT Id, AssigneeId, PermissionSetId, PermissionSet.Name
                     FROM PermissionSetAssignment
                     WHERE AssigneeId IN :userIds
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                     ORDER BY AssigneeId
                 ];
             } catch (SecurityException e) {
@@ -428,7 +428,7 @@ public with sharing class ElaroQuickActionsService {
                 FROM PermissionSetAssignment
                 WHERE AssigneeId IN :userIds
                 AND PermissionSet.PermissionsModifyAllData = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
 
             if (assignments.isEmpty()) {
@@ -478,7 +478,7 @@ public with sharing class ElaroQuickActionsService {
                 FROM User
                 WHERE IsActive = true
                 AND (LastLoginDate = null OR LastLoginDate < :cutoffDate)
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 200
             ];
 
@@ -531,7 +531,7 @@ public with sharing class ElaroQuickActionsService {
                 SELECT Id, AssigneeId, PermissionSet.Name
                 FROM PermissionSetAssignment
                 WHERE Id = :assignmentId
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
 
             if (!Schema.sObjectType.PermissionSetAssignment.isDeletable()) {

@@ -30,11 +30,11 @@ private class ElaroScoreCallbackTest {
         Test.stopTest();
         
         // Verify response
-        System.assertEquals(200, res.statusCode, 'Should return 200 on success');
+        Assert.areEqual(200, res.statusCode, 'Should return 200 on success');
         
         Map<String, Object> responseBody = (Map<String, Object>)JSON.deserializeUntyped(res.responseBody.toString());
-        System.assertEquals(true, responseBody.get('success'), 'Response should indicate success');
-        System.assertNotEquals(null, responseBody.get('scoreId'), 'Should return score ID');
+        Assert.areEqual(true, responseBody.get('success'), 'Response should indicate success');
+        Assert.areNotEqual(null, responseBody.get('scoreId'), 'Should return score ID');
         
         // Verify Compliance_Score__c was created/updated
         List<Compliance_Score__c> scores = [
@@ -43,8 +43,8 @@ private class ElaroScoreCallbackTest {
             WHERE Org_ID__c = :UserInfo.getOrganizationId()
         ];
         
-        System.assertEquals(1, scores.size(), 'Score record should be created');
-        System.assertEquals(7.5, scores[0].Risk_Score__c, 'Risk score should match');
+        Assert.areEqual(1, scores.size(), 'Score record should be created');
+        Assert.areEqual(7.5, scores[0].Risk_Score__c, 'Risk score should match');
     }
     
     @isTest
@@ -66,11 +66,11 @@ private class ElaroScoreCallbackTest {
         Test.stopTest();
         
         // Verify error response
-        System.assertEquals(500, res.statusCode, 'Should return 500 on error');
+        Assert.areEqual(500, res.statusCode, 'Should return 500 on error');
         
         Map<String, Object> responseBody = (Map<String, Object>)JSON.deserializeUntyped(res.responseBody.toString());
-        System.assertEquals(false, responseBody.get('success'), 'Response should indicate failure');
-        System.assertNotEquals(null, responseBody.get('error'), 'Should return error message');
+        Assert.areEqual(false, responseBody.get('success'), 'Response should indicate failure');
+        Assert.areNotEqual(null, responseBody.get('error'), 'Should return error message');
     }
     
     @isTest
@@ -86,7 +86,7 @@ private class ElaroScoreCallbackTest {
         Test.stopTest();
         
         // Verify error response
-        System.assertEquals(500, res.statusCode, 'Should return 500 on malformed JSON');
+        Assert.areEqual(500, res.statusCode, 'Should return 500 on malformed JSON');
     }
 }
 

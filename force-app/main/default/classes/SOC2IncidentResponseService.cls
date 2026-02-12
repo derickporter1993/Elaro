@@ -126,7 +126,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             SELECT Id, Name, Incident_Type__c, Severity__c
             FROM Security_Incident__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         String evidenceData = JSON.serialize(new Map<String, Object>{
@@ -150,7 +150,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             SELECT Detected_Date__c, Severity__c
             FROM Security_Incident__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         Integer responseDays;
@@ -176,7 +176,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             SELECT Id, Detected_Date__c, Severity__c, Status__c, Resolved_Date__c
             FROM Security_Incident__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         status.deadline = getNotificationDeadline(breachId);
@@ -191,7 +191,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             WHERE Framework__c = 'SOC2'
             AND Evidence_Type__c = 'INCIDENT_NOTIFICATION'
             AND Description__c LIKE :('%' + breachId + '%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         status.regulatorNotified = false;
@@ -224,7 +224,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
                    Root_Cause__c, Resolution__c, Assigned_To__r.Name
             FROM Security_Incident__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         String report = generateIncidentReportContent(incident);
@@ -238,7 +238,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
         ElaroSecurityUtils.validateCRUDAccess('ContentVersion', DmlOperation.DML_INSERT);
         insert cv;
 
-        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH SECURITY_ENFORCED];
+        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
 
         logAuditEntry('REPORT_GENERATED', 'Generated incident report for ' + incident.Name, cv.ContentDocumentId);
 
@@ -256,7 +256,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
                    Detected_Date__c, Affected_Records__c, Framework__c
             FROM Security_Incident__c
             WHERE Status__c NOT IN ('RESOLVED', 'CLOSED')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Severity__c, Detected_Date__c DESC
         ];
 
@@ -290,7 +290,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
                    Detected_Date__c, Resolved_Date__c, Affected_Records__c
             FROM Security_Incident__c
             WHERE Detected_Date__c >= :cutoffDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         metrics.totalBreaches = incidents.size();
@@ -384,7 +384,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             SELECT Id, Severity__c, Status__c
             FROM Security_Incident__c
             WHERE Id = :incidentId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         // Escalate severity
@@ -411,7 +411,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             SELECT Id, Status__c
             FROM Security_Incident__c
             WHERE Id = :incidentId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         incident.Status__c = 'RESOLVED';
@@ -438,7 +438,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             query += 'AND Severity__c = :severity ';
         }
 
-        query += 'WITH SECURITY_ENFORCED ORDER BY Severity__c, Detected_Date__c DESC LIMIT 200';
+        query += 'WITH USER_MODE ORDER BY Severity__c, Detected_Date__c DESC LIMIT 200';
 
         return Database.query(query);
     }
@@ -473,7 +473,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             FROM Security_Incident__c
             WHERE (Description__c = null OR Description__c = '')
             AND Status__c NOT IN ('CLOSED')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         if (undocumentedIncidents > 0) {
@@ -501,7 +501,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             SELECT Id, Severity__c, Detected_Date__c
             FROM Security_Incident__c
             WHERE Status__c NOT IN ('RESOLVED', 'CLOSED')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         Integer slaBreaches = 0;
@@ -539,7 +539,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
             FROM Security_Incident__c
             WHERE Status__c IN ('RESOLVED', 'CLOSED')
             AND (Root_Cause__c = null OR Root_Cause__c = '')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         if (noRootCause > 0) {

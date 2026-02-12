@@ -14,10 +14,10 @@ private class ElaroRemediationEngineTest {
             ElaroRemediationEngine.evaluateAndRemediate('test-node-123');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(false, result.success, 'Stub should return false for success');
-        System.assertEquals('PENDING_REVIEW', result.action, 'Action should be PENDING_REVIEW');
-        System.assertNotEquals(null, result.remediationId, 'Remediation ID should be set');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(false, result.success, 'Stub should return false for success');
+        Assert.areEqual('PENDING_REVIEW', result.action, 'Action should be PENDING_REVIEW');
+        Assert.areNotEqual(null, result.remediationId, 'Remediation ID should be set');
     }
     
     @isTest
@@ -27,9 +27,9 @@ private class ElaroRemediationEngineTest {
             ElaroRemediationEngine.rollbackRemediation('remediation-123');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(false, result.success, 'Stub should return false for success');
-        System.assertEquals('ROLLBACK_UNAVAILABLE', result.action, 'Action should be ROLLBACK_UNAVAILABLE');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(false, result.success, 'Stub should return false for success');
+        Assert.areEqual('ROLLBACK_UNAVAILABLE', result.action, 'Action should be ROLLBACK_UNAVAILABLE');
     }
     
     @isTest
@@ -39,8 +39,8 @@ private class ElaroRemediationEngineTest {
             ElaroRemediationEngine.getPendingRemediations();
         Test.stopTest();
         
-        System.assertNotEquals(null, results, 'Results should not be null');
-        System.assertEquals(0, results.size(), 'Stub should return empty list');
+        Assert.areNotEqual(null, results, 'Results should not be null');
+        Assert.areEqual(0, results.size(), 'Stub should return empty list');
     }
     
     @isTest
@@ -50,9 +50,9 @@ private class ElaroRemediationEngineTest {
             ElaroRemediationEngine.approveRemediation('remediation-123', 'Approved by admin');
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals(true, result.success, 'Approval should succeed');
-        System.assertEquals('APPROVED', result.action, 'Action should be APPROVED');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual(true, result.success, 'Approval should succeed');
+        Assert.areEqual('APPROVED', result.action, 'Action should be APPROVED');
     }
     
     @isTest
@@ -60,7 +60,7 @@ private class ElaroRemediationEngineTest {
         ElaroRemediationEngine.RemediationResult result = 
             new ElaroRemediationEngine.RemediationResult();
         
-        System.assertEquals(false, result.success, 'Default success should be false');
-        System.assertNotEquals(null, result.reviewDeadline, 'Review deadline should be set');
+        Assert.areEqual(false, result.success, 'Default success should be false');
+        Assert.areNotEqual(null, result.reviewDeadline, 'Review deadline should be set');
     }
 }

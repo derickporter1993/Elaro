@@ -85,7 +85,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
             AND Delivery_Status__c = 'Pending'
         ];
 
-        System.assertEquals(5, newNotices.size(), 'Should have created 5 new annual notices');
+        Assert.areEqual(5, newNotices.size(), 'Should have created 5 new annual notices');
     }
 
     @IsTest
@@ -97,7 +97,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, locator, 'QueryLocator should not be null');
+        Assert.areNotEqual(null, locator, 'QueryLocator should not be null');
     }
 
     @IsTest
@@ -138,7 +138,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'Finish method should complete');
+        Assert.isTrue(true, 'Finish method should complete');
     }
 
     // ========================================
@@ -194,7 +194,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
             WHERE Delivery_Status__c = 'Pending'
         ];
 
-        System.assertEquals(200, newNoticeCount, 'Should have created 200 new notices');
+        Assert.areEqual(200, newNoticeCount, 'Should have created 200 new notices');
     }
 
     // ========================================
@@ -214,7 +214,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
         Test.stopTest();
 
         // Should complete without errors
-        System.assert(true, 'Batch should handle empty data');
+        Assert.isTrue(true, 'Batch should handle empty data');
     }
 
     @IsTest
@@ -248,7 +248,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
         Test.stopTest();
 
         // Should only create one notice per contact
-        System.assert(true, 'Duplicate contacts should be handled');
+        Assert.isTrue(true, 'Duplicate contacts should be handled');
     }
 
     @IsTest
@@ -290,8 +290,8 @@ private class ElaroGLBAAnnualNoticeBatchTest {
             AND Delivery_Status__c = 'Pending'
         ];
 
-        System.assertEquals(1, newNotices.size(), 'Should create notice for contact without email');
-        System.assertEquals('Mail', newNotices[0].Delivery_Method__c, 'Should use Mail delivery for contact without email');
+        Assert.areEqual(1, newNotices.size(), 'Should create notice for contact without email');
+        Assert.areEqual('Mail', newNotices[0].Delivery_Method__c, 'Should use Mail delivery for contact without email');
     }
 
     // ========================================
@@ -307,7 +307,7 @@ private class ElaroGLBAAnnualNoticeBatchTest {
 
         Test.stopTest();
 
-        System.assertNotEquals(null, jobId, 'Scheduler should return job ID');
+        Assert.areNotEqual(null, jobId, 'Scheduler should return job ID');
 
         // Verify job was scheduled
         List<CronTrigger> jobs = [
@@ -316,6 +316,6 @@ private class ElaroGLBAAnnualNoticeBatchTest {
             WHERE Id = :jobId
         ];
 
-        System.assertEquals(1, jobs.size(), 'Job should be scheduled');
+        Assert.areEqual(1, jobs.size(), 'Job should be scheduled');
     }
 }

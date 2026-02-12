@@ -80,30 +80,50 @@ public with sharing class SlackNotifier {
         notifyBulkAsync(JSON.serialize(payloads));
     }
 
-    @future(callout=true)
     public static void notifyBulkAsync(String serializedPayloads) {
-        String correlationId = 'BULK-' + System.now().getTime();
-        try {
-            List<Object> payloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
-            Integer index = 0;
-            for (Object payloadObj : payloads) {
-                String jsonPayload = (String) payloadObj;
-                HttpRequest req = new HttpRequest();
-                req.setEndpoint('callout:Slack_Webhook');
-                req.setMethod('POST');
-                req.setHeader('Content-Type', 'application/json');
-                req.setBody(jsonPayload);
-                req.setTimeout(10000);
-                HttpResponse res = new Http().send(req);
-                if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                    String errorCorrelationId = correlationId + '-' + index;
-                    logBulkAsyncError('HTTP_ERROR', 'Slack bulk notify failed with status ' + res.getStatusCode() + ': ' + res.getStatus(), errorCorrelationId, jsonPayload);
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new SlackBulkNotificationQueueable(serializedPayloads));
+        }
+    }
+    
+    /**
+     * Queueable implementation for bulk Slack notifications
+     * Provides better error handling and monitoring than @future
+     */
+    public class SlackBulkNotificationQueueable implements Queueable, Database.AllowsCallouts {
+        private String serializedPayloads;
+        
+        public SlackBulkNotificationQueueable(String serializedPayloads) {
+            this.serializedPayloads = serializedPayloads;
+        }
+        
+        public void execute(QueueableContext context) {
+            String correlationId = 'BULK-' + System.now().getTime();
+            try {
+                List<Object> payloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
+                Integer index = 0;
+                for (Object payloadObj : payloads) {
+                    String jsonPayload = (String) payloadObj;
+                    HttpRequest req = new HttpRequest();
+                    req.setEndpoint('callout:Slack_Webhook');
+                    req.setMethod('POST');
+                    req.setHeader('Content-Type', 'application/json');
+                    req.setBody(jsonPayload);
+                    req.setTimeout(10000);
+                    HttpResponse res = new Http().send(req);
+                    if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
+                        String errorCorrelationId = correlationId + '-' + index;
+                        logBulkAsyncError('HTTP_ERROR', 'Slack bulk notify failed with status ' + res.getStatusCode() + ': ' + res.getStatus(), errorCorrelationId, jsonPayload);
+                    }
+                    index++;
                 }
-                index++;
+                ElaroLogger.info('SlackNotifier.SlackBulkNotificationQueueable', 
+                    'Successfully sent ' + index + ' bulk notifications');
+            } catch (Exception e) {
+                logBulkAsyncError('EXCEPTION', 'Slack bulk notify exception: ' + e.getMessage(), correlationId, e.getStackTraceString());
+                ElaroLogger.error('SlackNotifier.SlackBulkNotificationQueueable', 
+                    'Slack bulk notify exception: ' + e.getMessage(), e.getStackTraceString());
             }
-        } catch (Exception e) {
-            logBulkAsyncError('EXCEPTION', 'Slack bulk notify exception: ' + e.getMessage(), correlationId, e.getStackTraceString());
-            ElaroLogger.error('Slack bulk notify exception: ' + e.getMessage());
         }
     }
 

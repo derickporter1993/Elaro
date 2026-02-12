@@ -18,7 +18,7 @@ private class WeeklyScorecardSchedulerTest {
         Test.stopTest();
         
         // Assert result contains expected confirmation text
-        System.assertNotEquals(null, result, 'Schedule should return a result message');
+        Assert.areNotEqual(null, result, 'Schedule should return a result message');
         System.assert(result.contains('Weekly scorecard scheduled') || result.contains('Elaro Weekly Scorecard'), 
             'Result should confirm scheduling: ' + result);
         
@@ -97,14 +97,14 @@ private class WeeklyScorecardSchedulerTest {
         Test.stopTest();
         
         // Verify job was scheduled
-        System.assertNotEquals(null, jobId, 'Job ID should not be null');
+        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
         
         CronTrigger ct = [
             SELECT Id, CronExpression, TimesTriggered
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals('0 0 9 ? * MON *', ct.CronExpression, 'Cron expression should match');
+        Assert.areEqual('0 0 9 ? * MON *', ct.CronExpression, 'Cron expression should match');
     }
     
     /**
@@ -127,9 +127,9 @@ private class WeeklyScorecardSchedulerTest {
      */
     @isTest
     static void testChannelConstants() {
-        System.assertEquals('Slack', WeeklyScorecardScheduler.SLACK, 'SLACK constant should be "Slack"');
-        System.assertEquals('Teams', WeeklyScorecardScheduler.TEAMS, 'TEAMS constant should be "Teams"');
-        System.assertEquals('Both', WeeklyScorecardScheduler.BOTH, 'BOTH constant should be "Both"');
+        Assert.areEqual('Slack', WeeklyScorecardScheduler.SLACK, 'SLACK constant should be "Slack"');
+        Assert.areEqual('Teams', WeeklyScorecardScheduler.TEAMS, 'TEAMS constant should be "Teams"');
+        Assert.areEqual('Both', WeeklyScorecardScheduler.BOTH, 'BOTH constant should be "Both"');
     }
     
     /**
@@ -147,7 +147,7 @@ private class WeeklyScorecardSchedulerTest {
             WeeklyScorecardScheduler.sendWeeklyScorecard('InvalidChannel');
             completedSuccessfully = true;
         } catch (Exception e) {
-            System.assert(false, 'Should not throw exception for invalid channel: ' + e.getMessage());
+            Assert.fail( 'Should not throw exception for invalid channel: ' + e.getMessage());
         }
         Test.stopTest();
 

@@ -46,7 +46,7 @@ public with sharing class ComplianceDashboardController {
                    Detected_Date__c, Risk_Score__c
             FROM Compliance_Gap__c
             WHERE Status__c != 'VERIFIED'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Detected_Date__c DESC
             LIMIT 10
         ];
@@ -59,7 +59,7 @@ public with sharing class ComplianceDashboardController {
         List<Compliance_Evidence__c> evidence = [
             SELECT Id, Framework__c, Evidence_Type__c, Evidence_Date__c, Status__c, Compliance_Score__c
             FROM Compliance_Evidence__c
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Evidence_Date__c DESC
             LIMIT 10
         ];
@@ -93,7 +93,7 @@ public with sharing class ComplianceDashboardController {
                    Risk_Score__c, Detected_Date__c, Remediation_Owner__c, Target_Remediation_Date__c
             FROM Compliance_Gap__c
             WHERE Framework__c = :framework
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Risk_Score__c DESC NULLS LAST
         ];
         data.gaps = (List<Compliance_Gap__c>) ElaroSecurityUtils.stripInaccessibleFields(
@@ -106,7 +106,7 @@ public with sharing class ComplianceDashboardController {
             SELECT Id, Evidence_Type__c, Evidence_Date__c, Status__c, Compliance_Score__c, Description__c
             FROM Compliance_Evidence__c
             WHERE Framework__c = :framework
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Evidence_Date__c DESC
             LIMIT 50
         ];

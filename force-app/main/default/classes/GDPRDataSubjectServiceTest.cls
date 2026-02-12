@@ -33,9 +33,9 @@ private class GDPRDataSubjectServiceTest {
         Map<String, Object> result = service.handleAccessRequest(requestId, testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Access request should succeed');
-        System.assertNotEquals(null, result.get('personalData'), 'Personal data should be returned');
-        System.assertNotEquals(null, result.get('correlationId'), 'Correlation ID should be present');
+        Assert.areEqual(true, result.get('success'), 'Access request should succeed');
+        Assert.areNotEqual(null, result.get('personalData'), 'Personal data should be returned');
+        Assert.areNotEqual(null, result.get('correlationId'), 'Correlation ID should be present');
     }
     
     @IsTest
@@ -71,7 +71,7 @@ private class GDPRDataSubjectServiceTest {
         Map<String, Object> result = service.handleRectificationRequest(requestId, corrections);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Rectification should succeed');
+        Assert.areEqual(true, result.get('success'), 'Rectification should succeed');
     }
     
     @IsTest
@@ -85,7 +85,7 @@ private class GDPRDataSubjectServiceTest {
         Map<String, Object> result = service.handleErasureRequest(requestId, testContact.Id, reason);
         Test.stopTest();
         
-        System.assertNotEquals(null, result, 'Erasure result should not be null');
+        Assert.areNotEqual(null, result, 'Erasure result should not be null');
     }
     
     @IsTest
@@ -99,9 +99,9 @@ private class GDPRDataSubjectServiceTest {
         Map<String, Object> result = service.handlePortabilityRequest(requestId, testContact.Id, format);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Portability should succeed');
-        System.assertEquals('JSON', result.get('format'), 'Format should be JSON');
-        System.assertNotEquals(null, result.get('exportData'), 'Export data should be present');
+        Assert.areEqual(true, result.get('success'), 'Portability should succeed');
+        Assert.areEqual('JSON', result.get('format'), 'Format should be JSON');
+        Assert.areNotEqual(null, result.get('exportData'), 'Export data should be present');
     }
     
     @IsTest
@@ -114,7 +114,7 @@ private class GDPRDataSubjectServiceTest {
         GDPRDataSubjectService service = new GDPRDataSubjectService();
         try {
             Map<String, Object> result = service.handlePortabilityRequest(requestId, testContact.Id, format);
-            System.assert(false, 'Should throw exception for invalid format');
+            Assert.fail( 'Should throw exception for invalid format');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Invalid'), 'Should throw invalid format error');
         }
@@ -133,7 +133,7 @@ private class GDPRDataSubjectServiceTest {
         Boolean verified = service.verifyIdentity(testContact.Id, verificationData);
         Test.stopTest();
         
-        System.assertEquals(true, verified, 'Identity should be verified');
+        Assert.areEqual(true, verified, 'Identity should be verified');
     }
     
     @IsTest
@@ -148,7 +148,7 @@ private class GDPRDataSubjectServiceTest {
         Boolean verified = service.verifyIdentity(testContact.Id, verificationData);
         Test.stopTest();
         
-        System.assertEquals(false, verified, 'Identity should not be verified');
+        Assert.areEqual(false, verified, 'Identity should not be verified');
     }
     
     @IsTest
@@ -159,7 +159,7 @@ private class GDPRDataSubjectServiceTest {
         GDPRDataSubjectService service = new GDPRDataSubjectService();
         try {
             service.handleAccessRequest(null, testContact.Id);
-            System.assert(false, 'Should throw exception for null request ID');
+            Assert.fail( 'Should throw exception for null request ID');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }
@@ -175,7 +175,7 @@ private class GDPRDataSubjectServiceTest {
         GDPRDataSubjectService service = new GDPRDataSubjectService();
         try {
             service.handleErasureRequest(requestId, testContact.Id, null);
-            System.assert(false, 'Should throw exception for null reason');
+            Assert.fail( 'Should throw exception for null reason');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }

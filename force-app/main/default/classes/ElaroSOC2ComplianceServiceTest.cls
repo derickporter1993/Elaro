@@ -28,7 +28,7 @@ private class ElaroSOC2ComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should calculate risk score
-        System.assertNotEquals(null, score, 'Risk score should not be null');
+        Assert.areNotEqual(null, score, 'Risk score should not be null');
         System.assert(score >= 0 && score <= 10, 'Risk score should be between 0 and 10');
     }
     
@@ -40,7 +40,7 @@ private class ElaroSOC2ComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return compliance score
-        System.assertNotEquals(null, score, 'Compliance score should not be null');
+        Assert.areNotEqual(null, score, 'Compliance score should not be null');
     }
     
     @IsTest
@@ -51,7 +51,7 @@ private class ElaroSOC2ComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return violations list (may be empty)
-        System.assertNotEquals(null, violations, 'Violations list should not be null');
+        Assert.areNotEqual(null, violations, 'Violations list should not be null');
     }
     
     @IsTest
@@ -62,6 +62,6 @@ private class ElaroSOC2ComplianceServiceTest {
         Test.stopTest();
         
         // Then: Should return SOC2 framework name
-        System.assertEquals('SOC2', framework, 'Should return SOC2 framework name');
+        Assert.areEqual('SOC2', framework, 'Should return SOC2 framework name');
     }
 }

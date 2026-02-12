@@ -130,7 +130,7 @@ public with sharing class CCPAOptOutService extends ComplianceServiceBase {
             List<Third_Party_Recipient__c> recipients = [
                 SELECT Id, Recipient_Name__c
                 FROM Third_Party_Recipient__c
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             Integer vendorsSynced = 0;

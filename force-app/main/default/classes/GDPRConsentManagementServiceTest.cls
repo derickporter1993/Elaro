@@ -44,11 +44,11 @@ private class GDPRConsentManagementServiceTest {
         Id consentId = service.recordConsent(testContact.Id, 'Analytics', true, 'Email');
         Test.stopTest();
         
-        System.assertNotEquals(null, consentId, 'Consent ID should be returned');
+        Assert.areNotEqual(null, consentId, 'Consent ID should be returned');
         
         Consent__c consent = [SELECT Id, Consent_Type__c, Consent_Given__c FROM Consent__c WHERE Id = :consentId];
-        System.assertEquals('Analytics', consent.Consent_Type__c, 'Consent type should match');
-        System.assertEquals(true, consent.Consent_Given__c, 'Consent should be given');
+        Assert.areEqual('Analytics', consent.Consent_Type__c, 'Consent type should match');
+        Assert.areEqual(true, consent.Consent_Given__c, 'Consent should be given');
     }
     
     @IsTest
@@ -82,7 +82,7 @@ private class GDPRConsentManagementServiceTest {
         Map<String, Object> result = service.withdrawConsent(testContact.Id, 'Marketing');
         Test.stopTest();
         
-        System.assertEquals(true, result.get('success'), 'Withdrawal should succeed');
+        Assert.areEqual(true, result.get('success'), 'Withdrawal should succeed');
         
         List<Consent__c> withdrawnConsents = [
             SELECT Id, Consent_Withdrawn__c 
@@ -132,8 +132,8 @@ private class GDPRConsentManagementServiceTest {
         Map<String, Object> result = service.validateConsentBasis(activity.Id, testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(true, result.get('valid'), 'Consent basis should be valid');
-        System.assertEquals(true, result.get('hasActiveConsent'), 'Should have active consent');
+        Assert.areEqual(true, result.get('valid'), 'Consent basis should be valid');
+        Assert.areEqual(true, result.get('hasActiveConsent'), 'Should have active consent');
     }
     
     @IsTest
@@ -151,7 +151,7 @@ private class GDPRConsentManagementServiceTest {
         Map<String, Object> result = service.validateConsentBasis(activity.Id, testContact.Id);
         Test.stopTest();
         
-        System.assertEquals(false, result.get('valid'), 'Consent basis should be invalid without consent');
+        Assert.areEqual(false, result.get('valid'), 'Consent basis should be invalid without consent');
     }
     
     @IsTest
@@ -160,7 +160,7 @@ private class GDPRConsentManagementServiceTest {
         GDPRConsentManagementService service = new GDPRConsentManagementService();
         try {
             service.recordConsent(null, 'Marketing', true, 'Web');
-            System.assert(false, 'Should throw exception for null contact');
+            Assert.fail( 'Should throw exception for null contact');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should validate required parameters');
         }

@@ -72,14 +72,14 @@ private class ElaroInstallHandlerTest {
 
         // Assert - AI Settings created
         Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        System.assertNotEquals(null, settings, 'AI settings should be created on new install');
-        System.assertEquals(false, settings.AI_Enabled__c, 'AI should be disabled by default');
-        System.assertEquals('claude-sonnet-4-20250514', settings.Model_Name__c, 'Should use latest Claude model');
-        System.assertEquals(4096, settings.Max_Tokens__c, 'Should set default max tokens');
-        System.assertEquals(0.7, settings.Temperature__c, 'Should set default temperature');
-        System.assertEquals(true, settings.Cache_Enabled__c, 'Cache should be enabled by default');
-        System.assertEquals(60, settings.Cache_TTL_Minutes__c, 'Should set default cache TTL');
-        System.assertEquals(60, settings.Timeout_Seconds__c, 'Should set default timeout');
+        Assert.areNotEqual(null, settings, 'AI settings should be created on new install');
+        Assert.areEqual(false, settings.AI_Enabled__c, 'AI should be disabled by default');
+        Assert.areEqual('claude-sonnet-4-20250514', settings.Model_Name__c, 'Should use latest Claude model');
+        Assert.areEqual(4096, settings.Max_Tokens__c, 'Should set default max tokens');
+        Assert.areEqual(0.7, settings.Temperature__c, 'Should set default temperature');
+        Assert.areEqual(true, settings.Cache_Enabled__c, 'Cache should be enabled by default');
+        Assert.areEqual(60, settings.Cache_TTL_Minutes__c, 'Should set default cache TTL');
+        Assert.areEqual(60, settings.Timeout_Seconds__c, 'Should set default timeout');
 
         // Assert - Audit Log created
         List<Elaro_Audit_Log__c> auditLogs = [
@@ -87,10 +87,10 @@ private class ElaroInstallHandlerTest {
             FROM Elaro_Audit_Log__c
             WHERE Action__c = 'Package Installation'
         ];
-        System.assertEquals(1, auditLogs.size(), 'Should create welcome audit log');
-        System.assertEquals('New Installation', auditLogs[0].Event_Type__c, 'Should log as new installation');
-        System.assertEquals('Completed', auditLogs[0].Status__c, 'Should mark as completed');
-        System.assertEquals('INFO', auditLogs[0].Severity__c, 'Should be INFO severity');
+        Assert.areEqual(1, auditLogs.size(), 'Should create welcome audit log');
+        Assert.areEqual('New Installation', auditLogs[0].Event_Type__c, 'Should log as new installation');
+        Assert.areEqual('Completed', auditLogs[0].Status__c, 'Should mark as completed');
+        Assert.areEqual('INFO', auditLogs[0].Severity__c, 'Should be INFO severity');
     }
 
     /**
@@ -120,10 +120,10 @@ private class ElaroInstallHandlerTest {
 
         // Assert - Settings preserved (not overwritten)
         Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        System.assertEquals(existingSettings.Id, settings.Id, 'Should preserve existing settings record');
-        System.assertEquals(true, settings.AI_Enabled__c, 'Should preserve AI enabled state');
-        System.assertEquals('claude-opus-4-5-20251101', settings.Model_Name__c, 'Should preserve custom model');
-        System.assertEquals(8192, settings.Max_Tokens__c, 'Should preserve max tokens');
+        Assert.areEqual(existingSettings.Id, settings.Id, 'Should preserve existing settings record');
+        Assert.areEqual(true, settings.AI_Enabled__c, 'Should preserve AI enabled state');
+        Assert.areEqual('claude-opus-4-5-20251101', settings.Model_Name__c, 'Should preserve custom model');
+        Assert.areEqual(8192, settings.Max_Tokens__c, 'Should preserve max tokens');
 
         // Assert - Audit Log created for upgrade
         List<Elaro_Audit_Log__c> auditLogs = [
@@ -131,8 +131,8 @@ private class ElaroInstallHandlerTest {
             FROM Elaro_Audit_Log__c
             WHERE Action__c = 'Package Installation'
         ];
-        System.assertEquals(1, auditLogs.size(), 'Should create upgrade audit log');
-        System.assertEquals('Upgrade', auditLogs[0].Event_Type__c, 'Should log as upgrade');
+        Assert.areEqual(1, auditLogs.size(), 'Should create upgrade audit log');
+        Assert.areEqual('Upgrade', auditLogs[0].Event_Type__c, 'Should log as upgrade');
         System.assert(auditLogs[0].Description__c.contains('2.5'), 'Should reference previous version');
     }
 
@@ -157,8 +157,8 @@ private class ElaroInstallHandlerTest {
             FROM Elaro_Audit_Log__c
             WHERE Action__c = 'Package Installation'
         ];
-        System.assertEquals(1, auditLogs.size(), 'Should create push upgrade audit log');
-        System.assertEquals('Push Upgrade', auditLogs[0].Event_Type__c, 'Should log as push upgrade');
+        Assert.areEqual(1, auditLogs.size(), 'Should create push upgrade audit log');
+        Assert.areEqual('Push Upgrade', auditLogs[0].Event_Type__c, 'Should log as push upgrade');
     }
 
     /**
@@ -182,11 +182,11 @@ private class ElaroInstallHandlerTest {
         Test.stopTest();
 
         // Assert - No exception should bubble up
-        System.assertEquals(false, exceptionThrown, 'Install handler should not throw exceptions');
+        Assert.areEqual(false, exceptionThrown, 'Install handler should not throw exceptions');
 
         // AI settings should still be created if possible
         Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        System.assertNotEquals(null, settings, 'Should create settings even if other operations fail');
+        Assert.areNotEqual(null, settings, 'Should create settings even if other operations fail');
     }
 
     /**
@@ -217,7 +217,7 @@ private class ElaroInstallHandlerTest {
 
         // In test context, FeedItem creation may be restricted
         // Test passes if no exception is thrown
-        System.assert(true, 'Chatter notification logic executed without error');
+        Assert.isTrue(true, 'Chatter notification logic executed without error');
     }
 
     /**
@@ -234,7 +234,7 @@ private class ElaroInstallHandlerTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, summary, 'Summary should not be null');
+        Assert.areNotEqual(null, summary, 'Summary should not be null');
         System.assert(summary.contains('Elaro Installation Summary'), 'Should contain header');
         System.assert(summary.contains('Type: New Installation'), 'Should contain installation type');
         System.assert(summary.contains('Org ID: ' + UserInfo.getOrganizationId()), 'Should contain org ID');
@@ -281,7 +281,7 @@ private class ElaroInstallHandlerTest {
         Test.stopTest();
 
         // Assert - Should not throw exception even if custom settings can't be created
-        System.assertEquals(false, exceptionThrown, 'Should handle missing metadata gracefully');
+        Assert.areEqual(false, exceptionThrown, 'Should handle missing metadata gracefully');
     }
 
     /**
@@ -303,7 +303,7 @@ private class ElaroInstallHandlerTest {
         Test.stopTest();
 
         // Assert - Installation completes successfully
-        System.assert(true, 'Installation should complete even with limited permissions');
+        Assert.isTrue(true, 'Installation should complete even with limited permissions');
     }
 
     /**
@@ -326,7 +326,7 @@ private class ElaroInstallHandlerTest {
         List<Elaro_AI_Settings__c> settings = [
             SELECT Id FROM Elaro_AI_Settings__c
         ];
-        System.assertEquals(1, settings.size(), 'Should only have one AI settings record');
+        Assert.areEqual(1, settings.size(), 'Should only have one AI settings record');
 
         // Multiple audit logs allowed (one per install/upgrade)
         List<Elaro_Audit_Log__c> auditLogs = [
@@ -359,6 +359,6 @@ private class ElaroInstallHandlerTest {
         Test.stopTest();
 
         // Assert - All installations completed
-        System.assert(true, 'All installation types completed successfully');
+        Assert.isTrue(true, 'All installation types completed successfully');
     }
 }

@@ -15,7 +15,7 @@ private class ElaroEventSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, scheduler, 'Scheduler should be created with default constructor');
+        Assert.areNotEqual(null, scheduler, 'Scheduler should be created with default constructor');
     }
 
     @isTest
@@ -31,7 +31,7 @@ private class ElaroEventSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, scheduler, 'Scheduler should be created with parameters');
+        Assert.areNotEqual(null, scheduler, 'Scheduler should be created with parameters');
     }
 
     @isTest
@@ -45,7 +45,7 @@ private class ElaroEventSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assertNotEquals(null, scheduler, 'Scheduler should handle null parameters');
+        Assert.areNotEqual(null, scheduler, 'Scheduler should handle null parameters');
     }
 
     @isTest
@@ -60,8 +60,8 @@ private class ElaroEventSchedulerTest {
 
         // Assert
         CronTrigger ct = [SELECT Id, CronExpression, State FROM CronTrigger WHERE Id = :jobId];
-        System.assertEquals(cronExpression, ct.CronExpression, 'Cron expression should match');
-        System.assertEquals('WAITING', ct.State, 'Job should be in WAITING state');
+        Assert.areEqual(cronExpression, ct.CronExpression, 'Cron expression should match');
+        Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
     @isTest
@@ -75,7 +75,7 @@ private class ElaroEventSchedulerTest {
         Test.stopTest();
 
         // Assert - method should complete without error
-        System.assert(true, 'Execute method should complete successfully');
+        Assert.isTrue(true, 'Execute method should complete successfully');
     }
 
     @isTest
@@ -91,7 +91,7 @@ private class ElaroEventSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assert(true, 'All event types should be processed');
+        Assert.isTrue(true, 'All event types should be processed');
     }
 
     @isTest
@@ -107,6 +107,6 @@ private class ElaroEventSchedulerTest {
         Test.stopTest();
 
         // Assert
-        System.assert(true, 'All frameworks should be processed');
+        Assert.isTrue(true, 'All frameworks should be processed');
     }
 }

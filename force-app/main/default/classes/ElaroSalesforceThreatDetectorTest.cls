@@ -15,7 +15,7 @@ private class ElaroSalesforceThreatDetectorTest {
             ElaroSalesforceThreatDetector.detectPermissionSetClones();
         Test.stopTest();
         
-        System.assertNotEquals(null, threats, 'Should return threat list');
+        Assert.areNotEqual(null, threats, 'Should return threat list');
         // Note: Actual detection depends on PermissionsModifyAllData which can't be set in test
     }
     
@@ -46,7 +46,7 @@ private class ElaroSalesforceThreatDetectorTest {
             ElaroSalesforceThreatDetector.detectInactiveUsersWithAccess();
         Test.stopTest();
         
-        System.assertNotEquals(null, threats, 'Should return threat list');
+        Assert.areNotEqual(null, threats, 'Should return threat list');
     }
     
     @isTest
@@ -56,7 +56,7 @@ private class ElaroSalesforceThreatDetectorTest {
             ElaroSalesforceThreatDetector.detectExcessiveAdminPermissions();
         Test.stopTest();
         
-        System.assertNotEquals(null, threats, 'Should return threat list');
+        Assert.areNotEqual(null, threats, 'Should return threat list');
     }
     
     @isTest
@@ -66,7 +66,7 @@ private class ElaroSalesforceThreatDetectorTest {
             ElaroSalesforceThreatDetector.detectAllThreats();
         Test.stopTest();
         
-        System.assertNotEquals(null, threats, 'Should return all threats');
+        Assert.areNotEqual(null, threats, 'Should return all threats');
     }
 }
 

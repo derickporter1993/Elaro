@@ -6,7 +6,7 @@
  * - Object whitelisting
  * - Field validation against schema
  * - Granularity validation
- * - WITH SECURITY_ENFORCED
+ * - WITH USER_MODE
  * - Date range bounds
  * - Mobile-friendly data sampling
  *
@@ -327,7 +327,7 @@ public with sharing class ElaroTrendController {
 
         soql += ' GROUP BY ' + bucketExpr + ', CALENDAR_YEAR(' + dateField + ')' +
                 ' ORDER BY CALENDAR_YEAR(' + dateField + '), ' + bucketExpr +
-                ' WITH SECURITY_ENFORCED' +
+                ' WITH USER_MODE' +
                 ' LIMIT ' + MAX_DATA_POINTS;
 
         return soql;

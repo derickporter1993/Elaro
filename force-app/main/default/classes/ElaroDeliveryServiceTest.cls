@@ -26,8 +26,8 @@ private class ElaroDeliveryServiceTest {
         Test.stopTest();
 
         // Verify email delivery method completed successfully
-        System.assertNotEquals(null, pkg.Id, 'Package ID should be valid');
-        System.assertEquals(1, recipients.size(), 'Should have 1 recipient');
+        Assert.areNotEqual(null, pkg.Id, 'Package ID should be valid');
+        Assert.areEqual(1, recipients.size(), 'Should have 1 recipient');
     }
     
     @isTest
@@ -44,7 +44,7 @@ private class ElaroDeliveryServiceTest {
         Test.stopTest();
 
         // Verify multiple recipients processed successfully
-        System.assertEquals(3, recipients.size(), 'Should have 3 recipients');
+        Assert.areEqual(3, recipients.size(), 'Should have 3 recipients');
     }
     
     @isTest
@@ -52,7 +52,7 @@ private class ElaroDeliveryServiceTest {
         Test.startTest();
         try {
             ElaroDeliveryService.deliverAuditPackage(null, new List&lt;String&gt;{'test@example.com'});
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required fields');
         }
@@ -66,7 +66,7 @@ private class ElaroDeliveryServiceTest {
         Test.startTest();
         try {
             ElaroDeliveryService.deliverAuditPackage(pkg.Id, new List&lt;String&gt;());
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required fields');
         }
@@ -80,7 +80,7 @@ private class ElaroDeliveryServiceTest {
         Test.startTest();
         try {
             ElaroDeliveryService.deliverAuditPackage(pkg.Id, null);
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('required'), 'Should mention required fields');
         }
@@ -105,7 +105,7 @@ private class ElaroDeliveryServiceTest {
         );
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return scheduled job ID');
+        Assert.areNotEqual(null, jobId, 'Should return scheduled job ID');
         
         // Verify job was created
         CronTrigger ct = [
@@ -113,7 +113,7 @@ private class ElaroDeliveryServiceTest {
             FROM CronTrigger
             WHERE Id = :jobId
         ];
-        System.assertEquals('WAITING', ct.State, 'Job should be waiting');
+        Assert.areEqual('WAITING', ct.State, 'Job should be waiting');
         
         // Clean up
         System.abortJob(jobId);
@@ -130,7 +130,7 @@ private class ElaroDeliveryServiceTest {
                 null,
                 new List&lt;String&gt;{'test@example.com'}
             );
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Cron expression'), 'Should mention cron expression');
         }
@@ -148,7 +148,7 @@ private class ElaroDeliveryServiceTest {
                 '',
                 new List&lt;String&gt;{'test@example.com'}
             );
-            System.assert(false, 'Should throw exception');
+            Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('Cron expression'), 'Should mention cron expression');
         }
@@ -167,7 +167,7 @@ private class ElaroDeliveryServiceTest {
         String shareableUrl = ElaroDeliveryService.generateShareableLink(pkg.Id, 30);
         Test.stopTest();
         
-        System.assertNotEquals(null, shareableUrl, 'Should return shareable URL');
+        Assert.areNotEqual(null, shareableUrl, 'Should return shareable URL');
         
         // Verify ContentDistribution was created
         List&lt;ContentDistribution&gt; distributions = [
@@ -176,8 +176,8 @@ private class ElaroDeliveryServiceTest {
             WHERE Name LIKE '%Audit Package Share%'
         ];
         System.assert(!distributions.isEmpty(), 'ContentDistribution should be created');
-        System.assertEquals(Date.today().addDays(30), distributions[0].ExpiryDate, 'Expiration should be 30 days');
-        System.assertEquals(true, distributions[0].PreferencesPasswordRequired, 'Should require password');
+        Assert.areEqual(Date.today().addDays(30), distributions[0].ExpiryDate, 'Expiration should be 30 days');
+        Assert.areEqual(true, distributions[0].PreferencesPasswordRequired, 'Should require password');
     }
     
     @isTest
@@ -194,7 +194,7 @@ private class ElaroDeliveryServiceTest {
             FROM ContentDistribution
             WHERE Name LIKE '%Audit Package Share%'
         ];
-        System.assertEquals(Date.today().addDays(30), distributions[0].ExpiryDate, 'Should default to 30 days');
+        Assert.areEqual(Date.today().addDays(30), distributions[0].ExpiryDate, 'Should default to 30 days');
     }
     
     @isTest
@@ -206,7 +206,7 @@ private class ElaroDeliveryServiceTest {
         Test.stopTest();
         
         // Should default to 30 days for invalid input
-        System.assertNotEquals(null, shareableUrl, 'Should still return URL');
+        Assert.areNotEqual(null, shareableUrl, 'Should still return URL');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -225,7 +225,7 @@ private class ElaroDeliveryServiceTest {
         Test.stopTest();
 
         // Future method completed without exception (callout happened in mock)
-        System.assertNotEquals(null, pkg.Id, 'Package ID should be valid');
+        Assert.areNotEqual(null, pkg.Id, 'Package ID should be valid');
     }
     
     @isTest
@@ -241,7 +241,7 @@ private class ElaroDeliveryServiceTest {
 
         // Verify null parameter handling completed without exception
         // Method should validate parameters internally and handle gracefully
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML with null parameters');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML with null parameters');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -271,7 +271,7 @@ private class ElaroDeliveryServiceTest {
         List&lt;Map&lt;String, Object&gt;&gt; history = ElaroDeliveryService.getDeliveryHistory(newPkg.Id);
         Test.stopTest();
         
-        System.assertEquals(0, history.size(), 'Should return empty list for new package');
+        Assert.areEqual(0, history.size(), 'Should return empty list for new package');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -292,8 +292,8 @@ private class ElaroDeliveryServiceTest {
         Test.stopTest();
 
         // Verify scheduled delivery executed successfully
-        System.assertNotEquals(null, pkg.Id, 'Package ID should be valid');
-        System.assertEquals(1, recipients.size(), 'Should have recipient list');
+        Assert.areNotEqual(null, pkg.Id, 'Package ID should be valid');
+        Assert.areEqual(1, recipients.size(), 'Should have recipient list');
     }
     
     @isTest
@@ -305,7 +305,7 @@ private class ElaroDeliveryServiceTest {
         Id jobId = ElaroScheduledDelivery.scheduleWeekly(pkg.Id, recipients);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         // Clean up
         System.abortJob(jobId);
@@ -320,7 +320,7 @@ private class ElaroDeliveryServiceTest {
         Id jobId = ElaroScheduledDelivery.scheduleMonthly(pkg.Id, recipients);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         // Clean up
         System.abortJob(jobId);
@@ -335,7 +335,7 @@ private class ElaroDeliveryServiceTest {
         Id jobId = ElaroScheduledDelivery.scheduleQuarterly(pkg.Id, recipients);
         Test.stopTest();
         
-        System.assertNotEquals(null, jobId, 'Should return job ID');
+        Assert.areNotEqual(null, jobId, 'Should return job ID');
         
         // Clean up
         System.abortJob(jobId);

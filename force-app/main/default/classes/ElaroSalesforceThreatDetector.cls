@@ -5,7 +5,7 @@
  * that generic compliance tools miss. This is Elaro's core differentiation.
  * 
  * Security: Uses 'with sharing' to enforce user's sharing rules and FLS.
- * All SOQL queries use WITH SECURITY_ENFORCED for field-level security.
+ * All SOQL queries use WITH USER_MODE for field-level security.
  * 
  * @author Elaro TeamCRM
  * @version 1.0
@@ -37,7 +37,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 SELECT Id, Name, Label, PermissionsModifyAllData
                 FROM PermissionSet 
                 WHERE IsCustom = false
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ]) {
                 orgOwnedSets.put(ps.Name.toLowerCase(), ps);
             }
@@ -59,7 +59,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                      OR Name LIKE '%Test%'
                      OR Label LIKE '%Clone%'
                      OR Label LIKE '%Copy%')
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
         } catch (SecurityException e) {
             ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying custom permission sets: ' + e.getMessage());
@@ -118,7 +118,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 SELECT Id, Name, ParentId, Parent.Name
                 FROM Account 
                 WHERE ParentId != null
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT :MAX_ACCOUNT_HIERARCHY_QUERY
             ];
         } catch (SecurityException e) {
@@ -196,7 +196,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 FROM User 
                 WHERE IsActive = true 
                 AND (LastLoginDate = null OR LastLoginDate < LAST_N_DAYS:180)
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 ORDER BY LastLoginDate ASC NULLS LAST
             ];
         } catch (SecurityException e) {
@@ -217,7 +217,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                     SELECT AssigneeId, PermissionSet.Name, PermissionSet.Label
                     FROM PermissionSetAssignment
                     WHERE AssigneeId IN :userIds
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                 ]) {
                     if (psa != null && psa.AssigneeId != null) {
                         if (!userAssignments.containsKey(psa.AssigneeId)) {
@@ -286,7 +286,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 FROM User 
                 WHERE Profile.Name = 'System Administrator' 
                 AND IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             // Count users with Modify All Data permission
@@ -299,7 +299,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                     WHERE PermissionSet.PermissionsModifyAllData = true
                 )
                 AND IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             // Industry best practice: 2-5% of users should be admins
@@ -307,7 +307,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 SELECT COUNT() 
                 FROM User 
                 WHERE IsActive = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
         } catch (SecurityException e) {
             ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying admin users: ' + e.getMessage());
@@ -354,7 +354,7 @@ public with sharing class ElaroSalesforceThreatDetector {
                 WHERE PermissionsModifyAllData = true
                 AND CreatedDate = LAST_N_DAYS:30
                 AND IsCustom = true
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
         } catch (SecurityException e) {
             ElaroLogger.error( '[ElaroSalesforceThreatDetector] Security exception querying recent permission sets: ' + e.getMessage());

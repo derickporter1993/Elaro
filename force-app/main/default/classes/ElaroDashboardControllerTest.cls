@@ -75,7 +75,7 @@ private class ElaroDashboardControllerTest {
             ElaroDashboardController.getAuditPackages('ALL');
         Test.stopTest();
         
-        System.assertNotEquals(null, packages, 'Packages should not be null');
+        Assert.areNotEqual(null, packages, 'Packages should not be null');
         System.assert(packages.size() > 0, 'Should return at least one package');
     }
     
@@ -86,9 +86,9 @@ private class ElaroDashboardControllerTest {
             ElaroDashboardController.getAuditPackages('SOC2');
         Test.stopTest();
         
-        System.assertNotEquals(null, packages, 'Packages should not be null');
+        Assert.areNotEqual(null, packages, 'Packages should not be null');
         for (ElaroDashboardController.AuditPackageInfo pkg : packages) {
-            System.assertEquals('SOC2', pkg.framework, 'Framework should match');
+            Assert.areEqual('SOC2', pkg.framework, 'Framework should match');
         }
     }
     
@@ -99,7 +99,7 @@ private class ElaroDashboardControllerTest {
             ElaroDashboardController.getAuditPackages(null);
         Test.stopTest();
         
-        System.assertNotEquals(null, packages, 'Packages should not be null');
+        Assert.areNotEqual(null, packages, 'Packages should not be null');
     }
     
     @IsTest
@@ -115,8 +115,8 @@ private class ElaroDashboardControllerTest {
             ElaroDashboardController.getAuditPackageStats(pkg.Id);
         Test.stopTest();
         
-        System.assertNotEquals(null, stats, 'Stats should not be null');
-        System.assertEquals(pkg.Id, stats.id, 'Package ID should match');
+        Assert.areNotEqual(null, stats, 'Stats should not be null');
+        Assert.areEqual(pkg.Id, stats.id, 'Package ID should match');
         System.assert(stats.mappingCount > 0, 'Should have mappings');
         System.assert(stats.evidenceCount > 0, 'Should have evidence');
     }
@@ -126,7 +126,7 @@ private class ElaroDashboardControllerTest {
         Test.startTest();
         try {
             ElaroDashboardController.getAuditPackageStats('');
-            System.assert(false, 'Should have thrown AuraHandledException');
+            Assert.fail( 'Should have thrown AuraHandledException');
         } catch (AuraHandledException e) {
             System.assert(e.getMessage().contains('blank'), 'Should mention blank ID');
         }

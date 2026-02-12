@@ -12,8 +12,8 @@ private class ElaroEventPublisherTest {
         };
         
         // Verify test data is valid
-        System.assertNotEquals(null, orgId, 'Org ID should not be null');
-        System.assertNotEquals(null, changeData, 'Change data should not be null');
+        Assert.areNotEqual(null, orgId, 'Org ID should not be null');
+        Assert.areNotEqual(null, changeData, 'Change data should not be null');
 
         Test.startTest();
         // Platform Events are async - verify no exception is thrown
@@ -25,7 +25,7 @@ private class ElaroEventPublisherTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'publishConfigChange should not throw exception');
+        Assert.areEqual(null, caughtException, 'publishConfigChange should not throw exception');
     }
     
     @isTest
@@ -37,8 +37,8 @@ private class ElaroEventPublisherTest {
             'display' => 'PermissionSet: Test Permission Set'
         };
         
-        System.assertNotEquals(null, orgId, 'Org ID should not be null');
-        System.assertEquals(3, auditData.size(), 'Audit data should have 3 entries');
+        Assert.areNotEqual(null, orgId, 'Org ID should not be null');
+        Assert.areEqual(3, auditData.size(), 'Audit data should have 3 entries');
 
         Test.startTest();
         Exception caughtException = null;
@@ -49,7 +49,7 @@ private class ElaroEventPublisherTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'publishAuditTrailChange should not throw exception');
+        Assert.areEqual(null, caughtException, 'publishAuditTrailChange should not throw exception');
     }
     
     @isTest
@@ -59,9 +59,9 @@ private class ElaroEventPublisherTest {
         String permissionSetId = '0PS000000000001';
         String action = 'ASSIGNED';
         
-        System.assertNotEquals(null, orgId, 'Org ID should not be null');
-        System.assertNotEquals(null, userId, 'User ID should not be null');
-        System.assertEquals('ASSIGNED', action, 'Action should be ASSIGNED');
+        Assert.areNotEqual(null, orgId, 'Org ID should not be null');
+        Assert.areNotEqual(null, userId, 'User ID should not be null');
+        Assert.areEqual('ASSIGNED', action, 'Action should be ASSIGNED');
 
         Test.startTest();
         Exception caughtException = null;
@@ -72,7 +72,7 @@ private class ElaroEventPublisherTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'publishPermissionChange should not throw exception');
+        Assert.areEqual(null, caughtException, 'publishPermissionChange should not throw exception');
     }
     
     @isTest
@@ -91,7 +91,7 @@ private class ElaroEventPublisherTest {
             ));
         }
         
-        System.assertEquals(5, events.size(), 'Should have 5 events to publish');
+        Assert.areEqual(5, events.size(), 'Should have 5 events to publish');
 
         Test.startTest();
         Exception caughtException = null;
@@ -102,7 +102,7 @@ private class ElaroEventPublisherTest {
         }
         Test.stopTest();
 
-        System.assertEquals(null, caughtException, 'publishBatch should not throw exception');
+        Assert.areEqual(null, caughtException, 'publishBatch should not throw exception');
     }
     
     @isTest
@@ -118,7 +118,7 @@ private class ElaroEventPublisherTest {
         Test.stopTest();
 
         // Empty and null batches should be handled gracefully without exception
-        System.assertEquals(null, caughtException, 'Empty/null batch should not throw exception');
+        Assert.areEqual(null, caughtException, 'Empty/null batch should not throw exception');
     }
 }
 

@@ -53,7 +53,7 @@ private class ElaroPCIAccessLoggerTest {
         Test.stopTest();
 
         // Verify all access types were logged via platform events
-        System.assertEquals(5, accessTypes.size(), 'Should test all 5 access types');
+        Assert.areEqual(5, accessTypes.size(), 'Should test all 5 access types');
         System.assert(Limits.getDmlStatements() >= accessTypes.size(), 'Should publish event for each access type');
     }
 
@@ -74,7 +74,7 @@ private class ElaroPCIAccessLoggerTest {
         Test.stopTest();
 
         // Verify bulk logging completed with proper bulkification
-        System.assertEquals(200, recordIds.size(), 'Should process 200 records');
+        Assert.areEqual(200, recordIds.size(), 'Should process 200 records');
         System.assert(Limits.getDmlStatements() <= 2, 'Should bulkify platform event publishing');
     }
 
@@ -91,8 +91,8 @@ private class ElaroPCIAccessLoggerTest {
         Test.stopTest();
 
         // Verify empty set is handled gracefully without DML
-        System.assertEquals(0, emptySet.size(), 'Set should be empty');
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not publish event for empty set');
+        Assert.areEqual(0, emptySet.size(), 'Set should be empty');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not publish event for empty set');
     }
 
     @IsTest
@@ -122,7 +122,7 @@ private class ElaroPCIAccessLoggerTest {
         Test.stopTest();
 
         // Verify sensitive data view event was published
-        System.assertEquals(3, dataElements.size(), 'Should track 3 data elements');
+        Assert.areEqual(3, dataElements.size(), 'Should track 3 data elements');
         System.assert(Limits.getDmlStatements() > 0, 'Should publish sensitive data view event');
     }
 
@@ -136,7 +136,7 @@ private class ElaroPCIAccessLoggerTest {
         Test.stopTest();
 
         // Verify empty elements list is handled gracefully
-        System.assertEquals(0, emptyElements.size(), 'Elements list should be empty');
+        Assert.areEqual(0, emptyElements.size(), 'Elements list should be empty');
         // Method may still log with empty list, verify no exception thrown
     }
 
@@ -149,7 +149,7 @@ private class ElaroPCIAccessLoggerTest {
             ElaroPCIAccessLogger.getRecentAccessLogs(acc.Id, 10);
         Test.stopTest();
 
-        System.assertNotEquals(null, logs, 'Should return list (may be empty)');
+        Assert.areNotEqual(null, logs, 'Should return list (may be empty)');
     }
 
     @IsTest
@@ -163,8 +163,8 @@ private class ElaroPCIAccessLoggerTest {
         entry.ipAddress = '192.168.1.1';
         entry.timestamp = System.now();
 
-        System.assertEquals('001000000000001', entry.recordId, 'recordId should match');
-        System.assertEquals('View', entry.accessType, 'accessType should match');
+        Assert.areEqual('001000000000001', entry.recordId, 'recordId should match');
+        Assert.areEqual('View', entry.accessType, 'accessType should match');
     }
 
     @IsTest
@@ -217,7 +217,7 @@ private class ElaroPCIAccessLoggerTest {
         Test.stopTest();
 
         // Verify concurrent logging completed successfully
-        System.assertEquals(10, accounts.size(), 'Should process 10 accounts');
+        Assert.areEqual(10, accounts.size(), 'Should process 10 accounts');
         System.assert(Limits.getDmlStatements() >= 20, 'Should publish 20 events (2 per account)');
     }
 

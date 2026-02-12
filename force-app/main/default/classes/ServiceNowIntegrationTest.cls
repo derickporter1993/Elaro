@@ -62,7 +62,7 @@ private class ServiceNowIntegrationTest {
         Test.stopTest();
 
         // Verify HIPAA control sync completed successfully (mock returns 201 Created)
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for sync callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for sync callout');
     }
 
     @isTest
@@ -74,7 +74,7 @@ private class ServiceNowIntegrationTest {
         Test.stopTest();
 
         // Verify SOC2 control sync completed successfully
-        System.assertEquals(0, Limits.getDmlStatements(), 'Should not perform DML for sync callout');
+        Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for sync callout');
     }
 
     @isTest
@@ -87,7 +87,7 @@ private class ServiceNowIntegrationTest {
         Test.stopTest();
 
         // Verify evidence was pushed successfully to ServiceNow
-        System.assertNotEquals(null, evidence.Id, 'Evidence ID should not be null');
+        Assert.areNotEqual(null, evidence.Id, 'Evidence ID should not be null');
     }
 
     @isTest
@@ -105,7 +105,7 @@ private class ServiceNowIntegrationTest {
         String sysId = ServiceNowIntegration.createIncident(incidentData);
         Test.stopTest();
 
-        System.assertNotEquals(null, sysId, 'Incident sys_id should be returned');
+        Assert.areNotEqual(null, sysId, 'Incident sys_id should be returned');
     }
 
     @isTest
@@ -116,7 +116,7 @@ private class ServiceNowIntegrationTest {
         Map<String, Object> status = ServiceNowIntegration.getIncidentStatus('INC0001234');
         Test.stopTest();
 
-        System.assertNotEquals(null, status, 'Status should be returned');
+        Assert.areNotEqual(null, status, 'Status should be returned');
     }
 
     @isTest
@@ -129,7 +129,7 @@ private class ServiceNowIntegrationTest {
         Test.stopTest();
 
         // Verify compliance status sync completed for valid package
-        System.assertNotEquals(null, pkg.Id, 'Package ID should not be null');
+        Assert.areNotEqual(null, pkg.Id, 'Package ID should not be null');
     }
 
     @isTest
@@ -146,7 +146,7 @@ private class ServiceNowIntegrationTest {
         Boolean exceptionCaught = false;
         try {
             ServiceNowIntegration.createIncident(incidentData);
-            System.assert(false, 'Should have thrown exception');
+            Assert.fail( 'Should have thrown exception');
         } catch (AuraHandledException e) {
             exceptionCaught = true;
             System.assert(e.getMessage().length() > 0, 'Exception should have message');

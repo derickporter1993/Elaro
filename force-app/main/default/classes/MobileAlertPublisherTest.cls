@@ -106,7 +106,7 @@ private class MobileAlertPublisherTest {
         Test.stopTest();
 
         // Verify no exceptions thrown - notification sending is mocked in tests
-        System.assert(true, 'Critical alert published successfully');
+        Assert.isTrue(true, 'Critical alert published successfully');
     }
 
     @isTest
@@ -121,7 +121,7 @@ private class MobileAlertPublisherTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'High alert published successfully');
+        Assert.isTrue(true, 'High alert published successfully');
     }
 
     @isTest
@@ -132,7 +132,7 @@ private class MobileAlertPublisherTest {
         MobileAlertPublisher.publishAlertForGap(gap.Id);
         Test.stopTest();
 
-        System.assert(true, 'Alert for critical gap published successfully');
+        Assert.isTrue(true, 'Alert for critical gap published successfully');
     }
 
     @isTest
@@ -143,7 +143,7 @@ private class MobileAlertPublisherTest {
         MobileAlertPublisher.publishAlertForGap(gap.Id);
         Test.stopTest();
 
-        System.assert(true, 'Alert for high gap published successfully');
+        Assert.isTrue(true, 'Alert for high gap published successfully');
     }
 
     @isTest
@@ -155,7 +155,7 @@ private class MobileAlertPublisherTest {
         MobileAlertPublisher.publishAlertForGap(gap.Id);
         Test.stopTest();
 
-        System.assert(true, 'No alert sent for medium severity gap');
+        Assert.isTrue(true, 'No alert sent for medium severity gap');
     }
 
     @isTest
@@ -163,7 +163,7 @@ private class MobileAlertPublisherTest {
         Test.startTest();
         try {
             MobileAlertPublisher.publishAlertForGap('001000000000000AAA');
-            System.assert(false, 'Expected exception for invalid gap ID');
+            Assert.fail( 'Expected exception for invalid gap ID');
         } catch (MobileAlertPublisher.MobileAlertException e) {
             System.assert(e.getMessage().contains('not found'), 'Expected not found error');
         }
@@ -185,9 +185,9 @@ private class MobileAlertPublisherTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(true, updatedGap.Alert_Acknowledged__c, 'Gap should be acknowledged');
-        System.assertEquals(UserInfo.getUserId(), updatedGap.Alert_Acknowledged_By__c, 'Acknowledged by should be current user');
-        System.assertNotEquals(null, updatedGap.Alert_Acknowledged_At__c, 'Acknowledged at should be set');
+        Assert.areEqual(true, updatedGap.Alert_Acknowledged__c, 'Gap should be acknowledged');
+        Assert.areEqual(UserInfo.getUserId(), updatedGap.Alert_Acknowledged_By__c, 'Acknowledged by should be current user');
+        Assert.areNotEqual(null, updatedGap.Alert_Acknowledged_At__c, 'Acknowledged at should be set');
     }
 
     @isTest
@@ -205,7 +205,7 @@ private class MobileAlertPublisherTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertNotEquals(null, updatedGap.Alert_Snoozed_Until__c, 'Snoozed until should be set');
+        Assert.areNotEqual(null, updatedGap.Alert_Snoozed_Until__c, 'Snoozed until should be set');
         System.assert(updatedGap.Alert_Snoozed_Until__c > Datetime.now(), 'Snoozed until should be in the future');
     }
 
@@ -216,7 +216,7 @@ private class MobileAlertPublisherTest {
         Test.startTest();
         try {
             MobileAlertPublisher.snoozeAlert(gap.Id, 0);
-            System.assert(false, 'Expected exception for zero duration');
+            Assert.fail( 'Expected exception for zero duration');
         } catch (MobileAlertPublisher.MobileAlertException e) {
             System.assert(e.getMessage().contains('between 1 and 480'), 'Expected duration validation error');
         }
@@ -230,7 +230,7 @@ private class MobileAlertPublisherTest {
         Test.startTest();
         try {
             MobileAlertPublisher.snoozeAlert(gap.Id, 500);
-            System.assert(false, 'Expected exception for duration > 480');
+            Assert.fail( 'Expected exception for duration > 480');
         } catch (MobileAlertPublisher.MobileAlertException e) {
             System.assert(e.getMessage().contains('between 1 and 480'), 'Expected duration validation error');
         }
@@ -244,7 +244,7 @@ private class MobileAlertPublisherTest {
         Test.startTest();
         try {
             MobileAlertPublisher.snoozeAlert(gap.Id, -10);
-            System.assert(false, 'Expected exception for negative duration');
+            Assert.fail( 'Expected exception for negative duration');
         } catch (MobileAlertPublisher.MobileAlertException e) {
             System.assert(e.getMessage().contains('between 1 and 480'), 'Expected duration validation error');
         }
@@ -257,12 +257,12 @@ private class MobileAlertPublisherTest {
         List<MobileAlertPublisher.OnCallUser> onCallUsers = MobileAlertPublisher.getCurrentOnCallUsers();
         Test.stopTest();
 
-        System.assertNotEquals(0, onCallUsers.size(), 'Should have at least one on-call user');
+        Assert.areNotEqual(0, onCallUsers.size(), 'Should have at least one on-call user');
 
         MobileAlertPublisher.OnCallUser user = onCallUsers[0];
-        System.assertNotEquals(null, user.userId, 'User ID should be set');
-        System.assertNotEquals(null, user.userName, 'User name should be set');
-        System.assertEquals('Primary', user.rotationName, 'Rotation name should match');
+        Assert.areNotEqual(null, user.userId, 'User ID should be set');
+        Assert.areNotEqual(null, user.userName, 'User name should be set');
+        Assert.areEqual('Primary', user.rotationName, 'Rotation name should match');
     }
 
     @isTest
@@ -271,17 +271,17 @@ private class MobileAlertPublisherTest {
         List<MobileAlertPublisher.EscalationPathEntry> paths = MobileAlertPublisher.getEscalationPath();
         Test.stopTest();
 
-        System.assertEquals(3, paths.size(), 'Should have 3 escalation levels');
+        Assert.areEqual(3, paths.size(), 'Should have 3 escalation levels');
 
         // Verify ordering
-        System.assertEquals(1, paths[0].level, 'First entry should be level 1');
-        System.assertEquals(2, paths[1].level, 'Second entry should be level 2');
-        System.assertEquals(3, paths[2].level, 'Third entry should be level 3');
+        Assert.areEqual(1, paths[0].level, 'First entry should be level 1');
+        Assert.areEqual(2, paths[1].level, 'Second entry should be level 2');
+        Assert.areEqual(3, paths[2].level, 'Third entry should be level 3');
 
         // Verify roles
-        System.assertEquals('Team Lead', paths[0].role, 'Level 1 should be Team Lead');
-        System.assertEquals('Manager', paths[1].role, 'Level 2 should be Manager');
-        System.assertEquals('CISO', paths[2].role, 'Level 3 should be CISO');
+        Assert.areEqual('Team Lead', paths[0].role, 'Level 1 should be Team Lead');
+        Assert.areEqual('Manager', paths[1].role, 'Level 2 should be Manager');
+        Assert.areEqual('CISO', paths[2].role, 'Level 3 should be CISO');
     }
 
     @isTest
@@ -297,7 +297,7 @@ private class MobileAlertPublisherTest {
         List<MobileAlertPublisher.EscalationPathEntry> result = MobileAlertPublisher.getEscalationPath();
         Test.stopTest();
 
-        System.assertEquals(0, result.size(), 'Should have no escalation paths');
+        Assert.areEqual(0, result.size(), 'Should have no escalation paths');
     }
 
     @isTest
@@ -313,7 +313,7 @@ private class MobileAlertPublisherTest {
         List<MobileAlertPublisher.OnCallUser> result = MobileAlertPublisher.getCurrentOnCallUsers();
         Test.stopTest();
 
-        System.assertEquals(0, result.size(), 'Should have no on-call users');
+        Assert.areEqual(0, result.size(), 'Should have no on-call users');
     }
 
     @isTest
@@ -336,7 +336,7 @@ private class MobileAlertPublisherTest {
         );
         Test.stopTest();
 
-        System.assert(true, 'Alert handled gracefully with no on-call users');
+        Assert.isTrue(true, 'Alert handled gracefully with no on-call users');
     }
 
     @isTest
@@ -351,9 +351,9 @@ private class MobileAlertPublisherTest {
         wrapper.notificationMethods = 'Mobile;Email';
         Test.stopTest();
 
-        System.assertEquals(UserInfo.getUserId(), wrapper.userId, 'User ID should match');
-        System.assertEquals('Test User', wrapper.userName, 'User name should match');
-        System.assertEquals('Primary', wrapper.rotationName, 'Rotation name should match');
+        Assert.areEqual(UserInfo.getUserId(), wrapper.userId, 'User ID should match');
+        Assert.areEqual('Test User', wrapper.userName, 'User name should match');
+        Assert.areEqual('Primary', wrapper.rotationName, 'Rotation name should match');
     }
 
     @isTest
@@ -370,9 +370,9 @@ private class MobileAlertPublisherTest {
         wrapper.delayMinutes = 30;
         Test.stopTest();
 
-        System.assertEquals(2, wrapper.level, 'Level should match');
-        System.assertEquals('Manager', wrapper.role, 'Role should match');
-        System.assertEquals(30, wrapper.delayMinutes, 'Delay should match');
+        Assert.areEqual(2, wrapper.level, 'Level should match');
+        Assert.areEqual('Manager', wrapper.role, 'Role should match');
+        Assert.areEqual(30, wrapper.delayMinutes, 'Delay should match');
     }
 
     @isTest
@@ -384,7 +384,7 @@ private class MobileAlertPublisherTest {
         resender.execute(null);
         Test.stopTest();
 
-        System.assert(true, 'Resender executed successfully');
+        Assert.isTrue(true, 'Resender executed successfully');
     }
 
     @isTest
@@ -400,7 +400,7 @@ private class MobileAlertPublisherTest {
         resender.execute(null);
         Test.stopTest();
 
-        System.assert(true, 'Resender handled snoozed alert correctly');
+        Assert.isTrue(true, 'Resender handled snoozed alert correctly');
     }
 
     @isTest
@@ -410,6 +410,6 @@ private class MobileAlertPublisherTest {
         resender.execute(null);
         Test.stopTest();
 
-        System.assert(true, 'Resender handled invalid ID gracefully');
+        Assert.isTrue(true, 'Resender handled invalid ID gracefully');
     }
 }

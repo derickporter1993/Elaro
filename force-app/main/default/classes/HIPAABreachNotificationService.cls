@@ -128,7 +128,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
                    Records_Affected__c, Status__c
             FROM HIPAA_Breach__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -175,7 +175,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             SELECT Status__c, COUNT(Id) cnt, SUM(Records_Affected__c) total
             FROM HIPAA_Breach__c
             WHERE Discovery_Date__c >= :yearStart
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             GROUP BY Status__c
         ];
 
@@ -205,7 +205,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             FROM HIPAA_Breach__c
             WHERE Notification_Deadline__c < TODAY
             AND Individuals_Notified__c = false
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         // Determine HHS annual report requirement
@@ -228,7 +228,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
                    Records_Affected__c, Risk_Level__c, Breach_Type__c
             FROM HIPAA_Breach__c
             WHERE Discovery_Date__c >= :startDate
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
 
         metrics.totalBreaches = breaches.size();
@@ -305,7 +305,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
                    Breach_Type__c, Status__c, Risk_Level__c
             FROM HIPAA_Breach__c
             WHERE Status__c = 'Pending Assessment'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Discovery_Date__c ASC
         ];
     }
@@ -322,7 +322,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             FROM HIPAA_Breach__c
             WHERE Notification_Required__c = true
             AND (Individuals_Notified__c = false OR HHS_Notified__c = false)
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY Notification_Deadline__c ASC
         ];
     }
@@ -336,7 +336,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             SELECT Id, Individuals_Notified__c
             FROM HIPAA_Breach__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -361,7 +361,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             SELECT Id, HHS_Notified__c
             FROM HIPAA_Breach__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -390,7 +390,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
                    Media_Notification_Date__c, Records_Affected__c
             FROM HIPAA_Breach__c
             WHERE Id = :breachId
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -450,7 +450,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             WHERE Notification_Deadline__c < TODAY
             AND Individuals_Notified__c = false
             AND Notification_Required__c = true
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
     }
 
@@ -459,7 +459,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
             SELECT COUNT()
             FROM HIPAA_Breach__c
             WHERE Status__c = 'Pending Assessment'
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
         ];
     }
 

@@ -35,7 +35,7 @@ public with sharing class GDPRDataInventoryService extends ComplianceServiceBase
                 FROM Compliance_Control__mdt
                 WHERE Control_Id__c = :controlId
                 AND Framework__c = :framework
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
                 LIMIT 1
             ];
             
@@ -132,7 +132,7 @@ public with sharing class GDPRDataInventoryService extends ComplianceServiceBase
                     SELECT Id, Recipient_Name__c, Country__c, Safeguards__c, Data_Categories_Shared__c
                     FROM Third_Party_Recipient__c
                     WHERE Recipient_Name__c = :targetSystem
-                    WITH SECURITY_ENFORCED
+                    WITH USER_MODE
                     LIMIT 1
                 ];
                 
@@ -191,14 +191,14 @@ public with sharing class GDPRDataInventoryService extends ComplianceServiceBase
                 SELECT Id, Activity_Name__c, Legal_Basis__c, Data_Categories__c,
                        Retention_Period__c, Third_Parties__c
                 FROM Data_Processing_Activity__c
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             // Query third-party recipients
             List<Third_Party_Recipient__c> recipients = [
                 SELECT Id, Recipient_Name__c, Country__c, DPA_Signed__c
                 FROM Third_Party_Recipient__c
-                WITH SECURITY_ENFORCED
+                WITH USER_MODE
             ];
             
             Map<String, Object> inventory = new Map<String, Object>{

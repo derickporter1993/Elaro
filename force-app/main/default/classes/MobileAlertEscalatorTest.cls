@@ -79,7 +79,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(1, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 1');
+        Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 1');
     }
 
     @isTest
@@ -99,7 +99,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(2, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 2');
+        Assert.areEqual(2, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 2');
     }
 
     @isTest
@@ -119,7 +119,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(3, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 3');
+        Assert.areEqual(3, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 3');
     }
 
     @isTest
@@ -140,7 +140,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(3, updatedGap.Alert_Escalation_Level__c, 'Gap should remain at max escalation level 3');
+        Assert.areEqual(3, updatedGap.Alert_Escalation_Level__c, 'Gap should remain at max escalation level 3');
     }
 
     @isTest
@@ -161,7 +161,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(null, updatedGap.Alert_Escalation_Level__c, 'Escalation should not occur for acknowledged gaps');
+        Assert.areEqual(null, updatedGap.Alert_Escalation_Level__c, 'Escalation should not occur for acknowledged gaps');
     }
 
     @isTest
@@ -182,7 +182,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(null, updatedGap.Alert_Escalation_Level__c, 'Escalation should not occur for snoozed gaps');
+        Assert.areEqual(null, updatedGap.Alert_Escalation_Level__c, 'Escalation should not occur for snoozed gaps');
     }
 
     @isTest
@@ -203,7 +203,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(1, updatedGap.Alert_Escalation_Level__c, 'Escalation should proceed after snooze expires');
+        Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Escalation should proceed after snooze expires');
     }
 
     @isTest
@@ -214,7 +214,7 @@ private class MobileAlertEscalatorTest {
         Test.stopTest();
 
         // Should complete without error
-        System.assert(true, 'Escalator handled invalid ID gracefully');
+        Assert.isTrue(true, 'Escalator handled invalid ID gracefully');
     }
 
     @isTest
@@ -240,7 +240,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(null, updatedGap.Alert_Escalation_Level__c, 'No escalation without recipients');
+        Assert.areEqual(null, updatedGap.Alert_Escalation_Level__c, 'No escalation without recipients');
     }
 
     @isTest
@@ -257,7 +257,7 @@ private class MobileAlertEscalatorTest {
 
         // Verify job was scheduled
         List<CronTrigger> jobs = [SELECT Id FROM CronTrigger WHERE Id = :jobId];
-        System.assertEquals(1, jobs.size(), 'Job should be scheduled');
+        Assert.areEqual(1, jobs.size(), 'Job should be scheduled');
 
         // Abort the test job
         System.abortJob(jobId);
@@ -271,7 +271,7 @@ private class MobileAlertEscalatorTest {
         MobileAlertEscalator escalator = new MobileAlertEscalator(gap.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, escalator, 'Escalator should be instantiated');
+        Assert.areNotEqual(null, escalator, 'Escalator should be instantiated');
     }
 
     @isTest
@@ -292,7 +292,7 @@ private class MobileAlertEscalatorTest {
             WHERE Id = :gap.Id
         ];
 
-        System.assertEquals(1, updatedGap.Alert_Escalation_Level__c, 'Escalation should occur with null snooze');
+        Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Escalation should occur with null snooze');
     }
 
     @isTest
@@ -305,21 +305,21 @@ private class MobileAlertEscalatorTest {
         escalator1.execute(null);
 
         Compliance_Gap__c gap1 = [SELECT Alert_Escalation_Level__c FROM Compliance_Gap__c WHERE Id = :gap.Id];
-        System.assertEquals(1, gap1.Alert_Escalation_Level__c, 'Should be at level 1');
+        Assert.areEqual(1, gap1.Alert_Escalation_Level__c, 'Should be at level 1');
 
         // Second escalation
         MobileAlertEscalator escalator2 = new MobileAlertEscalator(gap.Id);
         escalator2.execute(null);
 
         Compliance_Gap__c gap2 = [SELECT Alert_Escalation_Level__c FROM Compliance_Gap__c WHERE Id = :gap.Id];
-        System.assertEquals(2, gap2.Alert_Escalation_Level__c, 'Should be at level 2');
+        Assert.areEqual(2, gap2.Alert_Escalation_Level__c, 'Should be at level 2');
 
         // Third escalation
         MobileAlertEscalator escalator3 = new MobileAlertEscalator(gap.Id);
         escalator3.execute(null);
 
         Compliance_Gap__c gap3 = [SELECT Alert_Escalation_Level__c FROM Compliance_Gap__c WHERE Id = :gap.Id];
-        System.assertEquals(3, gap3.Alert_Escalation_Level__c, 'Should be at level 3');
+        Assert.areEqual(3, gap3.Alert_Escalation_Level__c, 'Should be at level 3');
         Test.stopTest();
     }
 
@@ -334,7 +334,7 @@ private class MobileAlertEscalatorTest {
         escalator.execute(null);
         Test.stopTest();
 
-        System.assert(true, 'Escalator handled long description correctly');
+        Assert.isTrue(true, 'Escalator handled long description correctly');
     }
 
     @isTest
@@ -348,6 +348,6 @@ private class MobileAlertEscalatorTest {
         escalator.execute(null);
         Test.stopTest();
 
-        System.assert(true, 'Escalator handled null description correctly');
+        Assert.isTrue(true, 'Escalator handled null description correctly');
     }
 }

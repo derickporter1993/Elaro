@@ -45,7 +45,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         String jobName = 'Elaro_Daily_Digest_' + UserInfo.getUserId();
         
         // Remove existing job if present
-        for (CronTrigger ct : [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName WITH SECURITY_ENFORCED]) {
+        for (CronTrigger ct : [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName WITH USER_MODE]) {
             System.abortJob(ct.Id);
         }
         
@@ -116,7 +116,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             SELECT Evidence_Type__c eventType, COUNT(Id) cnt, Status__c status
             FROM Elaro_Evidence_Item__c
             WHERE CreatedDate >= :cutoffTime
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             GROUP BY Evidence_Type__c, Status__c
             LIMIT :QUERY_LIMIT
         ];
@@ -149,7 +149,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             SELECT Action, Section
             FROM SetupAuditTrail
             WHERE CreatedDate >= :cutoffTime
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT :QUERY_LIMIT
         ];
         
@@ -176,7 +176,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             FROM SetupAuditTrail
             WHERE CreatedDate >= :cutoffTime
             AND (Action LIKE '%permission%' OR Action LIKE '%delete%' OR Action LIKE '%LoginAs%')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT :MAX_TOP_RISKS
         ];
@@ -282,25 +282,51 @@ public with sharing class ElaroDailyDigest implements Schedulable {
     }
     
     /**
-     * @description Send digest to Slack
+     * @description Send digest to Slack using Queueable
      */
-    @future(callout=true)
     private static void sendDigestToSlack(DigestData digest) {
-        // Build Slack message
-        Map<String, Object> slackMessage = buildSlackMessage(digest);
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new SlackDigestQueueable(digest));
+        }
+    }
+    
+    /**
+     * Queueable implementation for Slack digest sending
+     * Provides better error handling and monitoring than @future
+     */
+    public class SlackDigestQueueable implements Queueable, Database.AllowsCallouts {
+        private DigestData digest;
         
-        HttpRequest req = new HttpRequest();
-        req.setEndpoint('callout:Slack_Webhook');
-        req.setMethod('POST');
-        req.setHeader('Content-Type', 'application/json');
-        req.setBody(JSON.serialize(slackMessage));
-        req.setTimeout(10000);
+        public SlackDigestQueueable(DigestData digest) {
+            this.digest = digest;
+        }
+        
+        public void execute(QueueableContext context) {
+            try {
+                // Build Slack message
+                Map<String, Object> slackMessage = buildSlackMessage(digest);
+                
+                HttpRequest req = new HttpRequest();
+                req.setEndpoint('callout:Slack_Webhook');
+                req.setMethod('POST');
+                req.setHeader('Content-Type', 'application/json');
+                req.setBody(JSON.serialize(slackMessage));
+                req.setTimeout(10000);
 
-        try {
-            Http http = new Http();
-            http.send(req);
-        } catch (Exception e) {
-            ElaroLogger.error( 'Slack digest send failed: ' + e.getMessage());
+                Http http = new Http();
+                HttpResponse res = http.send(req);
+                
+                if (res.getStatusCode() >= 200 && res.getStatusCode() < 300) {
+                    ElaroLogger.info('ElaroDailyDigest.SlackDigestQueueable',
+                        'Successfully sent Slack digest');
+                } else {
+                    ElaroLogger.error('ElaroDailyDigest.SlackDigestQueueable',
+                        'Slack digest failed with status ' + res.getStatusCode(), res.getBody());
+                }
+            } catch (Exception e) {
+                ElaroLogger.error('ElaroDailyDigest.SlackDigestQueueable',
+                    'Slack digest send failed: ' + e.getMessage(), e.getStackTraceString());
+            }
         }
     }
     
@@ -383,7 +409,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             SELECT Email FROM User
             WHERE IsActive = true
             AND Id IN (SELECT AssigneeId FROM PermissionSetAssignment WHERE PermissionSet.Name = 'Elaro_Admin')
-            WITH SECURITY_ENFORCED
+            WITH USER_MODE
             LIMIT 10
         ]) {
             recipients.add(u.Email);

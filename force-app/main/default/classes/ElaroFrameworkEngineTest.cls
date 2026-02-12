@@ -21,6 +21,6 @@ private class ElaroFrameworkEngineTest {
         Test.stopTest();
         
         // Assertions
-        System.assert(true, 'Test passed');
+        Assert.isTrue(true, 'Test passed');
     }
 }

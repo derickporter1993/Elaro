@@ -86,7 +86,7 @@ public class HIPAABreachNotificationServiceTest {
         String frameworkName = service.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('HIPAA', frameworkName, 'Framework name should be HIPAA');
+        Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
     @isTest
@@ -97,7 +97,7 @@ public class HIPAABreachNotificationServiceTest {
         List<ComplianceServiceBase.Violation> violations = service.getViolations();
         Test.stopTest();
 
-        System.assertNotEquals(null, violations, 'Violations should not be null');
+        Assert.areNotEqual(null, violations, 'Violations should not be null');
         System.assert(violations.size() > 0, 'Should have violations for overdue breaches');
     }
 
@@ -130,11 +130,11 @@ public class HIPAABreachNotificationServiceTest {
         IBreachNotificationService.BreachAssessment assessment = service.assessBreach(request);
         Test.stopTest();
 
-        System.assertNotEquals(null, assessment, 'Assessment should not be null');
-        System.assertNotEquals(null, assessment.assessmentDate, 'Assessment date should be set');
-        System.assertNotEquals(null, assessment.overallRiskScore, 'Overall risk score should be set');
-        System.assertNotEquals(null, assessment.notificationRequired, 'Notification required should be set');
-        System.assertNotEquals(null, assessment.riskLevel, 'Risk level should be set');
+        Assert.areNotEqual(null, assessment, 'Assessment should not be null');
+        Assert.areNotEqual(null, assessment.assessmentDate, 'Assessment date should be set');
+        Assert.areNotEqual(null, assessment.overallRiskScore, 'Overall risk score should be set');
+        Assert.areNotEqual(null, assessment.notificationRequired, 'Notification required should be set');
+        Assert.areNotEqual(null, assessment.riskLevel, 'Risk level should be set');
     }
 
     @isTest
@@ -173,10 +173,10 @@ public class HIPAABreachNotificationServiceTest {
             service.getNotificationStatus(breach.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, status, 'Status should not be null');
-        System.assertEquals(breach.Id, status.breachId, 'Breach ID should match');
-        System.assertNotEquals(null, status.discoveryDate, 'Discovery date should be set');
-        System.assertNotEquals(null, status.notificationDeadline, 'Notification deadline should be set');
+        Assert.areNotEqual(null, status, 'Status should not be null');
+        Assert.areEqual(breach.Id, status.breachId, 'Breach ID should match');
+        Assert.areNotEqual(null, status.discoveryDate, 'Discovery date should be set');
+        Assert.areNotEqual(null, status.notificationDeadline, 'Notification deadline should be set');
     }
 
     @isTest
@@ -187,7 +187,7 @@ public class HIPAABreachNotificationServiceTest {
         IBreachNotificationService.BreachSummary summary = service.getBreachSummary();
         Test.stopTest();
 
-        System.assertNotEquals(null, summary, 'Summary should not be null');
+        Assert.areNotEqual(null, summary, 'Summary should not be null');
         System.assert(summary.totalBreaches >= 4, 'Should have at least 4 breaches from test data');
         System.assert(summary.openBreaches > 0, 'Should have open breaches');
     }
@@ -200,10 +200,10 @@ public class HIPAABreachNotificationServiceTest {
         IBreachNotificationService.BreachMetrics metrics = service.getBreachMetrics(365);
         Test.stopTest();
 
-        System.assertNotEquals(null, metrics, 'Metrics should not be null');
+        Assert.areNotEqual(null, metrics, 'Metrics should not be null');
         System.assert(metrics.totalBreaches >= 4, 'Should have at least 4 breaches');
-        System.assertNotEquals(null, metrics.breachesByType, 'Breaches by type should not be null');
-        System.assertNotEquals(null, metrics.breachesByRiskLevel, 'Breaches by risk level should not be null');
+        Assert.areNotEqual(null, metrics.breachesByType, 'Breaches by type should not be null');
+        Assert.areNotEqual(null, metrics.breachesByRiskLevel, 'Breaches by risk level should not be null');
     }
 
     @isTest
@@ -218,16 +218,16 @@ public class HIPAABreachNotificationServiceTest {
         Id breachId = HIPAABreachNotificationService.createBreachRecord(breachData);
         Test.stopTest();
 
-        System.assertNotEquals(null, breachId, 'Breach ID should not be null');
+        Assert.areNotEqual(null, breachId, 'Breach ID should not be null');
 
         HIPAA_Breach__c breach = [
             SELECT Description__c, Records_Affected__c, Status__c
             FROM HIPAA_Breach__c
             WHERE Id = :breachId
         ];
-        System.assertEquals('New test breach', breach.Description__c, 'Description should match');
-        System.assertEquals(50, breach.Records_Affected__c, 'Records affected should match');
-        System.assertEquals('Open', breach.Status__c, 'Status should be Open');
+        Assert.areEqual('New test breach', breach.Description__c, 'Description should match');
+        Assert.areEqual(50, breach.Records_Affected__c, 'Records affected should match');
+        Assert.areEqual('Open', breach.Status__c, 'Status should be Open');
     }
 
     @isTest
@@ -236,7 +236,7 @@ public class HIPAABreachNotificationServiceTest {
         List<HIPAA_Breach__c> pending = HIPAABreachNotificationService.getPendingBreaches();
         Test.stopTest();
 
-        System.assertNotEquals(null, pending, 'Pending list should not be null');
+        Assert.areNotEqual(null, pending, 'Pending list should not be null');
         System.assert(pending.size() > 0, 'Should have pending breaches');
     }
 
@@ -247,7 +247,7 @@ public class HIPAABreachNotificationServiceTest {
             HIPAABreachNotificationService.getBreachesRequiringNotification();
         Test.stopTest();
 
-        System.assertNotEquals(null, breaches, 'Breaches list should not be null');
+        Assert.areNotEqual(null, breaches, 'Breaches list should not be null');
     }
 
     @isTest
@@ -267,9 +267,9 @@ public class HIPAABreachNotificationServiceTest {
             FROM HIPAA_Breach__c
             WHERE Id = :breach.Id
         ];
-        System.assertEquals(true, breach.Individuals_Notified__c, 'Should be marked as notified');
-        System.assertEquals(Date.today(), breach.Individual_Notification_Date__c, 'Date should be today');
-        System.assertEquals(100, breach.Individuals_Notified_Count__c, 'Count should be 100');
+        Assert.areEqual(true, breach.Individuals_Notified__c, 'Should be marked as notified');
+        Assert.areEqual(Date.today(), breach.Individual_Notification_Date__c, 'Date should be today');
+        Assert.areEqual(100, breach.Individuals_Notified_Count__c, 'Count should be 100');
     }
 
     @isTest
@@ -289,9 +289,9 @@ public class HIPAABreachNotificationServiceTest {
             FROM HIPAA_Breach__c
             WHERE Id = :breach.Id
         ];
-        System.assertEquals(true, breach.HHS_Notified__c, 'Should be marked as HHS notified');
-        System.assertEquals(Date.today(), breach.HHS_Notification_Date__c, 'Date should be today');
-        System.assertEquals('HHS-CONFIRM-123', breach.HHS_Confirmation_Number__c, 'Confirmation should match');
+        Assert.areEqual(true, breach.HHS_Notified__c, 'Should be marked as HHS notified');
+        Assert.areEqual(Date.today(), breach.HHS_Notification_Date__c, 'Date should be today');
+        Assert.areEqual('HHS-CONFIRM-123', breach.HHS_Confirmation_Number__c, 'Confirmation should match');
     }
 
     @isTest
@@ -303,7 +303,7 @@ public class HIPAABreachNotificationServiceTest {
             HIPAABreachNotificationService.getNotificationTimeline(breach.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, timeline, 'Timeline should not be null');
+        Assert.areNotEqual(null, timeline, 'Timeline should not be null');
         System.assert(timeline.size() >= 3, 'Should have at least 3 events');
     }
 

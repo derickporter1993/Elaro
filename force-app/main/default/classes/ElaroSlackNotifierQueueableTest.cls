@@ -38,7 +38,7 @@ private class ElaroSlackNotifierQueueableTest {
         Test.stopTest();
         
         // Verify job completed without exception
-        System.assert(true, 'Job should complete successfully');
+        Assert.isTrue(true, 'Job should complete successfully');
     }
     
     @IsTest
@@ -54,7 +54,7 @@ private class ElaroSlackNotifierQueueableTest {
         Test.stopTest();
         
         // Verify retry logic is triggered
-        System.assert(true, 'Job should handle retry logic');
+        Assert.isTrue(true, 'Job should handle retry logic');
     }
     
     @IsTest
@@ -68,7 +68,7 @@ private class ElaroSlackNotifierQueueableTest {
         Test.stopTest();
         
         // Verify empty payload is handled gracefully
-        System.assert(true, 'Empty payload should be handled');
+        Assert.isTrue(true, 'Empty payload should be handled');
     }
     
     @IsTest
@@ -85,7 +85,7 @@ private class ElaroSlackNotifierQueueableTest {
         Test.stopTest();
         
         // Verify large payload is truncated
-        System.assert(true, 'Large payload should be truncated');
+        Assert.isTrue(true, 'Large payload should be truncated');
     }
     
     @IsTest
@@ -100,7 +100,7 @@ private class ElaroSlackNotifierQueueableTest {
             System.enqueueJob(job);
         } catch (Exception e) {
             // Expected: callout exception
-            System.assert(true, 'Callout exception should be handled');
+            Assert.isTrue(true, 'Callout exception should be handled');
         }
         Test.stopTest();
     }
@@ -113,7 +113,7 @@ private class ElaroSlackNotifierQueueableTest {
         
         Test.startTest();
         ElaroSlackNotifierQueueable job = new ElaroSlackNotifierQueueable(payload, retryCount, correlationId);
-        System.assertNotEquals(null, job, 'Job should be created');
+        Assert.areNotEqual(null, job, 'Job should be created');
         Test.stopTest();
     }
     
@@ -124,7 +124,7 @@ private class ElaroSlackNotifierQueueableTest {
 
         Test.startTest();
         ElaroSlackNotifierQueueable job = new ElaroSlackNotifierQueueable(payload, correlationId);
-        System.assertNotEquals(null, job, 'Job should be created with default retry count');
+        Assert.areNotEqual(null, job, 'Job should be created with default retry count');
         Test.stopTest();
     }
 
@@ -149,7 +149,7 @@ private class ElaroSlackNotifierQueueableTest {
         }
         Test.stopTest();
 
-        System.assert(true, 'Bulk notifications should complete');
+        Assert.isTrue(true, 'Bulk notifications should complete');
         System.assert(Limits.getQueueableJobs() <= 50, 'Should stay under queueable limit');
     }
 
@@ -180,6 +180,6 @@ private class ElaroSlackNotifierQueueableTest {
         System.enqueueJob(job);
         Test.stopTest();
 
-        System.assert(true, 'Large batch payload should be handled');
+        Assert.isTrue(true, 'Large batch payload should be handled');
     }
 }

@@ -74,7 +74,7 @@ private class GDPRModuleTest {
         String name = module.getFrameworkName();
         Test.stopTest();
 
-        System.assertEquals('GDPR', name, 'Framework name should be GDPR');
+        Assert.areEqual('GDPR', name, 'Framework name should be GDPR');
     }
 
     @IsTest
@@ -85,7 +85,7 @@ private class GDPRModuleTest {
         String version = module.getFrameworkVersion();
         Test.stopTest();
 
-        System.assertEquals('2018', version, 'Framework version should be 2018');
+        Assert.areEqual('2018', version, 'Framework version should be 2018');
     }
 
     @IsTest
@@ -96,14 +96,14 @@ private class GDPRModuleTest {
         List<IComplianceModule.Control> controls = module.getControls();
         Test.stopTest();
 
-        System.assertNotEquals(null, controls, 'Controls list should not be null');
+        Assert.areNotEqual(null, controls, 'Controls list should not be null');
         System.assert(controls.size() > 0, 'Should have at least one control');
 
         Set<String> families = new Set<String>();
         for (IComplianceModule.Control ctrl : controls) {
             families.add(ctrl.family);
-            System.assertNotEquals(null, ctrl.code, 'Control code should not be null');
-            System.assertNotEquals(null, ctrl.name, 'Control name should not be null');
+            Assert.areNotEqual(null, ctrl.code, 'Control code should not be null');
+            Assert.areNotEqual(null, ctrl.name, 'Control name should not be null');
         }
         System.assert(families.size() > 1, 'Should cover multiple GDPR families');
     }
@@ -121,7 +121,7 @@ private class GDPRModuleTest {
         Decimal score = module.calculateScore(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, score, 'Score should not be null');
+        Assert.areNotEqual(null, score, 'Score should not be null');
         System.assert(score >= 0, 'Score should be >= 0');
     }
 
@@ -133,7 +133,7 @@ private class GDPRModuleTest {
         Decimal score = module.calculateScore(null);
         Test.stopTest();
 
-        System.assertEquals(0, score, 'Score should be 0 for null audit package');
+        Assert.areEqual(0, score, 'Score should be 0 for null audit package');
     }
 
     // =============================================
@@ -149,11 +149,11 @@ private class GDPRModuleTest {
         List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, gaps, 'Gaps list should not be null');
+        Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
         for (IComplianceModule.Gap gap : gaps) {
             System.assert(gap.id.startsWith('GAP-GDPR-'), 'Gap ID should start with GAP-GDPR-');
-            System.assertNotEquals(null, gap.controlCode, 'Gap controlCode should not be null');
-            System.assertNotEquals(null, gap.recommendation, 'Gap recommendation should not be null');
+            Assert.areNotEqual(null, gap.controlCode, 'Gap controlCode should not be null');
+            Assert.areNotEqual(null, gap.recommendation, 'Gap recommendation should not be null');
         }
     }
 
@@ -170,8 +170,8 @@ private class GDPRModuleTest {
         Blob report = module.generateReport(pkg.Id);
         Test.stopTest();
 
-        System.assertNotEquals(null, report, 'Report should not be null');
-        System.assertEquals('GDPR Report', report.toString(), 'Should return test report content');
+        Assert.areNotEqual(null, report, 'Report should not be null');
+        Assert.areEqual('GDPR Report', report.toString(), 'Should return test report content');
     }
 
     // =============================================
@@ -186,8 +186,8 @@ private class GDPRModuleTest {
         IComplianceModule.Control ctrl = module.getControlById('Art.17');
         Test.stopTest();
 
-        System.assertNotEquals(null, ctrl, 'Should find Right to Erasure control');
-        System.assertEquals('Art.17', ctrl.code, 'Control code should match');
+        Assert.areNotEqual(null, ctrl, 'Should find Right to Erasure control');
+        Assert.areEqual('Art.17', ctrl.code, 'Control code should match');
     }
 
     @IsTest
@@ -198,7 +198,7 @@ private class GDPRModuleTest {
         IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
-        System.assertEquals(null, ctrl, 'Should return null for nonexistent control');
+        Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
     }
 
     // =============================================
@@ -217,8 +217,8 @@ private class GDPRModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('Art.17', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('Art.17', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -233,8 +233,8 @@ private class GDPRModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('Art.30', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('Art.30', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -249,9 +249,9 @@ private class GDPRModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
+        Assert.areNotEqual(null, result, 'Result should not be null');
         System.assert(result.passed, 'Security measures should pass');
-        System.assertEquals(90, result.score, 'Score should be 90');
+        Assert.areEqual(90, result.score, 'Score should be 90');
     }
 
     @IsTest
@@ -266,8 +266,8 @@ private class GDPRModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('Art.33', result.controlId, 'Control ID should match');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('Art.33', result.controlId, 'Control ID should match');
     }
 
     @IsTest
@@ -282,9 +282,9 @@ private class GDPRModuleTest {
         );
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Result should not be null');
-        System.assertEquals('Art.5', result.controlId, 'Control ID should match');
-        System.assertEquals(70, result.score, 'Default evaluation score should be 70');
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        Assert.areEqual('Art.5', result.controlId, 'Control ID should match');
+        Assert.areEqual(70, result.score, 'Default evaluation score should be 70');
     }
 
     @IsTest
@@ -299,7 +299,7 @@ private class GDPRModuleTest {
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );
-            System.assertNotEquals(null, result, 'Result should not be null for: ' + ctrl.code);
+            Assert.areNotEqual(null, result, 'Result should not be null for: ' + ctrl.code);
         }
         Test.stopTest();
     }
