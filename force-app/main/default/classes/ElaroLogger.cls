@@ -84,6 +84,10 @@ public with sharing class ElaroLogger {
         log(Level.INFO, message, null);
     }
 
+    public static void info(String source, String message) {
+        log(Level.INFO, source + ': ' + message, null);
+    }
+
     public static void info(String message, Map<String, Object> context) {
         log(Level.INFO, message, context);
     }
@@ -92,12 +96,24 @@ public with sharing class ElaroLogger {
         log(Level.WARN, message, null);
     }
 
+    public static void warn(String source, String message) {
+        log(Level.WARN, source + ': ' + message, null);
+    }
+
     public static void warn(String message, Map<String, Object> context) {
         log(Level.WARN, message, context);
     }
 
     public static void error(String message) {
         log(Level.ERROR, message, null);
+    }
+
+    public static void error(String source, String message, String stackTrace) {
+        Map<String, Object> context = new Map<String, Object>{
+            'source' => source,
+            'stackTrace' => stackTrace
+        };
+        log(Level.ERROR, message, context);
     }
 
     public static void error(String message, Map<String, Object> context) {

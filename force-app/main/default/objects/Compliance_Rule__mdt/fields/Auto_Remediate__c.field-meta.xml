@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Auto_Remediate__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Whether failed evaluation should trigger auto-remediation</description>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <label>Auto Remediate</label>
+    <type>Checkbox</type>
+</CustomField>

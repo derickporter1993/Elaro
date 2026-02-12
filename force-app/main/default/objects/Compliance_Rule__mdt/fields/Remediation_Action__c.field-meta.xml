@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Remediation_Action__c</fullName>
+    <description>Remediation action identifier (references Compliance_Remediation__mdt DeveloperName)</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Remediation Action</label>
+    <length>120</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

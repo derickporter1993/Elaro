@@ -1143,6 +1143,147 @@
         <shortDescription>Refresh data button</shortDescription>
         <value>Refresh</value>
     </labels>
+    <!-- Rule Engine Labels -->
+    <labels>
+        <fullName>RE_EvaluationInProgress</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rule evaluation in progress message</shortDescription>
+        <value>Running compliance evaluation...</value>
+    </labels>
+    <labels>
+        <fullName>RE_EvaluationComplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rule evaluation complete message</shortDescription>
+        <value>Compliance evaluation complete</value>
+    </labels>
+    <labels>
+        <fullName>RE_EvaluationFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rule evaluation failed message</shortDescription>
+        <value>Compliance evaluation failed. Please try again.</value>
+    </labels>
+    <labels>
+        <fullName>RE_NoActiveRules</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No active rules message</shortDescription>
+        <value>No active compliance rules configured for this framework.</value>
+    </labels>
+    <labels>
+        <fullName>RE_ComplianceScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance score label</shortDescription>
+        <value>Compliance Score</value>
+    </labels>
+    <labels>
+        <fullName>RE_RulesPassed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rules passed metric label</shortDescription>
+        <value>Rules Passed</value>
+    </labels>
+    <labels>
+        <fullName>RE_RulesFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rules failed metric label</shortDescription>
+        <value>Rules Failed</value>
+    </labels>
+    <labels>
+        <fullName>RE_TotalRules</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Total rules metric label</shortDescription>
+        <value>Total Rules</value>
+    </labels>
+    <labels>
+        <fullName>RE_ExecutionHistory</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Execution history section title</shortDescription>
+        <value>Execution History</value>
+    </labels>
+    <labels>
+        <fullName>RE_NoExecutionHistory</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No execution history message</shortDescription>
+        <value>No compliance evaluations have been run yet.</value>
+    </labels>
+    <labels>
+        <fullName>RE_FrameworkScores</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework scores section title</shortDescription>
+        <value>Framework Scores</value>
+    </labels>
+    <labels>
+        <fullName>RE_RunEvaluation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Run evaluation button label</shortDescription>
+        <value>Run Evaluation</value>
+    </labels>
+    <labels>
+        <fullName>RE_SelectFramework</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Select framework prompt</shortDescription>
+        <value>Select a framework to evaluate</value>
+    </labels>
+    <labels>
+        <fullName>RE_RemediationQueued</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Remediation queued message</shortDescription>
+        <value>Remediation action has been queued for review.</value>
+    </labels>
+    <labels>
+        <fullName>RE_SeverityCritical</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Critical severity label</shortDescription>
+        <value>Critical</value>
+    </labels>
+    <labels>
+        <fullName>RE_SeverityHigh</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>High severity label</shortDescription>
+        <value>High</value>
+    </labels>
+    <labels>
+        <fullName>RE_SeverityMedium</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Medium severity label</shortDescription>
+        <value>Medium</value>
+    </labels>
+    <labels>
+        <fullName>RE_SeverityLow</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Low severity label</shortDescription>
+        <value>Low</value>
+    </labels>
+    <labels>
+        <fullName>RE_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading message</shortDescription>
+        <value>Loading rule engine data...</value>
+    </labels>
+    <labels>
+        <fullName>RE_ErrorGeneric</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic error message</shortDescription>
+        <value>An error occurred. Please try again or contact your administrator.</value>
+    </labels>
     <!-- Async Framework Labels -->
     <labels>
         <fullName>AF_FrameworkDisabled</fullName>
