@@ -31,7 +31,8 @@ export default class CrossFrameworkPrefill extends LightningElement {
         framework: this.framework || null,
       });
       this.hasPrefill = this.prefillData && Object.keys(this.prefillData).length > 0;
-    } catch (_err) {
+    } catch {
+      // Silently handle error - no prefill data available
       this.hasPrefill = false;
     } finally {
       this.isLoading = false;
