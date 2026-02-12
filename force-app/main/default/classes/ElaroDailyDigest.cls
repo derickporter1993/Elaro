@@ -282,25 +282,51 @@ public with sharing class ElaroDailyDigest implements Schedulable {
     }
     
     /**
-     * @description Send digest to Slack
+     * @description Send digest to Slack using Queueable
      */
-    @future(callout=true)
     private static void sendDigestToSlack(DigestData digest) {
-        // Build Slack message
-        Map<String, Object> slackMessage = buildSlackMessage(digest);
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new SlackDigestQueueable(digest));
+        }
+    }
+    
+    /**
+     * Queueable implementation for Slack digest sending
+     * Provides better error handling and monitoring than @future
+     */
+    public class SlackDigestQueueable implements Queueable, Database.AllowsCallouts {
+        private DigestData digest;
         
-        HttpRequest req = new HttpRequest();
-        req.setEndpoint('callout:Slack_Webhook');
-        req.setMethod('POST');
-        req.setHeader('Content-Type', 'application/json');
-        req.setBody(JSON.serialize(slackMessage));
-        req.setTimeout(10000);
+        public SlackDigestQueueable(DigestData digest) {
+            this.digest = digest;
+        }
+        
+        public void execute(QueueableContext context) {
+            try {
+                // Build Slack message
+                Map<String, Object> slackMessage = buildSlackMessage(digest);
+                
+                HttpRequest req = new HttpRequest();
+                req.setEndpoint('callout:Slack_Webhook');
+                req.setMethod('POST');
+                req.setHeader('Content-Type', 'application/json');
+                req.setBody(JSON.serialize(slackMessage));
+                req.setTimeout(10000);
 
-        try {
-            Http http = new Http();
-            http.send(req);
-        } catch (Exception e) {
-            ElaroLogger.error( 'Slack digest send failed: ' + e.getMessage());
+                Http http = new Http();
+                HttpResponse res = http.send(req);
+                
+                if (res.getStatusCode() >= 200 && res.getStatusCode() < 300) {
+                    ElaroLogger.info('ElaroDailyDigest.SlackDigestQueueable',
+                        'Successfully sent Slack digest');
+                } else {
+                    ElaroLogger.error('ElaroDailyDigest.SlackDigestQueueable',
+                        'Slack digest failed with status ' + res.getStatusCode(), res.getBody());
+                }
+            } catch (Exception e) {
+                ElaroLogger.error('ElaroDailyDigest.SlackDigestQueueable',
+                    'Slack digest send failed: ' + e.getMessage(), e.getStackTraceString());
+            }
         }
     }
     

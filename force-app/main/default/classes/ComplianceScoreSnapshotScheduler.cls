@@ -23,17 +23,32 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
      * Schedulable execute method
      */
     public void execute(SchedulableContext ctx) {
-        // Run in future context for governor limits
-        captureSnapshotsAsync();
+        // Run in Queueable context for better error handling and monitoring
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new ComplianceSnapshotQueueable());
+        } else {
+            // Run synchronously in tests
+            captureSnapshots();
+        }
     }
 
     /**
-     * Async method to capture snapshots
+     * Queueable implementation for compliance snapshot processing
+     * Provides better error handling, chaining, and monitoring than @future
      */
-    @future
-    private static void captureSnapshotsAsync() {
-        ComplianceScoreSnapshotScheduler scheduler = new ComplianceScoreSnapshotScheduler();
-        scheduler.captureSnapshots();
+    public class ComplianceSnapshotQueueable implements Queueable {
+        public void execute(QueueableContext context) {
+            try {
+                ComplianceScoreSnapshotScheduler scheduler = new ComplianceScoreSnapshotScheduler();
+                scheduler.captureSnapshots();
+                
+                ElaroLogger.info('ComplianceScoreSnapshotScheduler.ComplianceSnapshotQueueable',
+                    'Successfully captured compliance score snapshots');
+            } catch (Exception e) {
+                ElaroLogger.error('ComplianceScoreSnapshotScheduler.ComplianceSnapshotQueueable',
+                    e.getMessage(), e.getStackTraceString());
+            }
+        }
     }
 
     /**

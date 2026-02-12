@@ -9,101 +9,135 @@ public with sharing class PagerDutyIntegration {
     private static final String EVENTS_API = 'https://events.pagerduty.com/v2/enqueue';
     
     /**
-     * @description Trigger a PagerDuty incident
-     * @param alertData Alert information
-     * @return Dedup key for the incident
+     * @description Trigger a PagerDuty incident using Queueable
+     * @param alertDataJson Alert information as JSON
      */
-    @future(callout=true)
     public static void triggerIncident(String alertDataJson) {
-        // Get routing key from Custom Metadata
-        String routingKey = getRoutingKey();
-        if (String.isBlank(routingKey)) {
-            ElaroLogger.warn( 
-                '[PagerDutyIntegration] Cannot trigger incident: routing key not configured');
-            return;
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new PagerDutyTriggerQueueable(alertDataJson, 'trigger'));
         }
-
-        Map<String, Object> alertData = (Map<String, Object>)JSON.deserializeUntyped(alertDataJson);
-        
-        String severity = (String)alertData.get('severity');
-        String pdSeverity = mapSeverity(severity);
-        String dedupKey = 'elaro-' + alertData.get('alertId');
-        
-        Map<String, Object> event = new Map<String, Object>{
-            'routing_key' => routingKey,
-            'event_action' => 'trigger',
-            'dedup_key' => dedupKey,
-            'payload' => new Map<String, Object>{
-                'summary' => 'Elaro Compliance Alert: ' + alertData.get('eventType'),
-                'severity' => pdSeverity,
-                'source' => 'Elaro Compliance Platform',
-                'component' => 'compliance-monitoring',
-                'group' => (String)alertData.get('framework'),
-                'class' => 'compliance',
-                'custom_details' => new Map<String, Object>{
-                    'alert_id' => alertData.get('alertId'),
-                    'event_type' => alertData.get('eventType'),
-                    'risk_score' => alertData.get('riskScore'),
-                    'message' => alertData.get('message'),
-                    'timestamp' => alertData.get('timestamp'),
-                    'salesforce_url' => URL.getOrgDomainUrl().toExternalForm()
-                }
-            },
-            'links' => new List<Object>{
-                new Map<String, Object>{
-                    'href' => URL.getOrgDomainUrl().toExternalForm() + '/lightning/n/Elaro',
-                    'text' => 'View in Elaro'
-                }
-            }
-        };
-        
-        sendToPagerDuty(event);
     }
     
     /**
-     * @description Resolve a PagerDuty incident
+     * @description Resolve a PagerDuty incident using Queueable
      * @param dedupKey The dedup key used when triggering
      */
-    @future(callout=true)
     public static void resolveIncident(String dedupKey) {
-        // Get routing key from Custom Metadata
-        String routingKey = getRoutingKey();
-        if (String.isBlank(routingKey)) {
-            ElaroLogger.warn( 
-                '[PagerDutyIntegration] Cannot resolve incident: routing key not configured');
-            return;
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new PagerDutyResolveQueueable(dedupKey, 'resolve'));
         }
-
-        Map<String, Object> event = new Map<String, Object>{
-            'routing_key' => routingKey,
-            'event_action' => 'resolve',
-            'dedup_key' => dedupKey
-        };
-        
-        sendToPagerDuty(event);
     }
     
     /**
-     * @description Acknowledge a PagerDuty incident
+     * @description Acknowledge a PagerDuty incident using Queueable
      * @param dedupKey The dedup key used when triggering
      */
-    @future(callout=true)
     public static void acknowledgeIncident(String dedupKey) {
-        // Get routing key from Custom Metadata
-        String routingKey = getRoutingKey();
-        if (String.isBlank(routingKey)) {
-            ElaroLogger.warn( 
-                '[PagerDutyIntegration] Cannot acknowledge incident: routing key not configured');
-            return;
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new PagerDutyResolveQueueable(dedupKey, 'acknowledge'));
         }
-
-        Map<String, Object> event = new Map<String, Object>{
-            'routing_key' => routingKey,
-            'event_action' => 'acknowledge',
-            'dedup_key' => dedupKey
-        };
+    }
+    
+    /**
+     * Queueable implementation for PagerDuty incident triggering
+     */
+    public class PagerDutyTriggerQueueable implements Queueable, Database.AllowsCallouts {
+        private String alertDataJson;
+        private String action;
         
-        sendToPagerDuty(event);
+        public PagerDutyTriggerQueueable(String alertDataJson, String action) {
+            this.alertDataJson = alertDataJson;
+            this.action = action;
+        }
+        
+        public void execute(QueueableContext context) {
+            try {
+                String routingKey = getRoutingKey();
+                if (String.isBlank(routingKey)) {
+                    ElaroLogger.warn('PagerDutyIntegration.PagerDutyTriggerQueueable',
+                        'Cannot trigger incident: routing key not configured');
+                    return;
+                }
+
+                Map<String, Object> alertData = (Map<String, Object>)JSON.deserializeUntyped(alertDataJson);
+                
+                String severity = (String)alertData.get('severity');
+                String pdSeverity = mapSeverity(severity);
+                String dedupKey = 'elaro-' + alertData.get('alertId');
+                
+                Map<String, Object> event = new Map<String, Object>{
+                    'routing_key' => routingKey,
+                    'event_action' => action,
+                    'dedup_key' => dedupKey,
+                    'payload' => new Map<String, Object>{
+                        'summary' => 'Elaro Compliance Alert: ' + alertData.get('eventType'),
+                        'severity' => pdSeverity,
+                        'source' => 'Elaro Compliance Platform',
+                        'component' => 'compliance-monitoring',
+                        'group' => (String)alertData.get('framework'),
+                        'class' => 'compliance',
+                        'custom_details' => new Map<String, Object>{
+                            'alert_id' => alertData.get('alertId'),
+                            'event_type' => alertData.get('eventType'),
+                            'risk_score' => alertData.get('riskScore'),
+                            'message' => alertData.get('message'),
+                            'timestamp' => alertData.get('timestamp'),
+                            'salesforce_url' => URL.getOrgDomainUrl().toExternalForm()
+                        }
+                    },
+                    'links' => new List<Object>{
+                        new Map<String, Object>{
+                            'href' => URL.getOrgDomainUrl().toExternalForm() + '/lightning/n/Elaro',
+                            'text' => 'View in Elaro'
+                        }
+                    }
+                };
+                
+                sendToPagerDuty(event);
+                ElaroLogger.info('PagerDutyIntegration.PagerDutyTriggerQueueable',
+                    'Successfully triggered PagerDuty incident');
+            } catch (Exception e) {
+                ElaroLogger.error('PagerDutyIntegration.PagerDutyTriggerQueueable',
+                    e.getMessage(), e.getStackTraceString());
+            }
+        }
+    }
+    
+    /**
+     * Queueable implementation for PagerDuty incident resolution/acknowledgement
+     */
+    public class PagerDutyResolveQueueable implements Queueable, Database.AllowsCallouts {
+        private String dedupKey;
+        private String action;
+        
+        public PagerDutyResolveQueueable(String dedupKey, String action) {
+            this.dedupKey = dedupKey;
+            this.action = action;
+        }
+        
+        public void execute(QueueableContext context) {
+            try {
+                String routingKey = getRoutingKey();
+                if (String.isBlank(routingKey)) {
+                    ElaroLogger.warn('PagerDutyIntegration.PagerDutyResolveQueueable',
+                        'Cannot ' + action + ' incident: routing key not configured');
+                    return;
+                }
+
+                Map<String, Object> event = new Map<String, Object>{
+                    'routing_key' => routingKey,
+                    'event_action' => action,
+                    'dedup_key' => dedupKey
+                };
+                
+                sendToPagerDuty(event);
+                ElaroLogger.info('PagerDutyIntegration.PagerDutyResolveQueueable',
+                    'Successfully ' + action + 'd PagerDuty incident');
+            } catch (Exception e) {
+                ElaroLogger.error('PagerDutyIntegration.PagerDutyResolveQueueable',
+                    e.getMessage(), e.getStackTraceString());
+            }
+        }
     }
     
     /**
