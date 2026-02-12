@@ -3,6 +3,8 @@
 **Generated:** February 11, 2026 | All 19 audit findings resolved | Spring '26 (API v66.0)
 **Standards aligned with:** Salesforce Apex Best Practices Through Spring '26 (PDF), Elaro Sovereign Architecture, Elaro Team Split Plan, Elaro Codebase Fix Report, Solentra Best Practices Guide
 
+**Team 2 Build Status:** See [TEAM2_BUILD_STATUS.md](./TEAM2_BUILD_STATUS.md) for Agent 1-8 completion tracking
+
 ---
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.

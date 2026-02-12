@@ -982,4 +982,165 @@
         <shortDescription>Not started status</shortDescription>
         <value>Not Started</value>
     </labels>
+    <labels>
+        <fullName>AI_DiscoveryInProgress</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>AI discovery in progress message</shortDescription>
+        <value>Discovering AI systems in your org...</value>
+    </labels>
+    <labels>
+        <fullName>AI_DiscoveryComplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>AI discovery complete message</shortDescription>
+        <value>Discovery complete</value>
+    </labels>
+    <labels>
+        <fullName>AI_NoSystemsFound</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No AI systems found message</shortDescription>
+        <value>No AI systems detected in this org</value>
+    </labels>
+    <labels>
+        <fullName>AI_RiskUnacceptable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unacceptable risk level label</shortDescription>
+        <value>Unacceptable Risk</value>
+    </labels>
+    <labels>
+        <fullName>AI_RiskHigh</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>High risk level label</shortDescription>
+        <value>High Risk</value>
+    </labels>
+    <labels>
+        <fullName>AI_RiskLimited</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Limited risk level label</shortDescription>
+        <value>Limited Risk</value>
+    </labels>
+    <labels>
+        <fullName>AI_RiskMinimal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Minimal risk level label</shortDescription>
+        <value>Minimal Risk</value>
+    </labels>
+    <labels>
+        <fullName>AI_RegisterSystem</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Register AI system button</shortDescription>
+        <value>Register System</value>
+    </labels>
+    <labels>
+        <fullName>AI_ViewDetails</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>View details button</shortDescription>
+        <value>View Details</value>
+    </labels>
+    <labels>
+        <fullName>AI_ComplianceScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance score label</shortDescription>
+        <value>AI Governance Compliance Score</value>
+    </labels>
+    <labels>
+        <fullName>AI_TotalSystems</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Total systems label</shortDescription>
+        <value>Total AI Systems</value>
+    </labels>
+    <labels>
+        <fullName>AI_HighRiskSystems</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>High risk systems label</shortDescription>
+        <value>High-Risk Systems</value>
+    </labels>
+    <labels>
+        <fullName>AI_GapsIdentified</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gaps identified label</shortDescription>
+        <value>Compliance Gaps</value>
+    </labels>
+    <labels>
+        <fullName>AI_EUAIAct</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>EU AI Act label</shortDescription>
+        <value>EU AI Act</value>
+    </labels>
+    <labels>
+        <fullName>AI_NISTRMF</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>NIST AI RMF label</shortDescription>
+        <value>NIST AI RMF</value>
+    </labels>
+    <labels>
+        <fullName>AI_OversightRequired</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Oversight required message</shortDescription>
+        <value>This AI system requires human oversight per EU AI Act</value>
+    </labels>
+    <labels>
+        <fullName>AI_RecordDecision</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Record oversight decision button</shortDescription>
+        <value>Record Decision</value>
+    </labels>
+    <labels>
+        <fullName>AI_DecisionAccept</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Accept decision option</shortDescription>
+        <value>Accept</value>
+    </labels>
+    <labels>
+        <fullName>AI_DecisionModify</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Modify decision option</shortDescription>
+        <value>Modify</value>
+    </labels>
+    <labels>
+        <fullName>AI_DecisionReject</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Reject decision option</shortDescription>
+        <value>Reject</value>
+    </labels>
+    <labels>
+        <fullName>AI_DecisionOverride</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Override decision option</shortDescription>
+        <value>Override</value>
+    </labels>
+    <labels>
+        <fullName>AI_ErrorGeneric</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic AI governance error</shortDescription>
+        <value>An error occurred processing AI governance data. Please try again or contact your administrator.</value>
+    </labels>
+    <labels>
+        <fullName>AI_RefreshData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Refresh data button</shortDescription>
+        <value>Refresh</value>
+    </labels>
 </CustomLabels>

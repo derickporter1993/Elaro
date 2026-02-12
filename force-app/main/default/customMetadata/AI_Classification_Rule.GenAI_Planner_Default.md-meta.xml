@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>GenAI Planner - Default</label>
+    <protected>false</protected>
+    <values>
+        <field>Feature_Type__c</field>
+        <value xsi:type="xsd:string">GenAI Planner</value>
+    </values>
+    <values>
+        <field>Use_Case_Context__c</field>
+        <value xsi:type="xsd:string">Automated planning and workflow generation</value>
+    </values>
+    <values>
+        <field>Risk_Level__c</field>
+        <value xsi:type="xsd:string">High</value>
+    </values>
+    <values>
+        <field>EU_AI_Act_Article__c</field>
+        <value xsi:type="xsd:string">Annex III, Point 4</value>
+    </values>
+    <values>
+        <field>Rationale__c</field>
+        <value xsi:type="xsd:string">AI systems that generate business workflows or automation require strict oversight and validation</value>
+    </values>
+</CustomMetadata>

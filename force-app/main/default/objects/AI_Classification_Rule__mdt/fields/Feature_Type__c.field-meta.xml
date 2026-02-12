@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Feature_Type__c</fullName>
+    <label>Feature Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Einstein Prediction</fullName>
+                <default>false</default>
+                <label>Einstein Prediction</label>
+            </value>
+            <value>
+                <fullName>Einstein Bot</fullName>
+                <default>false</default>
+                <label>Einstein Bot</label>
+            </value>
+            <value>
+                <fullName>GenAI Function</fullName>
+                <default>false</default>
+                <label>GenAI Function</label>
+            </value>
+            <value>
+                <fullName>GenAI Planner</fullName>
+                <default>false</default>
+                <label>GenAI Planner</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
