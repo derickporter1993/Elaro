@@ -255,6 +255,12 @@ private class AssessmentWizardServiceTest {
 
     @IsTest
     static void shouldReturnEmptyPrefillForNoCompletedSessions() {
+        // Remove completed sessions from @TestSetup so this test has none
+        delete as user [
+            SELECT Id FROM Compliance_Assessment_Session__c
+            WHERE Status__c = 'Completed' WITH USER_MODE
+        ];
+
         Test.startTest();
         Map<String, String> prefill = AssessmentWizardService.getPrefillData(
             'HIPAA_Assessment', null
