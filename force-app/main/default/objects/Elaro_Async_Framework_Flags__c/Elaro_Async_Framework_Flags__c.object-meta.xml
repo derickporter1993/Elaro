@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Elaro Async Framework Flags</label>
+    <customSettingsType>Hierarchy</customSettingsType>
+    <enableFeeds>false</enableFeeds>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>Use_New_Async_Framework__c</fullName>
+        <label>Use New Async Framework</label>
+        <defaultValue>true</defaultValue>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Max_Retry_Count__c</fullName>
+        <label>Max Retry Count</label>
+        <type>Number</type>
+        <precision>2</precision>
+        <scale>0</scale>
+        <defaultValue>3</defaultValue>
+    </fields>
+    <fields>
+        <fullName>Max_Cursor_Fetch_Size__c</fullName>
+        <label>Max Cursor Fetch Size</label>
+        <type>Number</type>
+        <precision>4</precision>
+        <scale>0</scale>
+        <defaultValue>200</defaultValue>
+    </fields>
+    <fields>
+        <fullName>Enable_Step_Logging__c</fullName>
+        <label>Enable Step Logging</label>
+        <defaultValue>true</defaultValue>
+        <type>Checkbox</type>
+    </fields>
+</CustomObject>

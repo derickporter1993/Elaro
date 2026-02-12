@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Elaro Async Admin</label>
+    <description>Full access to the Elaro Async Framework: custom setting management and step log subscription</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <classAccesses>
+        <apexClass>StepProcessor</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ElaroAsyncFeatureFlags</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+</PermissionSet>

@@ -1143,4 +1143,54 @@
         <shortDescription>Refresh data button</shortDescription>
         <value>Refresh</value>
     </labels>
+    <!-- Async Framework Labels -->
+    <labels>
+        <fullName>AF_FrameworkDisabled</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Async framework disabled message</shortDescription>
+        <value>Async framework is currently disabled. Contact your administrator.</value>
+    </labels>
+    <labels>
+        <fullName>AF_StepFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Step failure message</shortDescription>
+        <value>Step {0} failed: {1}</value>
+    </labels>
+    <labels>
+        <fullName>AF_StepComplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Step completion message</shortDescription>
+        <value>Step {0} completed successfully. {1} records processed.</value>
+    </labels>
+    <labels>
+        <fullName>AF_WorkflowComplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Workflow completion message</shortDescription>
+        <value>Workflow completed. {0} steps executed, {1} total records processed.</value>
+    </labels>
+    <labels>
+        <fullName>AF_RetryAttempt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Retry attempt message</shortDescription>
+        <value>Retrying step {0} (attempt {1} of {2})</value>
+    </labels>
+    <labels>
+        <fullName>AF_MaxRetriesExceeded</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Max retries exceeded message</shortDescription>
+        <value>Step {0} failed after {1} retry attempts. Workflow halted.</value>
+    </labels>
+    <labels>
+        <fullName>AF_GovernorLimitWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Governor limit warning message</shortDescription>
+        <value>Approaching governor limits. Processing paused and will resume.</value>
+    </labels>
 </CustomLabels>
