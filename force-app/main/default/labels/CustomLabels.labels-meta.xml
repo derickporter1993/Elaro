@@ -820,6 +820,105 @@
         <shortDescription>No events message</shortDescription>
         <value>No timeline events</value>
     </labels>
+    <!-- SEC Approval Process Labels -->
+    <labels>
+        <fullName>SEC_SubmitForApproval</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Submit for approval button label</shortDescription>
+        <value>Submit for Approval</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalPending</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval pending status message</shortDescription>
+        <value>Pending Approval</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalApproved</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval approved status</shortDescription>
+        <value>Approved</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalRejected</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval rejected status</shortDescription>
+        <value>Rejected</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalSubmitted</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval submitted confirmation</shortDescription>
+        <value>Disclosure submitted for approval successfully.</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalSubmitFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval submission failure</shortDescription>
+        <value>Failed to submit for approval. Please verify all approver fields are populated.</value>
+    </labels>
+    <labels>
+        <fullName>SEC_LegalApprover</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Legal approver field label</shortDescription>
+        <value>Legal Approver</value>
+    </labels>
+    <labels>
+        <fullName>SEC_CFOApprover</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>CFO approver field label</shortDescription>
+        <value>CFO Approver</value>
+    </labels>
+    <labels>
+        <fullName>SEC_CEOApprover</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>CEO approver field label</shortDescription>
+        <value>CEO Approver</value>
+    </labels>
+    <labels>
+        <fullName>SEC_BoardApprover</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Board approver field label</shortDescription>
+        <value>Board Approver</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalChain</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval chain section heading</shortDescription>
+        <value>Approval Chain</value>
+    </labels>
+    <labels>
+        <fullName>SEC_CurrentApprover</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Current approver label</shortDescription>
+        <value>Current Approver</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApprovalHistory</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approval history section heading</shortDescription>
+        <value>Approval History</value>
+    </labels>
+    <labels>
+        <fullName>SEC_ApproversRequired</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Approvers required validation message</shortDescription>
+        <value>All approver fields (Legal, CFO, CEO, Board) must be assigned before submitting.</value>
+    </labels>
     <!-- Trust Center Labels -->
     <labels>
         <fullName>TC_DashboardTitle</fullName>

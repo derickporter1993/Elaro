@@ -11,6 +11,9 @@
             <value><fullName>Draft</fullName><default>false</default><label>Draft</label></value>
             <value><fullName>Under_Review</fullName><default>false</default><label>Under Review</label></value>
             <value><fullName>Determined</fullName><default>false</default><label>Determined</label></value>
+            <value><fullName>AG_Delay_Requested</fullName><default>false</default><label>AG Delay Requested</label></value>
+            <value><fullName>AG_Delay_Granted</fullName><default>false</default><label>AG Delay Granted</label></value>
+            <value><fullName>Disclosure_In_Progress</fullName><default>false</default><label>Disclosure In Progress</label></value>
             <value><fullName>Filed</fullName><default>false</default><label>Filed</label></value>
             <value><fullName>Closed</fullName><default>false</default><label>Closed</label></value>
         </valueSetDefinition>

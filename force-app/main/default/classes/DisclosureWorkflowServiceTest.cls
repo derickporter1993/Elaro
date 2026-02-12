@@ -201,4 +201,118 @@ private class DisclosureWorkflowServiceTest {
 
         Assert.isTrue(exceptionThrown, 'Should throw exception when not in Ready_To_File status');
     }
+
+    /**
+     * Verify submitForApproval fails when approver fields are not populated.
+     */
+    @IsTest
+    static void testSubmitForApproval_missingApprovers_throwsException() {
+        Materiality_Assessment__c ma = [SELECT Id FROM Materiality_Assessment__c LIMIT 1];
+        Disclosure_Workflow__c workflow = DisclosureWorkflowService.createWorkflow(ma.Id, '8-K');
+
+        Boolean exceptionThrown = false;
+        Test.startTest();
+        try {
+            DisclosureWorkflowService.submitForApproval(workflow.Id, 'Test comments');
+        } catch (AuraHandledException e) {
+            exceptionThrown = true;
+            Assert.isTrue(
+                e.getMessage().contains('approver fields'),
+                'Exception should mention missing approver fields'
+            );
+        }
+        Test.stopTest();
+
+        Assert.isTrue(exceptionThrown, 'Should throw exception when approver fields are empty');
+    }
+
+    /**
+     * Verify submitForApproval fails when workflow is not in Drafting status.
+     */
+    @IsTest
+    static void testSubmitForApproval_wrongStatus_throwsException() {
+        Materiality_Assessment__c ma = [SELECT Id FROM Materiality_Assessment__c LIMIT 1];
+        Disclosure_Workflow__c workflow = DisclosureWorkflowService.createWorkflow(ma.Id, '8-K');
+
+        // Advance past Drafting
+        DisclosureWorkflowService.advanceWorkflow(workflow.Id, 'Legal_Review', 'Moving on');
+
+        Boolean exceptionThrown = false;
+        Test.startTest();
+        try {
+            DisclosureWorkflowService.submitForApproval(workflow.Id, 'Test comments');
+        } catch (AuraHandledException e) {
+            exceptionThrown = true;
+            Assert.isTrue(
+                e.getMessage().contains('Drafting'),
+                'Exception should mention required Drafting status'
+            );
+        }
+        Test.stopTest();
+
+        Assert.isTrue(exceptionThrown, 'Should throw exception when not in Drafting status');
+    }
+
+    /**
+     * Verify submitForApproval fails with invalid workflow Id.
+     */
+    @IsTest
+    static void testSubmitForApproval_notFound_throwsException() {
+        // Use a fabricated Id that won't exist
+        Id fakeId = Disclosure_Workflow__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+
+        Boolean exceptionThrown = false;
+        Test.startTest();
+        try {
+            DisclosureWorkflowService.submitForApproval(fakeId, 'Test');
+        } catch (AuraHandledException e) {
+            exceptionThrown = true;
+            Assert.isTrue(
+                e.getMessage().contains('not found'),
+                'Exception should indicate workflow not found'
+            );
+        }
+        Test.stopTest();
+
+        Assert.isTrue(exceptionThrown, 'Should throw exception for nonexistent workflow');
+    }
+
+    /**
+     * Verify getApprovalStatus returns status map for a workflow.
+     */
+    @IsTest
+    static void testGetApprovalStatus_returnsMap() {
+        Materiality_Assessment__c ma = [SELECT Id FROM Materiality_Assessment__c LIMIT 1];
+        Disclosure_Workflow__c workflow = DisclosureWorkflowService.createWorkflow(ma.Id, '8-K');
+
+        Test.startTest();
+        Map<String, Object> status = DisclosureWorkflowService.getApprovalStatus(workflow.Id);
+        Test.stopTest();
+
+        Assert.isNotNull(status, 'Should return a non-null status map');
+        Assert.areEqual('Drafting', status.get('workflowStatus'), 'Workflow status should be Drafting');
+    }
+
+    /**
+     * Verify getApprovalStatus fails with invalid workflow Id.
+     */
+    @IsTest
+    static void testGetApprovalStatus_notFound_throwsException() {
+        Id fakeId = Disclosure_Workflow__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+
+        Boolean exceptionThrown = false;
+        Test.startTest();
+        try {
+            DisclosureWorkflowService.getApprovalStatus(fakeId);
+        } catch (AuraHandledException e) {
+            exceptionThrown = true;
+            Assert.isTrue(
+                e.getMessage().contains('not found'),
+                'Exception should indicate workflow not found'
+            );
+        }
+        Test.stopTest();
+
+        Assert.isTrue(exceptionThrown, 'Should throw exception for nonexistent workflow');
+    }
 }

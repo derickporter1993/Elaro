@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+    <active>true</active>
+    <allowRecall>true</allowRecall>
+    <allowedSubmitters>
+        <type>allInternalUsers</type>
+    </allowedSubmitters>
+    <approvalPageFields>
+        <field>Name</field>
+        <field>Form_Type__c</field>
+        <field>Status__c</field>
+        <field>Materiality_Assessment__c</field>
+    </approvalPageFields>
+    <description>Multi-step approval process for SEC cybersecurity disclosure workflows. Routes through Legal, CFO, CEO, and Board review before filing. Approval chain: CISO (submitter) &gt; Legal &gt; CFO &gt; CEO &gt; Board &gt; Ready to File.</description>
+    <emailTemplate>SEC_Disclosure_Approval_Request</emailTemplate>
+    <entryCriteria>
+        <formula>Status__c = &apos;Drafting&apos;</formula>
+    </entryCriteria>
+    <finalApprovalActions>
+        <action>
+            <name>SEC_Status_Ready_To_File</name>
+            <type>FieldUpdate</type>
+        </action>
+    </finalApprovalActions>
+    <finalApprovalRecordLock>true</finalApprovalRecordLock>
+    <finalRejectionActions>
+        <action>
+            <name>SEC_Status_Drafting</name>
+            <type>FieldUpdate</type>
+        </action>
+    </finalRejectionActions>
+    <finalRejectionRecordLock>false</finalRejectionRecordLock>
+    <initialSubmissionActions>
+        <action>
+            <name>SEC_Status_Legal_Review</name>
+            <type>FieldUpdate</type>
+        </action>
+    </initialSubmissionActions>
+    <label>SEC Disclosure Approval</label>
+    <nextAutomatedApprover>
+        <useApproverFieldOfRecordOwner>false</useApproverFieldOfRecordOwner>
+    </nextAutomatedApprover>
+    <processOrder>1</processOrder>
+    <recordEditability>AdminOrCurrentApprover</recordEditability>
+    <showApprovalHistory>true</showApprovalHistory>
+    <approvalStep>
+        <allowDelegate>true</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>Legal_Approver__c</name>
+                <type>relatedUserField</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <description>Legal counsel reviews the disclosure for regulatory accuracy and completeness per SEC Item 1.05 requirements.</description>
+        <label>Legal Review</label>
+        <name>Legal_Review</name>
+        <approvalActions>
+            <action>
+                <name>SEC_Status_CFO_Review</name>
+                <type>FieldUpdate</type>
+            </action>
+        </approvalActions>
+        <rejectionActions>
+            <action>
+                <name>SEC_Status_Drafting</name>
+                <type>FieldUpdate</type>
+            </action>
+        </rejectionActions>
+    </approvalStep>
+    <approvalStep>
+        <allowDelegate>true</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>CFO_Approver__c</name>
+                <type>relatedUserField</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <description>CFO reviews financial impact assessment and materiality determination accuracy.</description>
+        <label>CFO Review</label>
+        <name>CFO_Review</name>
+        <rejectBehavior>
+            <type>BackToPrevious</type>
+        </rejectBehavior>
+        <approvalActions>
+            <action>
+                <name>SEC_Status_CEO_Approval</name>
+                <type>FieldUpdate</type>
+            </action>
+        </approvalActions>
+    </approvalStep>
+    <approvalStep>
+        <allowDelegate>true</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>CEO_Approver__c</name>
+                <type>relatedUserField</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <description>CEO provides executive sign-off on the cybersecurity disclosure before board review.</description>
+        <label>CEO Approval</label>
+        <name>CEO_Approval</name>
+        <rejectBehavior>
+            <type>BackToPrevious</type>
+        </rejectBehavior>
+        <approvalActions>
+            <action>
+                <name>SEC_Status_Board_Review</name>
+                <type>FieldUpdate</type>
+            </action>
+        </approvalActions>
+    </approvalStep>
+    <approvalStep>
+        <allowDelegate>true</allowDelegate>
+        <assignedApprover>
+            <approver>
+                <name>Board_Approver__c</name>
+                <type>relatedUserField</type>
+            </approver>
+            <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
+        </assignedApprover>
+        <description>Board representative provides final governance review and authorization to file with the SEC.</description>
+        <label>Board Review</label>
+        <name>Board_Review</name>
+        <rejectBehavior>
+            <type>BackToPrevious</type>
+        </rejectBehavior>
+    </approvalStep>
+</ApprovalProcess>

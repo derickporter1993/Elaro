@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>Elaro SEC Disclosure Admin</label>
-    <description>Full access to SEC Cybersecurity Disclosure module</description>
+    <label>Elaro SEC Disclosure User</label>
+    <description>Read and execute access to the SEC Cybersecurity Disclosure module. Grants ability to view assessments, workflows, and approval status. Use Elaro SEC Disclosure Admin for full create/edit access.</description>
     <hasActivationRequired>false</hasActivationRequired>
-    
+
     <objectPermissions>
         <object>Materiality_Assessment__c</object>
-        <allowCreate>true</allowCreate>
+        <allowCreate>false</allowCreate>
         <allowRead>true</allowRead>
-        <allowEdit>true</allowEdit>
-        <allowDelete>true</allowDelete>
-        <viewAllRecords>true</viewAllRecords>
-        <modifyAllRecords>true</modifyAllRecords>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
     </objectPermissions>
-    
+
     <objectPermissions>
         <object>Disclosure_Workflow__c</object>
-        <allowCreate>true</allowCreate>
+        <allowCreate>false</allowCreate>
         <allowRead>true</allowRead>
-        <allowEdit>true</allowEdit>
-        <allowDelete>true</allowDelete>
-        <viewAllRecords>true</viewAllRecords>
-        <modifyAllRecords>true</modifyAllRecords>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
     </objectPermissions>
 
     <fieldPermissions>
         <field>Disclosure_Workflow__c.Legal_Approver__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Disclosure_Workflow__c.CFO_Approver__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Disclosure_Workflow__c.CEO_Approver__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Disclosure_Workflow__c.Board_Approver__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Disclosure_Workflow__c.Approval_Comments__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Disclosure_Workflow__c.Submitted_Date__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
 
@@ -59,24 +59,9 @@
         <apexClass>SECDisclosureController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <classAccesses>
-        <apexClass>MaterialityAssessmentService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DisclosureWorkflowService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>BoardGovernanceService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>IncidentTimelineService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>BusinessDayCalculator</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
+
+    <tabSettings>
+        <tab>SEC_Disclosure_Dashboard</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

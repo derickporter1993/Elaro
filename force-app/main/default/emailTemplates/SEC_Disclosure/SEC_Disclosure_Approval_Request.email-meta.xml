@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Email notification sent to approvers when a SEC disclosure workflow requires their review.</description>
+    <encodingKey>UTF-8</encodingKey>
+    <name>SEC Disclosure Approval Request</name>
+    <style>none</style>
+    <subject>SEC Disclosure Approval Required: {!Disclosure_Workflow__c.Name}</subject>
+    <textOnly>A SEC cybersecurity disclosure requires your review and approval.
+
+Workflow: {!Disclosure_Workflow__c.Name}
+Form Type: {!Disclosure_Workflow__c.Form_Type__c}
+Current Status: {!Disclosure_Workflow__c.Status__c}
+
+Please log in to Salesforce to review and approve or reject this disclosure.
+
+This is an automated notification from the Elaro SEC Cybersecurity Disclosure Module.</textOnly>
+    <type>text</type>
+    <uiType>SFX</uiType>
+    <apiVersion>66.0</apiVersion>
+</EmailTemplate>
