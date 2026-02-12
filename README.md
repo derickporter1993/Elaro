@@ -685,8 +685,8 @@ Elaro is under active development. Contributions welcome!
 
 ```bash
 # 1. Fork and clone the repo
-git clone https://github.com/derickporter1993/Elaro.git
-cd Elaro
+git clone https://github.com/derickporter1993/elaro.git
+cd elaro
 
 # 2. Install dependencies
 npm install
