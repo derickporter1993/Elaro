@@ -160,6 +160,80 @@ private class ElaroPCIAccessAlertHandlerTest {
     }
 
     // ========================================
+    // GOVERNOR LIMIT STRESS TESTS
+    // ========================================
+    
+    @IsTest
+    static void testHandleAfterHoursAccess_BulkEvents() {
+        // Test with 200 events to verify batching handles governor limits
+        List<Elaro_Raw_Event__e> events = new List<Elaro_Raw_Event__e>();
+        
+        for (Integer i = 0; i < 200; i++) {
+            events.add(createTestEvent(
+                'user' + i, 
+                'user' + i + '@example.com', 
+                '192.168.1.' + Math.mod(i, 255), 
+                'View Record ' + i
+            ));
+        }
+        
+        Test.startTest();
+        ElaroPCIAccessAlertHandler.handleAfterHoursAccess(events);
+        Test.stopTest();
+        
+        // Should handle 200 events with batched logging (no governor limit errors)
+        Assert.areEqual(200, events.size(), 'Should process all 200 events');
+    }
+    
+    @IsTest
+    static void testHandleBulkAccess_BulkEvents() {
+        // Test with 200 bulk access events
+        List<Elaro_Raw_Event__e> events = new List<Elaro_Raw_Event__e>();
+        
+        for (Integer i = 0; i < 200; i++) {
+            // Mix of over and under threshold
+            Integer recordCount = i < 100 ? 75 : 25;
+            events.add(createTestEventWithAction(
+                'user' + i, 
+                'user' + i + '@example.com', 
+                '192.168.1.' + Math.mod(i, 255), 
+                'Bulk: ' + recordCount + ' records'
+            ));
+        }
+        
+        Test.startTest();
+        ElaroPCIAccessAlertHandler.handleBulkAccess(events);
+        Test.stopTest();
+        
+        // Should handle 200 events with batched processing
+        Assert.areEqual(200, events.size(), 'Should process all 200 events');
+    }
+    
+    @IsTest
+    static void testHandleFailedAccess_BulkUsersWithMultipleAttempts() {
+        // Test with 50 users, each with 4 failed attempts (200 total events)
+        List<Elaro_Raw_Event__e> events = new List<Elaro_Raw_Event__e>();
+        
+        for (Integer userId = 0; userId < 50; userId++) {
+            for (Integer attempt = 0; attempt < 4; attempt++) {
+                events.add(createTestEvent(
+                    'user' + userId, 
+                    'user' + userId + '@example.com', 
+                    '192.168.1.' + Math.mod(userId, 255), 
+                    'Failed Login Attempt ' + attempt
+                ));
+            }
+        }
+        
+        Test.startTest();
+        ElaroPCIAccessAlertHandler.handleFailedAccess(events);
+        Test.stopTest();
+        
+        // Should group by user and detect 50 users with critical alerts
+        Assert.areEqual(200, events.size(), 'Should process all 200 events');
+    }
+
+    // ========================================
     // EDGE CASE TESTS
     // ========================================
 

@@ -58,21 +58,44 @@ public with sharing class ElaroPCIAccessAlertHandler {
      * @param events - List of after-hours events
      */
     public static void handleAfterHoursAccess(List<Elaro_Raw_Event__e> events) {
+        if (events.isEmpty()) {
+            return;
+        }
+        
+        // Batch alerts by aggregating events
+        List<String> eventDetails = new List<String>();
         for (Elaro_Raw_Event__e event : events) {
             String timeStr = event.Timestamp__c.format('HH:mm:ss');
-
-            sendSecurityAlert(
-                'WARNING: After-Hours Access to Payment Data',
-                'User ' + parseEventField(event, 'username') + ' accessed cardholder data at ' + timeStr + '.\n' +
-                'Access Type: ' + parseEventField(event, 'accessType') + '\n' +
-                'Record ID: ' + parseEventField(event, 'recordId') + '\n' +
-                'IP Address: ' + parseEventField(event, 'ipAddress') + '\n' +
-                'Action: Verify this access was authorized.',
-                'Warning'
+            String detail = String.format(
+                '- User {0} at {1} (IP: {2}, Type: {3}, Record: {4})',
+                new List<String>{
+                    parseEventField(event, 'username'),
+                    timeStr,
+                    parseEventField(event, 'ipAddress'),
+                    parseEventField(event, 'accessType'),
+                    parseEventField(event, 'recordId')
+                }
             );
-
-            logSecurityEvent(event, 'After-Hours Access');
+            eventDetails.add(detail);
         }
+        
+        // Single batched alert for all after-hours events
+        String batchedBody = String.format(
+            'Detected {0} after-hours access event(s) to cardholder data:\n\n{1}\n\nAction: Verify these accesses were authorized.',
+            new List<String>{
+                String.valueOf(events.size()),
+                String.join(eventDetails, '\n')
+            }
+        );
+        
+        sendSecurityAlert(
+            'WARNING: After-Hours Access to Payment Data',
+            batchedBody,
+            'Warning'
+        );
+        
+        // Batch log all events
+        batchLogSecurityEvents(events, 'After-Hours Access');
     }
 
     /**
@@ -80,25 +103,52 @@ public with sharing class ElaroPCIAccessAlertHandler {
      * @param events - List of bulk access events
      */
     public static void handleBulkAccess(List<Elaro_Raw_Event__e> events) {
+        if (events.isEmpty()) {
+            return;
+        }
+        
+        // Separate high-volume events from normal ones
+        List<String> highVolumeDetails = new List<String>();
+        List<Elaro_Raw_Event__e> allEvents = new List<Elaro_Raw_Event__e>();
+        
         for (Elaro_Raw_Event__e event : events) {
-            // Extract record count from action string
             String action = parseEventField(event, 'userAction');
             Integer recordCount = extractRecordCount(action);
+            allEvents.add(event);
 
             if (recordCount >= BULK_ACCESS_THRESHOLD) {
-                sendSecurityAlert(
-                    'ALERT: Large Bulk Access to Payment Data',
-                    'User ' + parseEventField(event, 'username') + ' accessed ' + recordCount +
-                    ' payment records in bulk operation.\n' +
-                    'Access Type: ' + parseEventField(event, 'accessType') + '\n' +
-                    'IP Address: ' + parseEventField(event, 'ipAddress') + '\n' +
-                    'Action: Review if this volume is appropriate for user role.',
-                    'High'
+                String detail = String.format(
+                    '- User {0} accessed {1} records (IP: {2}, Type: {3})',
+                    new List<String>{
+                        parseEventField(event, 'username'),
+                        String.valueOf(recordCount),
+                        parseEventField(event, 'ipAddress'),
+                        parseEventField(event, 'accessType')
+                    }
                 );
+                highVolumeDetails.add(detail);
             }
-
-            logSecurityEvent(event, 'Bulk Data Access');
         }
+        
+        // Send single alert for all high-volume events
+        if (!highVolumeDetails.isEmpty()) {
+            String batchedBody = String.format(
+                'Detected {0} large bulk access event(s) to payment data:\n\n{1}\n\nAction: Review if these volumes are appropriate for user roles.',
+                new List<String>{
+                    String.valueOf(highVolumeDetails.size()),
+                    String.join(highVolumeDetails, '\n')
+                }
+            );
+            
+            sendSecurityAlert(
+                'ALERT: Large Bulk Access to Payment Data',
+                batchedBody,
+                'High'
+            );
+        }
+        
+        // Batch log all events
+        batchLogSecurityEvents(allEvents, 'Bulk Data Access');
     }
 
     /**
@@ -147,6 +197,39 @@ public with sharing class ElaroPCIAccessAlertHandler {
             'Timestamp: ' + event.Timestamp__c + '\n' +
             'IP: ' + parseEventField(event, 'ipAddress') + '\n' +
             'Action: ' + parseEventField(event, 'userAction'));
+    }
+    
+    /**
+     * Batch log multiple security events for audit (governor limit optimization)
+     * @param events - List of PCI Access Events
+     * @param eventType - Type of security event
+     */
+    private static void batchLogSecurityEvents(List<Elaro_Raw_Event__e> events, String eventType) {
+        if (events.isEmpty()) {
+            return;
+        }
+        
+        List<String> eventSummaries = new List<String>();
+        for (Elaro_Raw_Event__e event : events) {
+            eventSummaries.add(String.format(
+                'User: {0}, Time: {1}, IP: {2}, Action: {3}',
+                new List<String>{
+                    parseEventField(event, 'username'),
+                    String.valueOf(event.Timestamp__c),
+                    parseEventField(event, 'ipAddress'),
+                    parseEventField(event, 'userAction')
+                }
+            ));
+        }
+        
+        ElaroLogger.warn(String.format(
+            '[PCIAccessAlertHandler] Security Events ({0}): {1}\nEvents:\n{2}',
+            new List<String>{
+                String.valueOf(events.size()),
+                eventType,
+                String.join(eventSummaries, '\n')
+            }
+        ));
     }
 
     /**

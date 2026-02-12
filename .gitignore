@@ -16,15 +16,29 @@ dist/
 
 # OS files
 .DS_Store
-Thumbs.db
 .DS_Store?
+._*
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
 
 # IDE and editor files
 .vscode/
 .idea/
 .cursor/
 *.sublime-*
+.sublime-project
+.sublime-workspace
 .history/
+*.swp
+*.swo
+*.swn
+*~
+.project
+.settings/
+.classpath
+.factorypath
 
 # Salesforce
 .sfdx/
