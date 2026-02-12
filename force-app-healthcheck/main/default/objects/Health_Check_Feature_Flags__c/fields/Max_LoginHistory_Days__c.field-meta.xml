@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Max_LoginHistory_Days__c</fullName>
+    <defaultValue>90</defaultValue>
+    <description>Number of days of LoginHistory to analyze for MFA compliance scanning. Higher values provide more accurate adoption percentages but increase query time.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>How many days of login history to scan for MFA compliance (default: 90).</inlineHelpText>
+    <label>Max LoginHistory Days</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

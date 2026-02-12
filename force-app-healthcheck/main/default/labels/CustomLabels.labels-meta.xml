@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>HC_ScanInProgress</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health Check scan in progress message</shortDescription>
+        <value>Scanning your org security settings...</value>
+    </labels>
+    <labels>
+        <fullName>HC_ScanComplete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health Check scan complete message</shortDescription>
+        <value>Security scan complete.</value>
+    </labels>
+    <labels>
+        <fullName>HC_ScanFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health Check scan failure message</shortDescription>
+        <value>Unable to complete the security scan. Please verify your permissions and try again.</value>
+    </labels>
+    <labels>
+        <fullName>HC_NoDataAvailable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No scan data available message</shortDescription>
+        <value>No scan data available. Click Run Scan to analyze your org security.</value>
+    </labels>
+    <labels>
+        <fullName>HC_HighRisk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>High risk severity label</shortDescription>
+        <value>High Risk</value>
+    </labels>
+    <labels>
+        <fullName>HC_MediumRisk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Medium risk severity label</shortDescription>
+        <value>Medium Risk</value>
+    </labels>
+    <labels>
+        <fullName>HC_LowRisk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Low risk severity label</shortDescription>
+        <value>Low Risk</value>
+    </labels>
+    <labels>
+        <fullName>HC_OverallScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Overall security score label</shortDescription>
+        <value>Overall Security Score</value>
+    </labels>
+    <labels>
+        <fullName>HC_MfaAdoption</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>MFA adoption category label</shortDescription>
+        <value>MFA Adoption</value>
+    </labels>
+    <labels>
+        <fullName>HC_PermissionHygiene</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Permission hygiene category label</shortDescription>
+        <value>Permission Hygiene</value>
+    </labels>
+    <labels>
+        <fullName>HC_SessionSecurity</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Session security category label</shortDescription>
+        <value>Session Security</value>
+    </labels>
+    <labels>
+        <fullName>HC_AuditTrailRisk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Audit trail risk category label</shortDescription>
+        <value>Audit Trail Risk</value>
+    </labels>
+    <labels>
+        <fullName>HC_GoToSetup</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Go to Setup button label</shortDescription>
+        <value>Go to Setup</value>
+    </labels>
+    <labels>
+        <fullName>HC_CtaTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>AppExchange CTA banner title</shortDescription>
+        <value>Ready for Full Compliance Automation?</value>
+    </labels>
+    <labels>
+        <fullName>HC_CtaBody</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>AppExchange CTA banner body text</shortDescription>
+        <value>Your scan found {0} findings. Elaro automates remediation across HIPAA, SOC2, PCI-DSS, and 10+ frameworks.</value>
+    </labels>
+    <labels>
+        <fullName>HC_CtaLink</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>AppExchange CTA link text</shortDescription>
+        <value>View on AppExchange</value>
+    </labels>
+    <labels>
+        <fullName>HC_ScoreExcellent</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Excellent score label (71-100)</shortDescription>
+        <value>Excellent</value>
+    </labels>
+    <labels>
+        <fullName>HC_ScoreGood</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Good score label (51-70)</shortDescription>
+        <value>Good</value>
+    </labels>
+    <labels>
+        <fullName>HC_ScoreNeedsWork</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Needs Work score label (41-70)</shortDescription>
+        <value>Needs Work</value>
+    </labels>
+    <labels>
+        <fullName>HC_ScoreCritical</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Critical score label (0-40)</shortDescription>
+        <value>Critical</value>
+    </labels>
+    <labels>
+        <fullName>HC_UsersOnMfa</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>MFA user count display</shortDescription>
+        <value>{0} of {1} logins verified with MFA</value>
+    </labels>
+    <labels>
+        <fullName>HC_FilterAll</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter button label - All</shortDescription>
+        <value>All</value>
+    </labels>
+    <labels>
+        <fullName>HC_FilterHigh</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter button label - High</shortDescription>
+        <value>High</value>
+    </labels>
+    <labels>
+        <fullName>HC_FilterMedium</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter button label - Medium</shortDescription>
+        <value>Medium</value>
+    </labels>
+    <labels>
+        <fullName>HC_FilterLow</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter button label - Low</shortDescription>
+        <value>Low</value>
+    </labels>
+</CustomLabels>

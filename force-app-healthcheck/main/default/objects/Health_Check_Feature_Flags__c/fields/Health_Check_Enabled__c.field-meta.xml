@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Health_Check_Enabled__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Master kill switch for Health Check scanning. When unchecked, runFullScan() throws an error instead of executing.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Uncheck to disable Health Check scanning for this org, profile, or user.</inlineHelpText>
+    <label>Health Check Enabled</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

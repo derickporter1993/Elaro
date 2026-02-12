@@ -1,0 +1,74 @@
+<template>
+    <lightning-card title={label.HC_OverallScore} icon-name="standard:health_cloud_admin">
+        <div slot="actions">
+            <lightning-button
+                label="Run Scan"
+                variant="brand"
+                onclick={handleRunScan}
+                disabled={isLoading}
+            ></lightning-button>
+        </div>
+
+        <div class="slds-var-p-around_medium">
+            <template lwc:if={isLoading}>
+                <div class="slds-align_absolute-center slds-var-p-around_large">
+                    <lightning-spinner
+                        alternative-text={label.HC_ScanInProgress}
+                        size="medium"
+                    ></lightning-spinner>
+                    <p class="slds-var-m-left_medium slds-text-body_regular">
+                        {label.HC_ScanInProgress}
+                    </p>
+                </div>
+            </template>
+
+            <template lwc:elseif={hasError}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <h2>{errorMessage}</h2>
+                </div>
+            </template>
+
+            <template lwc:elseif={isEmpty}>
+                <div class="slds-illustration slds-illustration_small slds-align_absolute-center">
+                    <p class="slds-text-body_regular slds-text-color_weak">
+                        {label.HC_NoDataAvailable}
+                    </p>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-var-p-around_small">
+                        <c-health-check-score-gauge
+                            score={overallScore}
+                        ></c-health-check-score-gauge>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-var-p-around_small">
+                        <c-health-check-mfa-indicator
+                            mfa-percentage={mfaPercentage}
+                            total-users={totalUsers}
+                            mfa-users={mfaUsers}
+                        ></c-health-check-mfa-indicator>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-var-p-around_small">
+                        <c-health-check-cta-banner
+                            findings-count={findingsCount}
+                        ></c-health-check-cta-banner>
+                    </div>
+                </div>
+
+                <div class="slds-var-m-top_medium">
+                    <c-health-check-risk-table
+                        findings={findings}
+                    ></c-health-check-risk-table>
+                </div>
+
+                <div class="slds-var-m-top_medium">
+                    <c-health-check-recommendations
+                        recommendations={recommendations}
+                    ></c-health-check-recommendations>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

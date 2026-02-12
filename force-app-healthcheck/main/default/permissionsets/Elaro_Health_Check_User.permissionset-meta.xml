@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Read and execute access to the Elaro Health Check dashboard. Users can run scans and view results but cannot modify feature flag settings.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Elaro Health Check User</label>
+    <classAccesses>
+        <apexClass>HealthCheckController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <objectPermissions>
+        <object>Health_Check_Feature_Flags__c</object>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Health_Check_Feature_Flags__c.Health_Check_Enabled__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Health_Check_Feature_Flags__c.Max_LoginHistory_Days__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <tabSettings>
+        <tab>Health_Check_Dashboard</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+</PermissionSet>

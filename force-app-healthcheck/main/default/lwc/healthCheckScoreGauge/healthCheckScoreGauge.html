@@ -1,0 +1,30 @@
+<template>
+    <div class="gauge-container" role="img" aria-label={ariaLabel}>
+        <svg viewBox="0 0 120 120" class="gauge-svg">
+            <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke="#e0e5ee"
+                stroke-width="8"
+            ></circle>
+            <circle
+                cx="60"
+                cy="60"
+                r="54"
+                fill="none"
+                stroke={gaugeColor}
+                stroke-width="8"
+                stroke-dasharray={strokeDasharray}
+                stroke-dashoffset={strokeDashoffset}
+                stroke-linecap="round"
+                class="gauge-progress"
+            ></circle>
+        </svg>
+        <div class="gauge-label">
+            <span class="gauge-score">{normalizedScore}</span>
+            <span class="gauge-text">{scoreLabel}</span>
+        </div>
+    </div>
+</template>

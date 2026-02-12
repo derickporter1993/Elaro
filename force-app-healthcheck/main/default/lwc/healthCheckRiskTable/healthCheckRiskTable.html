@@ -1,0 +1,34 @@
+<template>
+    <lightning-card title="Risk Findings" icon-name="standard:warning">
+        <div class="slds-var-p-around_medium">
+            <lightning-combobox
+                label="Filter by severity"
+                value={activeFilter}
+                options={filterOptions}
+                onchange={handleFilterChange}
+                class="slds-var-m-bottom_small"
+                variant="label-hidden"
+            ></lightning-combobox>
+
+            <template lwc:if={hasFindings}>
+                <lightning-datatable
+                    key-field="setting"
+                    data={filteredFindings}
+                    columns={columns}
+                    sorted-by={sortedBy}
+                    sorted-direction={sortDirection}
+                    onsort={handleSort}
+                    hide-checkbox-column
+                ></lightning-datatable>
+            </template>
+
+            <template lwc:else>
+                <div class="slds-align_absolute-center slds-var-p-around_large">
+                    <p class="slds-text-body_regular slds-text-color_weak">
+                        No findings match the selected filter.
+                    </p>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

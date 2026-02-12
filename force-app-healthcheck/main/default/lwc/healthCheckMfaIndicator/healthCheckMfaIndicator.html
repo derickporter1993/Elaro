@@ -1,0 +1,36 @@
+<template>
+    <lightning-card title={label.HC_MfaAdoption} icon-name="standard:shield">
+        <div class="slds-var-p-around_medium slds-align_absolute-center">
+            <div class="mfa-container" role="img" aria-label={ariaLabel}>
+                <svg viewBox="0 0 120 120" class="mfa-svg">
+                    <circle
+                        cx="60"
+                        cy="60"
+                        r="54"
+                        fill="none"
+                        stroke="#e0e5ee"
+                        stroke-width="8"
+                    ></circle>
+                    <circle
+                        cx="60"
+                        cy="60"
+                        r="54"
+                        fill="none"
+                        stroke={ringColor}
+                        stroke-width="8"
+                        stroke-dasharray={strokeDasharray}
+                        stroke-dashoffset={strokeDashoffset}
+                        stroke-linecap="round"
+                        class="mfa-progress"
+                    ></circle>
+                </svg>
+                <div class="mfa-label">
+                    <span class="mfa-percentage">{normalizedPercentage}%</span>
+                </div>
+            </div>
+        </div>
+        <p class="slds-text-body_regular slds-text-align_center slds-var-p-bottom_small">
+            {usersLabel}
+        </p>
+    </lightning-card>
+</template>

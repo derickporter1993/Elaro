@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Health Check</label>
+    <customObject>false</customObject>
+    <description>Security Health Check Dashboard — scan your org and view compliance scores</description>
+    <flexiPage>Health_Check_Dashboard</flexiPage>
+    <motif>Custom73: Shield</motif>
+</CustomTab>

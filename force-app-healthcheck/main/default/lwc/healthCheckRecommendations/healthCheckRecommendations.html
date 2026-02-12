@@ -1,0 +1,36 @@
+<template>
+    <lightning-card title="Recommendations" icon-name="standard:task">
+        <div class="slds-var-p-around_medium">
+            <template lwc:if={hasRecommendations}>
+                <template for:each={indexedRecommendations} for:item="rec">
+                    <div key={rec.key} class="slds-box slds-var-m-bottom_small">
+                        <div class="slds-grid slds-grid_vertical-align-center">
+                            <div class="slds-col slds-grow">
+                                <span class={rec.priorityClass}>{rec.priorityBadge}</span>
+                                <h3 class="slds-text-heading_small slds-var-m-top_xx-small">
+                                    {rec.title}
+                                </h3>
+                                <p class="slds-text-body_regular slds-var-m-top_xx-small">
+                                    {rec.description}
+                                </p>
+                            </div>
+                            <div class="slds-col slds-no-flex">
+                                <lightning-button
+                                    label={label.HC_GoToSetup}
+                                    variant="neutral"
+                                    data-path={rec.setupMenuPath}
+                                    onclick={handleGoToSetup}
+                                ></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <p class="slds-text-body_regular slds-text-color_weak slds-align_absolute-center">
+                    No recommendations at this time.
+                </p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

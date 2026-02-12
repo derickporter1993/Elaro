@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Elaro Health Check</label>
+    <description>Free security health check tool by Elaro. Scans org security posture and produces a composite score with actionable recommendations.</description>
+    <formFactors>
+        <formFactor>Large</formFactor>
+    </formFactors>
+    <navType>Standard</navType>
+    <tabs>Health_Check_Dashboard</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>
