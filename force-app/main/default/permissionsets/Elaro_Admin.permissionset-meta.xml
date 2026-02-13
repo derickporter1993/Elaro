@@ -220,6 +220,18 @@
     <tab>SEC_Disclosure_Dashboard</tab>
     <visibility>Visible</visibility>
   </tabSettings>
+  <tabSettings>
+    <tab>Elaro_All_Components</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Elaro_Compliance_Hub</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Elaro_Dashboard</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
   <classAccesses>
     <apexClass>AIGovernanceController</apexClass>
     <enabled>true</enabled>
@@ -456,6 +468,34 @@
     <apexClass>WeeklyScorecardScheduler</apexClass>
     <enabled>true</enabled>
   </classAccesses>
+  <classAccesses>
+    <apexClass>CommandCenterController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>AssessmentWizardController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>SECDisclosureController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>TrustCenterController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>ElaroPDFController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>EscalationPathController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>OnCallScheduleController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
   <objectPermissions>
     <object>Elaro_Audit_Package__c</object>
     <allowCreate>true</allowCreate>
@@ -620,6 +660,123 @@
   </objectPermissions>
   <objectPermissions>
     <object>Integration_Error__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Trust_Center_View__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Trust_Center_Link__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>true</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Compliance_Assessment_Session__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Board_Governance_Report__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Incident_Timeline__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Holiday__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>SEC_Control_Mapping__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Elaro_Escalation_Path__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Elaro_On_Call_Schedule__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Security_Incident__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Data_Processing_Activity__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Materiality_Assessment__c</object>
+    <allowCreate>true</allowCreate>
+    <allowDelete>false</allowDelete>
+    <allowEdit>true</allowEdit>
+    <allowRead>true</allowRead>
+    <modifyAllRecords>false</modifyAllRecords>
+    <viewAllRecords>true</viewAllRecords>
+  </objectPermissions>
+  <objectPermissions>
+    <object>Disclosure_Workflow__c</object>
     <allowCreate>true</allowCreate>
     <allowDelete>false</allowDelete>
     <allowEdit>true</allowEdit>

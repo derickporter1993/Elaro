@@ -219,4 +219,28 @@
     <field>Elaro_Evidence_Item__c.Reviewed_Date__c</field>
     <readable>true</readable>
   </fieldPermissions>
+  <tabSettings>
+    <tab>Elaro_All_Components</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Elaro_Compliance_Hub</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Elaro_Dashboard</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Compliance_Score__c</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Compliance_Evidence__c</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Compliance_Gap__c</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
 </PermissionSet>

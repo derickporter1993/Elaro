@@ -42,4 +42,20 @@
     <modifyAllRecords>false</modifyAllRecords>
     <viewAllRecords>true</viewAllRecords>
   </objectPermissions>
+  <classAccesses>
+    <apexClass>AuditReportController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <classAccesses>
+    <apexClass>ElaroPDFController</apexClass>
+    <enabled>true</enabled>
+  </classAccesses>
+  <tabSettings>
+    <tab>Elaro_Compliance_Hub</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
+  <tabSettings>
+    <tab>Event_Monitoring</tab>
+    <visibility>Visible</visibility>
+  </tabSettings>
 </PermissionSet>

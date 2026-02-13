@@ -34,4 +34,8 @@
         <object>AI_RMF_Mapping__c</object>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <tabSettings>
+        <tab>AI_Governance_Dashboard</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>
