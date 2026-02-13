@@ -52,6 +52,6 @@
         <members>*</members>
         <name>PlatformEventChannel</name>
     </types>
-    <version>63.0</version>
+    <version>66.0</version>
 </Package>
 
