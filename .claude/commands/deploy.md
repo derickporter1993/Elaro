@@ -122,8 +122,8 @@ If deployment fails or causes issues:
 - Re-run validation
 
 ### Deployment Fails with SOQL Error
-- Check for missing `WITH SECURITY_ENFORCED` clauses
-- Verify FLS/CRUD checks using ElaroSecurityUtils
+- Check for missing `WITH USER_MODE` clauses (never use `WITH SECURITY_ENFORCED`)
+- Verify all DML uses `as user` or `AccessLevel.USER_MODE`
 - Review object permissions in scratch org
 
 ### Component Conflicts

@@ -1,6 +1,6 @@
 # ELARO CLAUDE.md: Master Project Context
 
-**Generated:** February 11, 2026 | All 19 audit findings resolved | Spring '26 (API v66.0)
+**Updated:** February 14, 2026 | CRUD/FLS enforcement complete | Spring '26 (API v66.0)
 **Standards aligned with:** Salesforce Apex Best Practices Through Spring '26 (PDF), Elaro Sovereign Architecture, Elaro Team Split Plan, Elaro Codebase Fix Report, Solentra Best Practices Guide
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -12,8 +12,8 @@ HIPAA, SOC2, PCI-DSS, GDPR, CCPA, GLBA, ISO 27001, FINRA, FedRAMP, CMMC 2.0, SEC
 NIS2, DORA, and AI Governance (EU AI Act / NIST AI RMF).
 
 Current codebase: 299 Apex classes, 41 LWC components, 54 custom objects, 8 Platform Events,
-5 Permission Sets, 5 Apex Triggers. All code has been audit-remediated to modern standards.
-Audit score: 84/100.
+10 Permission Sets, 5 Apex Triggers. All DML uses `as user` or `AccessLevel.USER_MODE`.
+All SOQL uses `WITH USER_MODE`. Zero bare DML/SOQL remaining.
 
 ## Technology Stack
 
@@ -681,6 +681,13 @@ npm run precommit
 # Check for outdated security patterns
 grep -rn 'WITH SECURITY_ENFORCED' force-app/main/default/classes/ 2>/dev/null
 grep -rn 'System.assertEquals' force-app/main/default/classes/ 2>/dev/null
+
+# Check for bare DML (AppExchange rejection if found)
+grep -Prn '^\s+(insert|update|delete|upsert) (?!as user)[a-zA-Z]' force-app/main/default/classes/ 2>/dev/null
+grep -Prn '^\s+(insert|update|delete|upsert) (?!as user)[a-zA-Z]' force-app-healthcheck/main/default/classes/ 2>/dev/null
+
+# Check for Database.* without AccessLevel
+grep -rn 'Database\.\(insert\|update\|delete\|upsert\)(' force-app/main/default/classes/ 2>/dev/null | grep -v AccessLevel
 ```
 
 ---

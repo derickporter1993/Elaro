@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "customInstructions": "You are working on Elaro, an enterprise Salesforce compliance platform. Always prioritize security (use ElaroSecurityUtils), follow Salesforce best practices, and maintain test coverage above 75%. When making changes to Apex classes, ensure all SOQL queries use WITH USER_MODE and all DML uses 'as user' or AccessLevel.USER_MODE. Use SF CLI v2 syntax (sf not sfdx). Before deploying, always run tests and preview changes. Read CLAUDE.md for full project context and agent_docs/ for review checklists.",
+  "customInstructions": "You are working on Elaro, an enterprise Salesforce compliance platform targeting AppExchange. Security is enforced at the statement level: all SOQL uses WITH USER_MODE, all DML uses 'as user', all Database.* calls use AccessLevel.USER_MODE. Never use WITH SECURITY_ENFORCED (outdated). Use ElaroLogger for logging (never System.debug). Use Assert class for tests (never System.assertEquals). Use ApexDoc with @author/@since/@group (never @description tag). All new code targets API v66.0. Use SF CLI v2 syntax (sf not sfdx). Read CLAUDE.md for full project context.",
 
   "rules": [
     {
       "name": "Security-First Development",
-      "description": "All Apex code must use ElaroSecurityUtils for CRUD/FLS checks. SOQL must use WITH USER_MODE. DML must use 'as user' or AccessLevel.USER_MODE. Never use WITH SECURITY_ENFORCED (outdated).",
+      "description": "CRUD/FLS enforced at statement level: SOQL must use WITH USER_MODE. DML must use 'as user'. Database.* calls must use AccessLevel.USER_MODE. Never use WITH SECURITY_ENFORCED (outdated). ElaroSecurityUtils is defense-in-depth only, not a substitute for statement-level enforcement.",
       "pattern": "**/*.cls",
       "enabled": true
     },
@@ -22,7 +22,7 @@
     },
     {
       "name": "Documentation Standards",
-      "description": "Use JSDoc comments for all public Apex methods and TSDoc for TypeScript. Update SESSION_CONTEXT.md after significant work",
+      "description": "Use ApexDoc comments for all public Apex methods (with @author, @since, @group — no @description tag) and TSDoc for TypeScript.",
       "pattern": "**/*.{cls,ts,js}",
       "enabled": true
     }
@@ -131,6 +131,10 @@
     "force-app/main/default/**/*.css",
     "force-app/main/default/**/*.xml",
     "force-app/main/default/objects/**/fields/*.field-meta.xml",
+    "force-app-healthcheck/main/default/**/*.cls",
+    "force-app-healthcheck/main/default/**/*.js",
+    "force-app-healthcheck/main/default/**/*.html",
+    "force-app-healthcheck/main/default/**/*.xml",
     "platform/**/*.ts",
     "docs/**/*.md",
     "scripts/**/*.{sh,apex,js}",

@@ -1,113 +1,113 @@
 # Create New Apex Class
 
-Generate a new Apex class following Elaro coding standards and best practices.
+Generate a new Apex class following Elaro coding standards (CLAUDE.md) and AppExchange security requirements.
 
 ## Usage
 
 When creating a new Apex class, gather these details:
 
-1. **Class Name** - Must start with "Elaro" prefix (e.g., ElaroMyFeature)
+1. **Class Name** - PascalCase (e.g., MyFeatureService, MyFeatureController)
 2. **Purpose** - Brief description of functionality
 3. **Type** - Choose one:
-   - Controller (LWC backend logic)
-   - Service (Business logic layer)
-   - Utility (Helper/common functions)
-   - Batch (Async batch processing)
-   - Scheduler (Scheduled jobs)
-   - Trigger Handler (Trigger logic)
-   - Test (Test class)
+   - Controller (LWC backend logic) — `with sharing`
+   - Service (Business logic layer) — `inherited sharing`
+   - Utility (Helper/common functions) — `inherited sharing`
+   - Batch (Async batch processing) — `inherited sharing`
+   - Scheduler (Scheduled jobs) — `inherited sharing`
+   - Trigger Handler (Trigger logic) — `inherited sharing`
+   - Test (Test class) — `@IsTest private class`
 
 ## Template Structure
 
 Every new Apex class should include:
 
-### 1. File Header
+### 1. ApexDoc Header (NOT JSDoc — no @description tag)
 ```apex
 /**
- * @description [Purpose of class]
- * @author [Your Name]
- * @date [YYYY-MM-DD]
- * @group [Feature Group - e.g., Compliance Engine, Permission Intelligence]
+ * Handles business logic for [feature description].
+ *
+ * @author Elaro Team
+ * @since v3.1.0 (Spring '26)
+ * @group [Feature Group]
+ * @see [RelatedClass]
  */
 ```
 
 ### 2. Class Declaration with Sharing
 ```apex
-public with sharing class ElaroMyClass {
-    // Use 'with sharing' for security enforcement
-    // Use 'without sharing' ONLY if justified and documented
+// Controllers — enforces sharing
+public with sharing class MyController { }
+
+// Services, utilities, handlers — inherits caller context
+public inherited sharing class MyService { }
+
+// System operations ONLY — MUST document why
+/**
+ * SECURITY: without sharing required because [specific justification].
+ */
+public without sharing class MyEventPublisher { }
 ```
 
-### 3. Security Checks
-Import and use ElaroSecurityUtils:
+### 3. SOQL — ALWAYS WITH USER_MODE
 ```apex
-    /**
-     * @description Query records with security checks
-     * @param recordIds List of record IDs to query
-     * @return List of records
-     * @throws ElaroSecurityException if user lacks permissions
-     */
-    public static List<MyObject__c> getRecords(List<Id> recordIds) {
-        // Check CRUD permissions
-        ElaroSecurityUtils.checkReadPermission('MyObject__c');
+/**
+ * Retrieves records with CRUD/FLS enforcement.
+ *
+ * @param recordIds List of record IDs to query
+ * @return List of matching records
+ * @throws AuraHandledException if query fails or user lacks permission
+ */
+public static List<MyObject__c> getRecords(List<Id> recordIds) {
+    return [
+        SELECT Id, Name, Status__c
+        FROM MyObject__c
+        WHERE Id IN :recordIds
+        WITH USER_MODE
+    ];
+}
+```
 
-        // Check FLS for fields
-        ElaroSecurityUtils.checkFieldReadPermission('MyObject__c',
-            new Set<String>{'Name', 'Status__c', 'ComplianceRule__c'});
-
-        // SOQL with security enforced
-        return [
-            SELECT Id, Name, Status__c, ComplianceRule__c
-            FROM MyObject__c
-            WHERE Id IN :recordIds
-            WITH SECURITY_ENFORCED
-        ];
+### 4. DML — ALWAYS 'as user'
+```apex
+public static void processData(List<MyObject__c> records) {
+    try {
+        // Business logic here
+        update as user records;
+    } catch (Exception e) {
+        ElaroLogger.error('MyService.processData', e.getMessage(), e.getStackTraceString());
+        throw new AuraHandledException('Unable to process records. Please verify permissions and try again.');
     }
+}
 ```
 
-### 4. Error Handling
+### 5. ApexDoc for Public Methods
 ```apex
-    public static void processData(List<MyObject__c> records) {
-        try {
-            ElaroSecurityUtils.checkUpdatePermission('MyObject__c');
-
-            // Business logic here
-            update records;
-
-        } catch (DmlException e) {
-            // Log and handle DML errors
-            System.debug(LoggingLevel.ERROR, 'DML Error: ' + e.getMessage());
-            throw new ElaroException('Failed to update records: ' + e.getMessage());
-        }
-    }
-```
-
-### 5. JSDoc for Public Methods
-```apex
-    /**
-     * @description [Method purpose]
-     * @param paramName [Parameter description]
-     * @return [Return value description]
-     * @throws ExceptionType [When exception is thrown]
-     * @example
-     * ElaroMyClass.myMethod('example');
-     */
+/**
+ * Executes the compliance scan for the given framework.
+ *
+ * @param frameworkName The compliance framework identifier
+ * @return ScanResult containing findings and score
+ * @throws AuraHandledException if scan fails or user lacks permission
+ * @example
+ * ScanResult result = MyService.runScan('HIPAA');
+ */
 ```
 
 ## File Locations
 
 Place the new class in:
 ```
-force-app/main/default/classes/ElaroMyClass.cls
-force-app/main/default/classes/ElaroMyClass.cls-meta.xml
+force-app/main/default/classes/MyClass.cls
+force-app/main/default/classes/MyClass.cls-meta.xml
 ```
 
-## Metadata File
-Create accompanying `-meta.xml`:
+Health Check components go in `force-app-healthcheck/main/default/classes/`.
+
+## Metadata File — API v66.0
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>65.0</apiVersion>
+    <apiVersion>66.0</apiVersion>
     <status>Active</status>
 </ApexClass>
 ```
@@ -116,129 +116,120 @@ Create accompanying `-meta.xml`:
 
 For every new class, create a test class:
 ```
-force-app/main/default/classes/ElaroMyClassTest.cls
+force-app/main/default/classes/MyClassTest.cls
 ```
 
 Test class requirements:
-- ✅ Minimum 75% coverage (target 85%+)
-- ✅ Test positive scenarios
-- ✅ Test negative scenarios (exceptions)
-- ✅ Test bulk operations (200+ records)
-- ✅ Test security violations (without user permissions)
-- ✅ Use Test.startTest()/Test.stopTest() for async
-- ✅ Use System.runAs() for permission tests
+- 85%+ coverage (75% absolute minimum)
+- Test positive scenarios
+- Test negative scenarios (exceptions)
+- Test bulk operations (200+ records)
+- Test security violations (without user permissions)
+- Use `Test.startTest()`/`Test.stopTest()` for async
+- Use `System.runAs()` for permission tests
+- Use `Assert` class (NEVER `System.assertEquals`)
 
 ## Example Test Structure
 ```apex
-@isTest
-private class ElaroMyClassTest {
+@IsTest(testFor=MyClass.class)
+private class MyClassTest {
 
     @TestSetup
-    static void setup() {
-        // Create test data
+    static void makeData() {
+        // Create test data using ComplianceTestDataFactory
     }
 
-    @isTest
-    static void testPositiveScenario() {
+    @IsTest
+    static void shouldProcessRecordsSuccessfully() {
         Test.startTest();
         // Test normal operation
         Test.stopTest();
-        // Assert expected results
+
+        Assert.isNotNull(result, 'Result should not be null');
+        Assert.areEqual(expected, actual, 'Should match expected value');
     }
 
-    @isTest
-    static void testSecurityException() {
-        User testUser = createUserWithoutPermissions();
+    @IsTest
+    static void shouldThrowWhenUserLacksPermission() {
+        User testUser = ElaroTestUserFactory.createMinimalAccessUser();
         System.runAs(testUser) {
             Test.startTest();
             try {
-                ElaroMyClass.myMethod();
-                System.assert(false, 'Expected security exception');
-            } catch (ElaroSecurityException e) {
-                System.assert(true);
+                MyClass.myMethod();
+                Assert.fail('Expected AuraHandledException');
+            } catch (AuraHandledException e) {
+                Assert.isTrue(e.getMessage().contains('permission'),
+                    'Error should mention permissions');
             }
             Test.stopTest();
         }
     }
 
-    @isTest
-    static void testBulkOperation() {
+    @IsTest
+    static void shouldHandleBulkOperation() {
         List<MyObject__c> records = new List<MyObject__c>();
         for (Integer i = 0; i < 200; i++) {
             records.add(new MyObject__c(Name = 'Test ' + i));
         }
-        insert records;
+        insert as user records;
 
         Test.startTest();
-        ElaroMyClass.processBulk(records);
+        MyClass.processBulk(records);
         Test.stopTest();
 
-        // Assert bulk processing succeeded
+        Assert.areEqual(200, [SELECT COUNT() FROM MyObject__c WITH USER_MODE],
+            'All 200 records should be processed');
     }
 }
 ```
-
-## After Creation
-
-1. **Verify Syntax**
-   ```bash
-   sf project deploy validate --source-dir force-app/main/default/classes/ElaroMyClass.cls
-   ```
-
-2. **Run Tests**
-   ```bash
-   sf apex run test --tests ElaroMyClassTest --result-format human --code-coverage
-   ```
-
-3. **Check Coverage**
-   Ensure coverage ≥ 75% for the new class
-
-4. **Deploy**
-   ```bash
-   sf project deploy start --source-dir force-app/main/default/classes/ElaroMyClass.cls --target-org elaro-dev
-   ```
 
 ## Common Patterns
 
 ### LWC Controller Pattern
 ```apex
-public with sharing class ElaroMyComponentController {
+public with sharing class MyComponentController {
+
     @AuraEnabled(cacheable=true)
     public static List<MyObject__c> getRecords() {
-        ElaroSecurityUtils.checkReadPermission('MyObject__c');
-        return [SELECT Id, Name FROM MyObject__c WITH SECURITY_ENFORCED LIMIT 50];
+        try {
+            return [SELECT Id, Name FROM MyObject__c WITH USER_MODE LIMIT 50];
+        } catch (Exception e) {
+            ElaroLogger.error('MyComponentController.getRecords', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to load records. Please verify permissions.');
+        }
     }
 
     @AuraEnabled
     public static void updateRecord(Id recordId, String newValue) {
-        ElaroSecurityUtils.checkUpdatePermission('MyObject__c');
-        MyObject__c record = [SELECT Id FROM MyObject__c WHERE Id = :recordId WITH SECURITY_ENFORCED];
-        record.Name = newValue;
-        update record;
+        try {
+            MyObject__c record = [SELECT Id FROM MyObject__c WHERE Id = :recordId WITH USER_MODE];
+            record.Name = newValue;
+            update as user record;
+        } catch (Exception e) {
+            ElaroLogger.error('MyComponentController.updateRecord', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to update record. Please verify permissions.');
+        }
     }
 }
 ```
 
-### Batch Processing Pattern
+### Queueable Pattern (NOT @future)
 ```apex
-public class ElaroMyBatch implements Database.Batchable<SObject> {
+public inherited sharing class MyProcessor implements Queueable {
+    private Database.Cursor cursor;
+    private Integer position;
 
-    public Database.QueryLocator start(Database.BatchableContext bc) {
-        return Database.getQueryLocator([
-            SELECT Id, Name FROM MyObject__c
-            WHERE Status__c = 'Pending'
-            WITH SECURITY_ENFORCED
-        ]);
+    public MyProcessor(Database.Cursor cursor, Integer position) {
+        this.cursor = cursor;
+        this.position = position;
     }
 
-    public void execute(Database.BatchableContext bc, List<SObject> scope) {
-        List<MyObject__c> recordsToUpdate = (List<MyObject__c>) scope;
-        // Process records
-        update recordsToUpdate;
-    }
-
-    public void finish(Database.BatchableContext bc) {
-        // Post-processing
+    public void execute(QueueableContext ctx) {
+        List<SObject> records = cursor.fetch(position, 200);
+        // Process records...
+        if (position + 200 < cursor.getNumRecords()) {
+            System.enqueueJob(new MyProcessor(cursor, position + 200));
+        }
     }
 }
 ```
@@ -246,12 +237,14 @@ public class ElaroMyBatch implements Database.Batchable<SObject> {
 ## Checklist
 
 Before considering the class complete:
-- [ ] Class name starts with "Elaro"
-- [ ] Uses `with sharing` (unless documented exception)
-- [ ] All SOQL includes `WITH SECURITY_ENFORCED`
-- [ ] Uses ElaroSecurityUtils for CRUD/FLS
-- [ ] JSDoc comments on all public methods
-- [ ] Test class created with 75%+ coverage
+- [ ] Explicit sharing declaration (`with sharing`, `inherited sharing`, or documented `without sharing`)
+- [ ] All SOQL uses `WITH USER_MODE`
+- [ ] All DML uses `as user` or `AccessLevel.USER_MODE`
+- [ ] All `Database.*` calls include `AccessLevel.USER_MODE`
+- [ ] ApexDoc on class and all public methods (no `@description` tag)
+- [ ] ElaroLogger for error logging (no `System.debug()`)
+- [ ] `@AuraEnabled` methods have try-catch with user-friendly messages
+- [ ] API version 66.0 in meta.xml
+- [ ] Test class created with 85%+ coverage
+- [ ] Tests use `Assert` class (not `System.assert*`)
 - [ ] Tests include positive, negative, and bulk scenarios
-- [ ] Deployed successfully to dev org
-- [ ] No compiler warnings

@@ -148,7 +148,7 @@ static void setup() {
             Status__c = 'Active'
         ));
     }
-    insert testRecords;
+    insert as user testRecords;
 }
 ```
 

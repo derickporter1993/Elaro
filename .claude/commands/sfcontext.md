@@ -37,8 +37,8 @@ Based on the loaded context and pending tasks, recommend the highest-priority it
 ## Important Reminders
 - Before ending the session, update `docs/SESSION_CONTEXT.md` with completed work
 - Always run tests before deploying: `sf apex run test --test-level RunLocalTests`
-- Use security-enforced queries and ElaroSecurityUtils
-- Check `claude.me` for full project guidelines
+- Use `WITH USER_MODE` on all SOQL, `as user` on all DML
+- Check `CLAUDE.md` for full project guidelines
 
 ## Example Output
 ```
