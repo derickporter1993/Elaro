@@ -109,6 +109,9 @@
                 class="framework-card"
                 data-framework={fw.key}
                 onclick={handleFrameworkClick}
+                onkeydown={handleFrameworkKeydown}
+                role="button"
+                tabindex="0"
               >
                 <div class="framework-header">
                   <span class="framework-name">{fw.name}</span>
@@ -234,6 +237,9 @@
               class="audit-package-card"
               data-package-id={pkg.id}
               onclick={handleAuditPackageClick}
+              onkeydown={handleAuditPackageKeydown}
+              role="button"
+              tabindex="0"
             >
               <div class="package-header">
                 <span class="package-name">{pkg.packageName}</span>
@@ -299,9 +305,10 @@
 
     <!-- Loading Overlay -->
     <template lwc:if={isLoading}>
-      <div class="loading-overlay">
+      <div class="loading-overlay" role="status" aria-live="polite">
         <div class="loading-spinner"></div>
         <span>Calculating compliance scores...</span>
+        <span class="slds-assistive-text">Loading</span>
       </div>
     </template>
   </div>

@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button class="icon-button" onclick={clearChat} title="Clear conversation">
+          <button class="icon-button" onclick={clearChat} title="Clear conversation" aria-label="Clear conversation">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path
                 d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
@@ -216,6 +216,8 @@
                             data-action-type={action.actionType}
                             data-node-id={action.nodeId}
                             onclick={handleActionClick}
+                            aria-label={action.label}
+                            type="button"
                           >
                             <template lwc:if={action.canAutoFix}>
                               <svg
@@ -245,7 +247,7 @@
 
       <!-- Loading State -->
       <template lwc:if={isLoading}>
-        <div class="loading-message">
+        <div class="loading-message" role="status" aria-live="polite">
           <div class="assistant-avatar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M12 2L2 7L12 12L22 7L12 2Z" />
@@ -258,6 +260,7 @@
             <span></span>
             <span></span>
           </div>
+          <span class="slds-assistive-text">Processing your request</span>
         </div>
       </template>
     </div>
@@ -269,12 +272,13 @@
           type="text"
           class="chat-input"
           placeholder="Ask about compliance, violations, or generate evidence..."
+          aria-label="Ask about compliance, violations, or generate evidence"
           value={query}
           onchange={handleQueryChange}
           onkeypress={handleKeyPress}
           disabled={isLoading}
         />
-        <button class="send-button" onclick={handleSubmit} disabled={isLoading}>
+        <button class="send-button" onclick={handleSubmit} disabled={isLoading} aria-label="Send message">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" />
           </svg>
