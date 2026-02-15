@@ -8,7 +8,7 @@
       </template>
       <template lwc:else>
         <template lwc:if={hasRows}>
-          <lightning-datatable key-field="id" data={rows} columns={columns}></lightning-datatable>
+          <lightning-datatable key-field="id" data={rows} columns={columns} aria-label="API usage snapshots"></lightning-datatable>
         </template>
         <template lwc:else>
           <p>No snapshots yet.</p>

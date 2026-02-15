@@ -10,7 +10,7 @@
       </template>
 
       <template lwc:if={hasError}>
-        <div class="slds-text-color_error slds-p-around_medium">
+        <div class="slds-text-color_error slds-p-around_medium" role="alert">
           <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
           {errorMessage}
         </div>
@@ -26,7 +26,7 @@
       <template lwc:if={notLoading}>
         <template lwc:if={notError}>
           <template lwc:if={hasData}>
-            <lightning-datatable key-field="key" data={rows} columns={columns}></lightning-datatable>
+            <lightning-datatable key-field="key" data={rows} columns={columns} aria-label="Performance alerts"></lightning-datatable>
           </template>
         </template>
       </template>

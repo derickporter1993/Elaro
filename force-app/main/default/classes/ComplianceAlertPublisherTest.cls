@@ -155,6 +155,94 @@ private class ComplianceAlertPublisherTest {
     }
 
     @IsTest
+    static void shouldPublishBulkDriftAlerts() {
+        List<ConfigurationDrift__e> events = new List<ConfigurationDrift__e>();
+        for (Integer i = 0; i < 10; i++) {
+            events.add(new ConfigurationDrift__e(
+                Change_Type__c = 'Setting Changed ' + i,
+                Changed_By__c = 'admin@test.org',
+                Changed_Object__c = 'Security Controls',
+                Old_Value__c = 'OldVal' + i,
+                New_Value__c = 'NewVal' + i,
+                Risk_Level__c = ElaroConstants.SEVERITY_HIGH,
+                Detection_Timestamp__c = System.now()
+            ));
+        }
+
+        Test.startTest();
+        List<Database.SaveResult> results = ComplianceAlertPublisher.publishDriftAlerts(events);
+        Test.stopTest();
+
+        Assert.areEqual(10, results.size(), 'Should return 10 results');
+        for (Database.SaveResult sr : results) {
+            Assert.isTrue(sr.isSuccess(), 'Each drift alert should publish successfully');
+        }
+    }
+
+    @IsTest
+    static void shouldHandleEmptyBulkDriftAlerts() {
+        Test.startTest();
+        List<Database.SaveResult> results = ComplianceAlertPublisher.publishDriftAlerts(
+            new List<ConfigurationDrift__e>()
+        );
+        Test.stopTest();
+
+        Assert.isTrue(results.isEmpty(), 'Empty list should return empty results');
+    }
+
+    @IsTest
+    static void shouldHandleNullBulkDriftAlerts() {
+        Test.startTest();
+        List<Database.SaveResult> results = ComplianceAlertPublisher.publishDriftAlerts(null);
+        Test.stopTest();
+
+        Assert.isTrue(results.isEmpty(), 'Null list should return empty results');
+    }
+
+    @IsTest
+    static void shouldPublishBulkBreachIndicators() {
+        List<BreachIndicator__e> events = new List<BreachIndicator__e>();
+        for (Integer i = 0; i < 10; i++) {
+            events.add(new BreachIndicator__e(
+                Pattern_Name__c = 'Brute Force ' + i,
+                Severity__c = ElaroConstants.SEVERITY_CRITICAL,
+                Event_Sequence__c = '["LOGIN_FAILURE","LOGIN_FAILURE"]',
+                Time_Window_Minutes__c = 15,
+                Affected_User_Id__c = '005000000000001AAA'
+            ));
+        }
+
+        Test.startTest();
+        List<Database.SaveResult> results = ComplianceAlertPublisher.publishBreachIndicators(events);
+        Test.stopTest();
+
+        Assert.areEqual(10, results.size(), 'Should return 10 results');
+        for (Database.SaveResult sr : results) {
+            Assert.isTrue(sr.isSuccess(), 'Each breach indicator should publish successfully');
+        }
+    }
+
+    @IsTest
+    static void shouldHandleEmptyBulkBreachIndicators() {
+        Test.startTest();
+        List<Database.SaveResult> results = ComplianceAlertPublisher.publishBreachIndicators(
+            new List<BreachIndicator__e>()
+        );
+        Test.stopTest();
+
+        Assert.isTrue(results.isEmpty(), 'Empty list should return empty results');
+    }
+
+    @IsTest
+    static void shouldHandleNullBulkBreachIndicators() {
+        Test.startTest();
+        List<Database.SaveResult> results = ComplianceAlertPublisher.publishBreachIndicators(null);
+        Test.stopTest();
+
+        Assert.isTrue(results.isEmpty(), 'Null list should return empty results');
+    }
+
+    @IsTest
     static void shouldExposeAlertTypeConstants() {
         Assert.areEqual('FINDING', ComplianceAlertPublisher.ALERT_TYPE_FINDING,
             'FINDING constant should match');

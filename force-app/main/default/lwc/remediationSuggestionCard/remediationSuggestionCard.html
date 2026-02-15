@@ -212,7 +212,7 @@
 
     <!-- Reject Modal -->
     <template lwc:if={isRejectModalOpen}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="reject-modal-heading">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="reject-modal-heading" onkeydown={handleRejectModalKeydown}>
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeRejectModal}>
@@ -249,7 +249,7 @@
 
     <!-- Manual Apply Modal -->
     <template lwc:if={isManualApplyModalOpen}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="manual-apply-modal-heading">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="manual-apply-modal-heading" onkeydown={handleManualApplyModalKeydown}>
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeManualApplyModal}>

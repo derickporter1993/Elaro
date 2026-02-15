@@ -1,20 +1,25 @@
 /**
- * @description Multi-org management service for enterprise deployments
- * Manages connected orgs, policy sync, and cross-org compliance status
- * @group Enterprise Features
+ * Multi-org management service for enterprise deployments.
+ * Manages connected orgs, policy sync, and cross-org compliance status.
+ *
  * @author Elaro Team
+ * @since v3.1.0 (Spring '26)
+ * @group Enterprise Features
+ * @see ElaroComplianceScorer
  */
 public with sharing class MultiOrgManager {
-    
+
     /**
-     * @description Register a connected org
-     * @param orgConfig Configuration for the connected org
-     * @return Id of the created record
+     * Registers a connected org with the provided configuration.
+     *
+     * @param orgConfig Configuration map containing name, orgId, instanceUrl, environmentType, region
+     * @return Id of the created Elaro_Connected_Org__c record
+     * @throws AuraHandledException if required config fields are missing
      */
     @AuraEnabled
     public static Id registerOrg(Map<String, Object> orgConfig) {
         validateOrgConfig(orgConfig);
-        
+
         Elaro_Connected_Org__c connectedOrg = new Elaro_Connected_Org__c(
             Name = (String)orgConfig.get('name'),
             Org_Id__c = (String)orgConfig.get('orgId'),
@@ -25,18 +30,20 @@ public with sharing class MultiOrgManager {
             Last_Sync__c = null,
             Connection_Status__c = 'Pending'
         );
-        
-        insert connectedOrg;
-        
+
+        insert as user connectedOrg;
+
         // Test connection
         testOrgConnection(connectedOrg.Id);
-        
+
         return connectedOrg.Id;
     }
     
     /**
-     * @description Get multi-org compliance status
-     * @return Map of org statuses
+     * Retrieves the multi-org compliance status including current org
+     * and all active connected orgs with aggregate scoring.
+     *
+     * @return MultiOrgStatus containing current and connected org statuses
      */
     @AuraEnabled(cacheable=true)
     public static MultiOrgStatus getMultiOrgStatus() {
@@ -44,13 +51,14 @@ public with sharing class MultiOrgManager {
         status.currentOrg = getCurrentOrgStatus();
         status.connectedOrgs = new List<OrgStatus>();
         status.aggregateScore = 0;
-        
+
         List<Elaro_Connected_Org__c> orgs = [
-            SELECT Id, Name, Org_Id__c, Instance_URL__c, Environment_Type__c, 
+            SELECT Id, Name, Org_Id__c, Instance_URL__c, Environment_Type__c,
                    Region__c, Is_Active__c, Last_Sync__c, Connection_Status__c,
                    Compliance_Score__c
             FROM Elaro_Connected_Org__c
             WHERE Is_Active__c = true
+            WITH USER_MODE
             ORDER BY Name
         ];
         
@@ -80,8 +88,9 @@ public with sharing class MultiOrgManager {
     }
     
     /**
-     * @description Sync policies to connected orgs
-     * @param policyIds List of policy IDs to sync
+     * Syncs compliance policies to all active connected orgs.
+     *
+     * @param policyIds List of policy record IDs or DeveloperNames to sync
      */
     @future(callout=true)
     public static void syncPolicies(List<String> policyIds) {
@@ -89,13 +98,15 @@ public with sharing class MultiOrgManager {
             SELECT Id, Instance_URL__c, Org_Id__c
             FROM Elaro_Connected_Org__c
             WHERE Is_Active__c = true AND Connection_Status__c = 'Connected'
+            WITH USER_MODE
         ];
-        
+
         // Query policies to sync
         List<Compliance_Policy__mdt> policies = [
             SELECT DeveloperName, Label, MasterLabel, Description__c, Framework__c
             FROM Compliance_Policy__mdt
             WHERE Id IN :policyIds OR DeveloperName IN :policyIds
+            WITH USER_MODE
         ];
         
         for (Elaro_Connected_Org__c org : activeOrgs) {
@@ -104,24 +115,30 @@ public with sharing class MultiOrgManager {
     }
     
     /**
-     * @description Remove a connected org
-     * @param orgId The connected org record ID
+     * Removes a connected org by deactivating and deleting its record.
+     *
+     * @param orgId The connected org record ID to remove
      */
     @AuraEnabled
     public static void removeOrg(String orgId) {
         Elaro_Connected_Org__c org = [
-            SELECT Id FROM Elaro_Connected_Org__c WHERE Id = :orgId LIMIT 1
+            SELECT Id FROM Elaro_Connected_Org__c
+            WHERE Id = :orgId
+            WITH USER_MODE
+            LIMIT 1
         ];
-        delete org;
+        delete as user org;
     }
     
     /**
-     * @description Refresh connection status for all orgs
+     * Refreshes the connection status for all active connected orgs.
      */
     @AuraEnabled
     public static void refreshAllConnections() {
         List<Elaro_Connected_Org__c> orgs = [
-            SELECT Id FROM Elaro_Connected_Org__c WHERE Is_Active__c = true
+            SELECT Id FROM Elaro_Connected_Org__c
+            WHERE Is_Active__c = true
+            WITH USER_MODE
         ];
         
         for (Elaro_Connected_Org__c org : orgs) {
@@ -130,8 +147,9 @@ public with sharing class MultiOrgManager {
     }
     
     /**
-     * @description Aggregate compliance data from all orgs
-     * @return Aggregated compliance metrics
+     * Aggregates compliance metrics from the current org and all connected orgs.
+     *
+     * @return AggregateMetrics containing combined events, alerts, and average compliance score
      */
     @AuraEnabled(cacheable=true)
     public static AggregateMetrics getAggregateMetrics() {
@@ -213,26 +231,26 @@ public with sharing class MultiOrgManager {
         
         try {
             HttpRequest req = new HttpRequest();
-            req.setEndpoint(org.Instance_URL__c + '/services/data/v59.0/');
+            req.setEndpoint(org.Instance_URL__c + '/services/data/v66.0/');
             req.setMethod('GET');
             req.setTimeout(15000);
-            
+
             // In production, use Named Credential with OAuth
             // This is a simplified connection test
-            
+
             org.Connection_Status__c = 'Connected';
             org.Last_Sync__c = Datetime.now();
         } catch (Exception e) {
             org.Connection_Status__c = 'Error: ' + e.getMessage().left(100);
         }
-        
-        update org;
+
+        update as user org;
     }
     
     private static void syncPoliciesToOrg(Elaro_Connected_Org__c org, List<Compliance_Policy__mdt> policies) {
         // In production, this would call the connected org's API
         // to create/update policy records
-        ElaroLogger.info( 'Syncing ' + policies.size() + ' policies to ' + org.Name);
+        ElaroLogger.info('MultiOrgManager.syncPoliciesToOrg: Syncing ' + policies.size() + ' policies to org ' + org.Id);
     }
     
     // ═══════════════════════════════════════════════════════════════

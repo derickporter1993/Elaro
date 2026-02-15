@@ -8,7 +8,7 @@
       </template>
 
       <template lwc:if={hasError}>
-        <div class="slds-text-color_error slds-p-around_medium">
+        <div class="slds-text-color_error slds-p-around_medium" role="alert">
           <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
           {errorMessage}
         </div>

@@ -6,7 +6,7 @@
       </template>
 
       <template lwc:if={error}>
-        <div class="slds-text-color_error">Error loading dashboard: {errorMessage}</div>
+        <div class="slds-text-color_error" role="alert">Error loading dashboard: {errorMessage}</div>
       </template>
 
       <template lwc:if={hasData}>

@@ -96,6 +96,18 @@ export default class ReportSchedulerConfig extends LightningElement {
     this.newReportRecipients = "";
   }
 
+  handleModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.handleCloseModal();
+    }
+  }
+
+  handleConfirmModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.handleCloseConfirm();
+    }
+  }
+
   handleCloseModal() {
     this.showNewReportModal = false;
   }

@@ -32,6 +32,8 @@ public inherited sharing class MFAComplianceScanner {
 
     /**
      * Executes the MFA compliance scan by analyzing LoginHistory records.
+     * Uses aggregate COUNT() queries instead of loading individual records
+     * into memory, avoiding heap and query row limit issues on large orgs.
      *
      * @return MFAResult containing adoption percentage and related findings
      */
@@ -41,15 +43,16 @@ public inherited sharing class MFAComplianceScanner {
         Integer lookbackDays = HealthCheckFeatureFlags.getMaxDays();
         Datetime cutoffDate = Datetime.now().addDays(-lookbackDays);
 
-        List<LoginHistory> logins = [
-            SELECT UserId, LoginType, AuthenticationServiceId, LoginTime
+        // Use aggregate queries to avoid loading up to 50K records into memory
+        Integer totalLogins = [
+            SELECT COUNT()
             FROM LoginHistory
             WHERE LoginTime >= :cutoffDate
             WITH USER_MODE
             LIMIT 50000
         ];
 
-        result.totalLogins = logins.size();
+        result.totalLogins = totalLogins;
 
         if (result.totalLogins == 0) {
             result.mfaPercentage = 0;
@@ -64,17 +67,20 @@ public inherited sharing class MFAComplianceScanner {
             return result;
         }
 
-        Integer mfaCount = 0;
-        for (LoginHistory login : logins) {
-            if (login.AuthenticationServiceId != null) {
-                mfaCount++;
-            }
-        }
+        // Count MFA logins separately (those with AuthenticationServiceId)
+        Integer mfaLogins = [
+            SELECT COUNT()
+            FROM LoginHistory
+            WHERE LoginTime >= :cutoffDate
+                AND AuthenticationServiceId != null
+            WITH USER_MODE
+            LIMIT 50000
+        ];
 
-        result.mfaLogins = mfaCount;
-        result.mfaPercentage = (Integer) Math.round(
-            ((Decimal) mfaCount / result.totalLogins) * 100
-        );
+        result.mfaLogins = mfaLogins;
+        result.mfaPercentage = totalLogins > 0
+            ? (Decimal.valueOf(mfaLogins) / totalLogins * 100).setScale(0, System.RoundingMode.HALF_UP).intValue()
+            : 0;
 
         if (result.mfaPercentage < 100) {
             String severity = result.mfaPercentage < 50 ? 'HIGH_RISK' : 'MEDIUM_RISK';

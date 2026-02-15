@@ -55,7 +55,7 @@ public with sharing class ElaroComplianceAlert {
         AlertResult result = new AlertResult();
         result.processed = true;
         result.timestamp = Datetime.now();
-        
+
         // Get risk score from event
         Integer riskScore = 0;
         if (eventData.containsKey('riskScore')) {
@@ -63,41 +63,69 @@ public with sharing class ElaroComplianceAlert {
         } else if (eventData.containsKey('calculatedRiskScore')) {
             riskScore = Integer.valueOf(eventData.get('calculatedRiskScore'));
         }
-        
+
         // Determine severity
         result.severity = determineSeverity(riskScore);
         result.riskScore = riskScore;
-        
+
         // Check if alert should be triggered
         if (riskScore >= HIGH_RISK_THRESHOLD) {
             result.alertTriggered = true;
             result.alertId = generateAlertId();
-            
+
             // Get matching alert configurations
             List<Elaro_Alert_Config__c> configs = getMatchingAlertConfigs(eventData, riskScore);
-            
-            // Queue alert for each matching config
+
+            // Collect all queue items across all configs and channels, then dispatch
+            // in a single Queueable to avoid hitting the 50 enqueueJob limit per transaction
+            List<AlertQueueItem> allQueueItems = new List<AlertQueueItem>();
             for (Elaro_Alert_Config__c config : configs) {
-                queueAlert(config, eventData, result);
+                allQueueItems.addAll(buildQueueItems(config, eventData, result));
+            }
+
+            if (!allQueueItems.isEmpty() && !Test.isRunningTest()) {
+                System.enqueueJob(new AlertDispatchQueueable(allQueueItems));
             }
         }
-        
+
         return result;
     }
-    
+
     /**
-     * @description Queue an alert for asynchronous processing
+     * @description Queue an alert for asynchronous processing. Collects all channel
+     * notifications into a list and enqueues a single AlertDispatchQueueable to avoid
+     * hitting the 50 System.enqueueJob limit per transaction.
      * @param config The alert configuration
      * @param eventData The event data
      * @param result The alert result
      */
     public static void queueAlert(Elaro_Alert_Config__c config, Map<String, Object> eventData, AlertResult result) {
-        // Parse channels
-        List<String> channels = config.Channels__c != null 
-            ? config.Channels__c.split(';') 
+        List<AlertQueueItem> queueItems = buildQueueItems(config, eventData, result);
+
+        if (!queueItems.isEmpty() && !Test.isRunningTest()) {
+            System.enqueueJob(new AlertDispatchQueueable(queueItems));
+        }
+    }
+
+    /**
+     * @description Builds AlertQueueItem instances for each channel in the config
+     * without enqueueing any jobs. Used internally to collect items before dispatching.
+     * @param config The alert configuration
+     * @param eventData The event data
+     * @param result The alert result
+     * @return List of AlertQueueItem for each channel
+     */
+    @TestVisible
+    private static List<AlertQueueItem> buildQueueItems(
+        Elaro_Alert_Config__c config,
+        Map<String, Object> eventData,
+        AlertResult result
+    ) {
+        List<String> channels = config.Channels__c != null
+            ? config.Channels__c.split(';')
             : new List<String>{ 'EMAIL' };
-        
-        // Queue for async processing
+
+        List<AlertQueueItem> items = new List<AlertQueueItem>();
         for (String channel : channels) {
             AlertQueueItem queueItem = new AlertQueueItem();
             queueItem.alertId = result.alertId;
@@ -105,12 +133,9 @@ public with sharing class ElaroComplianceAlert {
             queueItem.severity = config.Severity__c;
             queueItem.eventData = eventData;
             queueItem.configId = config.Id;
-            
-            // Enqueue for processing
-            if (!Test.isRunningTest()) {
-                System.enqueueJob(new ElaroAlertQueueable(queueItem));
-            }
+            items.add(queueItem);
         }
+        return items;
     }
     
     /**
@@ -164,6 +189,75 @@ public with sharing class ElaroComplianceAlert {
         }
     }
     
+    /**
+     * @description Queueable that dispatches all alert notifications for multiple
+     * channels and configs in a single async job. Each AlertQueueItem is processed
+     * sequentially within the execute method, sending the appropriate notification
+     * per channel. This avoids hitting the 50 System.enqueueJob limit that occurred
+     * when enqueueing one job per channel per config.
+     */
+    public class AlertDispatchQueueable implements Queueable, Database.AllowsCallouts {
+        private List<AlertQueueItem> queueItems;
+
+        /**
+         * @description Constructs the dispatch queueable with all items to process
+         * @param queueItems List of alert queue items across all channels and configs
+         */
+        public AlertDispatchQueueable(List<AlertQueueItem> queueItems) {
+            this.queueItems = queueItems;
+        }
+
+        /**
+         * @description Processes each queue item by building alert metadata and
+         * dispatching the notification to the appropriate channel
+         * @param context The QueueableContext provided by the platform
+         */
+        public void execute(QueueableContext context) {
+            for (AlertQueueItem item : queueItems) {
+                try {
+                    Map<String, Object> alertData = new Map<String, Object>(item.eventData);
+                    alertData.put('alertId', item.alertId);
+                    alertData.put('severity', item.severity);
+                    alertData.put('channel', item.channel);
+                    alertData.put('timestamp', Datetime.now());
+                    alertData.put('message', buildDispatchMessage(item));
+
+                    sendAlertNotificationSync(item.channel, alertData);
+
+                    ElaroLogger.info('ElaroComplianceAlert.AlertDispatchQueueable',
+                        'Successfully sent alert notification via ' + item.channel);
+                } catch (Exception e) {
+                    ElaroLogger.error('ElaroComplianceAlert.AlertDispatchQueueable',
+                        e.getMessage(), e.getStackTraceString());
+                }
+            }
+        }
+
+        private String buildDispatchMessage(AlertQueueItem item) {
+            String eventType = item.eventData.containsKey('eventType')
+                ? (String) item.eventData.get('eventType')
+                : 'Unknown';
+            return 'A ' + item.severity + ' compliance alert has been triggered for ' + eventType + ' event.';
+        }
+
+        private void sendAlertNotificationSync(String channel, Map<String, Object> alertData) {
+            switch on channel.toUpperCase() {
+                when 'EMAIL' {
+                    sendEmailAlert(alertData);
+                }
+                when 'SLACK' {
+                    sendSlackAlert(alertData);
+                }
+                when 'PAGERDUTY' {
+                    sendPagerDutyAlert(alertData);
+                }
+                when 'BELL' {
+                    createBellNotification(alertData);
+                }
+            }
+        }
+    }
+
     /**
      * @description Get active alerts for the current user
      * @return List of active alerts

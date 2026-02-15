@@ -232,20 +232,25 @@ public inherited sharing class EventCorrelationEngine {
     }
 
     /**
-     * Publishes correlation results as BreachIndicator__e Platform Events.
+     * Publishes correlation results as BreachIndicator__e Platform Events in a single
+     * bulk {@link ComplianceAlertPublisher#publishBreachIndicators} call. Collects all
+     * events into a list first to avoid hitting the 150 DML limit that individual
+     * EventBus.publish calls inside a loop would cause.
      *
      * @param results List of CorrelationResult objects to publish
      */
     private static void publishCorrelationResults(List<CorrelationResult> results) {
+        List<BreachIndicator__e> events = new List<BreachIndicator__e>();
         for (CorrelationResult result : results) {
-            ComplianceAlertPublisher.publishBreachIndicator(
-                result.ruleName,
-                result.severity,
-                JSON.serialize(result.matchedEvents),
-                result.timeWindowMinutes,
-                result.userId
-            );
+            events.add(new BreachIndicator__e(
+                Pattern_Name__c = result.ruleName,
+                Severity__c = result.severity ?? ElaroConstants.SEVERITY_CRITICAL,
+                Event_Sequence__c = JSON.serialize(result.matchedEvents),
+                Time_Window_Minutes__c = result.timeWindowMinutes,
+                Affected_User_Id__c = result.userId
+            ));
         }
+        ComplianceAlertPublisher.publishBreachIndicators(events);
     }
 
     /**

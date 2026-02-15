@@ -60,6 +60,12 @@ export default class JiraCreateModal extends LightningElement {
     this.selectedPriority = event.detail.value;
   }
 
+  handleModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  }
+
   handleClose() {
     this.close();
   }

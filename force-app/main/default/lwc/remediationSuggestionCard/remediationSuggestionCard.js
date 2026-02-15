@@ -250,6 +250,18 @@ export default class RemediationSuggestionCard extends LightningElement {
     this.manualNotes = event.target.value;
   }
 
+  handleRejectModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.closeRejectModal();
+    }
+  }
+
+  handleManualApplyModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.closeManualApplyModal();
+    }
+  }
+
   closeRejectModal() {
     this.isRejectModalOpen = false;
     this.selectedSuggestion = null;

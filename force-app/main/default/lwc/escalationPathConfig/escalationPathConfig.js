@@ -220,6 +220,18 @@ export default class EscalationPathConfig extends LightningElement {
     }
   }
 
+  handleModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.closeModal();
+    }
+  }
+
+  handleDeleteModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.closeDeleteModal();
+    }
+  }
+
   closeModal() {
     this.isModalOpen = false;
     this.resetFormData();
