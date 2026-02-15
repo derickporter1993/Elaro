@@ -150,6 +150,19 @@ private class ConfigDriftDetectorTest {
     }
 
     @IsTest
+    static void shouldDetectAndConvertToFindings() {
+        ConfigDriftDetector detector = new ConfigDriftDetector();
+
+        Test.startTest();
+        List<RuleEngineEventBridge.ComplianceFinding> findings =
+            detector.detectAndConvertToFindings(24);
+        Test.stopTest();
+
+        // SetupAuditTrail is read-only in tests so results depend on org state
+        Assert.isNotNull(findings, 'Findings should not be null');
+    }
+
+    @IsTest
     static void shouldDetectDriftFromAuditTrail() {
         ConfigDriftDetector detector = new ConfigDriftDetector();
 

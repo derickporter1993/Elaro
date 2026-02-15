@@ -20,18 +20,14 @@ jest.mock(
   () => ({ default: jest.fn() }),
   { virtual: true }
 );
-jest.mock(
-  "@salesforce/apex/TrustCenterController.revokeLink",
-  () => ({ default: jest.fn() }),
-  { virtual: true }
-);
+jest.mock("@salesforce/apex/TrustCenterController.revokeLink", () => ({ default: jest.fn() }), {
+  virtual: true,
+});
 
 // Mock refreshApex
-jest.mock(
-  "@salesforce/apex",
-  () => ({ refreshApex: jest.fn().mockResolvedValue(undefined) }),
-  { virtual: true }
-);
+jest.mock("@salesforce/apex", () => ({ refreshApex: jest.fn().mockResolvedValue(undefined) }), {
+  virtual: true,
+});
 
 // Mock ShowToastEvent
 jest.mock("lightning/platformShowToastEvent", () => ({ ShowToastEvent: jest.fn() }), {
@@ -76,11 +72,9 @@ jest.mock("@salesforce/label/c.TC_CreatedFor", () => ({ default: "Created For" }
 });
 jest.mock("@salesforce/label/c.TC_Loading", () => ({ default: "Loading..." }), { virtual: true });
 jest.mock("@salesforce/label/c.TC_Error", () => ({ default: "Error" }), { virtual: true });
-jest.mock(
-  "@salesforce/label/c.TC_ErrorGeneric",
-  () => ({ default: "An error occurred." }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.TC_ErrorGeneric", () => ({ default: "An error occurred." }), {
+  virtual: true,
+});
 jest.mock("@salesforce/label/c.TC_DeactivateLink", () => ({ default: "Deactivate" }), {
   virtual: true,
 });

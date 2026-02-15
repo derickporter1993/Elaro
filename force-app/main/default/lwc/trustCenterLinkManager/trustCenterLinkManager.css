@@ -1,8 +1,8 @@
 /* Modal overlay z-index management */
 .slds-modal {
-    z-index: 9001;
+  z-index: 9001;
 }
 
 .slds-backdrop {
-    z-index: 9000;
+  z-index: 9000;
 }

@@ -260,6 +260,36 @@ private class BreachPatternMatcherTest {
     }
 
     @IsTest
+    static void shouldAnalyzeAndConvertToFindings() {
+        Datetime now = System.now();
+        List<EventCorrelationEngine.SecurityEvent> events =
+            new List<EventCorrelationEngine.SecurityEvent>{
+                new EventCorrelationEngine.SecurityEvent('LOGIN', 'user1', now.addMinutes(-10)),
+                new EventCorrelationEngine.SecurityEvent('ACCESS', 'user1', now.addMinutes(-5)),
+                new EventCorrelationEngine.SecurityEvent('EXPORT', 'user1', now)
+            };
+
+        Test.startTest();
+        List<RuleEngineEventBridge.ComplianceFinding> findings =
+            BreachPatternMatcher.analyzeAndConvertToFindings(events);
+        Test.stopTest();
+
+        Assert.isNotNull(findings, 'Findings should not be null');
+        // Results depend on CMT availability, but the method should not throw
+    }
+
+    @IsTest
+    static void shouldReturnEmptyFindingsForNullEventsConversion() {
+        Test.startTest();
+        List<RuleEngineEventBridge.ComplianceFinding> findings =
+            BreachPatternMatcher.analyzeAndConvertToFindings(null);
+        Test.stopTest();
+
+        Assert.isTrue(findings.isEmpty(),
+            'Null events should return empty findings from conversion');
+    }
+
+    @IsTest
     static void shouldConstructPatternAnalysis() {
         BreachPatternMatcher.PatternAnalysis analysis =
             new BreachPatternMatcher.PatternAnalysis('Test Pattern');

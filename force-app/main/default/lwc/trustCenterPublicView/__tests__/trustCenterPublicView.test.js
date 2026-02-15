@@ -15,38 +15,26 @@ jest.mock(
   () => ({ default: "Compliance Trust Center" }),
   { virtual: true }
 );
-jest.mock(
-  "@salesforce/label/c.TC_ComplianceStatus",
-  () => ({ default: "Compliance Status" }),
-  { virtual: true }
-);
-jest.mock(
-  "@salesforce/label/c.TC_NoFrameworks",
-  () => ({ default: "No frameworks available." }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.TC_ComplianceStatus", () => ({ default: "Compliance Status" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TC_NoFrameworks", () => ({ default: "No frameworks available." }), {
+  virtual: true,
+});
 jest.mock("@salesforce/label/c.TC_Loading", () => ({ default: "Loading..." }), { virtual: true });
 jest.mock("@salesforce/label/c.TC_Error", () => ({ default: "Error" }), { virtual: true });
-jest.mock(
-  "@salesforce/label/c.TC_ErrorGeneric",
-  () => ({ default: "An error occurred." }),
-  { virtual: true }
-);
-jest.mock(
-  "@salesforce/label/c.TC_InvalidLink",
-  () => ({ default: "This link is invalid." }),
-  { virtual: true }
-);
-jest.mock(
-  "@salesforce/label/c.TC_ExpiredLink",
-  () => ({ default: "This link has expired." }),
-  { virtual: true }
-);
-jest.mock(
-  "@salesforce/label/c.TC_InvalidToken",
-  () => ({ default: "Invalid token." }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.TC_ErrorGeneric", () => ({ default: "An error occurred." }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TC_InvalidLink", () => ({ default: "This link is invalid." }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TC_ExpiredLink", () => ({ default: "This link has expired." }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TC_InvalidToken", () => ({ default: "Invalid token." }), {
+  virtual: true,
+});
 
 // Mock child component labels (trustCenterBadge)
 jest.mock("@salesforce/label/c.TC_ComplianceScore", () => ({ default: "Compliance Score" }), {

@@ -36,18 +36,14 @@ jest.mock(
   () => ({ default: jest.fn() }),
   { virtual: true }
 );
-jest.mock(
-  "@salesforce/apex/TrustCenterController.revokeLink",
-  () => ({ default: jest.fn() }),
-  { virtual: true }
-);
+jest.mock("@salesforce/apex/TrustCenterController.revokeLink", () => ({ default: jest.fn() }), {
+  virtual: true,
+});
 
 // Mock refreshApex
-jest.mock(
-  "@salesforce/apex",
-  () => ({ refreshApex: jest.fn().mockResolvedValue(undefined) }),
-  { virtual: true }
-);
+jest.mock("@salesforce/apex", () => ({ refreshApex: jest.fn().mockResolvedValue(undefined) }), {
+  virtual: true,
+});
 
 // Mock ShowToastEvent
 jest.mock("lightning/platformShowToastEvent", () => ({ ShowToastEvent: jest.fn() }), {
@@ -58,28 +54,22 @@ jest.mock("lightning/platformShowToastEvent", () => ({ ShowToastEvent: jest.fn()
 jest.mock("@salesforce/label/c.TC_DashboardTitle", () => ({ default: "Trust Center" }), {
   virtual: true,
 });
-jest.mock(
-  "@salesforce/label/c.TC_ComplianceStatus",
-  () => ({ default: "Compliance Status" }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.TC_ComplianceStatus", () => ({ default: "Compliance Status" }), {
+  virtual: true,
+});
 jest.mock(
   "@salesforce/label/c.TC_NoFrameworks",
   () => ({ default: "No compliance frameworks available." }),
   { virtual: true }
 );
-jest.mock(
-  "@salesforce/label/c.TC_NoViews",
-  () => ({ default: "No compliance data available." }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.TC_NoViews", () => ({ default: "No compliance data available." }), {
+  virtual: true,
+});
 jest.mock("@salesforce/label/c.TC_Loading", () => ({ default: "Loading..." }), { virtual: true });
 jest.mock("@salesforce/label/c.TC_Error", () => ({ default: "Error" }), { virtual: true });
-jest.mock(
-  "@salesforce/label/c.TC_ErrorGeneric",
-  () => ({ default: "An error occurred." }),
-  { virtual: true }
-);
+jest.mock("@salesforce/label/c.TC_ErrorGeneric", () => ({ default: "An error occurred." }), {
+  virtual: true,
+});
 jest.mock(
   "@salesforce/label/c.TC_RunAggregation",
   () => ({ default: "Aggregate Compliance Data" }),
@@ -265,7 +255,9 @@ describe("c-trust-center-dashboard", () => {
 
   it("renders aggregation button", () => {
     const element = createComponent();
-    const button = element.shadowRoot.querySelector('lightning-button[icon-name="utility:refresh"]');
+    const button = element.shadowRoot.querySelector(
+      'lightning-button[icon-name="utility:refresh"]'
+    );
     expect(button).not.toBeNull();
   });
 

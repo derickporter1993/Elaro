@@ -1,77 +1,77 @@
 /* Badge card border accents */
 .badge-card {
-    border-radius: 0.25rem;
-    border: 1px solid var(--lwc-colorBorder, #e5e5e5);
-    transition: box-shadow 0.2s ease;
+  border-radius: 0.25rem;
+  border: 1px solid var(--lwc-colorBorder, #e5e5e5);
+  transition: box-shadow 0.2s ease;
 }
 
 .badge-card:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .badge-card_success {
-    border-top: 3px solid var(--lwc-colorBorderSuccess, #2e844a);
+  border-top: 3px solid var(--lwc-colorBorderSuccess, #2e844a);
 }
 
 .badge-card_warning {
-    border-top: 3px solid var(--lwc-colorBorderWarning, #fe9339);
+  border-top: 3px solid var(--lwc-colorBorderWarning, #fe9339);
 }
 
 .badge-card_error {
-    border-top: 3px solid var(--lwc-colorBorderError, #ea001e);
+  border-top: 3px solid var(--lwc-colorBorderError, #ea001e);
 }
 
 /* Status badge colors */
 .badge-success {
-    background-color: var(--lwc-colorBackgroundSuccessLight, #f1f8f5);
-    color: var(--lwc-colorTextSuccess, #2e844a);
+  background-color: var(--lwc-colorBackgroundSuccessLight, #f1f8f5);
+  color: var(--lwc-colorTextSuccess, #2e844a);
 }
 
 .badge-warning {
-    background-color: var(--lwc-colorBackgroundWarningLight, #fef7ed);
-    color: var(--lwc-colorTextWarning, #fe9339);
+  background-color: var(--lwc-colorBackgroundWarningLight, #fef7ed);
+  color: var(--lwc-colorTextWarning, #fe9339);
 }
 
 .badge-error {
-    background-color: var(--lwc-colorBackgroundErrorLight, #fef7f7);
-    color: var(--lwc-colorTextError, #ea001e);
+  background-color: var(--lwc-colorBackgroundErrorLight, #fef7f7);
+  color: var(--lwc-colorTextError, #ea001e);
 }
 
 /* Score text colors */
 .text-success {
-    color: var(--lwc-colorTextSuccess, #2e844a);
+  color: var(--lwc-colorTextSuccess, #2e844a);
 }
 
 .text-warning {
-    color: var(--lwc-colorTextWarning, #fe9339);
+  color: var(--lwc-colorTextWarning, #fe9339);
 }
 
 .text-error {
-    color: var(--lwc-colorTextError, #ea001e);
+  color: var(--lwc-colorTextError, #ea001e);
 }
 
 /* Progress bar colors */
 .progress-success {
-    background-color: var(--lwc-colorBorderSuccess, #2e844a);
+  background-color: var(--lwc-colorBorderSuccess, #2e844a);
 }
 
 .progress-warning {
-    background-color: var(--lwc-colorBorderWarning, #fe9339);
+  background-color: var(--lwc-colorBorderWarning, #fe9339);
 }
 
 .progress-error {
-    background-color: var(--lwc-colorBorderError, #ea001e);
+  background-color: var(--lwc-colorBorderError, #ea001e);
 }
 
 /* Icon container colors */
 .icon-success {
-    color: var(--lwc-colorTextSuccess, #2e844a);
+  color: var(--lwc-colorTextSuccess, #2e844a);
 }
 
 .icon-warning {
-    color: var(--lwc-colorTextWarning, #fe9339);
+  color: var(--lwc-colorTextWarning, #fe9339);
 }
 
 .icon-error {
-    color: var(--lwc-colorTextError, #ea001e);
+  color: var(--lwc-colorTextError, #ea001e);
 }
