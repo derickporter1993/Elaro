@@ -85,20 +85,14 @@ public inherited sharing class EventCorrelationEngine {
     }
 
     /**
-     * Loads all active correlation rules from Custom Metadata.
+     * Loads all active correlation rules from Custom Metadata. Uses Platform
+     * Cache (60-min TTL) to avoid repeated metadata queries across transactions.
      *
      * @return List of active CorrelationRule objects
      */
     public static List<CorrelationRule> loadActiveRules() {
+        List<Correlation_Rule__mdt> mdtRecords = getCachedCorrelationRules();
         List<CorrelationRule> rules = new List<CorrelationRule>();
-
-        List<Correlation_Rule__mdt> mdtRecords = [
-            SELECT DeveloperName, Rule_Name__c, Event_Sequence__c,
-                   Time_Window_Minutes__c, Severity__c, Description__c, Is_Active__c
-            FROM Correlation_Rule__mdt
-            WHERE Is_Active__c = true
-            WITH USER_MODE
-        ];
 
         for (Correlation_Rule__mdt mdt : mdtRecords) {
             rules.add(new CorrelationRule(mdt));
@@ -109,6 +103,44 @@ public inherited sharing class EventCorrelationEngine {
         });
 
         return rules;
+    }
+
+    /**
+     * Retrieves Correlation_Rule__mdt records from Platform Cache, falling
+     * back to a SOQL query on cache miss. Caches results for 60 minutes
+     * to reduce repeated metadata queries during event correlation.
+     *
+     * @return List of active Correlation_Rule__mdt records
+     */
+    @TestVisible
+    private static List<Correlation_Rule__mdt> getCachedCorrelationRules() {
+        String cacheKey = 'correlationRules';
+        try {
+            Cache.OrgPartition orgPart = Cache.Org.getPartition('local.ElaroCache');
+            List<Correlation_Rule__mdt> cachedRules = (List<Correlation_Rule__mdt>) orgPart.get(cacheKey);
+            if (cachedRules != null) {
+                return cachedRules;
+            }
+        } catch (Exception e) {
+            ElaroLogger.warn(CLASS_NAME + '.getCachedCorrelationRules: Cache read failed, querying directly: ' + e.getMessage());
+        }
+
+        List<Correlation_Rule__mdt> mdtRecords = [
+            SELECT DeveloperName, Rule_Name__c, Event_Sequence__c,
+                   Time_Window_Minutes__c, Severity__c, Description__c, Is_Active__c
+            FROM Correlation_Rule__mdt
+            WHERE Is_Active__c = true
+            WITH USER_MODE
+        ];
+
+        try {
+            Cache.OrgPartition orgPart = Cache.Org.getPartition('local.ElaroCache');
+            orgPart.put(cacheKey, mdtRecords, 3600); // 60-min TTL
+        } catch (Exception e) {
+            ElaroLogger.warn(CLASS_NAME + '.getCachedCorrelationRules: Cache write failed: ' + e.getMessage());
+        }
+
+        return mdtRecords;
     }
 
     /**

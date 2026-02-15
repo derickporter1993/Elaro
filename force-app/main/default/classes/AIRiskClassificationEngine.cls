@@ -11,6 +11,8 @@
  */
 public inherited sharing class AIRiskClassificationEngine {
 
+    private static final String CACHE_KEY = 'aiClassificationRules';
+    /** In-transaction fallback populated from Platform Cache or SOQL. */
     private static Map<String, AI_Classification_Rule__mdt> ruleCache;
 
     /**
@@ -52,23 +54,47 @@ public inherited sharing class AIRiskClassificationEngine {
     }
 
     /**
-     * Initializes the classification rule cache from Custom Metadata.
+     * Initializes the classification rule cache. First attempts to read from
+     * Platform Cache (cross-transaction, 60-min TTL), then falls back to
+     * SOQL if cache is empty. Populates both the Platform Cache and the
+     * static in-transaction map.
      */
     private static void initializeRuleCache() {
-        if (ruleCache == null) {
-            ruleCache = new Map<String, AI_Classification_Rule__mdt>();
+        if (ruleCache != null) {
+            return;
+        }
+        ruleCache = new Map<String, AI_Classification_Rule__mdt>();
 
-            List<AI_Classification_Rule__mdt> rules = [
+        // Try Platform Cache first for cross-transaction caching
+        List<AI_Classification_Rule__mdt> rules;
+        try {
+            Cache.OrgPartition orgPart = Cache.Org.getPartition('local.ElaroCache');
+            rules = (List<AI_Classification_Rule__mdt>) orgPart.get(CACHE_KEY);
+        } catch (Exception e) {
+            ElaroLogger.warn('AIRiskClassificationEngine.initializeRuleCache: Cache read failed: ' + e.getMessage());
+        }
+
+        // Fall back to SOQL on cache miss
+        if (rules == null) {
+            rules = [
                 SELECT DeveloperName, Feature_Type__c, Use_Case_Context__c,
                        Risk_Level__c, EU_AI_Act_Article__c, Rationale__c
                 FROM AI_Classification_Rule__mdt
                 WITH USER_MODE
             ];
 
-            for (AI_Classification_Rule__mdt rule : rules) {
-                String key = rule.Feature_Type__c + '|' + (rule.Use_Case_Context__c ?? '');
-                ruleCache.put(key, rule);
+            // Populate Platform Cache for subsequent transactions
+            try {
+                Cache.OrgPartition orgPart = Cache.Org.getPartition('local.ElaroCache');
+                orgPart.put(CACHE_KEY, rules, 3600); // 60-min TTL
+            } catch (Exception e) {
+                ElaroLogger.warn('AIRiskClassificationEngine.initializeRuleCache: Cache write failed: ' + e.getMessage());
             }
+        }
+
+        for (AI_Classification_Rule__mdt rule : rules) {
+            String key = rule.Feature_Type__c + '|' + (rule.Use_Case_Context__c ?? '');
+            ruleCache.put(key, rule);
         }
     }
 
