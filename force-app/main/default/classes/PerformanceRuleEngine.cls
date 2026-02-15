@@ -249,7 +249,7 @@ public with sharing class PerformanceRuleEngine {
             }
 
             // Use USER_MODE for FLS enforcement and add structured error tracking
-            List<Database.SaveResult> results = Database.insert(records, AccessLevel.USER_MODE, false);
+            List<Database.SaveResult> results = Database.insert(records, false, AccessLevel.USER_MODE);
 
             for (Integer i = 0; i < results.size(); i++) {
                 Database.SaveResult sr = results[i];

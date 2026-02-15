@@ -197,7 +197,7 @@ public with sharing class ElaroComplianceScorer {
                 usersWithViewAll = (Integer)viewAllResults[0].get('assignmentCount');
             }
         } catch (SecurityException e) {
-            ElaroLogger.error( '[ElaroComplianceScorer] Security exception calculating permission sprawl: ' + e.getMessage());
+            ElaroLogger.error( '[ElaroComplianceScorer] Security exception calculating permission sprawl: ' + e.getMessage() + ', StackTrace: ' + e.getStackTraceString());
             factor.score = 0;
             factor.status = 'ERROR';
             factor.detail = 'Security exception: Unable to query permission data.';
@@ -379,10 +379,10 @@ public with sharing class ElaroComplianceScorer {
         Integer activePolicyCount = 0;
         try {
             // Try to count active policies
-            activePolicyCount = Database.countQuery('SELECT COUNT() FROM Compliance_Policy__mdt WHERE Is_Active__c = true');
+            activePolicyCount = [SELECT COUNT() FROM Compliance_Policy__mdt WHERE Is_Active__c = true WITH USER_MODE];
         } catch (Exception e) {
             // Custom metadata may not exist or have different schema
-            ElaroLogger.warn( '[ElaroComplianceScorer] Could not query policies: ' + e.getMessage());
+            ElaroLogger.warn( '[ElaroComplianceScorer] Could not query policies: ' + e.getMessage() + ', StackTrace: ' + e.getStackTraceString());
             activePolicyCount = 0;
         }
         

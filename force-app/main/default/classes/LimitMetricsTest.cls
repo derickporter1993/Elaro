@@ -21,6 +21,19 @@ private class LimitMetricsTest {
 
         Assert.areNotEqual(null, g.heapKb, 'Heap size should not be null');
         Assert.isTrue(g.heapKb >= 0, 'Heap size should be non-negative');
+
+        // Verify max/remaining fields are populated
+        Assert.areNotEqual(null, g.cpuMax, 'CPU max should not be null');
+        Assert.isTrue(g.cpuMax > 0, 'CPU max should be positive');
+
+        Assert.areNotEqual(null, g.soqlMax, 'SOQL max should not be null');
+        Assert.isTrue(g.soqlMax > 0, 'SOQL max should be positive');
+
+        Assert.areNotEqual(null, g.dmlMax, 'DML max should not be null');
+        Assert.isTrue(g.dmlMax > 0, 'DML max should be positive');
+
+        Assert.areNotEqual(null, g.heapMaxKb, 'Heap max should not be null');
+        Assert.isTrue(g.heapMaxKb > 0, 'Heap max should be positive');
     }
 
     @IsTest
