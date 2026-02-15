@@ -193,6 +193,72 @@ public without sharing class ComplianceAlertPublisher {
     }
 
     /**
+     * Publishes multiple drift detection alerts in a single bulk EventBus.publish call.
+     * Avoids the 150 DML limit that would be hit by publishing events individually in a loop.
+     *
+     * @param events List of ConfigurationDrift__e events to publish
+     * @return List of Database.SaveResult from the bulk publish operation
+     */
+    public static List<Database.SaveResult> publishDriftAlerts(List<ConfigurationDrift__e> events) {
+        if (events == null || events.isEmpty()) {
+            return new List<Database.SaveResult>();
+        }
+
+        List<Database.SaveResult> results = EventBus.publish(events);
+        Integer failCount = 0;
+
+        for (Integer i = 0; i < results.size(); i++) {
+            if (!results[i].isSuccess()) {
+                failCount++;
+                ElaroLogger.error(CLASS_NAME + '.publishDriftAlerts: Failed to publish drift event ' + i, new Map<String, Object>{
+                    'errors' => formatErrors(results[i].getErrors())
+                });
+            }
+        }
+
+        ElaroLogger.info(CLASS_NAME + '.publishDriftAlerts: Bulk drift publish complete', new Map<String, Object>{
+            'total' => events.size(),
+            'succeeded' => events.size() - failCount,
+            'failed' => failCount
+        });
+
+        return results;
+    }
+
+    /**
+     * Publishes multiple breach indicator events in a single bulk EventBus.publish call.
+     * Avoids the 150 DML limit that would be hit by publishing events individually in a loop.
+     *
+     * @param events List of BreachIndicator__e events to publish
+     * @return List of Database.SaveResult from the bulk publish operation
+     */
+    public static List<Database.SaveResult> publishBreachIndicators(List<BreachIndicator__e> events) {
+        if (events == null || events.isEmpty()) {
+            return new List<Database.SaveResult>();
+        }
+
+        List<Database.SaveResult> results = EventBus.publish(events);
+        Integer failCount = 0;
+
+        for (Integer i = 0; i < results.size(); i++) {
+            if (!results[i].isSuccess()) {
+                failCount++;
+                ElaroLogger.error(CLASS_NAME + '.publishBreachIndicators: Failed to publish breach event ' + i, new Map<String, Object>{
+                    'errors' => formatErrors(results[i].getErrors())
+                });
+            }
+        }
+
+        ElaroLogger.info(CLASS_NAME + '.publishBreachIndicators: Bulk breach publish complete', new Map<String, Object>{
+            'total' => events.size(),
+            'succeeded' => events.size() - failCount,
+            'failed' => failCount
+        });
+
+        return results;
+    }
+
+    /**
      * Formats Database.Error list into a readable string for logging.
      *
      * @param errors List of Database.Error objects

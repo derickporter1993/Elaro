@@ -327,6 +327,13 @@ export default class ComplianceGraphViewer extends LightningElement {
     }
   }
 
+  handleModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.closeDetailsPanel();
+      this.closeImpactPanel();
+    }
+  }
+
   closeDetailsPanel() {
     this.showDetailsPanel = false;
     this.selectedNode = null;

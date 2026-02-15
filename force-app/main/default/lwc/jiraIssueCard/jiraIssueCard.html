@@ -135,7 +135,7 @@
 
   <!-- Comment Modal -->
   <template lwc:if={showCommentModal}>
-    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="comment-modal-heading">
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="comment-modal-heading" onkeydown={handleCommentModalKeydown}>
       <div class="slds-modal__container">
         <header class="slds-modal__header">
           <button
@@ -172,7 +172,7 @@
 
   <!-- Transition Modal -->
   <template lwc:if={showTransitionModal}>
-    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="transition-modal-heading">
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open" aria-modal="true" aria-labelledby="transition-modal-heading" onkeydown={handleTransitionModalKeydown}>
       <div class="slds-modal__container">
         <header class="slds-modal__header">
           <button

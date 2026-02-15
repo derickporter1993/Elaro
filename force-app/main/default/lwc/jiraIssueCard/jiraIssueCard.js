@@ -136,6 +136,18 @@ export default class JiraIssueCard extends LightningElement {
     }
   }
 
+  handleCommentModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.handleCloseCommentModal();
+    }
+  }
+
+  handleTransitionModalKeydown(event) {
+    if (event.key === "Escape") {
+      this.handleCloseTransitionModal();
+    }
+  }
+
   // Comment Modal
   handleOpenCommentModal() {
     this.commentText = "";

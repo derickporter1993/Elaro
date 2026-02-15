@@ -32,6 +32,8 @@ public without sharing class TrustCenterDataService implements Schedulable {
     /**
      * Aggregates compliance data from all frameworks into materialized views.
      * Deletes existing views and rebuilds from current compliance state.
+     * Uses 3 bulk aggregate queries instead of per-framework queries to avoid
+     * SOQL-in-loop governor limit issues.
      *
      * @throws DmlException if aggregation or delete/insert operations fail
      */
@@ -44,16 +46,52 @@ public without sharing class TrustCenterDataService implements Schedulable {
             delete as user existingViews;
         }
 
-        List<Trust_Center_View__c> newViews = new List<Trust_Center_View__c>();
-
         // Define frameworks to aggregate
         List<String> frameworks = new List<String>{
             'SOC2', 'HIPAA', 'ISO27001', 'GDPR', 'PCI_DSS',
             'CCPA', 'CMMC', 'FedRAMP', 'NIST_CSF'
         };
 
+        // Bulk query 1: Total controls per framework (replaces per-framework COUNT)
+        Map<String, Integer> totalByFramework = new Map<String, Integer>();
+        for (AggregateResult ar : [
+            SELECT Framework__c fw, COUNT(Id) cnt
+            FROM Compliance_Control__c
+            GROUP BY Framework__c
+            WITH USER_MODE
+        ]) {
+            totalByFramework.put((String) ar.get('fw'), (Integer) ar.get('cnt'));
+        }
+
+        // Bulk query 2: Compliant controls per framework (replaces per-framework COUNT)
+        Map<String, Integer> compliantByFramework = new Map<String, Integer>();
+        for (AggregateResult ar : [
+            SELECT Framework__c fw, COUNT(Id) cnt
+            FROM Compliance_Control__c
+            WHERE Status__c = 'Compliant'
+            GROUP BY Framework__c
+            WITH USER_MODE
+        ]) {
+            compliantByFramework.put((String) ar.get('fw'), (Integer) ar.get('cnt'));
+        }
+
+        // Bulk query 3: Last audit date per framework (replaces per-framework MAX)
+        Map<String, Date> auditDateByFramework = new Map<String, Date>();
+        for (AggregateResult ar : [
+            SELECT Framework__c fw, MAX(Assessment_Date__c) maxDate
+            FROM Compliance_Assessment__c
+            GROUP BY Framework__c
+            WITH USER_MODE
+        ]) {
+            auditDateByFramework.put((String) ar.get('fw'), (Date) ar.get('maxDate'));
+        }
+
+        // Build views from pre-queried maps (no SOQL inside loop)
+        List<Trust_Center_View__c> newViews = new List<Trust_Center_View__c>();
         for (String framework : frameworks) {
-            Trust_Center_View__c view = buildFrameworkView(framework);
+            Trust_Center_View__c view = buildFrameworkView(
+                framework, totalByFramework, compliantByFramework, auditDateByFramework
+            );
             if (view != null) {
                 newViews.add(view);
             }
@@ -68,55 +106,35 @@ public without sharing class TrustCenterDataService implements Schedulable {
     }
 
     /**
-     * Builds a materialized view for a single framework by querying
-     * compliance control status (assumes Compliance_Control__c exists).
+     * Builds a materialized view for a single framework using pre-queried
+     * aggregate data maps. No SOQL is executed in this method.
      *
      * @param framework Framework identifier (e.g., 'SOC2', 'HIPAA')
+     * @param totalByFramework Map of framework to total control count
+     * @param compliantByFramework Map of framework to compliant control count
+     * @param auditDateByFramework Map of framework to most recent audit date
      * @return Trust_Center_View__c record with aggregated metrics, or null if no data
      */
     @TestVisible
-    private Trust_Center_View__c buildFrameworkView(String framework) {
-        // SECURITY: Query assumes Compliance_Control__c has Framework__c and Status__c
-        // This aggregates control counts, not raw finding data
-
-        // Count total controls for framework
-        Integer totalControls = [
-            SELECT COUNT()
-            FROM Compliance_Control__c
-            WHERE Framework__c = :framework
-            WITH USER_MODE
-        ];
+    private Trust_Center_View__c buildFrameworkView(
+        String framework,
+        Map<String, Integer> totalByFramework,
+        Map<String, Integer> compliantByFramework,
+        Map<String, Date> auditDateByFramework
+    ) {
+        Integer totalControls = totalByFramework.get(framework) ?? 0;
 
         if (totalControls == 0) {
             return null; // No controls for this framework
         }
 
-        // Count compliant controls
-        Integer compliantControls = [
-            SELECT COUNT()
-            FROM Compliance_Control__c
-            WHERE Framework__c = :framework
-            AND Status__c = 'Compliant'
-            WITH USER_MODE
-        ];
+        Integer compliantControls = compliantByFramework.get(framework) ?? 0;
 
         // Calculate percentage
-        Decimal compliancePercentage = totalControls > 0
-            ? (Decimal.valueOf(compliantControls) / Decimal.valueOf(totalControls)) * 100
-            : 0;
+        Decimal compliancePercentage = (Decimal.valueOf(compliantControls) / Decimal.valueOf(totalControls)) * 100;
 
-        // Query most recent audit date (if Assessment objects exist)
-        Date lastAudit = null;
-        List<AggregateResult> auditResults = [
-            SELECT MAX(Assessment_Date__c) maxDate
-            FROM Compliance_Assessment__c
-            WHERE Framework__c = :framework
-            WITH USER_MODE
-            LIMIT 1
-        ];
-        if (!auditResults.isEmpty() && auditResults[0].get('maxDate') != null) {
-            lastAudit = (Date) auditResults[0].get('maxDate');
-        }
+        // Get most recent audit date from pre-queried map
+        Date lastAudit = auditDateByFramework.get(framework);
 
         // Determine certification status
         String certStatus = determineCertificationStatus(

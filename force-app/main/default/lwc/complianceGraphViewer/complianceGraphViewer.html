@@ -3,7 +3,8 @@
         <div slot="actions">
             <lightning-button-group>
                 <lightning-combobox
-                    label=""
+                    label="Filter by Framework"
+                    variant="label-hidden"
                     value={selectedFramework}
                     options={frameworkOptions}
                     onchange={handleFrameworkChange}
@@ -99,14 +100,14 @@
 
     <!-- Node Details Panel -->
     <template lwc:if={showDetailsPanel}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-modal="true" aria-labelledby="node-details-heading" onkeydown={handleModalKeydown}>
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeDetailsPanel}>
                         <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
                         <span class="slds-assistive-text">Close</span>
                     </button>
-                    <h2 class="slds-modal__title">{nodeTypeLabel}: {selectedNode.label}</h2>
+                    <h2 id="node-details-heading" class="slds-modal__title">{nodeTypeLabel}: {selectedNode.label}</h2>
                 </header>
 
                 <div class="slds-modal__content slds-p-around_medium">
@@ -175,14 +176,14 @@
 
     <!-- Impact Analysis Panel -->
     <template lwc:if={showImpactPanel}>
-        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large" aria-modal="true" aria-labelledby="impact-analysis-heading" onkeydown={handleModalKeydown}>
             <div class="slds-modal__container">
                 <header class="slds-modal__header slds-theme_warning">
                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeImpactPanel}>
                         <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
                         <span class="slds-assistive-text">Close</span>
                     </button>
-                    <h2 class="slds-modal__title">Impact Analysis</h2>
+                    <h2 id="impact-analysis-heading" class="slds-modal__title">Impact Analysis</h2>
                 </header>
 
                 <div class="slds-modal__content slds-p-around_medium">

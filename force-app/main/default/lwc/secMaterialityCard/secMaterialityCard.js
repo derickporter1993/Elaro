@@ -70,6 +70,13 @@ export default class SecMaterialityCard extends LightningElement {
     return new Date(this.assessment.Filing_Deadline__c).toLocaleDateString();
   }
 
+  handleCardKeydown(event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      this.handleCardClick();
+    }
+  }
+
   handleCardClick() {
     this.dispatchEvent(
       new CustomEvent("viewassessment", {
