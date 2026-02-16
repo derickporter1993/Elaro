@@ -437,13 +437,13 @@ public inherited sharing class ToolingApiService {
 
 ```html
 <!-- ONLY lwc:if / lwc:elseif / lwc:else. NEVER if:true / if:false. -->
-<template lwc:if={isLoading}>
+<template lwc:if="{isLoading}">
   <lightning-spinner alternative-text="Loading"></lightning-spinner>
 </template>
-<template lwc:elseif={hasError}>
-  <c-error-panel message={errorMessage}></c-error-panel>
+<template lwc:elseif="{hasError}">
+  <c-error-panel message="{errorMessage}"></c-error-panel>
 </template>
-<template lwc:elseif={isEmpty}>
+<template lwc:elseif="{isEmpty}">
   <div class="slds-illustration slds-illustration_small">
     <p>{label.NoDataAvailable}</p>
   </div>
