@@ -1,7 +1,7 @@
 /**
  * HTTP Callout Mock for Claude API
  * Provides mock responses for Anthropic Claude API testing
- * @group Tests
+ * @group Utilities
  * @author Elaro Team
  */
 @isTest

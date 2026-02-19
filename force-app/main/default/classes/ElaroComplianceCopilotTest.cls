@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=ElaroComplianceCopilot.class)
 private class ElaroComplianceCopilotTest {
     
     @TestSetup

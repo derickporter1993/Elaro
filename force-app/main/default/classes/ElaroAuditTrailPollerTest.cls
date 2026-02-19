@@ -1,4 +1,4 @@
-@isTest
+@IsTest(testFor=ElaroAuditTrailPoller.class)
 private class ElaroAuditTrailPollerTest {
     
     @isTest

@@ -6,7 +6,7 @@
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group SEC Cybersecurity
+ * @group SEC Module
  * @see MaterialityAssessmentService
  * @see DisclosureWorkflowService
  * @see BoardGovernanceService

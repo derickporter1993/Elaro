@@ -4,7 +4,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@isTest
+@IsTest(testFor=ElaroDailyDigest.class)
 private class ElaroDailyDigestTest {
     
     @testSetup

@@ -512,7 +512,7 @@ public with sharing class JiraIntegrationService {
      *
      * @author Elaro Team
      * @since v3.1.0 (Spring '26)
-     * @group Integrations
+     * @group Integration
      * @see JiraIntegrationService
      */
     public class JiraIssueCreationQueueable implements Queueable, Database.AllowsCallouts {

@@ -1,7 +1,7 @@
 /**
  * Blockchain-based evidence verification service
  * Provides tamper-proof evidence anchoring using third-party services
- * @group Enterprise Features
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

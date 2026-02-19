@@ -4,7 +4,7 @@
  * @group Tests
  * @see ElaroPDFController
  */
-@isTest
+@IsTest(testFor=ElaroPDFController.class)
 private class ElaroPDFControllerTest {
 
     @TestSetup

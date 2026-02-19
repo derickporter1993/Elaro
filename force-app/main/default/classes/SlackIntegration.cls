@@ -3,7 +3,7 @@
  * Provides alert notifications, audit package sharing, and daily digest delivery
  * via a consolidated Queueable pattern for all async Slack callouts.
  *
- * @group Integrations
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  * @see ElaroDailyDigest

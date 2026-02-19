@@ -4,7 +4,7 @@
  * @author Elaro
  * @version 1.0
  */
-@isTest
+@IsTest(testFor=SchedulerErrorHandler.class)
 private class SchedulerErrorHandlerTest {
 
     @isTest

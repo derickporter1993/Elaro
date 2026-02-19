@@ -1,7 +1,7 @@
 /**
  * Schedulable class for daily compliance digest
  * Sends daily summary at 6 AM with statistics, top risks, and AI summary
- * @group Automation & Alerting
+ * @group System Monitoring
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

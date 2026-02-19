@@ -3,7 +3,7 @@
  * @author Elaro Development Team
  * @since 2026-01
  */
-@isTest
+@IsTest(testFor=OnCallScheduleController.class)
 private class OnCallScheduleControllerTest {
 
     @TestSetup

@@ -1,7 +1,7 @@
 /**
  * PagerDuty integration service for Elaro
  * Provides incident triggering and resolution
- * @group Integrations
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

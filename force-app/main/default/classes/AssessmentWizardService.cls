@@ -6,7 +6,7 @@
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group Assessment Wizards
+ * @group Assessment
  * @see AssessmentWizardController
  * @see Assessment_Wizard_Config__mdt
  * @see Compliance_Assessment_Session__c

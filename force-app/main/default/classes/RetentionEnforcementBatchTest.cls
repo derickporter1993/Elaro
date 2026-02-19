@@ -4,7 +4,7 @@
  * @group Tests
  * @see RetentionEnforcementBatch
  */
-@isTest
+@IsTest(testFor=RetentionEnforcementBatch.class)
 private class RetentionEnforcementBatchTest {
 
     @TestSetup

@@ -6,7 +6,7 @@
  * @author Elaro
  * @version 1.0
  */
-@isTest
+@IsTest(testFor=SOC2IncidentResponseService.class)
 public class SOC2IncidentResponseServiceTest {
 
     @TestSetup

@@ -6,7 +6,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@IsTest
+@IsTest(testFor=ComplianceServiceBase.class)
 private class ComplianceServiceBaseTest {
 
     // =============================================

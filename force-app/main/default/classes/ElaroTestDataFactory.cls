@@ -1,7 +1,7 @@
 /**
  * Test data factory for Elaro unit tests
  * Provides mock data for Shield events, audit packages, and evidence items
- * @group Tests
+ * @group Utilities
  * @author Elaro Team
  */
 @isTest

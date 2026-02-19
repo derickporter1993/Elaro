@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=ApiUsageDashboardController.class)
 private class ApiUsageDashboardControllerTest {
     @IsTest
     static void testRecent() {

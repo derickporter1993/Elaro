@@ -1,7 +1,7 @@
 /**
  * Test class for ElaroCCPAComplianceService
  */
-@IsTest
+@IsTest(testFor=ElaroCCPAComplianceService.class)
 private class ElaroCCPAComplianceServiceTest {
     
     @IsTest

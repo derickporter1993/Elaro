@@ -4,7 +4,7 @@
  * @group Tests
  * @see BlockchainVerification
  */
-@isTest
+@IsTest(testFor=BlockchainVerification.class)
 private class BlockchainVerificationTest {
 
     @TestSetup

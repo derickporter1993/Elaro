@@ -1,7 +1,7 @@
 /**
  * Interface for compliance framework modules
  * Each framework (HIPAA, SOC2, GDPR, etc.) implements this interface
- * @group Framework Modules
+ * @group Interfaces
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

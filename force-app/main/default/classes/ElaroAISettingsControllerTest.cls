@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=ElaroAISettingsController.class)
 private class ElaroAISettingsControllerTest {
 
     @IsTest

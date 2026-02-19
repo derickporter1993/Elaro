@@ -2,7 +2,7 @@
  * Multi-org management service for enterprise deployments.
  * Manages connected orgs, policy sync, and cross-org compliance status.
  *
- * @group Enterprise Features
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

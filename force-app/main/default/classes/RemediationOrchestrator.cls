@@ -1,7 +1,7 @@
 /**
  * Orchestrates automated remediation actions for compliance events
  * Supports actions like REVOKE_PERMISSION, LOCK_USER, NOTIFY_MANAGER
- * @group Automation & Alerting
+ * @group System Monitoring
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

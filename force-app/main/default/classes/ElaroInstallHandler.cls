@@ -2,7 +2,7 @@
  * Post-install handler for Elaro package
  * Executes configuration and initialization logic after package installation/upgrade
  *
- * @group Installation
+ * @group Utilities
  * @author Elaro Team
  * @version 3.0
  *

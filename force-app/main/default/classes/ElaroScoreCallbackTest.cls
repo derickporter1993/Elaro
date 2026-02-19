@@ -1,4 +1,4 @@
-@isTest
+@IsTest(testFor=ElaroScoreCallback.class)
 private class ElaroScoreCallbackTest {
     
     @isTest

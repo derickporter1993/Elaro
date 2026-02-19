@@ -1,7 +1,7 @@
 /**
  * Real-time event stream processing with risk scoring
  * Provides immediate risk assessment and alert triggering for Shield events
- * @group Shield Integration
+ * @group Security
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

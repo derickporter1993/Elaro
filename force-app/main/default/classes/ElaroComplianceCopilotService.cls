@@ -1,7 +1,7 @@
 /**
  * AI-powered compliance analysis service using Claude API
  * Provides event pattern analysis, audit summaries, risk predictions, and event categorization
- * @group AI Integration
+ * @group AI Governance
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

@@ -1,7 +1,7 @@
 /**
  * Factory class for parsing different Shield event types
  * Provides type-specific parsing for Login, LoginAs, API, ReportExport, etc.
- * @group Shield Integration
+ * @group Security
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

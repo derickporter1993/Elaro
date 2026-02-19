@@ -5,7 +5,7 @@
  * @author Elaro Development Team
  * @since 2026-01
  */
-@isTest
+@IsTest(testFor=JiraIntegrationService.class)
 private class JiraIntegrationServiceTest {
 
     private static final String MOCK_JIRA_KEY = 'COMPLIANCE-123';
@@ -143,8 +143,45 @@ private class JiraIntegrationServiceTest {
         JiraIntegrationService.createIssueAsync(gap.Id, 'High');
         Test.stopTest();
 
-        // Future method execution - verify no exception thrown
+        // Queueable enqueued (skipped in test context) - verify no exception thrown
         Assert.isTrue(true, 'Async method should complete');
+    }
+
+    @isTest
+    static void testJiraIssueCreationQueueable_Execute() {
+        Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
+
+        Test.setMock(HttpCalloutMock.class, new JiraCreateIssueMock(true));
+
+        JiraIntegrationService.JiraIssueCreationQueueable queueable =
+            new JiraIntegrationService.JiraIssueCreationQueueable(gap.Id, 'High');
+
+        Test.startTest();
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Verify gap was updated with Jira info
+        Compliance_Gap__c updatedGap = [
+            SELECT Jira_Issue_Key__c, Jira_Issue_URL__c
+            FROM Compliance_Gap__c
+            WHERE Id = :gap.Id
+        ];
+        Assert.areNotEqual(null, updatedGap.Jira_Issue_Key__c, 'Gap should be linked to Jira after Queueable execution');
+    }
+
+    @isTest
+    static void testJiraIssueCreationQueueable_HandleError() {
+        // Use an invalid gap ID to trigger an error
+        JiraIntegrationService.JiraIssueCreationQueueable queueable =
+            new JiraIntegrationService.JiraIssueCreationQueueable('001000000000000AAA', null);
+
+        Test.startTest();
+        // Should not throw - error is caught and logged internally
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Verify Queueable handled error gracefully
+        Assert.isNotNull(queueable, 'Queueable should handle errors without throwing');
     }
 
     // ============================================

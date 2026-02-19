@@ -2,7 +2,7 @@
  * User factory for Elaro security testing
  * Creates test users with various permission sets for security and sharing tests
  *
- * @group Testing
+ * @group Utilities
  * @author Elaro Team
  * @version 3.0
  *

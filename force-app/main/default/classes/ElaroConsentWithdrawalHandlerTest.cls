@@ -6,7 +6,7 @@
  * @author Elaro
  * @version 1.0
  */
-@IsTest
+@IsTest(testFor=ElaroConsentWithdrawalHandler.class)
 private class ElaroConsentWithdrawalHandlerTest {
     
     @TestSetup

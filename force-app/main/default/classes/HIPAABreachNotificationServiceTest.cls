@@ -6,7 +6,7 @@
  * @author Elaro
  * @version 1.0
  */
-@isTest
+@IsTest(testFor=HIPAABreachNotificationService.class)
 public class HIPAABreachNotificationServiceTest {
 
     @TestSetup

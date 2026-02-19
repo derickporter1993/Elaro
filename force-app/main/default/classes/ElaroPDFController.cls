@@ -1,7 +1,7 @@
 /**
  * Controller extension for Visualforce PDF pages
  * Provides data for audit package, executive summary, and evidence report PDFs
- * @group Export &amp; Delivery
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

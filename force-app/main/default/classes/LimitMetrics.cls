@@ -6,7 +6,7 @@
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group Performance Monitoring
+ * @group System Monitoring
  * @see PerformanceRuleEngine
  */
 public with sharing class LimitMetrics {

@@ -1,7 +1,7 @@
 /**
  * ServiceNow integration service for Elaro
  * Provides control sync, evidence push, and incident creation
- * @group Integrations
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

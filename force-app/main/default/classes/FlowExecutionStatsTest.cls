@@ -1,7 +1,7 @@
 /**
  * Test class for FlowExecutionStats
  */
-@IsTest
+@IsTest(testFor=FlowExecutionStats.class)
 private class FlowExecutionStatsTest {
     
     @TestSetup

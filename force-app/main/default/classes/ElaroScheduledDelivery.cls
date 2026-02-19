@@ -1,6 +1,6 @@
 /**
  * Schedulable class for recurring audit package delivery
- * @group Export &amp; Delivery
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

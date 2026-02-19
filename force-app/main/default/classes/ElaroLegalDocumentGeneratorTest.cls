@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=ElaroLegalDocumentGenerator.class)
 private class ElaroLegalDocumentGeneratorTest {
 
     @IsTest

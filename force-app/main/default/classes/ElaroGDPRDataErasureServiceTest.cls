@@ -10,7 +10,7 @@
  * 
  * Target Coverage: 90%+
  */
-@IsTest
+@IsTest(testFor=ElaroGDPRDataErasureService.class)
 private class ElaroGDPRDataErasureServiceTest {
     
     @TestSetup

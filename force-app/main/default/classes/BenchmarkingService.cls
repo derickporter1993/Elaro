@@ -1,7 +1,7 @@
 /**
  * Industry benchmarking service for compliance maturity
  * Provides industry comparisons and maturity assessments
- * @group Enterprise Features
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

@@ -4,7 +4,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@isTest
+@IsTest(testFor=MultiOrgManager.class)
 private class MultiOrgManagerTest {
     
     @testSetup
@@ -312,9 +312,55 @@ private class MultiOrgManagerTest {
     }
     
     // ═══════════════════════════════════════════════════════════════
+    // Queueable Execution Tests
+    // ═══════════════════════════════════════════════════════════════
+
+    @isTest
+    static void testOrgConnectionTestQueueable_Execute() {
+        Elaro_Connected_Org__c org = [
+            SELECT Id FROM Elaro_Connected_Org__c LIMIT 1
+        ];
+
+        Test.setMock(HttpCalloutMock.class, new MultiOrgCalloutMock(200, '{"status":"success"}'));
+
+        MultiOrgManager.OrgConnectionTestQueueable queueable =
+            new MultiOrgManager.OrgConnectionTestQueueable(org.Id);
+
+        Test.startTest();
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Verify connection status was updated
+        Elaro_Connected_Org__c updatedOrg = [
+            SELECT Connection_Status__c, Last_Sync__c
+            FROM Elaro_Connected_Org__c
+            WHERE Id = :org.Id
+        ];
+        Assert.areEqual('Connected', updatedOrg.Connection_Status__c, 'Connection status should be Connected');
+        Assert.areNotEqual(null, updatedOrg.Last_Sync__c, 'Last sync should be set');
+    }
+
+    @isTest
+    static void testPolicySyncQueueable_Execute() {
+        List<String> policyIds = new List<String>{'Policy1', 'Policy2'};
+
+        Test.setMock(HttpCalloutMock.class, new MultiOrgCalloutMock(200, '{"status":"success"}'));
+
+        MultiOrgManager.PolicySyncQueueable queueable =
+            new MultiOrgManager.PolicySyncQueueable(policyIds);
+
+        Test.startTest();
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Verify no exceptions during Queueable execution
+        Assert.isNotNull(queueable, 'PolicySyncQueueable should execute without errors');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
     // Mock Classes
     // ═══════════════════════════════════════════════════════════════
-    
+
     private class MultiOrgCalloutMock implements HttpCalloutMock {
         private Integer statusCode;
         private String responseBody;

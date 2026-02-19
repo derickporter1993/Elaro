@@ -1,6 +1,6 @@
 /**
  * Queueable class for processing alerts asynchronously
- * @group Automation & Alerting
+ * @group System Monitoring
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

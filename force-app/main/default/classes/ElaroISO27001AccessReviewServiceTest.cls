@@ -10,7 +10,7 @@
  * 
  * Target Coverage: 90%+
  */
-@IsTest
+@IsTest(testFor=ElaroISO27001AccessReviewService.class)
 private class ElaroISO27001AccessReviewServiceTest {
     
     @TestSetup

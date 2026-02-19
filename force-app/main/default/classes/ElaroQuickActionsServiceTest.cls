@@ -1,4 +1,4 @@
-@isTest
+@IsTest(testFor=ElaroQuickActionsService.class)
 private class ElaroQuickActionsServiceTest {
     
     @isTest

@@ -2,7 +2,7 @@
  * @description Unit tests for ElaroEventParser
  * @group Tests
  */
-@isTest
+@IsTest(testFor=ElaroEventParser.class)
 private class ElaroEventParserTest {
     
     // ═══════════════════════════════════════════════════════════════

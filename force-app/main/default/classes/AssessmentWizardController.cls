@@ -5,7 +5,7 @@
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group Assessment Wizards
+ * @group Assessment
  * @see AssessmentWizardService
  */
 public with sharing class AssessmentWizardController {

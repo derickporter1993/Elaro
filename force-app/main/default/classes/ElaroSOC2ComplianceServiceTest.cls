@@ -1,7 +1,7 @@
 /**
  * Test class for ElaroSOC2ComplianceService
  */
-@IsTest
+@IsTest(testFor=ElaroSOC2ComplianceService.class)
 private class ElaroSOC2ComplianceServiceTest {
     
     @TestSetup

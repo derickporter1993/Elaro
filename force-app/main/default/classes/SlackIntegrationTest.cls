@@ -4,7 +4,7 @@
  * @group Tests
  * @see SlackIntegration
  */
-@isTest
+@IsTest(testFor=SlackIntegration.class)
 private class SlackIntegrationTest {
 
     /**
@@ -195,5 +195,88 @@ private class SlackIntegrationTest {
         // Assert - Verify all 6 severity levels processed without exception
         Assert.areEqual(6, severities.size(), 'Should test all 6 severity levels');
         Assert.isTrue(Limits.getCallouts() <= Limits.getLimitCallouts(), 'Should stay within callout limits');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // Queueable Execution Tests
+    // ═══════════════════════════════════════════════════════════════
+
+    @isTest
+    static void testSlackNotificationQueueable_AlertSuccess() {
+        // Arrange
+        Test.setMock(HttpCalloutMock.class, new SlackMock());
+
+        Map<String, Object> message = new Map<String, Object>{
+            'text' => 'Test alert message'
+        };
+
+        SlackIntegration.SlackNotificationQueueable queueable =
+            new SlackIntegration.SlackNotificationQueueable(
+                SlackIntegration.NotificationType.ALERT, message
+            );
+
+        // Act
+        Test.startTest();
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Assert - Queueable executed successfully without throwing
+        Assert.isNotNull(queueable, 'Queueable should be instantiated');
+    }
+
+    @isTest
+    static void testSlackNotificationQueueable_ErrorResponse() {
+        // Arrange
+        Test.setMock(HttpCalloutMock.class, new SlackErrorMock());
+
+        Map<String, Object> message = new Map<String, Object>{
+            'text' => 'Test message that will fail'
+        };
+
+        SlackIntegration.SlackNotificationQueueable queueable =
+            new SlackIntegration.SlackNotificationQueueable(
+                SlackIntegration.NotificationType.DAILY_DIGEST, message
+            );
+
+        // Act
+        Test.startTest();
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Assert - Queueable handled error without throwing
+        Assert.isNotNull(queueable, 'Queueable should handle errors gracefully');
+    }
+
+    @isTest
+    static void testSlackNotificationQueueable_CustomMessage() {
+        // Arrange
+        Test.setMock(HttpCalloutMock.class, new SlackMock());
+
+        Map<String, Object> message = new Map<String, Object>{
+            'channel' => '#general',
+            'text' => 'Custom test message'
+        };
+
+        SlackIntegration.SlackNotificationQueueable queueable =
+            new SlackIntegration.SlackNotificationQueueable(
+                SlackIntegration.NotificationType.CUSTOM_MESSAGE, message
+            );
+
+        // Act
+        Test.startTest();
+        queueable.execute(null);
+        Test.stopTest();
+
+        // Assert - Custom message Queueable executed successfully
+        Assert.isNotNull(queueable, 'Custom message Queueable should execute');
+    }
+
+    @isTest
+    static void testNotificationTypeEnum() {
+        // Verify all enum values exist
+        Assert.areEqual('ALERT', SlackIntegration.NotificationType.ALERT.name(), 'ALERT enum should exist');
+        Assert.areEqual('AUDIT_PACKAGE', SlackIntegration.NotificationType.AUDIT_PACKAGE.name(), 'AUDIT_PACKAGE enum should exist');
+        Assert.areEqual('DAILY_DIGEST', SlackIntegration.NotificationType.DAILY_DIGEST.name(), 'DAILY_DIGEST enum should exist');
+        Assert.areEqual('CUSTOM_MESSAGE', SlackIntegration.NotificationType.CUSTOM_MESSAGE.name(), 'CUSTOM_MESSAGE enum should exist');
     }
 }

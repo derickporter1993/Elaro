@@ -5,7 +5,7 @@
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group Command Center
+ * @group Compliance Framework
  * @see CommandCenterController
  * @see Compliance_Action__mdt
  */

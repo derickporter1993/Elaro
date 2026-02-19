@@ -5,7 +5,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@IsTest
+@IsTest(testFor=HIPAAModule.class)
 private class HIPAAModuleTest {
 
     @TestSetup

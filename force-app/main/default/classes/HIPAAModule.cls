@@ -1,7 +1,7 @@
 /**
  * HIPAA compliance module implementation
  * Covers 164.308 (Administrative), 164.310 (Physical), 164.312 (Technical) safeguards
- * @group Framework Modules
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

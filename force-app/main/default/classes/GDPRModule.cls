@@ -1,7 +1,7 @@
 /**
  * GDPR compliance module implementation
  * Covers DSR tracking (Articles 15-22), ROPA (Article 30), Breach Notification (Article 33)
- * @group Framework Modules
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

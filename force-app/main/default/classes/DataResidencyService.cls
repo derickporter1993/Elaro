@@ -1,7 +1,7 @@
 /**
  * Data residency service for regional compliance
  * Supports US, EU, APAC data location validation
- * @group Enterprise Features
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

@@ -6,7 +6,7 @@
  * @author Elaro
  * @version 1.0
  */
-@isTest
+@IsTest(testFor=ElaroAuditPackageGenerator.class)
 private class ElaroAuditPackageGeneratorTest {
     
     @TestSetup

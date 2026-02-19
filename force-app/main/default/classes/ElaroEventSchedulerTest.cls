@@ -4,7 +4,7 @@
  * @group Tests
  * @see ElaroEventScheduler
  */
-@isTest
+@IsTest(testFor=ElaroEventScheduler.class)
 private class ElaroEventSchedulerTest {
 
     @isTest

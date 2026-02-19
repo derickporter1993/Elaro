@@ -1,7 +1,7 @@
 /**
  * FINRA compliance module implementation
  * Covers Rule 3110 (Supervision), Rule 4511 (Books/Records), Rule 4370 (BCP)
- * @group Framework Modules
+ * @group Compliance Framework
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

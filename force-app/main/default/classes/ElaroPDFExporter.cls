@@ -1,7 +1,7 @@
 /**
  * PDF and export generation service for audit packages
  * Generates PDF reports, CSV exports, and JSON exports with integrity hashing
- * @group Export &amp; Delivery
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

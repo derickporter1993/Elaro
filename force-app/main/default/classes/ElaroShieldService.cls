@@ -1,7 +1,7 @@
 /**
  * Shield Event Monitoring API integration service
  * Provides methods to query, parse, and process Shield EventLogFile data
- * @group Shield Integration
+ * @group Security
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

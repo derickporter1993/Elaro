@@ -1,7 +1,7 @@
 /**
  * AI-powered root cause analysis engine for compliance events
  * Uses Claude API to analyze event chains and identify root causes
- * @group AI Integration
+ * @group AI Governance
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

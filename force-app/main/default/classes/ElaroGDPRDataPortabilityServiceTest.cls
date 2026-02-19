@@ -5,7 +5,7 @@
  * @author Elaro
  * @version 1.0
  */
-@IsTest
+@IsTest(testFor=ElaroGDPRDataPortabilityService.class)
 private class ElaroGDPRDataPortabilityServiceTest {
 
     @TestSetup

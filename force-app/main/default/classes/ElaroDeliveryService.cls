@@ -1,7 +1,7 @@
 /**
  * Delivery service for audit packages
  * Provides email delivery, shareable links, and Slack integration
- * @group Export &amp; Delivery
+ * @group Integration
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */

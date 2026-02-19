@@ -4,7 +4,7 @@
  * @group Tests
  * @see ElaroAlertQueueable
  */
-@isTest
+@IsTest(testFor=ElaroAlertQueueable.class)
 private class ElaroAlertQueueableTest {
 
     @isTest

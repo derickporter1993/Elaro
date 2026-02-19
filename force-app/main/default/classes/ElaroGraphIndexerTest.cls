@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=ElaroGraphIndexer.class)
 private class ElaroGraphIndexerTest {
     @TestSetup
     static void setup() {

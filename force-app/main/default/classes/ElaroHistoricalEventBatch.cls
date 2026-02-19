@@ -1,7 +1,7 @@
 /**
  * Batch processor for historical Shield EventLogFiles
  * Processes large volumes of historical events with heap limit protection
- * @group Shield Integration
+ * @group Security
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */
