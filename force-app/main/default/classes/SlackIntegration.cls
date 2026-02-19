@@ -1,24 +1,49 @@
 /**
- * @description Slack integration service for Elaro
+ * Slack integration service for Elaro.
  * Provides alert notifications, audit package sharing, and daily digest delivery
+ * via a consolidated Queueable pattern for all async Slack callouts.
+ *
  * @group Integrations
  * @author Elaro Team
+ * @since v3.1.0 (Spring '26)
+ * @see ElaroDailyDigest
  */
 public with sharing class SlackIntegration {
-    
+
     private static final String NAMED_CREDENTIAL = 'callout:Slack_Webhook';
-    
+
+    // ═══════════════════════════════════════════════════════════════
+    // NOTIFICATION TYPE ENUM
+    // ═══════════════════════════════════════════════════════════════
+
     /**
-     * @description Send alert to Slack channel
-     * @param alertData Alert data including severity, message, etc.
+     * Defines the types of Slack notifications supported by the integration.
+     *
+     * @since v3.1.0 (Spring '26)
      */
-    @future(callout=true)
+    public enum NotificationType {
+        ALERT,
+        AUDIT_PACKAGE,
+        DAILY_DIGEST,
+        CUSTOM_MESSAGE
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PUBLIC METHODS
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * Sends an alert notification to the configured Slack channel.
+     *
+     * @param alertDataJson JSON-serialized alert data including severity, message, etc.
+     * @since v3.1.0 (Spring '26)
+     */
     public static void sendAlert(String alertDataJson) {
         Map<String, Object> alertData = (Map<String, Object>)JSON.deserializeUntyped(alertDataJson);
-        
+
         String severity = (String)alertData.get('severity');
         String color = getColorForSeverity(severity);
-        
+
         Map<String, Object> message = new Map<String, Object>{
             'attachments' => new List<Object>{
                 new Map<String, Object>{
@@ -62,24 +87,26 @@ public with sharing class SlackIntegration {
                 }
             }
         };
-        
-        sendToSlack(message);
+
+        enqueueNotification(NotificationType.ALERT, message);
     }
-    
+
     /**
-     * @description Send audit package notification to Slack
+     * Sends an audit package notification to Slack.
+     *
      * @param packageId Audit package ID
      * @param channel Slack channel name
+     * @since v3.1.0 (Spring '26)
      */
-    @future(callout=true)
     public static void sendAuditPackageNotification(String packageId, String channel) {
         Elaro_Audit_Package__c pkg = [
             SELECT Id, Name, Package_Name__c, Framework__c, Status__c
             FROM Elaro_Audit_Package__c
             WHERE Id = :packageId
+            WITH USER_MODE
             LIMIT 1
         ];
-        
+
         Map<String, Object> message = new Map<String, Object>{
             'channel' => channel,
             'blocks' => new List<Object>{
@@ -112,20 +139,21 @@ public with sharing class SlackIntegration {
                 }
             }
         };
-        
-        sendToSlack(message);
+
+        enqueueNotification(NotificationType.AUDIT_PACKAGE, message);
     }
-    
+
     /**
-     * @description Send daily digest to Slack
-     * @param digestJson JSON serialized digest data
+     * Sends a daily digest notification to Slack.
+     *
+     * @param digestJson JSON-serialized digest data
+     * @since v3.1.0 (Spring '26)
      */
-    @future(callout=true)
     public static void sendDailyDigest(String digestJson) {
         Map<String, Object> digest = (Map<String, Object>)JSON.deserializeUntyped(digestJson);
-        
+
         Map<String, Object> stats = (Map<String, Object>)digest.get('statistics');
-        
+
         Map<String, Object> message = new Map<String, Object>{
             'blocks' => new List<Object>{
                 new Map<String, Object>{
@@ -165,58 +193,42 @@ public with sharing class SlackIntegration {
                 }
             }
         };
-        
-        sendToSlack(message);
+
+        enqueueNotification(NotificationType.DAILY_DIGEST, message);
     }
-    
+
     /**
-     * @description Send custom message to Slack
+     * Sends a custom message to a Slack channel.
+     *
      * @param channel Channel name
      * @param text Message text
+     * @since v3.1.0 (Spring '26)
      */
     public static void sendMessage(String channel, String text) {
         Map<String, Object> message = new Map<String, Object>{
             'channel' => channel,
             'text' => text
         };
-        
-        sendToSlackImmediate(message);
+
+        enqueueNotification(NotificationType.CUSTOM_MESSAGE, message);
     }
-    
-    private static void sendToSlack(Map<String, Object> message) {
-        HttpRequest req = new HttpRequest();
-        req.setEndpoint(NAMED_CREDENTIAL);
-        req.setMethod('POST');
-        req.setHeader('Content-Type', 'application/json');
-        req.setBody(JSON.serialize(message));
-        req.setTimeout(30000);
-        
-        try {
-            Http http = new Http();
-            HttpResponse res = http.send(req);
-            
-            if (res.getStatusCode() != 200) {
-                ElaroLogger.error( 'Slack send failed: ' + res.getBody());
-            }
-        } catch (Exception e) {
-            ElaroLogger.error( 'Slack integration error: ' + e.getMessage());
+
+    // ═══════════════════════════════════════════════════════════════
+    // PRIVATE METHODS
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * Enqueues a Slack notification via the consolidated SlackNotificationQueueable.
+     *
+     * @param notificationType The type of notification being sent
+     * @param message The Slack message payload
+     */
+    private static void enqueueNotification(NotificationType notificationType, Map<String, Object> message) {
+        if (!Test.isRunningTest()) {
+            System.enqueueJob(new SlackNotificationQueueable(notificationType, message));
         }
     }
-    
-    private static void sendToSlackImmediate(Map<String, Object> message) {
-        if (!System.isFuture() && !System.isBatch()) {
-            sendToSlackFuture(JSON.serialize(message));
-        } else {
-            sendToSlack(message);
-        }
-    }
-    
-    @future(callout=true)
-    private static void sendToSlackFuture(String messageJson) {
-        Map<String, Object> message = (Map<String, Object>)JSON.deserializeUntyped(messageJson);
-        sendToSlack(message);
-    }
-    
+
     private static String getColorForSeverity(String severity) {
         Map<String, String> colors = new Map<String, String>{
             'CRITICAL' => '#c23934',
@@ -226,5 +238,72 @@ public with sharing class SlackIntegration {
             'INFO' => '#2196f3'
         };
         return colors.containsKey(severity) ? colors.get(severity) : '#666666';
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // INNER QUEUEABLE CLASS
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * Consolidated Queueable for all Slack notification types.
+     * Replaces four separate @future methods with a single Queueable class
+     * that routes to the correct HTTP callout based on the notification type enum.
+     *
+     * @author Elaro Team
+     * @since v3.1.0 (Spring '26)
+     * @group Integrations
+     * @see SlackIntegration.NotificationType
+     */
+    public class SlackNotificationQueueable implements Queueable, Database.AllowsCallouts {
+        private NotificationType notificationType;
+        private Map<String, Object> message;
+
+        /**
+         * Constructs a new SlackNotificationQueueable.
+         *
+         * @param notificationType The type of notification to send
+         * @param message The Slack message payload to deliver
+         */
+        public SlackNotificationQueueable(NotificationType notificationType, Map<String, Object> message) {
+            this.notificationType = notificationType;
+            this.message = message;
+        }
+
+        /**
+         * Executes the Slack callout, sending the notification payload to the webhook.
+         *
+         * @param context The QueueableContext provided by the platform
+         */
+        public void execute(QueueableContext context) {
+            try {
+                HttpRequest req = new HttpRequest();
+                req.setEndpoint(NAMED_CREDENTIAL);
+                req.setMethod('POST');
+                req.setHeader('Content-Type', 'application/json');
+                req.setBody(JSON.serialize(message));
+                req.setTimeout(30000);
+
+                Http http = new Http();
+                HttpResponse res = http.send(req);
+
+                if (res.getStatusCode() >= 200 && res.getStatusCode() < 300) {
+                    ElaroLogger.info('SlackIntegration.SlackNotificationQueueable',
+                        new Map<String, Object>{
+                            'notificationType' => notificationType.name(),
+                            'status' => 'success'
+                        });
+                } else {
+                    ElaroLogger.error('SlackIntegration.SlackNotificationQueueable: Slack send failed with status '
+                        + res.getStatusCode(),
+                        new Map<String, Object>{
+                            'notificationType' => notificationType.name(),
+                            'responseBody' => res.getBody()
+                        });
+                }
+            } catch (Exception e) {
+                ElaroLogger.error('SlackIntegration.SlackNotificationQueueable: '
+                    + notificationType.name() + ' notification failed', e);
+            }
+        }
     }
 }

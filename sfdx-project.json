@@ -17,7 +17,8 @@
     }
   ],
   "name": "Elaro",
-  "namespace": "",
+  "namespace": "elaro",
+  "_TODO_namespace": "Register 'elaro' namespace in DevHub before creating package versions",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "66.0",
   "packageAliases": {
