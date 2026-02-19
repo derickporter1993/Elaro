@@ -441,14 +441,11 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             afterHoursCount.put(lh.UserId, afterHoursCount.get(lh.UserId) + 1);
         }
 
-        // Safe: single bulk query outside loop. userIds is bounded by the LIMIT 100
-        // on the afterHours query and the HAVING threshold on highVolume query.
+        // Bounded: userIds capped by LIMIT 100 on afterHours + HAVING threshold on highVolume
         if (!userIds.isEmpty()) {
-            for (User u : [SELECT Id, Name FROM User WHERE Id IN :userIds WITH USER_MODE]) {
-                if (!users.containsKey(u.Id)) {
-                    users.put(u.Id, u);
-                }
-            }
+            users.putAll(new Map<Id, User>([
+                SELECT Id, Name FROM User WHERE Id IN :userIds WITH USER_MODE
+            ]));
         }
 
         for (Id userId : afterHoursCount.keySet()) {

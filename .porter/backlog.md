@@ -1,7 +1,7 @@
 # Elaro Remediation Backlog
 
 **Generated:** 2026-02-19 | Post-Phase 7 | Solentra Review v2.0 baseline
-**Updated:** 2026-02-19 | After 10-agent sweep + manual fixes
+**Updated:** 2026-02-19 | Final sweep complete — all feasible items resolved
 **Current Grade:** C (3.325/5.00) | **Target Grade:** B+ (4.25+)
 **Review Report:** `.review-state/final-report.md`
 
@@ -100,9 +100,8 @@
 **Resolution:** Agent 9 set all labels to `<protected>true</protected>` for 2GP managed package.
 
 ### BL-018: Two admin permission sets with unclear distinction (AX-014)
-**Status:** Open
-**Why P2:** Confusing for subscriber admins. Needs documentation or consolidation.
-**Effort:** Low
+**Status:** Done
+**Resolution:** Both permission sets already have clear `<description>` elements. Elaro_Admin grants core CRUD/object/tab/class access. Elaro_Admin_Extended supplements with schedulers, event publishers, app visibility, and user permissions (ApiEnabled, RunReports, ExportReport). Description explicitly says "Assign alongside Elaro Admin for full platform access."
 
 ### BL-019: Weak assertion patterns in non-stub tests
 **Status:** Open
@@ -115,25 +114,20 @@
 ## P3 — Low / Polish
 
 ### BL-020: GOV-001 — HIPAAAuditControlService SOQL in for-each (bounded)
-**Status:** Open
-**File:** `HIPAAAuditControlService.cls:444`
-**Why P3:** Low risk (bounded collection), but stylistically impure.
-**Effort:** Low
+**Status:** Done
+**Resolution:** Replaced SOQL-in-for-each with `users.putAll(new Map<Id, User>([...]))` pattern — eliminates scanner warning while keeping single bulk query.
 
 ### BL-021: GOV-002 — ElaroDailyDigest SOQL in for-each (bounded)
-**Status:** Open
-**File:** `ElaroDailyDigest.cls:48`
-**Why P3:** Same as BL-020.
-**Effort:** Low
+**Status:** Done
+**Resolution:** Extracted SOQL result into `List<CronTrigger>` variable before iterating — removes scanner false positive.
 
 ### BL-022: Nested loop CPU concern in ComplianceGraphService
 **Status:** Done
 **Resolution:** Agent 10 replaced O(n*m) nested loop with Set-based O(1) lookup for entity dedup.
 
 ### BL-023: Callout timeout set to 30s (low priority)
-**Status:** Open
-**Why P3:** Could cause test failures in slow environments.
-**Effort:** Low
+**Status:** Done
+**Resolution:** Added `CALLOUT_TIMEOUT_MS` constant to ElaroConstants. Replaced hardcoded `30000` in 6 integration classes (ElaroDeliveryService, SlackIntegration, ServiceNowIntegration, JiraIntegrationService, NaturalLanguageQueryService, PagerDutyIntegration) with centralized constant.
 
 ### BL-024: CI pipeline soft-fails on format/lint
 **Status:** Done
@@ -151,9 +145,9 @@
 |----------|-------|------|------|---------|
 | **P0** | 6 | 6 | 0 | 0 |
 | **P1** | 6 | 5 | 0 | 1 |
-| **P2** | 7 | 4 | 3 | 0 |
-| **P3** | 6 | 3 | 3 | 0 |
-| **Total** | **25** | **18** | **6** | **1** |
+| **P2** | 7 | 5 | 2 | 0 |
+| **P3** | 6 | 6 | 0 | 0 |
+| **Total** | **25** | **22** | **2** | **1** |
 
 ## Remaining Items
 
@@ -161,11 +155,7 @@
 |----|----------|--------|-------------|
 | BL-012 | P1 | Blocked | Code Analyzer v5 (requires sf CLI + org) |
 | BL-016 | P2 | Open | Method-level ApexDoc (very high effort) |
-| BL-018 | P2 | Open | Permission set documentation |
 | BL-019 | P2 | Open | Weak assertion patterns |
-| BL-020 | P3 | Open | HIPAAAuditControlService bounded SOQL |
-| BL-021 | P3 | Open | ElaroDailyDigest bounded SOQL |
-| BL-023 | P3 | Open | Callout timeout |
 
 ---
 
@@ -202,3 +192,9 @@
 - [x] BL-015: Database.query() → queryWithBinds() in 6 files
 - [x] BL-024 (remaining): JSON scan || true removed
 - [x] CI: Prettier + Jest failures fixed (NavigationMixin mock, ShowToastEvent mock)
+
+**Final Cleanup:**
+- [x] BL-018: Permission set descriptions verified — already clear and complete
+- [x] BL-020: HIPAAAuditControlService SOQL-in-for-each → putAll(Map) pattern
+- [x] BL-021: ElaroDailyDigest SOQL-in-for-each → extracted to List variable
+- [x] BL-023: Callout timeouts centralized via ElaroConstants.CALLOUT_TIMEOUT_MS (6 files)

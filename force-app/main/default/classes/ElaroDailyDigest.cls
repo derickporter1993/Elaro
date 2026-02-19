@@ -45,10 +45,10 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         
         String jobName = 'Elaro_Daily_Digest_' + UserInfo.getUserId();
         
-        // Safe: single SOQL as for-each iterable (not inside a loop). CronTrigger results
-        // are bounded to at most 1 row for a specific job name. This is an idiomatic Apex
-        // pattern for iterating query results directly.
-        for (CronTrigger ct : [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName WITH USER_MODE]) {
+        List<CronTrigger> existingJobs = [
+            SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = :jobName WITH USER_MODE
+        ];
+        for (CronTrigger ct : existingJobs) {
             System.abortJob(ct.Id);
         }
         

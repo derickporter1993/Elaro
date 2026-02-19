@@ -234,7 +234,7 @@ public with sharing class ServiceNowIntegration {
         req.setEndpoint(NAMED_CREDENTIAL + '/api/now/table/incident/' + incidentSysId);
         req.setMethod('GET');
         req.setHeader('Accept', 'application/json');
-        req.setTimeout(30000);
+        req.setTimeout(ElaroConstants.CALLOUT_TIMEOUT_MS);
         
         try {
             Http http = new Http();

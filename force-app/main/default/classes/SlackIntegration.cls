@@ -281,7 +281,7 @@ public with sharing class SlackIntegration {
                 req.setMethod('POST');
                 req.setHeader('Content-Type', 'application/json');
                 req.setBody(JSON.serialize(message));
-                req.setTimeout(30000);
+                req.setTimeout(ElaroConstants.CALLOUT_TIMEOUT_MS);
 
                 Http http = new Http();
                 HttpResponse res = http.send(req);

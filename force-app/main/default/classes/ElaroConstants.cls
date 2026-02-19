@@ -163,6 +163,11 @@ public with sharing class ElaroConstants {
     // ============================================
     public static final String SALESFORCE_API_VERSION = '66.0';
     public static final String ELARO_VERSION = '3.0.0';
+
+    // ============================================
+    // CALLOUT SETTINGS
+    // ============================================
+    public static final Integer CALLOUT_TIMEOUT_MS = 30000;
     
     // ============================================
     // LOGGING

@@ -216,7 +216,7 @@ public with sharing class NaturalLanguageQueryService {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setHeader('anthropic-version', '2023-06-01');
-        req.setTimeout(30000);
+        req.setTimeout(ElaroConstants.CALLOUT_TIMEOUT_MS);
         
         Map&lt;String, Object&gt; body = new Map&lt;String, Object&gt;{
             'model' =&gt; 'claude-sonnet-4-20250514',

@@ -481,7 +481,7 @@ public with sharing class JiraIntegrationService {
         req.setMethod(method);
         req.setHeader('Content-Type', 'application/json');
         req.setHeader('Accept', 'application/json');
-        req.setTimeout(30000);
+        req.setTimeout(ElaroConstants.CALLOUT_TIMEOUT_MS);
 
         if (String.isNotBlank(body)) {
             req.setBody(body);

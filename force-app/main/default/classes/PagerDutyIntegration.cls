@@ -195,7 +195,7 @@ public with sharing class PagerDutyIntegration {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(event));
-        req.setTimeout(30000);
+        req.setTimeout(ElaroConstants.CALLOUT_TIMEOUT_MS);
         
         try {
             Http http = new Http();
