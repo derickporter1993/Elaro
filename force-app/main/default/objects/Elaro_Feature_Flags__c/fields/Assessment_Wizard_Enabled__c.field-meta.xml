@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assessment_Wizard_Enabled__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Enables or disables the Assessment Wizard module. When false, assessment wizard features are hidden from users.</description>
+    <externalId>false</externalId>
+    <label>Assessment Wizard Enabled</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

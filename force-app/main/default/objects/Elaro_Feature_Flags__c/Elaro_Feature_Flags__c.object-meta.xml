@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <description>Kill-switch feature flags for each major Elaro module. Hierarchy Custom Setting allows per-org and per-user overrides. All flags default to TRUE (enabled).</description>
+    <enableFeeds>false</enableFeeds>
+    <label>Elaro Feature Flags</label>
+    <visibility>Protected</visibility>
+</CustomObject>
