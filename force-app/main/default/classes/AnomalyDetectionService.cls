@@ -11,10 +11,12 @@
 public with sharing class AnomalyDetectionService {
     
     /**
-     * Detect anomalies in compliance data
+     * Detects anomalies in compliance data including unusual permissions, metadata changes, and access patterns.
+     *
      * @param framework Framework to analyze
      * @param daysBack Number of days to look back
      * @return List of detected anomalies
+     * @throws IllegalArgumentException if framework is blank
      */
     @AuraEnabled
     public static List<Anomaly> detectAnomalies(String framework, Integer daysBack) {

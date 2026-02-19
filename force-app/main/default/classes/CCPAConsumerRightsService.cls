@@ -231,6 +231,13 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     
     // Interface methods not applicable to CCPA (return null/empty)
     
+    /**
+     * Handles a rectification request (not applicable under CCPA).
+     *
+     * @param requestId The data subject request record ID
+     * @param corrections Map of field corrections to apply
+     * @return Map indicating CCPA does not include explicit right to rectification
+     */
     public Map<String, Object> handleRectificationRequest(Id requestId, Map<String, Object> corrections) {
         // CCPA doesn't have explicit rectification right, but can be handled via update
         return new Map<String, Object>{
@@ -239,6 +246,14 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
         };
     }
     
+    /**
+     * Handles a portability request by delegating to the Know request handler.
+     *
+     * @param requestId The data subject request record ID
+     * @param dataSubjectId The data subject identifier (Contact, Lead, etc.)
+     * @param format Requested export format (not used, delegates to Know request)
+     * @return Map containing personal information disclosure from Know request
+     */
     public Map<String, Object> handlePortabilityRequest(Id requestId, Id dataSubjectId, String format) {
         // CCPA doesn't have explicit portability right, but can provide data export
         return handleKnowRequest(requestId, dataSubjectId);
