@@ -76,6 +76,9 @@ coverage/
 sf/
 scanner-reports/
 
+# Review state (Solentra Codebase Review System)
+.review-state/
+
 # Temporary documentation and analysis files
 FAILED_PRS_SUMMARY.md
 *_TEMP.md

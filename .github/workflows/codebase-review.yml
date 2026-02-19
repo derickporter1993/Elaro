@@ -1,0 +1,250 @@
+name: Solentra Codebase Review v2.0
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "force-app/**"
+      - "force-app-healthcheck/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+env:
+  NODE_VERSION: "20.17.0"
+
+jobs:
+  auto-fail-gate:
+    name: Auto-Fail Gate (8 Kill Conditions)
+    runs-on: ubuntu-latest
+    outputs:
+      gate-passed: ${{ steps.gate.outputs.passed }}
+      gate-details: ${{ steps.gate.outputs.details }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Run Auto-Fail Gate Checks
+        id: gate
+        run: |
+          FAILED=0
+          DETAILS=""
+
+          # Gate 1: SOQL Injection (Database.query with string concat)
+          SOQL_INJECTION=$(grep -rn 'Database\.query\s*(' --include="*.cls" force-app/ force-app-healthcheck/ 2>/dev/null | grep -v 'queryWithBinds' | grep '+' || true)
+          if [ -n "$SOQL_INJECTION" ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: SOQL Injection - Database.query with string concatenation found\n"
+            echo "::error::SOQL Injection detected: Database.query() with string concatenation"
+          else
+            DETAILS="${DETAILS}PASS: No SOQL injection patterns detected\n"
+          fi
+
+          # Gate 2: Hardcoded Credentials
+          CREDS=$(grep -rn -i 'password\s*=\s*["\x27].\+["\x27]\|api_key\s*=\s*["\x27].\+["\x27]\|secret\s*=\s*["\x27].\+["\x27]' --include="*.cls" force-app/ force-app-healthcheck/ 2>/dev/null | grep -v 'Test\|Mock\|test\|mock\|@IsTest' || true)
+          if [ -n "$CREDS" ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: Hardcoded credentials detected\n"
+            echo "::error::Hardcoded credentials found in source code"
+          else
+            DETAILS="${DETAILS}PASS: No hardcoded credentials detected\n"
+          fi
+
+          # Gate 3: Test Classes Exist
+          TEST_COUNT=$(find force-app/ force-app-healthcheck/ -name "*Test.cls" 2>/dev/null | wc -l)
+          if [ "$TEST_COUNT" -eq 0 ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: No test classes found (0 *Test.cls files)\n"
+            echo "::error::No test classes found"
+          else
+            DETAILS="${DETAILS}PASS: Found ${TEST_COUNT} test classes\n"
+          fi
+
+          # Gate 4: DML in Loop (simplified pattern detection)
+          DML_IN_LOOP=$(grep -rn -A 20 'for\s*(' --include="*.cls" force-app/ force-app-healthcheck/ 2>/dev/null | grep -E '^\s*(insert|update|delete|upsert|Database\.(insert|update|delete|upsert))\s' || true)
+          if [ -n "$DML_IN_LOOP" ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: DML statements detected inside loops\n"
+            echo "::error::DML in loop detected"
+          else
+            DETAILS="${DETAILS}PASS: No DML in loops detected\n"
+          fi
+
+          # Gate 5: SOQL in Loop
+          SOQL_IN_LOOP=$(grep -rn -A 20 'for\s*(' --include="*.cls" force-app/ force-app-healthcheck/ 2>/dev/null | grep '\[SELECT' || true)
+          if [ -n "$SOQL_IN_LOOP" ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: SOQL queries detected inside loops\n"
+            echo "::error::SOQL in loop detected"
+          else
+            DETAILS="${DETAILS}PASS: No SOQL in loops detected\n"
+          fi
+
+          # Gate 6: Missing Sharing Keyword
+          MISSING_SHARING=$(grep -rL 'sharing' --include="*.cls" force-app/main/default/classes/ 2>/dev/null | grep -v 'Test\.cls$\|__mdt\|Interface' || true)
+          if [ -n "$MISSING_SHARING" ]; then
+            COUNT=$(echo "$MISSING_SHARING" | wc -l)
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: ${COUNT} production classes missing sharing keyword\n"
+            echo "::error::${COUNT} classes missing sharing declaration"
+          else
+            DETAILS="${DETAILS}PASS: All production classes have sharing keywords\n"
+          fi
+
+          # Gate 7: Namespace Missing
+          NAMESPACE=$(python3 -c "import json; f=open('sfdx-project.json'); d=json.load(f); print(d.get('namespace',''))" 2>/dev/null || echo "")
+          if [ -z "$NAMESPACE" ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: Empty namespace in sfdx-project.json\n"
+            echo "::error::Empty namespace blocks managed package creation"
+          else
+            DETAILS="${DETAILS}PASS: Namespace configured: ${NAMESPACE}\n"
+          fi
+
+          # Gate 8: API Version Mismatch
+          API_VERSIONS=$(grep -rh '<apiVersion>' --include="*-meta.xml" force-app/ force-app-healthcheck/ 2>/dev/null | sort -u | wc -l)
+          if [ "$API_VERSIONS" -gt 2 ]; then
+            FAILED=1
+            DETAILS="${DETAILS}FAIL: ${API_VERSIONS} distinct API versions found (max 2 allowed)\n"
+            echo "::error::Too many API versions: ${API_VERSIONS}"
+          else
+            DETAILS="${DETAILS}PASS: ${API_VERSIONS} API version(s) found\n"
+          fi
+
+          # Set outputs
+          if [ "$FAILED" -eq 1 ]; then
+            echo "passed=false" >> $GITHUB_OUTPUT
+          else
+            echo "passed=true" >> $GITHUB_OUTPUT
+          fi
+          echo "details<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$DETAILS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Report Gate Results
+        if: always()
+        run: |
+          echo "## Auto-Fail Gate Results"
+          echo ""
+          echo "${{ steps.gate.outputs.details }}"
+          echo ""
+          if [ "${{ steps.gate.outputs.passed }}" = "true" ]; then
+            echo "All gates PASSED"
+          else
+            echo "::error::One or more auto-fail gates FAILED. Grade ceiling: F"
+          fi
+
+  code-analysis:
+    name: Code Analyzer (AppExchange Rules)
+    runs-on: ubuntu-latest
+    needs: auto-fail-gate
+    if: always()
+    outputs:
+      sev1-violations: ${{ steps.sfca.outputs.num-sev1-violations }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ">= 20.9.0"
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: ">= 11"
+          distribution: "zulu"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ">= 3.10"
+
+      - name: Install Salesforce CLI and Code Analyzer
+        run: |
+          npm install -g @salesforce/cli@latest
+          sf plugins install code-analyzer@latest
+
+      - name: Run Code Analyzer (AppExchange Rules)
+        id: sfca
+        uses: forcedotcom/run-code-analyzer@v2
+        with:
+          run-arguments: --workspace . --rule-selector AppExchange
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail on Critical Violations
+        if: steps.sfca.outputs.num-sev1-violations > 0
+        run: |
+          echo "::error::Found ${{ steps.sfca.outputs.num-sev1-violations }} severity-1 violations."
+          exit 1
+
+  ai-review:
+    name: AI Code Review (Multi-Agent)
+    runs-on: ubuntu-latest
+    needs: [auto-fail-gate, code-analysis]
+    if: always()
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are the Solentra Codebase Review System v2.0 orchestrator conducting a
+            multi-agent Salesforce code review against Spring '26 (API v66.0) standards.
+
+            Auto-Fail Gate Results: ${{ needs.auto-fail-gate.outputs.gate-passed }}
+            Code Analyzer Results: ${{ needs.code-analysis.outputs.sev1-violations }} severity-1 violations
+
+            Review ALL changed Apex (.cls), LWC (.js, .html), and metadata (.xml) files
+            in this PR. Apply all five review agent perspectives:
+
+            1. SECURITY: CRUD/FLS (WITH USER_MODE), sharing model, injection, credentials
+            2. GOVERNOR: SOQL/DML in loops, bulkification, async patterns (Queueable only)
+            3. TESTS: Assert class, meaningful assertions, no fake coverage, bulk tests
+            4. ARCHITECTURE: Separation of concerns, naming, ApexDoc, null safety
+            5. APPEXCHANGE: API version, Permission Sets, Custom Labels, lwc:if
+
+            ## AUTO-FAIL GATES
+            1. SOQL/DML without USER_MODE enforcement
+            2. SOQL or DML inside a loop
+            3. Hardcoded credentials
+            4. Test coverage below 75%
+            5. Missing sharing declaration
+            6. SOQL injection via string concatenation
+            7. XSS vulnerability
+            8. API version below v58.0
+
+            ## SCORING (1-5 per category, weighted)
+            - Security (25%) | Governor (20%) | Tests (15%) | Maintainability (15%)
+            - Architecture (10%) | API Compliance (5%) | AppExchange (5%) | Modernization (5%)
+
+            ## OUTPUT
+            For each file: Summary, Auto-Fail gates, Findings table, Scorecard, Grade.
+            Overall: PR Grade, Top 5 fixes, AppExchange Readiness (Ready/Needs Work/Not Ready).
+
+  review-summary:
+    name: Review Summary
+    runs-on: ubuntu-latest
+    needs: [auto-fail-gate, code-analysis, ai-review]
+    if: always()
+    steps:
+      - name: Summarize Review
+        run: |
+          echo "## Solentra Codebase Review v2.0 Summary"
+          echo ""
+          echo "| Check | Result |"
+          echo "|-------|--------|"
+          echo "| Auto-Fail Gate | ${{ needs.auto-fail-gate.outputs.gate-passed == 'true' && 'PASSED' || 'FAILED' }} |"
+          echo "| Code Analyzer | ${{ needs.code-analysis.result }} |"
+          echo "| AI Review | ${{ needs.ai-review.result }} |"
+          echo ""
+          if [ "${{ needs.auto-fail-gate.outputs.gate-passed }}" != "true" ]; then
+            echo "::warning::Auto-fail gate failed. Grade ceiling: F"
+          fi
+          if [ "${{ needs.code-analysis.result }}" != "success" ]; then
+            echo "::warning::Code Analyzer found violations"
+          fi
