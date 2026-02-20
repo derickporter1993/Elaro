@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CEO_Approver__c</fullName>
+    <label>CEO Approver</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipName>CEO_Approved_Disclosures</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <description>Chief Executive Officer responsible for executive sign-off. Used as the approver in the CEO Approval step of the SEC Disclosure Approval Process.</description>
+    <inlineHelpText>Select the CEO who will provide executive approval for this disclosure.</inlineHelpText>
+</CustomField>

@@ -320,4 +320,44 @@ private class SECDisclosureControllerTest {
         Assert.isTrue(updated.AG_Delay_Requested__c, 'AG delay should be flagged');
         Assert.areEqual(5, updated.AG_Delay_Duration_Days__c, 'Delay duration should be 5');
     }
+
+    /**
+     * Verify submitForApproval rejects when approver fields are missing.
+     */
+    @IsTest
+    static void testSubmitForApproval_missingApprovers() {
+        Materiality_Assessment__c ma = [SELECT Id FROM Materiality_Assessment__c LIMIT 1];
+        Id workflowId = SECDisclosureController.createWorkflow(String.valueOf(ma.Id), '8-K');
+
+        Boolean exceptionThrown = false;
+        Test.startTest();
+        try {
+            SECDisclosureController.submitForApproval(String.valueOf(workflowId), 'CISO submitting');
+        } catch (AuraHandledException e) {
+            exceptionThrown = true;
+            Assert.isTrue(
+                e.getMessage().contains('approver'),
+                'Exception should mention approver fields: ' + e.getMessage()
+            );
+        }
+        Test.stopTest();
+
+        Assert.isTrue(exceptionThrown, 'Should throw exception when approver fields are not populated');
+    }
+
+    /**
+     * Verify getApprovalStatus returns status map through the controller.
+     */
+    @IsTest
+    static void testGetApprovalStatus_returnsMap() {
+        Materiality_Assessment__c ma = [SELECT Id FROM Materiality_Assessment__c LIMIT 1];
+        Id workflowId = SECDisclosureController.createWorkflow(String.valueOf(ma.Id), '8-K');
+
+        Test.startTest();
+        Map<String, Object> status = SECDisclosureController.getApprovalStatus(String.valueOf(workflowId));
+        Test.stopTest();
+
+        Assert.isNotNull(status, 'Should return a non-null status map');
+        Assert.areEqual('Drafting', status.get('workflowStatus'), 'Workflow status should be Drafting');
+    }
 }

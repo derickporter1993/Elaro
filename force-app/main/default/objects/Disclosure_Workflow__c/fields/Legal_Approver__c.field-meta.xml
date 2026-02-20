@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Legal_Approver__c</fullName>
+    <label>Legal Approver</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Legal_Approved_Disclosures</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <description>Legal counsel responsible for reviewing the disclosure for regulatory accuracy. Used as the approver in the Legal Review step of the SEC Disclosure Approval Process.</description>
+    <inlineHelpText>Select the legal counsel who will review this disclosure.</inlineHelpText>
+</CustomField>

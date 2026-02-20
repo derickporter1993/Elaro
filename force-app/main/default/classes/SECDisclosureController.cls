@@ -228,6 +228,60 @@ public with sharing class SECDisclosureController {
     }
 
     /**
+     * Submits a disclosure workflow into the multi-step approval process.
+     * Approval chain: CISO (submitter) > Legal > CFO > CEO > Board > Ready to File.
+     * All approver lookup fields must be populated before submission.
+     *
+     * @param workflowId The Disclosure_Workflow__c record Id as string
+     * @param comments Optional submitter comments for the approval record
+     * @throws AuraHandledException if submission fails or approvers not configured
+     */
+    @AuraEnabled
+    public static void submitForApproval(String workflowId, String comments) {
+        try {
+            DisclosureWorkflowService.submitForApproval(
+                Id.valueOf(workflowId),
+                comments
+            );
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            ElaroLogger.error(
+                'SECDisclosureController.submitForApproval',
+                e.getMessage(),
+                e.getStackTraceString()
+            );
+            throw new AuraHandledException('Unable to submit for approval. Please try again.');
+        }
+    }
+
+    /**
+     * Retrieves the current approval status for a disclosure workflow,
+     * including the pending approver name and step details.
+     *
+     * @param workflowId The Disclosure_Workflow__c record Id as string
+     * @return Map containing approval status details
+     * @throws AuraHandledException if query fails
+     */
+    @AuraEnabled
+    public static Map<String, Object> getApprovalStatus(String workflowId) {
+        try {
+            return DisclosureWorkflowService.getApprovalStatus(
+                Id.valueOf(workflowId)
+            );
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            ElaroLogger.error(
+                'SECDisclosureController.getApprovalStatus',
+                e.getMessage(),
+                e.getStackTraceString()
+            );
+            throw new AuraHandledException('Unable to retrieve approval status. Please try again.');
+        }
+    }
+
+    /**
      * Retrieves all disclosure workflows for a materiality assessment.
      *
      * @param assessmentId The parent Materiality_Assessment__c record Id as string

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CFO_Approver__c</fullName>
+    <label>CFO Approver</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipName>CFO_Approved_Disclosures</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <description>Chief Financial Officer responsible for reviewing financial impact and accuracy. Used as the approver in the CFO Review step of the SEC Disclosure Approval Process.</description>
+    <inlineHelpText>Select the CFO who will review financial aspects of this disclosure.</inlineHelpText>
+</CustomField>

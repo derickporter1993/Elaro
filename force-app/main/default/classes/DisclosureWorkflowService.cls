@@ -194,6 +194,156 @@ public inherited sharing class DisclosureWorkflowService {
     }
 
     /**
+     * Submits a disclosure workflow into the declarative Salesforce Approval Process.
+     * The approval chain routes through Legal, CFO, CEO, and Board approvers
+     * as configured on the record's approver lookup fields.
+     *
+     * @param workflowId The Disclosure_Workflow__c record Id
+     * @param submitterComments Optional comments from the CISO submitting the disclosure
+     * @throws AuraHandledException if workflow not found, not in Drafting status,
+     *         approver fields are not populated, or submission fails
+     */
+    public static void submitForApproval(Id workflowId, String submitterComments) {
+        List<Disclosure_Workflow__c> workflows = [
+            SELECT Id, Status__c, Legal_Approver__c, CFO_Approver__c,
+                CEO_Approver__c, Board_Approver__c
+            FROM Disclosure_Workflow__c
+            WHERE Id = :workflowId
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (workflows.isEmpty()) {
+            throw new AuraHandledException('Disclosure workflow not found.');
+        }
+
+        Disclosure_Workflow__c workflow = workflows[0];
+
+        if (workflow.Status__c != 'Drafting') {
+            throw new AuraHandledException(
+                'Workflow must be in Drafting status to submit for approval. Current status: '
+                    + workflow.Status__c
+            );
+        }
+
+        if (workflow.Legal_Approver__c == null || workflow.CFO_Approver__c == null
+            || workflow.CEO_Approver__c == null || workflow.Board_Approver__c == null) {
+            throw new AuraHandledException(
+                'All approver fields (Legal, CFO, CEO, Board) must be populated before submitting for approval.'
+            );
+        }
+
+        workflow.Submitted_Date__c = DateTime.now();
+        workflow.Approval_Comments__c = submitterComments;
+
+        try {
+            update as user workflow;
+
+            Approval.ProcessSubmitRequest req = new Approval.ProcessSubmitRequest();
+            req.setObjectId(workflowId);
+            req.setSubmitterId(UserInfo.getUserId());
+            req.setComments(submitterComments ?? '');
+            req.setProcessDefinitionNameOrId('SEC_Disclosure_Approval');
+            req.setSkipEntryCriteria(false);
+
+            Approval.ProcessResult result = Approval.process(req);
+
+            if (!result.isSuccess()) {
+                throw new AuraHandledException(
+                    'Approval submission failed: '
+                        + String.join(getErrorMessages(result.getErrors()), '; ')
+                );
+            }
+
+            ElaroLogger.info(
+                'DisclosureWorkflowService.submitForApproval',
+                'Workflow ' + workflowId + ' submitted for approval by '
+                    + UserInfo.getUserId()
+            );
+        } catch (AuraHandledException e) {
+            throw e;
+        } catch (Exception e) {
+            ElaroLogger.error(
+                'DisclosureWorkflowService.submitForApproval',
+                e.getMessage(),
+                e.getStackTraceString()
+            );
+            throw new AuraHandledException(
+                'Failed to submit for approval. Please verify all approver fields are populated and try again.'
+            );
+        }
+    }
+
+    /**
+     * Retrieves the current approval status for a disclosure workflow,
+     * including the pending approver and process instance details.
+     *
+     * @param workflowId The Disclosure_Workflow__c record Id
+     * @return Map containing workflowStatus, submittedDate, approvalComments,
+     *         approvalProcessStatus, currentApproverName, stepStatus, and stepComments
+     * @throws AuraHandledException if workflow not found
+     */
+    public static Map<String, Object> getApprovalStatus(Id workflowId) {
+        List<Disclosure_Workflow__c> workflows = [
+            SELECT Id, Status__c, Submitted_Date__c, Approval_Comments__c
+            FROM Disclosure_Workflow__c
+            WHERE Id = :workflowId
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (workflows.isEmpty()) {
+            throw new AuraHandledException('Disclosure workflow not found.');
+        }
+
+        Map<String, Object> statusMap = new Map<String, Object>{
+            'workflowStatus' => workflows[0].Status__c,
+            'submittedDate' => workflows[0].Submitted_Date__c,
+            'approvalComments' => workflows[0].Approval_Comments__c
+        };
+
+        List<ProcessInstance> instances = [
+            SELECT Id, Status, CreatedDate,
+                (SELECT Id, ActorId, Actor.Name, StepStatus, Comments
+                 FROM StepsAndWorkitems
+                 ORDER BY CreatedDate DESC
+                 LIMIT 1)
+            FROM ProcessInstance
+            WHERE TargetObjectId = :workflowId
+            WITH USER_MODE
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+
+        if (!instances.isEmpty()) {
+            ProcessInstance pi = instances[0];
+            statusMap.put('approvalProcessStatus', pi.Status);
+            if (!pi.StepsAndWorkitems.isEmpty()) {
+                ProcessInstanceHistory step = pi.StepsAndWorkitems[0];
+                statusMap.put('currentApproverName', step.Actor.Name);
+                statusMap.put('stepStatus', step.StepStatus);
+                statusMap.put('stepComments', step.Comments);
+            }
+        }
+
+        return statusMap;
+    }
+
+    /**
+     * Extracts error messages from a list of Database.Error objects.
+     *
+     * @param errors The list of Database.Error objects from a failed operation
+     * @return List of error message strings
+     */
+    private static List<String> getErrorMessages(List<Database.Error> errors) {
+        List<String> messages = new List<String>();
+        for (Database.Error err : errors) {
+            messages.add(err.getMessage());
+        }
+        return messages;
+    }
+
+    /**
      * Validates whether a status transition is allowed.
      *
      * @param currentStatus The current workflow status

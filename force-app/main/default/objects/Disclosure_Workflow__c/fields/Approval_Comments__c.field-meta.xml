@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_Comments__c</fullName>
+    <label>Approval Comments</label>
+    <type>LongTextArea</type>
+    <length>32768</length>
+    <visibleLines>4</visibleLines>
+    <required>false</required>
+    <description>Accumulated comments from all approval steps. Updated at each stage of the approval process to maintain a full audit trail of reviewer feedback.</description>
+    <inlineHelpText>Comments from the approval process reviewers.</inlineHelpText>
+</CustomField>

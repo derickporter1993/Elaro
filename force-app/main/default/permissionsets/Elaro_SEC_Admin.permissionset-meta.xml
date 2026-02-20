@@ -24,6 +24,37 @@
         <modifyAllRecords>true</modifyAllRecords>
     </objectPermissions>
 
+    <fieldPermissions>
+        <field>Disclosure_Workflow__c.Legal_Approver__c</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Disclosure_Workflow__c.CFO_Approver__c</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Disclosure_Workflow__c.CEO_Approver__c</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Disclosure_Workflow__c.Board_Approver__c</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Disclosure_Workflow__c.Approval_Comments__c</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Disclosure_Workflow__c.Submitted_Date__c</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+
     <classAccesses>
         <apexClass>SECDisclosureController</apexClass>
         <enabled>true</enabled>

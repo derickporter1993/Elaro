@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Board_Approver__c</fullName>
+    <label>Board Approver</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Board_Approved_Disclosures</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <description>Board representative responsible for final governance review. Used as the approver in the Board Review step of the SEC Disclosure Approval Process.</description>
+    <inlineHelpText>Select the board representative who will provide final governance approval.</inlineHelpText>
+</CustomField>
