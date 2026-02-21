@@ -1,272 +1,74 @@
 # Elaro
 
-**The AI Compliance Brain for Salesforce — Configuration drift detection, audit evidence automation, and intelligent compliance analysis for regulated organizations.**
+**AI-Powered Compliance & DevOps Platform for Salesforce**
 
-_Current: v3.0 — Unified Enterprise Platform_
+Automated compliance monitoring, audit evidence generation, and DevOps intelligence for regulated organizations.
 
 <div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Salesforce API](https://img.shields.io/badge/Salesforce-v66.0-blue.svg)](https://developer.salesforce.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-success.svg)](.github/workflows)
-[![Code Quality](https://img.shields.io/badge/Code%20Quality-Passing-brightgreen.svg)](.github/workflows/elaro-ci.yml)
-[![Security Scan](https://img.shields.io/badge/Security-Scanned-blue.svg)](.github/workflows/elaro-ci.yml)
-[![Test Coverage](https://img.shields.io/badge/Coverage-85%25+-success.svg)](force-app/main/default/classes)
 
-[Quick Start](#quick-start) • [Sample Report](examples/compliance-baseline-report-sample.md) • [Who It's For](#who-its-for) • [Roadmap](docs/ROADMAP.md) • [Documentation](docs/)
+[Quick Start](#quick-start) | [Architecture](#architecture) | [Documentation](docs/) | [Contributing](CONTRIBUTING.md)
 
 </div>
 
 ---
 
-## What is Elaro?
+## Overview
 
-Elaro makes your Salesforce org **audit-ready and protected from configuration drift** in 24 hours.
+Elaro is a **2GP managed package** for Salesforce that automates compliance across 14 regulatory frameworks. It monitors configuration drift, scores compliance posture, generates audit evidence, and provides AI-powered risk analysis — all within your Salesforce org.
 
-**Today (v3.0)**: Elaro continuously monitors your Salesforce configuration for compliance violations, permission sprawl, and undocumented changes — then generates audit evidence and a baseline compliance report that regulators actually want to see.
+### Supported Frameworks
 
-**Tomorrow (v1.5+)**: Elaro evolves into an **AI Compliance Brain** that doesn't just detect drift, but interprets the _intent, impact, and compliance reasoning_ behind every change — answering questions no other tool can answer.
+HIPAA | SOC 2 | PCI-DSS | GDPR | CCPA | GLBA | ISO 27001 | FINRA | FedRAMP | CMMC 2.0 | SEC Cybersecurity | NIS2 | DORA | AI Governance (EU AI Act / NIST AI RMF)
 
-**Think of it as**: Your AI compliance analyst that works 24/7, understands regulatory frameworks, and speaks both technical and auditor language.
+### By the Numbers
 
----
-
-## Current Status
-
-**Grade: B+ (86/100)** - Significant improvements from code review remediation
-
-### Recent Improvements (January-February 2026)
-
-- ✅ **Security**: Integrated ElaroSecurityUtils across all classes
-- ✅ **Deployment**: 207/207 Apex classes deployed (100% - up from 55%)
-- ✅ **Git**: Main branch synced, cleaned up abandoned branches
-- ✅ **Tests**: Added critical test coverage for security utilities
-- ✅ **Code Quality**: Removed dead code, fixed all compilation errors
-- ✅ **CI/CD**: Automated PR merging and status monitoring ([docs](docs/archive/loose/PR_AUTO_MERGE.md))
-
-### Component Status
-
-- ✅ **100% of LWC components** deployed (34 active)
-- ✅ **100% of custom objects** deployed (46 objects)
-- ✅ **100% of Apex classes** deployed (207/207)
-- ✅ **100% of UI components** deployed
-- ✅ **All SOQL queries secured** (WITH USER_MODE - Spring '26 standard)
-
-See [REMEDIATION_SUMMARY.md](REMEDIATION_SUMMARY.md) for detailed changes and [SYNC_STATUS.md](SYNC_STATUS.md) for current sync status.
+| Metric | Count |
+|--------|-------|
+| Apex Classes | 349 |
+| LWC Components | 57 |
+| Custom Objects & Platform Events | 72 |
+| Apex Triggers | 5 |
+| Permission Sets | 8 |
+| Compliance Frameworks | 14 |
 
 ---
 
-## Why This Exists
-
-- **Audits fail** because nobody can explain who changed what and why
-- **Regulated orgs** can't afford Salesforce misconfigurations or permission sprawl
-- **Existing tools** are too complex/expensive or not tailored to nonprofits and smaller regulated teams
-- **Elaro** gives them a simple, opinionated compliance guardrail + evidence engine
-
----
-
-## Who It's For
-
-Elaro is built for **regulated organizations using Salesforce**:
-
-- 🏥 **Healthcare**: HIPAA compliance, PHI protection, audit trails
-- 🏛️ **Government & Nonprofits**: FedRAMP, FISMA, NIST, grants management, donor privacy
-- 💰 **Financial Services**: SOX, PCI-DSS, GLBA, transaction auditing, privacy notices
-- 🏢 **Any Regulated Org**: SOC 2, GDPR, CCPA, ISO 27001, or compliance frameworks requiring audit evidence
-
-If you're spending weeks preparing for audits, manually reviewing permissions, or can't explain recent configuration changes — Elaro is for you.
-
----
-
-## What v3.0 Does Today
-
-### 1. **Compliance Baseline Scan** 📊
-
-Generates a comprehensive compliance baseline report showing:
-
-- Audit Readiness Score (0-100)
-- Top 5 compliance risks ranked by severity
-- Permissions overview (who has access to what)
-- Sharing rules and data access analysis
-- Compliance checklist across 10 frameworks: HIPAA, SOC 2, NIST, FedRAMP, GDPR, SOX, PCI-DSS, CCPA, GLBA, ISO 27001
-
-**📄 [View Sample Report](examples/compliance-baseline-report-sample.md)**
-
-### 2. **Configuration Drift Detection** 🔍
-
-Tracks Salesforce metadata changes in real-time:
-
-- Profile & permission set modifications
-- Sharing rule changes
-- Object & field-level security updates
-- Setup changes without change control tickets
-- Unreviewed production changes
-
-**Alerts you when**: High-risk changes happen (e.g., "Modify All Data" permission granted)
-
-### 3. **Audit Evidence Export** 📁
-
-Automatically collects audit evidence:
-
-- Setup Audit Trail exports
-- Field History Tracking data
-- Event Monitoring logs (if Shield is enabled)
-- Permission set assignment history
-- Correlation IDs for tracing changes across systems
-
-**Export formats**: Markdown, CSV, JSON for compliance documentation
-
-### 4. **Audit Readiness Score** 🎯
-
-Calculates a compliance score based on:
-
-- Permission sprawl (how many users have elevated access)
-- Audit trail coverage (% of objects with field history enabled)
-- Configuration drift (# of unreviewed changes)
-- Policy violations (OWD too permissive, no encryption, etc.)
-
-**Score updates**: Real-time as you fix issues
-
----
-
-## What v3.0 Does NOT Do (Non-Goals)
-
-To keep Elaro simple and focused, v3.0 intentionally:
-
-- ❌ **Does not replace SIEM**: Not a generic security information & event management tool
-- ❌ **Does not monitor every SaaS**: Salesforce only (multi-SaaS is v2+)
-- ❌ **Does not do complex AI governance**: AI-powered change explanations are v1.5+
-- ❌ **Does not prevent changes**: It detects and alerts; it doesn't block (approval workflows are future work)
-
-Elaro is a **compliance drift detector**, not a full GRC platform.
-
----
-
-## The Future: AI Compliance Intelligence
-
-Elaro is evolving into the world's first **AI Compliance Brain** — a system that doesn't just detect drift, but **interprets the meaning, intent, and compliance impact** of every change.
-
-**Vision**: Intelligence, not dashboards.
-
-Where competitors show logs, Elaro will provide judgment, context, and compliance reasoning.
-
-### Coming in v1.5 (Q2 2025) — AI-Assisted Remediation
-
-#### **Change Intent Analysis** 🧠
-
-The signature feature that sets Elaro apart — AI that understands the _why_ behind every change:
-
-**What competitors show**:
-
-```
-Permission Set "Financial_Data_Access" modified by j.smith@acme.org
-```
-
-**What Elaro shows**:
-
-```
-⚠️ High-Risk Change Detected
-
-Change: Permission Set "Financial_Data_Access" modified
-Changed By: j.smith@acme.org
-Risk Score: 8.7/10
-
-AI Analysis:
-This change grants 45 users "Modify All Data" permission, which:
-• Violates SOC2-CC6.3 (logical access controls)
-• Expands donor-data exposure by 340%
-• Bypasses approval workflow for financial records
-• Fails HIPAA "minimum necessary" access rule (§164.514(d))
-
-Compliance Impact:
-- HIPAA: ❌ Non-compliant
-- SOC 2: ❌ Control failure (CC6.1)
-- SOX: ❌ Segregation of duties violation
-
-Recommended Fix:
-Create granular permission set with access to:
-- Financial_Transactions__c (Read/Edit only)
-- Account.AnnualRevenue (Read only)
-
-Evidence Generated: Attached to audit trail
-```
-
-This level of reasoning is **impossible for competitors to match** without rebuilding their entire platform.
-
-#### **Automated Remediation Suggestions** 🛠️
-
-One-click fixes for common compliance violations:
-
-- Remove stale permission set assignments (users inactive >90 days)
-- Revert OWD settings to "Private" when changed without approval
-- Re-enable Field History Tracking on compliance-sensitive objects
-
-#### **Jira Integration** 🎫
-
-Auto-create tickets for high-risk changes with full compliance evidence attached.
-
----
-
-### Coming in v2.0 (Q4 2025) — Multi-Org Governance
-
-#### **Compliance Co-Pilot** 🤖
-
-Natural language interface for compliance queries:
-
-```
-You: "Show me all risky flows touching PII"
-Elaro: [Displays 12 flows with PII exposure risks, ranked by severity]
-
-You: "Generate SOC2 evidence for Q2"
-Elaro: [Exports audit-ready PDF with all Q2 evidence]
-
-You: "Why did our readiness score drop from 87 to 72?"
-Elaro: "3 high-risk changes detected:
-1. 23 users granted 'View All Data' without approval
-2. Patient_Records__c sharing changed to Public Read/Write
-3. Shield Platform Encryption disabled on SSN__c field"
-```
-
-#### **Cross-CRM Unified Governance** 🌐
-
-One compliance model across all your CRMs:
-
-- Salesforce
-- HubSpot
-- Dynamics 365
-- Zendesk
-- ServiceNow
-- Custom apps
-
-**The Moat**: Once Elaro builds this unified compliance graph, competitors cannot catch up without 3-4 years of development.
-
-#### **Predictive Risk Modeling** 📈
-
-Proactive alerts before violations happen:
-
-```
-⚡ Predictive Alert
-
-Based on recent admin behavior and automation dependencies,
-the upcoming Flow deployment has an 87% probability of causing
-HIPAA access violations.
-
-Suggested Action: Review Flow permissions before deployment.
-```
-
----
-
-### Why This Matters — Elaro's Uncopyable Differentiators
-
-1. **AI Change Intent Analysis** — Competitors show _what_ changed; Elaro explains _why it matters_
-2. **Automated Compliance Mapping** — Instant mapping to SOC2, HIPAA, NIST, FedRAMP, GDPR
-3. **Evidence Packs** — Auto-generated, auditor-ready documentation
-4. **Cross-CRM Intelligence** — Unified compliance model (impossible to copy quickly)
-5. **Nonprofit-Focused** — Purpose-built for regulated nonprofits (underserved market)
-
-**No one else is building this.**
-
-[See full roadmap →](ROADMAP.md)
+## Key Capabilities
+
+### Compliance Engine
+- **Multi-framework scoring** — Real-time compliance scores across all 14 frameworks
+- **Gap analysis** — Identifies control gaps per framework with remediation guidance
+- **Audit evidence packs** — Auto-generated, auditor-ready documentation (PDF, CSV, JSON)
+- **Compliance Copilot** — Natural language queries against your compliance posture
+
+### Configuration Drift Detection
+- **Real-time monitoring** — Platform Events capture permission, sharing, and metadata changes
+- **Risk scoring** — Every change scored by compliance impact (Critical/High/Medium/Low)
+- **Alert routing** — Slack, Teams, PagerDuty, ServiceNow, email, and mobile push notifications
+- **Audit trail correlation** — Links changes to change control tickets
+
+### DevOps Intelligence
+- **Governor limit tracking** — CPU, heap, SOQL, DML monitoring with threshold alerts
+- **API usage forecasting** — Predicts limit exhaustion before it happens
+- **Flow execution monitoring** — Tracks flow runs, faults, and performance
+- **Deployment metrics** — Job tracking with test pass/fail analysis
+
+### AI & Reasoning
+- **AI risk prediction** — Identifies high-risk changes before they cause violations
+- **Change intent analysis** — Explains the compliance impact of configuration changes
+- **Reasoning engine** — Traces violation root causes across the compliance graph
+- **AI Governance module** — EU AI Act and NIST AI RMF compliance tracking
+
+### Enterprise Features
+- **Multi-org management** — Monitor compliance across connected orgs
+- **Trust Center** — Public compliance status page for customers
+- **Blockchain verification** — Tamper-proof audit evidence
+- **Segregation of duties** — Automated SoD conflict detection
+- **Data retention enforcement** — Policy-driven record lifecycle management
 
 ---
 
@@ -274,481 +76,161 @@ Suggested Action: Review Flow permissions before deployment.
 
 ### Prerequisites
 
-- Salesforce org (Production, Sandbox, or Scratch Org)
-- Salesforce CLI (`sf` or `sfdx`) installed
-- DevHub org authenticated (for scratch orgs)
+- Salesforce org (Enterprise Edition or higher)
+- [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) (`sf`) installed
+- Node.js 20+ (for local development)
 
-### Installation
-
-#### Option 1: Deploy to Existing Org
+### Deploy to an Org
 
 ```bash
-# Clone the repo
 git clone https://github.com/derickporter1993/elaro.git
 cd elaro
+npm install
 
-# Authenticate to your Salesforce org
+# Authenticate to your org
 sf org login web --alias myorg
 
-# Deploy the package
+# Deploy
 sf project deploy start --target-org myorg
 
 # Assign permissions
 sf org assign permset --name Elaro_Admin --target-org myorg
 
-# Open the org
+# Open
 sf org open --target-org myorg
 ```
 
-#### Option 2: Create Scratch Org (for testing)
+### Create a Scratch Org
 
 ```bash
-# Run the initialization script
-./scripts/orgInit.sh
+sf org create scratch \
+  --definition-file config/project-scratch-def.json \
+  --duration-days 30 \
+  --alias elaro-dev
 
-# This will:
-# - Create a 7-day scratch org
-# - Push source code
-# - Assign Elaro_Admin permission set
-# - Open the org in your browser
-```
-
-### Run Your First Compliance Scan
-
-1. **Navigate to Elaro** in the App Launcher
-2. **Click "Run Baseline Scan"** on the dashboard
-3. **Wait 30-60 seconds** while Elaro analyzes your org
-4. **View your Audit Readiness Score** and top risks
-5. **Export the report** (Markdown or PDF) for your compliance team
-
----
-
-## Core Features in Detail
-
-### Compliance Baseline Scan
-
-**What it does**: Scans your Salesforce org's configuration and generates a compliance baseline report.
-
-**What it scans**:
-
-- Profiles and Permission Sets (elevated permissions, stale assignments)
-- Sharing Rules and OWD settings (over-permissioned objects)
-- Object and Field-Level Security (sensitive data exposure)
-- Audit Trail configuration (Field History, Event Monitoring)
-- Platform Encryption status (Shield enabled/disabled)
-
-**How to use**:
-
-```apex
-// Programmatically trigger a scan
-ComplianceBaselineScanner scanner = new ComplianceBaselineScanner();
-ComplianceReport report = scanner.runScan();
-System.debug('Audit Readiness Score: ' + report.getScore());
-```
-
-Or use the Lightning Web Component dashboard (navigate to Elaro app).
-
----
-
-### Configuration Drift Detection
-
-**What it does**: Monitors Setup Audit Trail and Field History for configuration changes.
-
-**What it tracks**:
-
-- Profile/Permission Set modifications
-- Sharing Rule changes
-- Custom Object/Field changes
-- User permission assignments
-- Integration/Connected App changes
-
-**How it works**:
-
-1. **Platform Events**: Elaro listens to Salesforce Platform Events for real-time changes
-2. **Scheduled Jobs**: Runs hourly to poll Setup Audit Trail API
-3. **Risk Scoring**: Each change is scored based on impact (Critical/High/Medium/Low)
-4. **Alerting**: High-risk changes trigger Slack/email notifications
-
-**Sample alert**:
-
-```
-⚠️ Elaro Drift Alert
-
-Change: Permission Set Modified
-Object: Financial_Data_Access
-Changed By: j.smith@acme.org
-Risk Level: 🔴 High
-Reason: Grants "Modify All Data" without change control ticket
-Action Required: Review and approve or rollback
-```
-
-**Schedule automatic scans**:
-
-```bash
-# Run this script to schedule hourly drift detection
-./scripts/scheduleApiSnapshot.sh myorg
+sf project deploy start --target-org elaro-dev
+sf org assign permset --name Elaro_Admin --target-org elaro-dev
+sf org open --target-org elaro-dev
 ```
 
 ---
 
-### Audit Evidence Export
+## Architecture
 
-**What it does**: Collects and exports audit evidence required by auditors.
-
-**Evidence collected**:
-
-- Setup Audit Trail (last 180 days)
-- Field History records for compliance-sensitive objects
-- Permission set assignment changes
-- Login history and session activity (if Event Monitoring enabled)
-
-**Export formats**:
-
-- **Markdown**: Human-readable reports
-- **CSV**: For import into GRC tools
-- **JSON**: For SIEM integration
-
-**Export a compliance report**:
-
-```bash
-# Using Salesforce CLI
-sf apex run --file scripts/exportEvidenceReport.apex --target-org myorg
-
-# Or use the LWC dashboard
-# Navigate to Elaro → Reports → Export Compliance Evidence
-```
-
----
-
-### Audit Readiness Score
-
-**How it's calculated**:
-
-| Factor                   | Weight | Criteria                                                     |
-| ------------------------ | ------ | ------------------------------------------------------------ |
-| **Permission Sprawl**    | 30%    | # of users with "Modify All" or "View All" permissions       |
-| **Audit Trail Coverage** | 25%    | % of compliance-sensitive objects with Field History enabled |
-| **Configuration Drift**  | 20%    | # of unreviewed high-risk changes in last 30 days            |
-| **Encryption Status**    | 15%    | Shield Platform Encryption enabled for PHI/PII fields        |
-| **Policy Compliance**    | 10%    | OWD settings, session timeout, password policy               |
-
-**Example score calculation**:
+Elaro is structured as two 2GP managed packages with a TypeScript CLI monorepo:
 
 ```
-Base Score: 100
-
-Deductions:
-- 127 users with "Modify All Data": -20 points
-- Field History not enabled on Patient_Records__c: -10 points
-- 34 unreviewed changes: -15 points
-- Shield Platform Encryption disabled: -10 points
-- OWD set to "Public Read/Write" on 2 objects: -8 points
-
-Final Score: 100 - 63 = 37/100 (🔴 Critical)
+elaro/
+├── force-app/                          # Main Elaro 2GP (elaro namespace)
+│   └── main/default/
+│       ├── classes/                    # Apex classes
+│       ├── lwc/                        # Lightning Web Components
+│       ├── objects/                    # Custom objects & platform events
+│       ├── triggers/                   # Apex triggers
+│       └── permissionsets/             # Permission sets
+├── force-app-healthcheck/              # Health Check 2GP (elaroHC namespace)
+│   └── main/default/
+│       ├── classes/                    # Health Check Apex
+│       └── lwc/                        # Health Check LWC
+├── platform/                           # TypeScript monorepo (Turborepo)
+│   └── packages/
+│       ├── cli/                        # elaro CLI
+│       ├── sf-client/                  # Salesforce API client
+│       ├── types/                      # Shared types
+│       └── masking/                    # Data masking utilities
+├── config/                             # Salesforce & PMD config
+├── scripts/                            # Automation scripts
+└── docs/                               # Documentation
 ```
 
-**Improving your score**:
+### Core Patterns
 
-1. Follow the "Suggested Actions" in your baseline report
-2. Re-run the scan after making changes
-3. Track score improvements over time
+| Pattern | Purpose |
+|---------|---------|
+| **ComplianceServiceFactory** + **IComplianceModule** | Extensible module registration for compliance frameworks |
+| **ElaroLogger** | Structured logging via Platform Events (survives transaction rollback) |
+| **ElaroSecurityUtils** | Defense-in-depth security utilities |
+| **ElaroConstants** | Centralized constants |
+| **ComplianceTestDataFactory** | Shared test data factory |
+| **Transaction Finalizers** | Error logging on all Queueable classes |
 
----
+### Security Model
 
-## Dashboard Components
-
-Elaro includes Lightning Web Components for real-time monitoring:
-
-### 1. **System Monitor Dashboard**
-
-- Governor limit tracking (CPU, Heap, SOQL, DML)
-- Real-time alerts when limits are approaching
-- Historical trending
-
-**Location**: `force-app/main/default/lwc/systemMonitorDashboard/`
-
-### 2. **API Usage Dashboard**
-
-- API call consumption tracking
-- Predict when you'll hit API limits
-- Integration health monitoring
-
-**Location**: `force-app/main/default/lwc/apiUsageDashboard/`
-
-### 3. **Flow Execution Monitor**
-
-- Track Flow runs, faults, and performance
-- Identify slow or failing automations
-- Audit trail for business logic changes
-
-**Location**: `force-app/main/default/lwc/flowExecutionMonitor/`
-
-### 4. **Performance Alert Panel**
-
-- Real-time alerts for threshold breaches
-- Configurable alert rules
-- Integration with Slack/Jira
-
-**Location**: `force-app/main/default/lwc/performanceAlertPanel/`
-
----
-
-## Configuration
-
-### Elaro Settings
-
-Configure compliance thresholds in **Elaro Settings** (Custom Settings):
-
-| Setting        | Description                       | Default |
-| -------------- | --------------------------------- | ------- |
-| `CPU_Warn__c`  | CPU time warning threshold (ms)   | 8000    |
-| `CPU_Crit__c`  | CPU time critical threshold (ms)  | 9500    |
-| `Heap_Warn__c` | Heap size warning threshold (KB)  | 10000   |
-| `Heap_Crit__c` | Heap size critical threshold (KB) | 11500   |
-| `SOQL_Warn__c` | SOQL query warning threshold      | 80      |
-| `SOQL_Crit__c` | SOQL query critical threshold     | 95      |
-
-**Access**: Setup → Custom Settings → Elaro Settings → Manage
-
-### Alert Integrations
-
-Elaro supports multiple alert channels:
-
-#### Slack Integration
-
-1. Create a Slack Webhook URL: https://api.slack.com/messaging/webhooks
-2. Setup → Named Credentials → New Named Credential
-   - Label: `Slack_Webhook`
-   - URL: Your Slack webhook URL
-3. Test the integration:
-   ```apex
-   ElaroSlackNotifierQueueable.notifyAsync('🚨 Test alert from Elaro');
-   ```
-
-#### Jira Integration (Future)
-
-Coming in v1.5 — automatically create Jira tickets for high-risk changes.
+- All SOQL: `WITH USER_MODE` (enforces FLS, CRUD, and sharing)
+- All DML: `as user`
+- Dynamic SOQL: `Database.queryWithBinds()` only
+- Controllers: `with sharing`
+- Services: `inherited sharing`
+- System operations: `without sharing` (documented exceptions only)
 
 ---
 
 ## Development
 
-### Project Structure
-
-```
-elaro/
-├── force-app/main/default/          # Salesforce code
-│   ├── classes/                     # Apex classes
-│   │   ├── ApiUsageSnapshot.cls     # API usage tracking
-│   │   ├── PerformanceRuleEngine.cls # Alert rule evaluation
-│   │   ├── FlowExecutionLogger.cls  # Flow monitoring
-│   │   └── ElaroSlackNotifierQueueable.cls # Alert notifications
-│   ├── lwc/                         # Lightning Web Components
-│   │   ├── systemMonitorDashboard/  # Real-time monitoring UI
-│   │   ├── apiUsageDashboard/       # API usage dashboard
-│   │   ├── elaroDashboard/    # Main compliance dashboard
-│   │   └── complianceCopilot/       # AI compliance assistant
-│   ├── objects/                     # Custom Objects & Settings
-│   │   ├── Elaro_AI_Settings__c/ # AI configuration
-│   │   ├── Elaro_Compliance_Graph__b/ # Big Object for graph data
-│   │   └── Performance_Alert_History__c/ # Alert history
-│   └── permissionsets/              # Permission sets
-│       └── Elaro_Admin.permissionset-meta.xml
-├── scripts/                         # Automation scripts
-│   ├── orgInit.sh                   # Scratch org initialization
-│   ├── scheduleApiSnapshot.sh       # Schedule periodic scans
-│   └── get-all-prs-to-main.sh       # Get all PRs targeting main branch
-├── config/                          # Salesforce project config
-│   └── project-scratch-def.json     # Scratch org definition
-├── examples/                        # Sample outputs
-│   └── compliance-baseline-report-sample.md
-├── docs/                            # Documentation
-└── README.md
-```
-
-### Running Tests
+### Commands
 
 ```bash
-# Run all Apex tests
-sf apex run test --target-org myorg --code-coverage --result-format human
+# Code Quality
+npm run fmt              # Format with Prettier
+npm run fmt:check        # Check formatting
+npm run lint             # ESLint (max 3 warnings)
 
-# Run specific test class
-sf apex run test --target-org myorg --tests PerformanceRuleEngineTest
+# Testing
+npm run test:unit        # LWC Jest tests
+npm run test:unit:watch  # Watch mode
+sf apex run test -o <org> -c   # Apex tests with coverage
 
-# Current test coverage: 95%+
+# Validation
+npm run precommit        # fmt:check + lint + test:unit
+
+# Salesforce
+sf project deploy start -o <org>             # Deploy
+sf project deploy start -o <org> --dry-run   # Validate only
+
+# Security Scan
+sf scanner run --pmdconfig config/pmd-ruleset.xml --target force-app --format table
+
+# Platform CLI
+cd platform && npm install && npm run build
 ```
 
-### Code Quality
+### Test Standards
 
-```bash
-# Format code
-npm run fmt
+- **Coverage**: 85%+ per class (Salesforce requires 75% minimum)
+- **Assertions**: `Assert` class only — never `System.assertEquals`
+- **Naming**: `testMethodName_scenario_expectedResult`
+- **Structure**: Arrange/Act/Assert with `Test.startTest()` / `Test.stopTest()`
+- **Data**: `@TestSetup` + `ComplianceTestDataFactory` — never rely on org data
 
-# Check formatting
-npm run fmt:check
+### Git Workflow
 
-# Run linter
-npm run lint
+```
+feature/[ticket]-[description]    # Feature branches
+bugfix/[ticket]-[description]     # Bug fixes
+hotfix/[ticket]-[description]     # Production hotfixes
 ```
 
----
-
-## Roadmap
-
-### ✅ v3.0 (Current) - Unified Enterprise Platform
-
-- [x] Compliance Baseline Scan
-- [x] Configuration Drift Detection
-- [x] Audit Evidence Export
-- [x] Audit Readiness Score
-- [x] Slack alerting
-- [x] LWC dashboards (governor limits, API usage, Flow monitoring)
-- [x] AI Compliance Copilot
-- [x] Multi-framework compliance scoring (HIPAA, SOC2, NIST, FedRAMP, GDPR, SOX, PCI-DSS, CCPA, GLBA, ISO 27001)
-- [x] Enhanced error logging and correlation IDs
-- [x] Batched queries for governor limit optimization
-
-### 🚧 v1.5 (Next 3-6 months) - AI-Assisted Remediation
-
-- [ ] **AI Change Explanations**: GPT/Claude integration to explain why a change is risky
-- [ ] **Suggested Fixes**: Auto-generate remediation steps (e.g., "Create permission set to replace 'Modify All'")
-- [ ] **Jira Integration**: Auto-create tickets for high-risk changes
-- [ ] **Compliance Report Scheduler**: Email weekly/monthly reports to compliance team
-- [ ] **Mobile Alerts**: Push notifications for critical drift events
-
-### 🔮 v2.0 (6-12 months) - Multi-Org Governance
-
-- [ ] **Multi-Org Dashboard**: Monitor compliance across production, sandboxes, dev orgs
-- [ ] **Centralized Evidence Repository**: Store audit evidence from multiple orgs in a single location
-- [ ] **AI Governance**: Track Einstein/AI feature usage and compliance (e.g., GDPR Article 22)
-- [ ] **SIEM Export**: Push events to Splunk, DataDog, or other SIEM tools
-- [ ] **Custom Compliance Frameworks**: Define your own compliance rules beyond the 10 supported frameworks
-
-### 🌟 v3.0+ (Future) - Automated Remediation
-
-- [ ] **Auto-Remediation**: Automatically fix common drift issues (e.g., remove stale permission sets)
-- [ ] **Change Control Workflows**: Require approval before high-risk changes go live
-- [ ] **Policy-as-Code**: Define compliance policies in YAML, enforce via CI/CD
-- [ ] **AppExchange Listing**: Publish as managed package for easy installation
-
----
-
-## FAQ
-
-### Q: Does Elaro prevent users from making non-compliant changes?
-
-**A**: Not in v3.0. Elaro **detects** and **alerts** on drift, but doesn't block changes. Automated remediation and approval workflows are planned for v2+.
-
-### Q: Does Elaro require Shield Platform Encryption?
-
-**A**: No, but it will flag missing encryption as a compliance risk in your baseline report. If you need HIPAA or SOX compliance, Shield is strongly recommended.
-
-### Q: Can I use Elaro in a sandbox?
-
-**A**: Yes! We recommend testing in a sandbox first. Elaro works in Production, Sandbox, Scratch Orgs, and Developer Orgs.
-
-### Q: Does Elaro store data outside Salesforce?
-
-**A**: No. All data stays in your Salesforce org. Elaro does not send data to external servers (except for Slack/Jira if you configure those integrations).
-
-### Q: What about GDPR compliance?
-
-**A**: Elaro helps with GDPR by tracking access to personal data and providing audit evidence. See the [Compliance section in the full README](docs/compliance-frameworks.md) for details.
-
-### Q: Can I customize the Audit Readiness Score calculation?
-
-**A**: Not yet. Custom scoring is planned for v2. For now, the score is based on industry best practices across 10 compliance frameworks (HIPAA, SOC 2, NIST, FedRAMP, GDPR, SOX, PCI-DSS, CCPA, GLBA, ISO 27001).
-
----
-
-## Contributing
-
-Elaro is under active development. Contributions welcome!
-
-**Priority areas for v3.0+**:
-
-- Improved drift detection rules
-- Test coverage improvements (target 85%+)
-- Enhanced error handling and logging
-- Governor limit optimizations
-- Security enhancements
-
-**Before contributing**, please read our comprehensive [CONTRIBUTING.md](CONTRIBUTING.md) guide which covers:
-
-- Development setup and workflow
-- Coding standards (Apex security, bulkification, LWC patterns)
-- Testing requirements (85% coverage, governor limit tests)
-- Pull request process and review checklist
-- Issue reporting templates
-
-**Quick Start for Contributors**:
-
-```bash
-# 1. Fork and clone the repo
-git clone https://github.com/derickporter1993/elaro.git
-cd elaro
-
-# 2. Install dependencies
-npm install
-
-# 3. Create a scratch org
-./scripts/orgInit.sh
-
-# 4. Run quality checks before committing
-npm run precommit  # Runs formatting, linting, and unit tests
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for complete guidelines.
-
----
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
+Commit format: `type(scope): description` — e.g., `feat(compliance): add DORA framework module`
 
 ---
 
 ## Documentation
 
-### Installation & Setup
-
-- **📦 [Installation Guide](docs/INSTALLATION_GUIDE.md)** - Complete installation instructions with step-by-step configuration
-- **🔌 [External Services Guide](docs/EXTERNAL_SERVICES.md)** - Claude AI, Slack, PagerDuty, ServiceNow, Teams integration setup
-- **⚙️ Post-Install Configuration** - Named Credentials, AI settings, compliance frameworks
-
-### Security & Testing
-
-- **🔒 [PagerDuty Security Review](docs/PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md)** - Critical security findings and remediation
-- **🛡️ [Scanner Report Bundle](docs/SCANNER_REPORT_BUNDLE.md)** - AppExchange Code Analyzer guide and security scanning
-- **🧪 Test Utilities** - `ElaroTestUserFactory`, `ElaroTestDataFactory` for security testing
-
-### Development
-
-- **🤝 [Contributing Guide](CONTRIBUTING.md)** - Development workflow, coding standards, testing requirements
-- **📝 [Changelog](CHANGELOG.md)** - Release notes and version history
-- **🗺️ [Roadmap](ROADMAP.md)** - Feature roadmap and planned releases
-
-### Architecture & Reference
-
-- **📘 [Technical Deep Dive](TECHNICAL_DEEP_DIVE.md)** - Architecture and implementation details
-- **📚 [API Reference](API_REFERENCE.md)** - API documentation and code examples
-- **🤖 [Claude.md](CLAUDE.md)** - AI assistant guide for the codebase
-- **📋 [Compliance Frameworks Reference](docs/COMPLIANCE_FRAMEWORKS_CODE_REFERENCE.md)** - Framework code patterns
-
-### Examples & Reports
-
-- **📊 [Sample Compliance Report](examples/compliance-baseline-report-sample.md)** - Example compliance baseline report
-- **📁 [Examples Directory](examples/)** - Sample outputs and reports
-
-### Support
-
-- **🐛 [Report Issues](https://github.com/derickporter1993/elaro/issues)** - Bug reports and feature requests
-- **💬 [Discussions](https://github.com/derickporter1993/elaro/discussions)** - Community discussions and Q&A
-- **📧 Email Support**: support@elaro.io
-- **🔒 Security Issues**: security@elaro.io
+| Category | Docs |
+|----------|------|
+| **Getting Started** | [Installation Guide](docs/user/INSTALLATION_GUIDE.md) · [Setup Guide](docs/user/SETUP_GUIDE.md) · [Admin Guide](docs/user/ADMIN_GUIDE.md) |
+| **Architecture** | [Technical Deep Dive](docs/developer/TECHNICAL_DEEP_DIVE.md) · [Data Flows](docs/developer/DATA_FLOWS.md) · [ADRs](docs/architecture/) |
+| **Development** | [Contributing](CONTRIBUTING.md) · [API Reference](docs/developer/API_REFERENCE.md) · [External Services](docs/developer/EXTERNAL_SERVICES.md) |
+| **Security** | [Security Review Checklist](docs/security/SECURITY_REVIEW_CHECKLIST.md) · [FLS Audit](docs/security/FLS_AUDIT_REPORT.md) |
+| **AppExchange** | [Listing](docs/appexchange/APPEXCHANGE_LISTING.md) · [Security Review](docs/appexchange/SECURITY_REVIEW.md) |
+| **Operations** | [Operations Guide](docs/user/OPERATIONS_GUIDE.md) · [Changelog](docs/CHANGELOG.md) · [Roadmap](docs/ROADMAP.md) |
 
 ---
 
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
 ---
 
-_Elaro™ — Keep your Salesforce org audit-ready, every day._
+*Elaro — Compliance intelligence for Salesforce.*
