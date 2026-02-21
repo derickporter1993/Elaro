@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Elaro PMD Rules"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Custom PMD ruleset for Elaro. Inherits all default Apex rules with
+        project-specific overrides for test method naming conventions.
+    </description>
+
+    <!-- Include all default Apex rules -->
+    <rule ref="category/apex/bestpractices.xml" />
+    <rule ref="category/apex/codestyle.xml">
+        <exclude name="MethodNamingConventions" />
+    </rule>
+    <rule ref="category/apex/design.xml" />
+    <rule ref="category/apex/errorprone.xml" />
+    <rule ref="category/apex/performance.xml" />
+    <rule ref="category/apex/security.xml" />
+
+    <!-- Override MethodNamingConventions to allow underscores in test methods -->
+    <rule ref="category/apex/codestyle.xml/MethodNamingConventions">
+        <properties>
+            <!-- Production methods: standard camelCase -->
+            <property name="methodPattern" value="[a-z][a-zA-Z0-9]*" />
+            <!-- Test methods: allow test_Scenario_ExpectedResult pattern -->
+            <property name="testPattern" value="[a-z][a-zA-Z0-9_]*" />
+            <!-- Static methods: standard camelCase -->
+            <property name="staticPattern" value="[a-z][a-zA-Z0-9]*" />
+        </properties>
+    </rule>
+
+</ruleset>
