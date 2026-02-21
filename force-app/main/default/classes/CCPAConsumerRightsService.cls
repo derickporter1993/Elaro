@@ -1,26 +1,26 @@
 /**
  * CCPA Consumer Rights Service
  * Implements CCPA consumer rights: Know, Delete, Opt-Out
- * 
+ *
  * CCPA Key Requirements:
  * - Right to Know: Consumers can request disclosure of personal information collected
  * - Right to Delete: Consumers can request deletion of personal information
  * - Right to Opt-Out: Consumers can opt-out of sale of personal information
- * 
+ *
  * @author Elaro
  * @version 3.0
  * @since v3.1.0 (Spring '26)
  * @group Compliance Framework
  */
 public with sharing class CCPAConsumerRightsService extends ComplianceServiceBase implements IDataSubjectService {
-    
+
     private static final String FRAMEWORK = 'CCPA';
-    
+
     /** {@inheritDoc} Returns 'CCPA'. */
     protected override String getFrameworkName() {
         return FRAMEWORK;
     }
-    
+
     /**
      * Handle "Know" request (CCPA Right to Know)
      * Similar to GDPR Article 15 access request
@@ -31,7 +31,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     public Map<String, Object> handleAccessRequest(Id requestId, Id dataSubjectId) {
         return handleKnowRequest(requestId, dataSubjectId);
     }
-    
+
     /**
      * Handle "Know" request (CCPA Right to Know)
      * @param requestId CCPA_Request__c record ID
@@ -41,25 +41,25 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     public Map<String, Object> handleKnowRequest(Id requestId, Id dataSubjectId) {
         validateRequired('requestId', requestId);
         validateRequired('dataSubjectId', dataSubjectId);
-        
+
         try {
             logDebug(LoggingLevel.INFO, 'Processing CCPA Know request', new Map<String, Object>{
                 'requestId' => requestId,
                 'dataSubjectId' => dataSubjectId
             });
-            
+
             // Collect personal information
             Map<String, Object> personalInfo = collectPersonalInformation(dataSubjectId);
-            
+
             // Check for data sales
             List<Map<String, Object>> dataSales = identifyDataSales(dataSubjectId);
-            
-            logAuditEvent('CCPA_KNOW_REQUEST', 'CCPA_Request__c', requestId, 
+
+            logAuditEvent('CCPA_KNOW_REQUEST', 'CCPA_Request__c', requestId,
                 JSON.serialize(new Map<String, Object>{
                     'dataSubjectId' => dataSubjectId,
                     'categoriesCollected' => personalInfo.keySet()
                 }));
-            
+
             return new Map<String, Object>{
                 'success' => true,
                 'requestId' => requestId,
@@ -78,7 +78,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             throw new AuraHandledException(getSanitizedErrorMessage(errorCategory));
         }
     }
-    
+
     /**
      * Handle "Delete" request (CCPA Right to Delete)
      * Similar to GDPR Article 17 erasure request
@@ -90,7 +90,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     public Map<String, Object> handleErasureRequest(Id requestId, Id dataSubjectId, String reason) {
         return handleDeleteRequest(requestId, dataSubjectId);
     }
-    
+
     /**
      * Handle "Delete" request (CCPA Right to Delete)
      * @param requestId CCPA_Request__c record ID
@@ -100,13 +100,13 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     public Map<String, Object> handleDeleteRequest(Id requestId, Id dataSubjectId) {
         validateRequired('requestId', requestId);
         validateRequired('dataSubjectId', dataSubjectId);
-        
+
         try {
             logDebug(LoggingLevel.INFO, 'Processing CCPA Delete request', new Map<String, Object>{
                 'requestId' => requestId,
                 'dataSubjectId' => dataSubjectId
             });
-            
+
             // Check for exceptions (e.g., legal obligations)
             Boolean canDelete = validateDeleteAllowed(dataSubjectId);
             if (!canDelete) {
@@ -116,16 +116,16 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
                     'correlationId' => correlationId
                 };
             }
-            
+
             // Delete personal information
             Integer recordsDeleted = performDeletion(dataSubjectId);
-            
-            logAuditEvent('CCPA_DELETE_REQUEST', 'CCPA_Request__c', requestId, 
+
+            logAuditEvent('CCPA_DELETE_REQUEST', 'CCPA_Request__c', requestId,
                 JSON.serialize(new Map<String, Object>{
                     'dataSubjectId' => dataSubjectId,
                     'recordsDeleted' => recordsDeleted
                 }));
-            
+
             return new Map<String, Object>{
                 'success' => true,
                 'requestId' => requestId,
@@ -142,7 +142,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             throw new AuraHandledException(getSanitizedErrorMessage(errorCategory));
         }
     }
-    
+
     /**
      * Handle "Opt-Out" request (CCPA Right to Opt-Out of Sale)
      * @param requestId CCPA_Request__c record ID
@@ -152,22 +152,22 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     public Map<String, Object> handleOptOutRequest(Id requestId, Id dataSubjectId) {
         validateRequired('requestId', requestId);
         validateRequired('dataSubjectId', dataSubjectId);
-        
+
         try {
             logDebug(LoggingLevel.INFO, 'Processing CCPA Opt-Out request', new Map<String, Object>{
                 'requestId' => requestId,
                 'dataSubjectId' => dataSubjectId
             });
-            
+
             // Process opt-out (would integrate with CCPAOptOutService)
             Boolean optOutProcessed = processOptOut(dataSubjectId);
-            
-            logAuditEvent('CCPA_OPT_OUT_REQUEST', 'CCPA_Request__c', requestId, 
+
+            logAuditEvent('CCPA_OPT_OUT_REQUEST', 'CCPA_Request__c', requestId,
                 JSON.serialize(new Map<String, Object>{
                     'dataSubjectId' => dataSubjectId,
                     'optOutProcessed' => optOutProcessed
                 }));
-            
+
             return new Map<String, Object>{
                 'success' => optOutProcessed,
                 'requestId' => requestId,
@@ -183,7 +183,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             throw new AuraHandledException(getSanitizedErrorMessage(errorCategory));
         }
     }
-    
+
     /**
      * Verify identity of consumer making request
      * @param dataSubjectId The data subject identifier
@@ -193,7 +193,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
     public Boolean verifyIdentity(Id dataSubjectId, Map<String, Object> verificationData) {
         validateRequired('dataSubjectId', dataSubjectId);
         validateRequired('verificationData', verificationData);
-        
+
         try {
             // Query consumer record
             List<Contact> contacts = [
@@ -203,13 +203,13 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
                 WITH USER_MODE
                 LIMIT 1
             ];
-            
+
             if (contacts.isEmpty()) {
                 return false;
             }
-            
+
             Contact consumer = contacts[0];
-            
+
             // Verify email if provided
             if (verificationData.containsKey('email')) {
                 String providedEmail = (String)verificationData.get('email');
@@ -217,9 +217,9 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
                     return false;
                 }
             }
-            
+
             // Additional verification logic can be added here
-            
+
             return true;
         } catch (Exception e) {
             logDebug(LoggingLevel.ERROR, 'Identity verification failed', new Map<String, Object>{
@@ -229,9 +229,9 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             return false;
         }
     }
-    
+
     // Interface methods not applicable to CCPA (return null/empty)
-    
+
     /**
      * Handles a rectification request. CCPA does not include an explicit right to rectification,
      * so this returns an unsupported status. Included for IDataSubjectService interface compliance.
@@ -247,7 +247,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             'message' => 'CCPA does not include explicit right to rectification'
         };
     }
-    
+
     /**
      * Handles a data portability request. CCPA does not include an explicit portability right,
      * but delegates to the Know request handler to provide a data export.
@@ -261,12 +261,12 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
         // CCPA doesn't have explicit portability right, but can provide data export
         return handleKnowRequest(requestId, dataSubjectId);
     }
-    
+
     // Private helper methods
-    
+
     private Map<String, Object> collectPersonalInformation(Id dataSubjectId) {
         Map<String, Object> personalInfo = new Map<String, Object>();
-        
+
         // Query Contact data
         List<Contact> contacts = [
             SELECT Id, FirstName, LastName, Email, Phone, MailingAddress
@@ -275,7 +275,7 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
             WITH USER_MODE
             LIMIT 1
         ];
-        
+
         if (!contacts.isEmpty()) {
             Contact c = contacts[0];
             personalInfo.put('contact', new Map<String, Object>{
@@ -285,27 +285,27 @@ public with sharing class CCPAConsumerRightsService extends ComplianceServiceBas
                 'phone' => c.Phone
             });
         }
-        
+
         return personalInfo;
     }
-    
+
     private List<Map<String, Object>> identifyDataSales(Id dataSubjectId) {
         // Check if consumer's data has been sold to third parties
         // This would query data sharing records
         return new List<Map<String, Object>>();
     }
-    
+
     private Boolean validateDeleteAllowed(Id dataSubjectId) {
         // Check for legal obligations that prevent deletion
         return true;
     }
-    
+
     private Integer performDeletion(Id dataSubjectId) {
         // Delete personal information records
         // Similar to GDPR erasure
         return 0;
     }
-    
+
     private Boolean processOptOut(Id dataSubjectId) {
         // Process opt-out (would integrate with CCPAOptOutService)
         return true;

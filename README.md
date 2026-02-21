@@ -38,44 +38,49 @@ Elaro is built for **regulated organizations running Salesforce**:
 
 ### By the Numbers
 
-| Metric | Count |
-|--------|-------|
-| Apex Classes | 349 |
-| LWC Components | 57 |
-| Custom Objects & Platform Events | 72 |
-| Apex Triggers | 5 |
-| Permission Sets | 8 |
-| Compliance Frameworks | 14 |
+| Metric                           | Count |
+| -------------------------------- | ----- |
+| Apex Classes                     | 349   |
+| LWC Components                   | 57    |
+| Custom Objects & Platform Events | 72    |
+| Apex Triggers                    | 5     |
+| Permission Sets                  | 8     |
+| Compliance Frameworks            | 14    |
 
 ---
 
 ## Key Capabilities
 
 ### Compliance Engine
+
 - **Multi-framework scoring** — Real-time compliance scores across all 14 frameworks
 - **Gap analysis** — Identifies control gaps per framework with remediation guidance
 - **Audit evidence packs** — Auto-generated, auditor-ready documentation (PDF, CSV, JSON)
 - **Compliance Copilot** — Natural language queries against your compliance posture
 
 ### Configuration Drift Detection
+
 - **Real-time monitoring** — Platform Events capture permission, sharing, and metadata changes
 - **Risk scoring** — Every change scored by compliance impact (Critical/High/Medium/Low)
 - **Alert routing** — Slack, Teams, PagerDuty, ServiceNow, email, and mobile push notifications
 - **Audit trail correlation** — Links changes to change control tickets
 
 ### DevOps Intelligence
+
 - **Governor limit tracking** — CPU, heap, SOQL, DML monitoring with threshold alerts
 - **API usage forecasting** — Predicts limit exhaustion before it happens
 - **Flow execution monitoring** — Tracks flow runs, faults, and performance
 - **Deployment metrics** — Job tracking with test pass/fail analysis
 
 ### AI & Reasoning
+
 - **AI risk prediction** — Identifies high-risk changes before they cause violations
 - **Change intent analysis** — Explains the compliance impact of configuration changes
 - **Reasoning engine** — Traces violation root causes across the compliance graph
 - **AI Governance module** — EU AI Act and NIST AI RMF compliance tracking
 
 ### Enterprise Features
+
 - **Multi-org management** — Monitor compliance across connected orgs
 - **Trust Center** — Public compliance status page for customers
 - **Blockchain verification** — Tamper-proof audit evidence
@@ -173,14 +178,14 @@ elaro/
 
 ### Core Patterns
 
-| Pattern | Purpose |
-|---------|---------|
-| **ComplianceServiceFactory** + **IComplianceModule** | Extensible module registration for compliance frameworks |
-| **ElaroLogger** | Structured logging via Platform Events (survives transaction rollback) |
-| **ElaroSecurityUtils** | Defense-in-depth security utilities |
-| **ElaroConstants** | Centralized constants |
-| **ComplianceTestDataFactory** | Shared test data factory |
-| **Transaction Finalizers** | Error logging on all Queueable classes |
+| Pattern                                              | Purpose                                                                |
+| ---------------------------------------------------- | ---------------------------------------------------------------------- |
+| **ComplianceServiceFactory** + **IComplianceModule** | Extensible module registration for compliance frameworks               |
+| **ElaroLogger**                                      | Structured logging via Platform Events (survives transaction rollback) |
+| **ElaroSecurityUtils**                               | Defense-in-depth security utilities                                    |
+| **ElaroConstants**                                   | Centralized constants                                                  |
+| **ComplianceTestDataFactory**                        | Shared test data factory                                               |
+| **Transaction Finalizers**                           | Error logging on all Queueable classes                                 |
 
 ### Security Model
 
@@ -253,13 +258,13 @@ Commit format: `type(scope): description` — e.g., `feat(compliance): add DORA 
 
 ### Alert Integrations
 
-| Channel | Setup |
-|---------|-------|
-| **Slack** | Named Credential `Slack_Webhook` with your webhook URL. Routes CRITICAL and HIGH severity alerts. |
-| **Microsoft Teams** | Named Credential `Teams_Webhook` with Incoming Webhook URL. |
-| **PagerDuty** | Named Credential `PagerDuty_API` with Events API v2 integration key. |
-| **Jira** | Named Credential `Jira_API` with Jira Cloud URL and API token. Configure `Elaro_Jira_Settings__c`. Register webhook URL (`/jira/webhook/*`) in Jira. |
-| **AI (Claude)** | Named Credential `Elaro_Claude_API` with Anthropic API key. Configure `Elaro_AI_Settings__c`. |
+| Channel             | Setup                                                                                                                                                |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Slack**           | Named Credential `Slack_Webhook` with your webhook URL. Routes CRITICAL and HIGH severity alerts.                                                    |
+| **Microsoft Teams** | Named Credential `Teams_Webhook` with Incoming Webhook URL.                                                                                          |
+| **PagerDuty**       | Named Credential `PagerDuty_API` with Events API v2 integration key.                                                                                 |
+| **Jira**            | Named Credential `Jira_API` with Jira Cloud URL and API token. Configure `Elaro_Jira_Settings__c`. Register webhook URL (`/jira/webhook/*`) in Jira. |
+| **AI (Claude)**     | Named Credential `Elaro_Claude_API` with Anthropic API key. Configure `Elaro_AI_Settings__c`.                                                        |
 
 ### Custom Settings
 
@@ -294,14 +299,14 @@ Health Check is a separate 2GP managed package (`elaroHC` namespace) that can be
 
 ## Documentation
 
-| Category | Docs |
-|----------|------|
-| **Getting Started** | [Installation Guide](docs/user/INSTALLATION_GUIDE.md) · [Setup Guide](docs/user/SETUP_GUIDE.md) · [Admin Guide](docs/user/ADMIN_GUIDE.md) |
-| **Architecture** | [Technical Deep Dive](docs/developer/TECHNICAL_DEEP_DIVE.md) · [Data Flows](docs/developer/DATA_FLOWS.md) · [ADRs](docs/architecture/) |
-| **Development** | [Contributing](CONTRIBUTING.md) · [API Reference](docs/developer/API_REFERENCE.md) · [External Services](docs/developer/EXTERNAL_SERVICES.md) |
-| **Security** | [Security Review Checklist](docs/security/SECURITY_REVIEW_CHECKLIST.md) · [FLS Audit](docs/security/FLS_AUDIT_REPORT.md) |
-| **AppExchange** | [Listing](docs/appexchange/APPEXCHANGE_LISTING.md) · [Security Review](docs/appexchange/SECURITY_REVIEW.md) |
-| **Operations** | [Operations Guide](docs/user/OPERATIONS_GUIDE.md) · [Changelog](docs/CHANGELOG.md) · [Roadmap](docs/ROADMAP.md) |
+| Category            | Docs                                                                                                                                          |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Getting Started** | [Installation Guide](docs/user/INSTALLATION_GUIDE.md) · [Setup Guide](docs/user/SETUP_GUIDE.md) · [Admin Guide](docs/user/ADMIN_GUIDE.md)     |
+| **Architecture**    | [Technical Deep Dive](docs/developer/TECHNICAL_DEEP_DIVE.md) · [Data Flows](docs/developer/DATA_FLOWS.md) · [ADRs](docs/architecture/)        |
+| **Development**     | [Contributing](CONTRIBUTING.md) · [API Reference](docs/developer/API_REFERENCE.md) · [External Services](docs/developer/EXTERNAL_SERVICES.md) |
+| **Security**        | [Security Review Checklist](docs/security/SECURITY_REVIEW_CHECKLIST.md) · [FLS Audit](docs/security/FLS_AUDIT_REPORT.md)                      |
+| **AppExchange**     | [Listing](docs/appexchange/APPEXCHANGE_LISTING.md) · [Security Review](docs/appexchange/SECURITY_REVIEW.md)                                   |
+| **Operations**      | [Operations Guide](docs/user/OPERATIONS_GUIDE.md) · [Changelog](docs/CHANGELOG.md) · [Roadmap](docs/ROADMAP.md)                               |
 
 ---
 
@@ -311,4 +316,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-*Elaro — Compliance intelligence for Salesforce.*
+_Elaro — Compliance intelligence for Salesforce._
