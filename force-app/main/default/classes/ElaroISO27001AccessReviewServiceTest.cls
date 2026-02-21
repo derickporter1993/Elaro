@@ -193,7 +193,7 @@ private class ElaroISO27001AccessReviewServiceTest {
         Test.stopTest();
         
         // Then: Should return pending reviews for reviewer
-        Assert.isTrue(pendingReviews.size() >= 0, 'Should return pending reviews');
+        Assert.isNotNull(pendingReviews, 'Pending reviews list should not be null');
         for (Access_Review__c review : pendingReviews) {
             Assert.isTrue(review.Review_Status__c == 'Pending' || review.Review_Status__c == 'In Progress', 
                 'Should only return pending/in progress reviews');
@@ -219,7 +219,7 @@ private class ElaroISO27001AccessReviewServiceTest {
         Test.stopTest();
         
         // Then: Should return overdue reviews
-        Assert.isTrue(overdueReviews.size() >= 0, 'Should return overdue reviews');
+        Assert.isNotNull(overdueReviews, 'Overdue reviews list should not be null');
         for (Access_Review__c review : overdueReviews) {
             Assert.isTrue(review.Due_Date__c < Date.today(), 'Should be overdue');
         }
@@ -235,7 +235,7 @@ private class ElaroISO27001AccessReviewServiceTest {
         Test.stopTest();
         
         // Then: Should handle bulk users
-        Assert.isTrue(reviews.size() >= 0, 'Should process users');
+        Assert.isNotNull(reviews, 'Reviews list should not be null');
         // Note: Actual count depends on org setup
     }
     

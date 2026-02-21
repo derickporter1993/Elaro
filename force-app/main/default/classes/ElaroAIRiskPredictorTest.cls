@@ -30,7 +30,7 @@ private class ElaroAIRiskPredictorTest {
         Test.startTest();
         try {
             ElaroAIRiskPredictor.predictRisk('', '001000000000001AAA', 'SOX');
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for blank parameters');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('required'), 'Exception should mention required parameters');
         }
@@ -42,7 +42,7 @@ private class ElaroAIRiskPredictorTest {
         Test.startTest();
         try {
             ElaroAIRiskPredictor.predictRisk(null, null, null);
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for null parameters');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('required'), 'Exception should mention required parameters');
         }

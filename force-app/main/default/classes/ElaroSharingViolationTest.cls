@@ -104,8 +104,7 @@ private class ElaroSharingViolationTest {
                 WITH USER_MODE
             ];
             
-            Assert.areNotEqual(null, accounts, 'Accounts list should not be null');
-            Assert.isTrue(accounts.size() >= 0, 'Should return accounts respecting sharing');
+            Assert.isNotNull(accounts, 'Accounts list should not be null');
         }
         Test.stopTest();
     }

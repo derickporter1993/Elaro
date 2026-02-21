@@ -41,7 +41,7 @@ private class ChangeImpactAnalyzerTest {
         Test.startTest();
         try {
             ChangeImpactAnalyzer.analyzeImpact(null);
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for null changes');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('null or empty'), 'Exception should mention null or empty changes');
         }
@@ -53,7 +53,7 @@ private class ChangeImpactAnalyzerTest {
         Test.startTest();
         try {
             ChangeImpactAnalyzer.analyzeImpact(new List<ChangeImpactAnalyzer.MetadataChange>());
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for empty changes');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('null or empty'), 'Exception should mention null or empty changes');
         }

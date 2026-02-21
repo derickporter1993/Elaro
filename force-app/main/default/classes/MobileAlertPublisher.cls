@@ -399,6 +399,7 @@ public with sharing class MobileAlertPublisher {
             this.alertId = alertId;
         }
 
+        /** Re-sends the alert if the snooze period has expired. */
         public void execute(SchedulableContext ctx) {
             // Check if still snoozed
             List<Compliance_Gap__c> gaps = [

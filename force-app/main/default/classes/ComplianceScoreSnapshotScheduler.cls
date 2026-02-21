@@ -21,9 +21,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
         'SOC2', 'HIPAA', 'NIST', 'FedRAMP', 'GDPR', 'SOX', 'PCI-DSS', 'CCPA', 'GLBA', 'ISO27001'
     };
 
-    /**
-     * Schedulable execute method
-     */
+    /** Triggers compliance score snapshot capture, delegating to a Queueable for async execution. */
     public void execute(SchedulableContext ctx) {
         // Run in Queueable context for better error handling and monitoring
         if (!Test.isRunningTest()) {
@@ -42,11 +40,13 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
     }
 
     /**
-     * Queueable implementation for compliance snapshot processing
-     * Provides better error handling, chaining, and monitoring than @future
+     * @description Queueable implementation for compliance snapshot processing.
+     * Provides better error handling, chaining, and monitoring than @future.
      */
     public class ComplianceSnapshotQueueable implements Queueable {
+        /** Captures compliance score snapshots for all configured frameworks. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new ComplianceSnapshotQueueableFinalizer());
             try {
                 ComplianceScoreSnapshotScheduler scheduler = new ComplianceScoreSnapshotScheduler();
                 scheduler.captureSnapshots();
@@ -56,6 +56,17 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             } catch (Exception e) {
                 ElaroLogger.error('ComplianceScoreSnapshotScheduler.ComplianceSnapshotQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class ComplianceSnapshotQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('ComplianceSnapshotQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

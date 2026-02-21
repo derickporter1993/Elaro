@@ -40,7 +40,7 @@ private class EvidenceCollectionServiceTest {
         Test.startTest();
         try {
             EvidenceCollectionService.collectEvidence('', startDate, endDate);
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for blank framework');
         } catch (IllegalArgumentException e) {
             Assert.isNotNull(e.getMessage(), 'Expected exception for blank framework should have a message');
         }
@@ -52,7 +52,7 @@ private class EvidenceCollectionServiceTest {
         Test.startTest();
         try {
             EvidenceCollectionService.collectEvidence('SOX', null, null);
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for null dates');
         } catch (IllegalArgumentException e) {
             Assert.isNotNull(e.getMessage(), 'Expected exception for null dates should have a message');
         }
@@ -67,7 +67,7 @@ private class EvidenceCollectionServiceTest {
         Test.startTest();
         try {
             EvidenceCollectionService.collectEvidence('SOX', startDate, endDate);
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for invalid date range');
         } catch (IllegalArgumentException e) {
             Assert.isNotNull(e.getMessage(), 'Expected exception for invalid date range should have a message');
         }

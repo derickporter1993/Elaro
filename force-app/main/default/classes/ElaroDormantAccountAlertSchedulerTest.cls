@@ -87,7 +87,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         // Assert - check if any access reviews were created
         Integer reviewCount = [SELECT COUNT() FROM Access_Review__c WHERE Review_Type__c = 'Termination Review'];
         // Note: Count may vary based on org's user data
-        Assert.isTrue(reviewCount >= 0, 'Access review query should succeed');
+        Assert.isNotNull(scheduler, 'Scheduler should not be null');
     }
 
     @isTest

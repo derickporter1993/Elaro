@@ -135,7 +135,7 @@ private class ElaroComplianceCopilotTest {
         Assert.areNotEqual(null, response.actions, 'Actions should not be null');
         // Export action is added in the method, verify actions list exists
         // May be empty if method fails, but list should exist
-        Assert.isTrue(response.actions.size() >= 0, 'Actions list should exist');
+        Assert.isNotNull(response.actions, 'Actions list should not be null');
     }
     
     @IsTest

@@ -1,3 +1,10 @@
+/**
+ * Slack notification service for Elaro compliance alerts and performance monitoring.
+ * Supports plain text, rich Block Kit, bulk, and performance-specific notifications.
+ *
+ * @author Elaro Team
+ * @group Integrations
+ */
 public with sharing class SlackNotifier {
 
     /**
@@ -83,6 +90,10 @@ public with sharing class SlackNotifier {
         notifyBulkAsync(JSON.serialize(payloads));
     }
 
+    /**
+     * Enqueues a bulk Slack notification job for asynchronous processing.
+     * @param serializedPayloads JSON-serialized list of Slack message payloads
+     */
     public static void notifyBulkAsync(String serializedPayloads) {
         if (!Test.isRunningTest()) {
             System.enqueueJob(new SlackBulkNotificationQueueable(serializedPayloads));
@@ -100,7 +111,9 @@ public with sharing class SlackNotifier {
             this.serializedPayloads = serializedPayloads;
         }
         
+        /** Deserializes payloads and sends each as a separate Slack webhook POST. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new SlackBulkNotificationQueueableFinalizer());
             String correlationId = 'BULK-' + System.now().getTime();
             try {
                 List<Object> payloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
@@ -123,7 +136,19 @@ public with sharing class SlackNotifier {
                 ElaroLogger.info('[SlackNotifier.SlackBulkNotificationQueueable] Successfully sent ' + index + ' bulk notifications');
             } catch (Exception e) {
                 logBulkAsyncError('EXCEPTION', 'Slack bulk notify exception: ' + e.getMessage(), correlationId, e.getStackTraceString());
-                ElaroLogger.error('[SlackNotifier.SlackBulkNotificationQueueable] Slack bulk notify exception: ' + e.getMessage() + ', StackTrace: ' + e.getStackTraceString());
+                ElaroLogger.error('SlackNotifier.SlackBulkNotificationQueueable',
+                    'Slack bulk notify exception: ' + e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class SlackBulkNotificationQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('SlackBulkNotificationQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }
@@ -302,7 +327,13 @@ public with sharing class SlackNotifier {
         return JSON.serialize(payload);
     }
 
-    // Build Slack notification for Flow performance issues
+    /**
+     * Builds and sends a Slack notification for Flow performance issues.
+     * @param flowName The name of the Flow exhibiting performance concerns
+     * @param cpuTime The CPU time consumed by the Flow in milliseconds
+     * @param rating Performance rating (e.g., 'Critical', 'Slow')
+     * @param percentileRank Where this Flow ranks compared to others
+     */
     public static void notifyFlowPerformance(
         String flowName,
         Decimal cpuTime,

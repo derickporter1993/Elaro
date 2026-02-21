@@ -49,7 +49,7 @@ private class ComplianceDashboardControllerTest {
         Test.startTest();
         try {
             ComplianceDashboardController.getFrameworkDashboard('');
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for blank framework');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('blank'), 'Exception should mention blank framework');
         }

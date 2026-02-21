@@ -52,10 +52,11 @@ private class ElaroScheduledDeliveryTest {
         );
         
         Test.startTest();
-        // Should handle error gracefully
+        // Should handle error gracefully or throw meaningful exception
         try {
             scheduler.execute(null);
-        } catch (Exception e) {
+            // If no exception, execution handled the invalid ID gracefully
+        } catch (AuraHandledException e) {
             // Expected - package doesn't exist
             Assert.isNotNull(e.getMessage(), 'Exception should have a message for invalid package ID');
         }

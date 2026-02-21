@@ -161,7 +161,7 @@ private class ComplianceReportGeneratorTest {
 
         Assert.areNotEqual(null, data.scoreTrend, 'Score trend should not be null');
         // Trend points should exist if Compliance_Score__c records exist
-        Assert.isTrue(data.scoreTrend.size() >= 0, 'Score trend should be populated');
+        Assert.isNotNull(data.scoreTrend, 'Score trend list should not be null');
     }
 
     /**

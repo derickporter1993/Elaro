@@ -61,7 +61,7 @@ private class ElaroPDFExporterTest {
         Test.startTest();
         try {
             ElaroPDFExporter.generateAuditPackagePDF('001000000000000AAA');
-            Assert.fail( 'Should throw exception');
+            Assert.fail('Expected AuraHandledException for invalid ID');
         } catch (AuraHandledException e) {
             Assert.isNotNull(e.getMessage(), 'Exception should have a message for invalid ID');
         }

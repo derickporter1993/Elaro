@@ -24,6 +24,7 @@ public with sharing class ElaroEventScheduler implements Schedulable {
         this('LOGIN', 7, ElaroConstants.FRAMEWORK_SOC2);
     }
     
+    /** Initiates a batch event load for the configured event type, date range, and framework. */
     public void execute(SchedulableContext ctx) {
         Date endDate = Date.today();
         Date startDate = endDate.addDays(-this.daysBack);

@@ -35,7 +35,7 @@ private class ComplianceFrameworkServiceTest {
         Test.startTest();
         try {
             ComplianceFrameworkService.evaluateFramework('');
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for blank framework');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('blank'), 'Exception should mention blank framework');
         }
@@ -47,7 +47,7 @@ private class ComplianceFrameworkServiceTest {
         Test.startTest();
         try {
             ComplianceFrameworkService.evaluateFramework(null);
-            Assert.fail( 'Should have thrown IllegalArgumentException');
+            Assert.fail('Expected IllegalArgumentException for null framework');
         } catch (IllegalArgumentException e) {
             Assert.isTrue(e.getMessage().contains('blank'), 'Exception should mention blank framework');
         }
