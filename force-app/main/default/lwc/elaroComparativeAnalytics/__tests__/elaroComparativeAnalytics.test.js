@@ -10,7 +10,6 @@
 
 import { createElement } from "lwc";
 import ElaroComparativeAnalytics from "c/elaroComparativeAnalytics";
-import getDimensionFields from "@salesforce/apex/ElaroMatrixController.getDimensionFields";
 import executeMatrixQuery from "@salesforce/apex/ElaroMatrixController.executeMatrixQuery";
 
 let mockDimensionFieldsCallbacks = new Set();
@@ -97,10 +96,6 @@ describe("c-elaro-comparative-analytics", () => {
     return Array.from(buttons).find((btn) => btn.label === "Generate Matrix");
   }
 
-  function getSpinner(element) {
-    return element.shadowRoot.querySelector("lightning-spinner");
-  }
-
   function getErrorContainer(element) {
     return element.shadowRoot.querySelector(".slds-text-color_error");
   }
@@ -136,7 +131,7 @@ describe("c-elaro-comparative-analytics", () => {
       await Promise.resolve();
 
       const combobox = getObjectCombobox(element);
-      if (combobox) {
+      expect(combobox).toBeTruthy();
         combobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
         await Promise.resolve();
 
@@ -146,11 +141,10 @@ describe("c-elaro-comparative-analytics", () => {
         // When object changes, row and column fields should reset
         const rowField = getRowFieldCombobox(element);
         const colField = getColumnFieldCombobox(element);
-        if (rowField && colField) {
-          expect(rowField.value).toBe("");
-          expect(colField.value).toBe("");
-        }
-      }
+        expect(rowField).toBeTruthy();
+        expect(colField).toBeTruthy();
+        expect(rowField.value).toBe("");
+        expect(colField.value).toBe("");
     });
 
     it("handles row field change", async () => {
@@ -159,12 +153,11 @@ describe("c-elaro-comparative-analytics", () => {
       await Promise.resolve();
 
       const combobox = getRowFieldCombobox(element);
-      if (combobox) {
+      expect(combobox).toBeTruthy();
         combobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Industry" } }));
         await Promise.resolve();
 
         expect(combobox.value).toBe("Industry");
-      }
     });
 
     it("handles column field change", async () => {
@@ -173,12 +166,11 @@ describe("c-elaro-comparative-analytics", () => {
       await Promise.resolve();
 
       const combobox = getColumnFieldCombobox(element);
-      if (combobox) {
+      expect(combobox).toBeTruthy();
         combobox.dispatchEvent(new CustomEvent("change", { detail: { value: "Region" } }));
         await Promise.resolve();
 
         expect(combobox.value).toBe("Region");
-      }
     });
   });
 
@@ -201,7 +193,7 @@ describe("c-elaro-comparative-analytics", () => {
       const rowCombo = getRowFieldCombobox(element);
       const colCombo = getColumnFieldCombobox(element);
 
-      if (objectCombo && rowCombo && colCombo) {
+      expect(objectCombo && rowCombo && colCombo).toBeTruthy();
         objectCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
         rowCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Industry" } }));
         colCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Region" } }));
@@ -209,20 +201,18 @@ describe("c-elaro-comparative-analytics", () => {
 
         // Click generate button
         const button = getGenerateButton(element);
-        if (button) {
-          button.click();
-          await Promise.resolve();
-          await Promise.resolve();
-          await Promise.resolve();
+        expect(button).toBeTruthy();
+        button.click();
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
 
-          expect(executeMatrixQuery).toHaveBeenCalled();
+        expect(executeMatrixQuery).toHaveBeenCalled();
 
-          // Check if results table is rendered
-          const table = getResultsTable(element);
-          // Table should appear after successful query
-          expect(table).not.toBeNull();
-        }
-      }
+        // Check if results table is rendered
+        const table = getResultsTable(element);
+        // Table should appear after successful query
+        expect(table).not.toBeNull();
     });
 
     it("handles query error", async () => {
@@ -242,25 +232,25 @@ describe("c-elaro-comparative-analytics", () => {
       const rowCombo = getRowFieldCombobox(element);
       const colCombo = getColumnFieldCombobox(element);
 
-      if (objectCombo && rowCombo && colCombo) {
-        objectCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
-        rowCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Industry" } }));
-        colCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Region" } }));
-        await Promise.resolve();
+      expect(objectCombo).toBeTruthy();
+      expect(rowCombo).toBeTruthy();
+      expect(colCombo).toBeTruthy();
+      objectCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Account" } }));
+      rowCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Industry" } }));
+      colCombo.dispatchEvent(new CustomEvent("change", { detail: { value: "Region" } }));
+      await Promise.resolve();
 
-        // Click generate button
-        const button = getGenerateButton(element);
-        if (button) {
-          button.click();
-          await Promise.resolve();
-          await Promise.resolve();
-          await Promise.resolve();
+      // Click generate button
+      const button = getGenerateButton(element);
+      expect(button).toBeTruthy();
+      button.click();
+      await Promise.resolve();
+      await Promise.resolve();
+      await Promise.resolve();
 
-          // Check for error state in DOM
-          const errorContainer = getErrorContainer(element);
-          expect(errorContainer).not.toBeNull();
-        }
-      }
+      // Check for error state in DOM
+      const errorContainer = getErrorContainer(element);
+      expect(errorContainer).not.toBeNull();
     });
   });
 
@@ -280,9 +270,8 @@ describe("c-elaro-comparative-analytics", () => {
 
       // The dimension fields should populate the row/column comboboxes
       const rowCombo = getRowFieldCombobox(element);
-      if (rowCombo) {
+      expect(rowCombo).toBeTruthy();
         expect(rowCombo.options).toBeDefined();
-      }
     });
 
     it("handles wire adapter error via toast", async () => {
@@ -293,7 +282,7 @@ describe("c-elaro-comparative-analytics", () => {
         message: "Failed to fetch fields",
       };
 
-      const element = await createComponent();
+      await createComponent();
       await Promise.resolve();
 
       emitDimensionFieldsError(error);

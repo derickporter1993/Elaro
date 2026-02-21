@@ -150,7 +150,6 @@ export function verifyFocusTrap(container) {
   const focusable = getFocusableElements(container);
   if (focusable.length === 0) return false;
 
-  const first = focusable[0];
   const last = focusable[focusable.length - 1];
 
   // Test Tab from last element wraps to first

@@ -117,7 +117,6 @@ describe("c-api-usage-dashboard", () => {
       expect(element).not.toBeNull();
       const card = element.shadowRoot.querySelector("lightning-card");
       expect(card).not.toBeNull();
-      const titleEl = card.shadowRoot ? card.shadowRoot.querySelector('[slot="title"]') : null;
       // Lightning card title is set via attribute, check it exists
       expect(card).toBeTruthy();
     });
@@ -144,7 +143,7 @@ describe("c-api-usage-dashboard", () => {
     });
 
     it("loads API usage data on connected", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       const getSnapshots =
@@ -213,7 +212,7 @@ describe("c-api-usage-dashboard", () => {
     });
 
     it("calls load with correct parameters", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       const getSnapshots =
@@ -225,7 +224,7 @@ describe("c-api-usage-dashboard", () => {
   describe("Error Handling", () => {
     it("handles API errors gracefully", async () => {
       mockSnapshotsError = { body: { message: "Test error" } };
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       expect(mockShowToastEvent).toHaveBeenCalledWith(
@@ -239,7 +238,7 @@ describe("c-api-usage-dashboard", () => {
 
     it("handles errors without body message", async () => {
       mockSnapshotsError = { message: "Network error" };
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       expect(mockShowToastEvent).toHaveBeenCalledWith(
@@ -253,7 +252,7 @@ describe("c-api-usage-dashboard", () => {
 
     it("applies exponential backoff on error", async () => {
       mockSnapshotsError = { message: "Error" };
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Component should handle error and show toast
@@ -270,7 +269,7 @@ describe("c-api-usage-dashboard", () => {
     it("resets backoff multiplier on successful load after error", async () => {
       // First call fails
       mockSnapshotsError = { message: "Error" };
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Should show error toast
@@ -303,7 +302,7 @@ describe("c-api-usage-dashboard", () => {
 
   describe("Polling Manager Integration", () => {
     it("creates PollingManager on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Verify component initializes correctly (loads data)
@@ -321,7 +320,7 @@ describe("c-api-usage-dashboard", () => {
     });
 
     it("starts polling on connected", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Polling should start - verify data loads initially

@@ -10,6 +10,10 @@ jest.mock("@salesforce/apex/JiraIntegrationService.isConfigured", () => ({ defau
   virtual: true,
 });
 
+function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 describe("c-jira-create-modal", () => {
   afterEach(() => {
     while (document.body.firstChild) {
@@ -62,12 +66,7 @@ describe("c-jira-create-modal", () => {
     await openModal(element);
 
     const modal = queryModal(element);
-    if (modal) {
-      expect(modal).toBeTruthy();
-    } else {
-      // isOpen reactivity may not trigger re-render in test env without @track
-      expect(element).toBeTruthy();
-    }
+    expect(modal).toBeTruthy();
   });
 
   it("closes modal via public close method", async () => {
@@ -106,20 +105,16 @@ describe("c-jira-create-modal", () => {
     element.addEventListener("issuecreated", handler);
 
     const createBtn = findButtonByLabel(element.shadowRoot, "Create Issue");
-    if (createBtn) {
-      createBtn.click();
-      await flushPromises();
+    expect(createBtn).toBeTruthy();
+    createBtn.click();
+    await flushPromises();
 
-      expect(createIssue).toHaveBeenCalledWith({
-        gapId: "a00xx0000001",
-        priority: null,
-      });
-      expect(handler).toHaveBeenCalled();
-      expect(handler.mock.calls[0][0].detail.issueKey).toBe("COMP-123");
-    } else {
-      // Modal content not rendered due to isOpen reactivity in test env
-      expect(isConfigured).toHaveBeenCalled();
-    }
+    expect(createIssue).toHaveBeenCalledWith({
+      gapId: "a00xx0000001",
+      priority: null,
+    });
+    expect(handler).toHaveBeenCalled();
+    expect(handler.mock.calls[0][0].detail.issueKey).toBe("COMP-123");
   });
 
   it("shows error when no recordId is provided", async () => {
@@ -129,14 +124,10 @@ describe("c-jira-create-modal", () => {
     await openModal(element);
 
     const createBtn = findButtonByLabel(element.shadowRoot, "Create Issue");
-    if (createBtn) {
-      createBtn.click();
-      await flushPromises();
-      expect(createIssue).not.toHaveBeenCalled();
-    } else {
-      // Modal content not rendered; verify component state
-      expect(element.recordId).toBeNull();
-    }
+    expect(createBtn).toBeTruthy();
+    createBtn.click();
+    await flushPromises();
+    expect(createIssue).not.toHaveBeenCalled();
   });
 
   it("handles createIssue error", async () => {
@@ -147,17 +138,13 @@ describe("c-jira-create-modal", () => {
     await openModal(element);
 
     const createBtn = findButtonByLabel(element.shadowRoot, "Create Issue");
-    if (createBtn) {
-      createBtn.click();
-      await flushPromises();
+    expect(createBtn).toBeTruthy();
+    createBtn.click();
+    await flushPromises();
 
-      const errorAlert = element.shadowRoot.querySelector(".slds-alert_error span:last-child");
-      if (errorAlert) {
-        expect(errorAlert.textContent).toBe("Jira API error");
-      }
-    } else {
-      expect(isConfigured).toHaveBeenCalled();
-    }
+    const errorAlert = element.shadowRoot.querySelector(".slds-alert_error span:last-child");
+    expect(errorAlert).not.toBeNull();
+    expect(errorAlert.textContent).toBe("Jira API error");
   });
 
   it("disables create button when not configured", async () => {
@@ -172,12 +159,8 @@ describe("c-jira-create-modal", () => {
     await openModal(element);
 
     const createBtn = findButtonByLabel(element.shadowRoot, "Create Issue");
-    if (createBtn) {
-      expect(createBtn.disabled).toBe(true);
-    } else {
-      // Verify config check ran even if modal didn't render
-      expect(isConfigured).toHaveBeenCalled();
-    }
+    expect(createBtn).toBeTruthy();
+    expect(createBtn.disabled).toBe(true);
   });
 
   it("shows not configured warning when jira is not set up", async () => {
@@ -192,12 +175,7 @@ describe("c-jira-create-modal", () => {
     await openModal(element);
 
     const warning = element.shadowRoot.querySelector(".slds-alert_warning");
-    if (warning) {
-      expect(warning).toBeTruthy();
-    } else {
-      // Verify config was checked
-      expect(isConfigured).toHaveBeenCalled();
-    }
+    expect(warning).toBeTruthy();
   });
 
   it("closes modal on cancel button click", async () => {
@@ -207,15 +185,11 @@ describe("c-jira-create-modal", () => {
     await openModal(element);
 
     const cancelBtn = findButtonByLabel(element.shadowRoot, "Cancel");
-    if (cancelBtn) {
-      cancelBtn.click();
-      await flushPromises();
+    expect(cancelBtn).toBeTruthy();
+    cancelBtn.click();
+    await flushPromises();
 
-      const modal = queryModal(element);
-      expect(modal).toBeNull();
-    } else {
-      // Modal didn't render; component still valid
-      expect(element).toBeTruthy();
-    }
+    const modal = queryModal(element);
+    expect(modal).toBeNull();
   });
 });

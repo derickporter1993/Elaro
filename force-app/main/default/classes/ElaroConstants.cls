@@ -183,10 +183,18 @@ public with sharing class ElaroConstants {
      * Get severity from risk score
      */
     public static String getSeverityFromRiskScore(Decimal riskScore) {
-        if (riskScore == null) return SEVERITY_LOW;
-        if (riskScore >= RISK_THRESHOLD_CRITICAL) return SEVERITY_CRITICAL;
-        if (riskScore >= RISK_THRESHOLD_HIGH) return SEVERITY_HIGH;
-        if (riskScore >= RISK_THRESHOLD_MEDIUM) return SEVERITY_MEDIUM;
+        if (riskScore == null) {
+            return SEVERITY_LOW;
+        }
+        if (riskScore >= RISK_THRESHOLD_CRITICAL) {
+            return SEVERITY_CRITICAL;
+        }
+        if (riskScore >= RISK_THRESHOLD_HIGH) {
+            return SEVERITY_HIGH;
+        }
+        if (riskScore >= RISK_THRESHOLD_MEDIUM) {
+            return SEVERITY_MEDIUM;
+        }
         return SEVERITY_LOW;
     }
     
@@ -194,11 +202,21 @@ public with sharing class ElaroConstants {
      * Get rating from compliance score
      */
     public static String getRatingFromScore(Decimal score) {
-        if (score == null) return RATING_CRITICAL;
-        if (score >= SCORE_THRESHOLD_EXCELLENT) return RATING_EXCELLENT;
-        if (score >= SCORE_THRESHOLD_GOOD) return RATING_GOOD;
-        if (score >= SCORE_THRESHOLD_FAIR) return RATING_FAIR;
-        if (score >= SCORE_THRESHOLD_NEEDS_IMPROVEMENT) return RATING_NEEDS_IMPROVEMENT;
+        if (score == null) {
+            return RATING_CRITICAL;
+        }
+        if (score >= SCORE_THRESHOLD_EXCELLENT) {
+            return RATING_EXCELLENT;
+        }
+        if (score >= SCORE_THRESHOLD_GOOD) {
+            return RATING_GOOD;
+        }
+        if (score >= SCORE_THRESHOLD_FAIR) {
+            return RATING_FAIR;
+        }
+        if (score >= SCORE_THRESHOLD_NEEDS_IMPROVEMENT) {
+            return RATING_NEEDS_IMPROVEMENT;
+        }
         return RATING_CRITICAL;
     }
     
@@ -206,10 +224,18 @@ public with sharing class ElaroConstants {
      * Get emoji for score
      */
     public static String getScoreEmoji(Decimal score) {
-        if (score == null) return '🔴';
-        if (score >= SCORE_THRESHOLD_EXCELLENT) return '🟢';
-        if (score >= SCORE_THRESHOLD_GOOD) return '🟡';
-        if (score >= SCORE_THRESHOLD_FAIR) return '🟠';
+        if (score == null) {
+            return '🔴';
+        }
+        if (score >= SCORE_THRESHOLD_EXCELLENT) {
+            return '🟢';
+        }
+        if (score >= SCORE_THRESHOLD_GOOD) {
+            return '🟡';
+        }
+        if (score >= SCORE_THRESHOLD_FAIR) {
+            return '🟠';
+        }
         return '🔴';
     }
     
@@ -217,10 +243,18 @@ public with sharing class ElaroConstants {
      * Get color hex for score
      */
     public static String getScoreColor(Decimal score) {
-        if (score == null) return '#e74c3c';
-        if (score >= SCORE_THRESHOLD_EXCELLENT) return '#2ecc71';
-        if (score >= SCORE_THRESHOLD_GOOD) return '#f39c12';
-        if (score >= SCORE_THRESHOLD_FAIR) return '#e67e22';
+        if (score == null) {
+            return '#e74c3c';
+        }
+        if (score >= SCORE_THRESHOLD_EXCELLENT) {
+            return '#2ecc71';
+        }
+        if (score >= SCORE_THRESHOLD_GOOD) {
+            return '#f39c12';
+        }
+        if (score >= SCORE_THRESHOLD_FAIR) {
+            return '#e67e22';
+        }
         return '#e74c3c';
     }
     

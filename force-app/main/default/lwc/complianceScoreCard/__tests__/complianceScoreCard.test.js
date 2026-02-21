@@ -279,7 +279,6 @@ describe("c-compliance-score-card", () => {
       });
 
       // Component starts in loading state for wire
-      const spinner = element.shadowRoot.querySelector("lightning-spinner");
       // Spinner may or may not be present depending on wire state
       expect(element.shadowRoot).not.toBeNull();
     });

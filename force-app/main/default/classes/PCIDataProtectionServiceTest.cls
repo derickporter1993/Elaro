@@ -36,7 +36,7 @@ private class PCIDataProtectionServiceTest {
                 String encrypted = service.encryptCHD(data);
                 encryptedDataList.add(encrypted);
             } catch (Exception e) {
-                // Some may fail due to encryption limitations
+                Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
             }
         }
         Test.stopTest();
@@ -73,7 +73,7 @@ private class PCIDataProtectionServiceTest {
                 String token = service.tokenizeData(data);
                 tokens.add(token);
             } catch (Exception e) {
-                // Some may fail
+                Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
             }
         }
         Test.stopTest();

@@ -153,7 +153,7 @@ describe("c-system-monitor-dashboard", () => {
     });
 
     it("loads governor stats on connected", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -166,10 +166,10 @@ describe("c-system-monitor-dashboard", () => {
       const element = await createComponent();
       await flushPromises();
 
-      const loadingText = element.shadowRoot.querySelector("p");
-      if (loadingText) {
-        expect(loadingText.textContent.trim()).toBe("Loading...");
-      }
+      // When stats resolves with null, neither the stats block nor spinner renders
+      // Verify no progress rings appear (stats block is hidden)
+      const progressRings = element.shadowRoot.querySelectorAll("lightning-progress-ring");
+      expect(progressRings.length).toBe(0);
     });
 
     it("displays stats when data is available", async () => {
@@ -231,7 +231,7 @@ describe("c-system-monitor-dashboard", () => {
   describe("Error Handling", () => {
     it("handles API errors gracefully", async () => {
       mockStatsError = { body: { message: "Test error" } };
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -245,7 +245,7 @@ describe("c-system-monitor-dashboard", () => {
 
     it("handles errors without body message", async () => {
       mockStatsError = { message: "Network error" };
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -271,7 +271,7 @@ describe("c-system-monitor-dashboard", () => {
     });
 
     it("evaluates and publishes on load", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -282,7 +282,7 @@ describe("c-system-monitor-dashboard", () => {
 
   describe("Polling Manager Integration", () => {
     it("initializes polling on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Verify component renders and loads data (polling is internal)

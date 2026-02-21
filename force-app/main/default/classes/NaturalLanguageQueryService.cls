@@ -67,8 +67,9 @@ public with sharing class NaturalLanguageQueryService {
             
             // Add WITH USER_MODE to ensure FLS/CRUD enforcement
             String secureSOQL = addSecurityEnforced(generatedSOQL);
-            
+
             // Execute query with security enforcement using queryWithBinds
+            // NOPMD ApexSOQLInjection - AI-generated SOQL validated by isSOQLSafe() against object allowlist and DML keyword blocklist
             Map&lt;String, Object&gt; binds = new Map&lt;String, Object&gt;();
             List&lt;SObject&gt; rawResults = Database.queryWithBinds(
                 secureSOQL, binds, AccessLevel.USER_MODE
@@ -327,10 +328,16 @@ public with sharing class NaturalLanguageQueryService {
             String countQuery = soql.replaceFirst('(?i)SELECT.*?FROM', 'SELECT COUNT() FROM');
             countQuery = countQuery.replaceFirst('(?i)LIMIT\\s+\\d+', '');
             countQuery = countQuery.replaceFirst('(?i)ORDER BY.*', '');
-            
+
             // Add WITH USER_MODE for security
             countQuery = addSecurityEnforced(countQuery);
-            
+
+            // Validate the count query against allowed objects before execution
+            if (!isSOQLSafe(countQuery + ' LIMIT 1')) {
+                return -1;
+            }
+
+            // NOPMD ApexSOQLInjection - query validated by isSOQLSafe() against object allowlist
             return Database.countQuery(countQuery);
         } catch (Exception e) {
             return -1;

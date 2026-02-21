@@ -221,6 +221,7 @@ public with sharing class PagerDutyIntegration {
                 FROM Elaro_API_Config__mdt
                 WHERE DeveloperName = 'PagerDuty'
                 AND Is_Active__c = true
+                WITH USER_MODE
                 LIMIT 1
             ];
 

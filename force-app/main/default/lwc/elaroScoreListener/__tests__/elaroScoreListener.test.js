@@ -11,12 +11,11 @@
 import { createElement } from "lwc";
 import ElaroScoreListener from "c/elaroScoreListener";
 import { subscribe, unsubscribe, onError } from "lightning/empApi";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 jest.mock(
   "lightning/empApi",
   () => ({
-    subscribe: jest.fn((channel, replayId, callback) => {
+    subscribe: jest.fn(() => {
       return Promise.resolve({ id: "mock-subscription-id" });
     }),
     unsubscribe: jest.fn((subscription, callback) => {
@@ -70,7 +69,7 @@ describe("c-elaro-score-listener", () => {
 
   describe("Subscription", () => {
     it("subscribes to score events on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       expect(subscribe).toHaveBeenCalledWith(
@@ -91,7 +90,7 @@ describe("c-elaro-score-listener", () => {
     });
 
     it("registers error listener on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       expect(onError).toHaveBeenCalledWith(expect.any(Function));
@@ -123,7 +122,7 @@ describe("c-elaro-score-listener", () => {
         },
       };
 
-      if (capturedCallback) {
+      expect(capturedCallback).toBeTruthy();
         capturedCallback(mockPayload);
         await flushPromises();
 
@@ -134,7 +133,6 @@ describe("c-elaro-score-listener", () => {
         expect(scoreUpdateEvent).toBeDefined();
         expect(scoreUpdateEvent[0].detail.scoreId).toBe("score123");
         expect(scoreUpdateEvent[0].detail.overallScore).toBe(85);
-      }
 
       dispatchEventSpy.mockRestore();
     });
@@ -162,14 +160,13 @@ describe("c-elaro-score-listener", () => {
         },
       };
 
-      if (capturedCallback) {
+      expect(capturedCallback).toBeTruthy();
         capturedCallback(mockPayload);
         await flushPromises();
 
         const toastEvent = dispatchEventSpy.mock.calls.find((call) => call[0].type === "showtoast");
         expect(toastEvent).toBeDefined();
         expect(toastEvent[0].detail.variant).toBe("warning");
-      }
 
       dispatchEventSpy.mockRestore();
     });
@@ -197,14 +194,13 @@ describe("c-elaro-score-listener", () => {
         },
       };
 
-      if (capturedCallback) {
+      expect(capturedCallback).toBeTruthy();
         capturedCallback(mockPayload);
         await flushPromises();
 
         const toastEvent = dispatchEventSpy.mock.calls.find((call) => call[0].type === "showtoast");
         expect(toastEvent).toBeDefined();
         expect(toastEvent[0].detail.variant).toBe("warning");
-      }
 
       dispatchEventSpy.mockRestore();
     });
@@ -232,14 +228,13 @@ describe("c-elaro-score-listener", () => {
         },
       };
 
-      if (capturedCallback) {
+      expect(capturedCallback).toBeTruthy();
         capturedCallback(mockPayload);
         await flushPromises();
 
         // Only scoreupdate event should be dispatched, no toast
         const toastEvent = dispatchEventSpy.mock.calls.find((call) => call[0].type === "showtoast");
         expect(toastEvent).toBeUndefined();
-      }
 
       dispatchEventSpy.mockRestore();
     });

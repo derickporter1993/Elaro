@@ -187,7 +187,6 @@ describe("c-compliance-dashboard", () => {
       await Promise.resolve();
 
       // Component should render with gap data - verify via child component or section
-      const gapList = element.shadowRoot.querySelector("c-compliance-gap-list");
       // Gap list may or may not exist depending on template structure
       const card = element.shadowRoot.querySelector("lightning-card");
       expect(card).not.toBeNull();

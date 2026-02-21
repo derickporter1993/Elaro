@@ -10,8 +10,7 @@
 
 import { createElement } from "lwc";
 import ElaroEventMonitor from "c/elaroEventMonitor";
-import { subscribe, unsubscribe, onError } from "lightning/empApi";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { subscribe, unsubscribe } from "lightning/empApi";
 
 jest.mock(
   "lightning/empApi",
@@ -65,7 +64,7 @@ describe("c-elaro-event-monitor", () => {
 
   describe("Subscription", () => {
     it("subscribes to events on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await Promise.resolve();
       await Promise.resolve();
 

@@ -105,9 +105,15 @@ public with sharing class ChangeImpactAnalyzer {
             }
         }
         
-        if (hasCritical) return 'CRITICAL';
-        if (hasHigh) return 'HIGH';
-        if (!risks.isEmpty()) return 'MEDIUM';
+        if (hasCritical) {
+            return 'CRITICAL';
+        }
+        if (hasHigh) {
+            return 'HIGH';
+        }
+        if (!risks.isEmpty()) {
+            return 'MEDIUM';
+        }
         return 'LOW';
     }
     

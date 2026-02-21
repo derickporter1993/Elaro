@@ -204,17 +204,25 @@ public with sharing class BenchmarkingService {
     }
     
     private static MaturityLevel determineMaturityLevel(Decimal score) {
-        if (score >= 90) return MaturityLevel.OPTIMIZED;
-        if (score >= 75) return MaturityLevel.MANAGED;
-        if (score >= 60) return MaturityLevel.DEFINED;
-        if (score >= 40) return MaturityLevel.REPEATABLE;
+        if (score >= 90) {
+            return MaturityLevel.OPTIMIZED;
+        }
+        if (score >= 75) {
+            return MaturityLevel.MANAGED;
+        }
+        if (score >= 60) {
+            return MaturityLevel.DEFINED;
+        }
+        if (score >= 40) {
+            return MaturityLevel.REPEATABLE;
+        }
         return MaturityLevel.AD_HOC;
     }
     
     private static Decimal calculateProcessMaturity() {
         // Check for documented policies
         // Custom Metadata: SECURITY_ENFORCED not applicable to __mdt objects
-        Integer policyCount = [SELECT COUNT() FROM Compliance_Policy__mdt];
+        Integer policyCount = [SELECT COUNT() FROM Compliance_Policy__mdt WITH USER_MODE];
         return Math.min(100, policyCount * 5);
     }
     

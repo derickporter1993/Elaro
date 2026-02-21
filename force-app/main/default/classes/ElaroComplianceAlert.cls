@@ -308,10 +308,18 @@ public with sharing class ElaroComplianceAlert {
     }
     
     private static String determineSeverity(Integer riskScore) {
-        if (riskScore >= CRITICAL_RISK_THRESHOLD) return 'CRITICAL';
-        if (riskScore >= HIGH_RISK_THRESHOLD) return 'HIGH';
-        if (riskScore >= 50) return 'MEDIUM';
-        if (riskScore >= 25) return 'LOW';
+        if (riskScore >= CRITICAL_RISK_THRESHOLD) {
+            return 'CRITICAL';
+        }
+        if (riskScore >= HIGH_RISK_THRESHOLD) {
+            return 'HIGH';
+        }
+        if (riskScore >= 50) {
+            return 'MEDIUM';
+        }
+        if (riskScore >= 25) {
+            return 'LOW';
+        }
         return 'INFO';
     }
     

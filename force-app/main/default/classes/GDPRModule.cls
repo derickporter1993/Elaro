@@ -77,7 +77,9 @@ public with sharing class GDPRModule implements IComplianceModule {
     public List<IComplianceModule.Control> getControls() { return GDPR_CONTROLS; }
     
     public Decimal calculateScore(Id auditPackageId) {
-        if (auditPackageId == null) return 0;
+        if (auditPackageId == null) {
+            return 0;
+        }
         
         Decimal totalScore = 0;
         Decimal totalWeight = 0;
@@ -126,7 +128,9 @@ public with sharing class GDPRModule implements IComplianceModule {
     
     public IComplianceModule.Control getControlById(String controlId) {
         for (IComplianceModule.Control ctrl : GDPR_CONTROLS) {
-            if (ctrl.code == controlId) return ctrl;
+            if (ctrl.code == controlId) {
+                return ctrl;
+            }
         }
         return null;
     }

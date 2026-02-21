@@ -364,12 +364,11 @@ describe("c-assessment-wizard", () => {
 
     const buttons = element.shadowRoot.querySelectorAll("lightning-button");
     const completeBtn = Array.from(buttons).find((b) => b.variant === "brand");
-    if (completeBtn) {
-      completeBtn.click();
-      await flushPromises();
-      expect(completeAssessment).toHaveBeenCalledWith({
-        sessionId: "a0B000000000001",
-      });
-    }
+    expect(completeBtn).toBeTruthy();
+    completeBtn.click();
+    await flushPromises();
+    expect(completeAssessment).toHaveBeenCalledWith({
+      sessionId: "a0B000000000001",
+    });
   });
 });

@@ -23,6 +23,10 @@ jest.mock(
 // Re-import after mock setup
 const { ShowToastEvent } = jest.requireMock("lightning/platformShowToastEvent");
 
+function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 describe("c-sec-disclosure-form", () => {
   afterEach(() => {
     while (document.body.firstChild) {

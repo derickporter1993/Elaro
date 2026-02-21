@@ -139,6 +139,13 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
         return service.getExcessiveAccessUsersList();
     }
 
+    // Allowed objects for PHI access audit history queries
+    private static final Set<String> ALLOWED_HISTORY_OBJECTS = new Set<String>{
+        'ContactHistory', 'LeadHistory', 'AccountHistory', 'CaseHistory',
+        'Contact__History', 'Lead__History', 'Account__History', 'Case__History',
+        'HealthCloudGA__EhrPatient__History'
+    };
+
     /**
      * Audit PHI access for a specific record
      * @param recordId The record to audit
@@ -149,14 +156,25 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
     public static List<PHIAccessLog> auditPHIAccess(Id recordId, String objectName) {
         List<PHIAccessLog> accessLogs = new List<PHIAccessLog>();
 
+        // Validate object name against PHI_OBJECTS allowlist
+        if (!PHI_OBJECTS.contains(objectName)) {
+            throw new AuraHandledException('Object not authorized for PHI audit: ' + objectName);
+        }
+
         // Query field history for the record
         String historyObjectName = objectName.endsWith('__c') ?
             objectName.replace('__c', '__History') :
             objectName + 'History';
 
+        // Validate history object against allowlist
+        if (!ALLOWED_HISTORY_OBJECTS.contains(historyObjectName)) {
+            throw new AuraHandledException('History object not authorized: ' + historyObjectName);
+        }
+
         try {
+            // NOPMD ApexSOQLInjection - historyObjectName validated against ALLOWED_HISTORY_OBJECTS allowlist
             String query = 'SELECT Id, Field, OldValue, NewValue, CreatedById, CreatedBy.Name, CreatedDate '
-                + 'FROM ' + String.escapeSingleQuotes(historyObjectName) + ' '
+                + 'FROM ' + historyObjectName + ' '
                 + 'WHERE ParentId = :recordId '
                 + 'WITH USER_MODE '
                 + 'ORDER BY CreatedDate DESC LIMIT 100';

@@ -259,7 +259,7 @@ private class DisclosureWorkflowServiceTest {
     @IsTest
     static void testSubmitForApproval_notFound_throwsException() {
         // Use a fabricated Id that won't exist
-        Id fakeId = Disclosure_Workflow__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+        Id fakeId = Disclosure_Workflow__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000'; // NOPMD EagerlyLoadedDescribeSObjectResult
 
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -298,7 +298,7 @@ private class DisclosureWorkflowServiceTest {
      */
     @IsTest
     static void testGetApprovalStatus_notFound_throwsException() {
-        Id fakeId = Disclosure_Workflow__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+        Id fakeId = Disclosure_Workflow__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000'; // NOPMD EagerlyLoadedDescribeSObjectResult
 
         Boolean exceptionThrown = false;
         Test.startTest();

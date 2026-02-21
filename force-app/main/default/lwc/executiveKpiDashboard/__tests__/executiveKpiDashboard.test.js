@@ -9,8 +9,6 @@
 
 import { createElement } from "lwc";
 import ExecutiveKpiDashboard from "c/executiveKpiDashboard";
-import getDashboardSummary from "@salesforce/apex/ComplianceDashboardController.getDashboardSummary";
-
 let mockDashboardCallbacks = new Set();
 
 jest.mock(

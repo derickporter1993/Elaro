@@ -373,7 +373,9 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
      */
     private static List<String> validateEmails(List<String> emails) {
         List<String> valid = new List<String>();
-        if (emails == null) return valid;
+        if (emails == null) {
+            return valid;
+        }
 
         Pattern emailPattern = Pattern.compile('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$');
 
@@ -421,8 +423,12 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
      * Parse frequency from job name
      */
     private static String parseFrequencyFromJobName(String jobName) {
-        if (jobName.containsIgnoreCase('DAILY')) return 'DAILY';
-        if (jobName.containsIgnoreCase('MONTHLY')) return 'MONTHLY';
+        if (jobName.containsIgnoreCase('DAILY')) {
+            return 'DAILY';
+        }
+        if (jobName.containsIgnoreCase('MONTHLY')) {
+            return 'MONTHLY';
+        }
         return 'WEEKLY';
     }
 

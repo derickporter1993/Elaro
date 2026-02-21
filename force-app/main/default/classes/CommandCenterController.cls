@@ -389,8 +389,12 @@ public with sharing class CommandCenterController {
             Datetime thisTime = this.timestamp ?? Datetime.newInstance(2000, 1, 1);
             Datetime otherTime = other.timestamp ?? Datetime.newInstance(2000, 1, 1);
             // Descending: more recent first
-            if (otherTime > thisTime) return 1;
-            if (otherTime < thisTime) return -1;
+            if (otherTime > thisTime) {
+                return 1;
+            }
+            if (otherTime < thisTime) {
+                return -1;
+            }
             return 0;
         }
     }

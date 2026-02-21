@@ -102,7 +102,7 @@ public with sharing class ElaroGraphIndexer {
             // Note: Elaro_Compliance_Graph__b is a Big Object and does not support standard CRUD/FLS checks
             // via ElaroSecurityUtils/Security APIs. Access to this Big Object must be controlled via
             // permission set assignments and platform Big Object permissions, not runtime CRUD checks here.
-            insert node;
+            insert as user node;
             return nodeHash;
         } catch (DmlException e) {
             String correlationId = generateCorrelationId(entityType, entityId);
@@ -250,9 +250,15 @@ public with sharing class ElaroGraphIndexer {
     }
 
     private static String determineDriftCategory(Decimal riskScore, Map<String, Object> metadata) {
-        if (riskScore >= ElaroConstants.RISK_THRESHOLD_AUTO_FIX) return ElaroConstants.DRIFT_POLICY_VIOLATION;
-        if (riskScore >= ElaroConstants.RISK_THRESHOLD_MEDIUM) return ElaroConstants.DRIFT_UNAUTHORIZED;
-        if (riskScore >= ElaroConstants.RISK_THRESHOLD_LOW) return ElaroConstants.DRIFT_ANOMALY;
+        if (riskScore >= ElaroConstants.RISK_THRESHOLD_AUTO_FIX) {
+            return ElaroConstants.DRIFT_POLICY_VIOLATION;
+        }
+        if (riskScore >= ElaroConstants.RISK_THRESHOLD_MEDIUM) {
+            return ElaroConstants.DRIFT_UNAUTHORIZED;
+        }
+        if (riskScore >= ElaroConstants.RISK_THRESHOLD_LOW) {
+            return ElaroConstants.DRIFT_ANOMALY;
+        }
         return ElaroConstants.DRIFT_MANUAL_OVERRIDE;
     }
 
@@ -405,7 +411,7 @@ public with sharing class ElaroGraphIndexer {
             // via ElaroSecurityUtils/Security APIs. Access to this Big Object must be controlled via
             // permission set assignments and platform Big Object permissions, not runtime CRUD checks here.
             try {
-                insert nodesToInsert;
+                insert as user nodesToInsert;
             } catch (DmlException e) {
                 String correlationId = generateCorrelationId('BULK', String.valueOf(nodesToInsert.size()));
                 ElaroLogger.error( 

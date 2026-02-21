@@ -213,10 +213,18 @@ public with sharing class ComplianceGraphService {
         analysis.lowCount = 0;
 
         for (AffectedGap ag : analysis.affectedGaps) {
-            if (ag.severity == 'CRITICAL') analysis.criticalCount++;
-            else if (ag.severity == 'HIGH') analysis.highCount++;
-            else if (ag.severity == 'MEDIUM') analysis.mediumCount++;
-            else if (ag.severity == 'LOW') analysis.lowCount++;
+            if (ag.severity == 'CRITICAL') {
+                analysis.criticalCount++;
+            }
+            else if (ag.severity == 'HIGH') {
+                analysis.highCount++;
+            }
+            else if (ag.severity == 'MEDIUM') {
+                analysis.mediumCount++;
+            }
+            else if (ag.severity == 'LOW') {
+                analysis.lowCount++;
+            }
         }
 
         return analysis;

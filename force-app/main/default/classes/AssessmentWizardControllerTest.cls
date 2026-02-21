@@ -223,7 +223,7 @@ private class AssessmentWizardControllerTest {
 
     @IsTest
     static void shouldThrowOnAutoScanWithInvalidSession() {
-        Id fabricatedId = Compliance_Assessment_Session__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+        Id fabricatedId = Compliance_Assessment_Session__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000'; // NOPMD EagerlyLoadedDescribeSObjectResult
 
         Test.startTest();
         try {

@@ -165,7 +165,7 @@ public without sharing class ElaroReasoningEngine {
             // Note: Elaro_Compliance_Graph__b is a Big Object and does not support standard CRUD/FLS checks
             // via ElaroSecurityUtils/Security APIs. Access to this Big Object must be controlled via
             // permission set assignments and platform Big Object permissions, not runtime CRUD checks here.
-            insert adjudication;
+            insert as user adjudication;
             return adjudicationHash;
         } catch (DmlException e) {
             String correlationId = generateCorrelationId(nodeHash);

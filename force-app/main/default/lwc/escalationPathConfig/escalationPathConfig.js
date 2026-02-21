@@ -1,7 +1,7 @@
 import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from "@salesforce/apex";
-import _getEscalationPath from "@salesforce/apex/MobileAlertPublisher.getEscalationPath";
+
 import getEscalationPaths from "@salesforce/apex/EscalationPathController.getPaths";
 import createPath from "@salesforce/apex/EscalationPathController.createPath";
 import updatePath from "@salesforce/apex/EscalationPathController.updatePath";

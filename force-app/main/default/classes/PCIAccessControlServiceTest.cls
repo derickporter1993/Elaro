@@ -57,7 +57,7 @@ private class PCIAccessControlServiceTest {
                 Map<String, Object> result = service.enforceRBAC(u.Id, 'CardholderData');
                 results.add(result);
             } catch (Exception e) {
-                // Some may fail due to test data limitations
+                Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
             }
         }
         Test.stopTest();

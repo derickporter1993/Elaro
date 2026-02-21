@@ -109,7 +109,7 @@ export default class TrustCenterPublicView extends LightningElement {
       }
 
       return null;
-    } catch (_err) {
+    } catch (e) { // eslint-disable-line no-unused-vars
       return null;
     }
   }

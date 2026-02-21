@@ -29,7 +29,7 @@ public with sharing class PerformanceAlertEventTriggerHandler {
         }
         
         if (!hist.isEmpty() && Schema.sObjectType.Performance_Alert_History__c.isCreateable()) {
-            insert hist;
+            insert as user hist;
         }
         
         // Bulk Slack notification (single future call for all events)

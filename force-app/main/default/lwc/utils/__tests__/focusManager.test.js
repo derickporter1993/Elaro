@@ -20,6 +20,21 @@ import {
   announceToScreenReader,
 } from "../focusManager";
 
+function buildDOM(container, elements) {
+  elements.forEach(({ tag, attrs, text }) => {
+    const el = document.createElement(tag);
+    if (attrs) {
+      Object.entries(attrs).forEach(([key, value]) => {
+        el.setAttribute(key, value);
+      });
+    }
+    if (text) {
+      el.textContent = text;
+    }
+    container.appendChild(el);
+  });
+}
+
 describe("focusManager", () => {
   let container;
 
@@ -53,12 +68,12 @@ describe("focusManager", () => {
     });
 
     it("finds focusable elements", () => {
-      container.innerHTML = `
-        <button>Button 1</button>
-        <input type="text" />
-        <a href="#">Link</a>
-        <div tabindex="0">Focusable div</div>
-      `;
+      buildDOM(container, [
+        { tag: "button", text: "Button 1" },
+        { tag: "input", attrs: { type: "text" } },
+        { tag: "a", attrs: { href: "#" }, text: "Link" },
+        { tag: "div", attrs: { tabindex: "0" }, text: "Focusable div" },
+      ]);
 
       const elements = getFocusableElements(container);
       expect(elements.length).toBe(4);
@@ -69,12 +84,12 @@ describe("focusManager", () => {
     });
 
     it("excludes disabled elements", () => {
-      container.innerHTML = `
-        <button>Enabled</button>
-        <button disabled>Disabled</button>
-        <input type="text" />
-        <input type="text" disabled />
-      `;
+      buildDOM(container, [
+        { tag: "button", text: "Enabled" },
+        { tag: "button", attrs: { disabled: "" }, text: "Disabled" },
+        { tag: "input", attrs: { type: "text" } },
+        { tag: "input", attrs: { type: "text", disabled: "" } },
+      ]);
 
       const elements = getFocusableElements(container);
       expect(elements.length).toBe(2);
@@ -82,10 +97,10 @@ describe("focusManager", () => {
     });
 
     it("excludes elements with tabindex=-1", () => {
-      container.innerHTML = `
-        <button tabindex="0">Focusable</button>
-        <button tabindex="-1">Not focusable</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { tabindex: "0" }, text: "Focusable" },
+        { tag: "button", attrs: { tabindex: "-1" }, text: "Not focusable" },
+      ]);
 
       const elements = getFocusableElements(container);
       expect(elements.length).toBe(1);
@@ -93,11 +108,15 @@ describe("focusManager", () => {
     });
 
     it("excludes hidden elements", () => {
-      container.innerHTML = `
-        <button style="display: none;">Hidden</button>
-        <button style="visibility: hidden;">Invisible</button>
-        <button>Visible</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { style: "display: none;" }, text: "Hidden" },
+        {
+          tag: "button",
+          attrs: { style: "visibility: hidden;" },
+          text: "Invisible",
+        },
+        { tag: "button", text: "Visible" },
+      ]);
 
       const elements = getFocusableElements(container);
       expect(elements.length).toBe(1);
@@ -117,10 +136,10 @@ describe("focusManager", () => {
     });
 
     it("focuses first element and returns true", () => {
-      container.innerHTML = `
-        <button>First</button>
-        <button>Second</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", text: "First" },
+        { tag: "button", text: "Second" },
+      ]);
 
       const result = focusFirstElement(container);
       expect(result).toBe(true);
@@ -140,10 +159,10 @@ describe("focusManager", () => {
     });
 
     it("focuses last element and returns true", () => {
-      container.innerHTML = `
-        <button>First</button>
-        <button>Last</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", text: "First" },
+        { tag: "button", text: "Last" },
+      ]);
 
       const result = focusLastElement(container);
       expect(result).toBe(true);
@@ -159,11 +178,11 @@ describe("focusManager", () => {
     });
 
     it("traps focus within container", () => {
-      container.innerHTML = `
-        <button>First</button>
-        <button>Middle</button>
-        <button>Last</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", text: "First" },
+        { tag: "button", text: "Middle" },
+        { tag: "button", text: "Last" },
+      ]);
 
       const focusable = Array.from(container.querySelectorAll("button"));
       focusable[0].focus();
@@ -187,10 +206,10 @@ describe("focusManager", () => {
     });
 
     it("handles Shift+Tab to wrap backwards", () => {
-      container.innerHTML = `
-        <button>First</button>
-        <button>Last</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", text: "First" },
+        { tag: "button", text: "Last" },
+      ]);
 
       const focusable = Array.from(container.querySelectorAll("button"));
       focusable[0].focus();
@@ -212,7 +231,7 @@ describe("focusManager", () => {
     });
 
     it("cleans up event listener", () => {
-      container.innerHTML = `<button>Test</button>`;
+      buildDOM(container, [{ tag: "button", text: "Test" }]);
 
       const cleanup = trapFocus(container);
       cleanup();
@@ -241,7 +260,7 @@ describe("focusManager", () => {
     });
 
     it("saves and restores focus", (done) => {
-      container.innerHTML = `<button>Test Button</button>`;
+      buildDOM(container, [{ tag: "button", text: "Test Button" }]);
       const button = container.querySelector("button");
       button.focus();
 
@@ -261,7 +280,7 @@ describe("focusManager", () => {
     });
 
     it("clear removes saved element", () => {
-      container.innerHTML = `<button>Test</button>`;
+      buildDOM(container, [{ tag: "button", text: "Test" }]);
       const button = container.querySelector("button");
       button.focus();
 
@@ -273,7 +292,7 @@ describe("focusManager", () => {
     });
 
     it("getSaved returns saved element", () => {
-      container.innerHTML = `<button>Test</button>`;
+      buildDOM(container, [{ tag: "button", text: "Test" }]);
       const button = container.querySelector("button");
       button.focus();
 
@@ -286,11 +305,11 @@ describe("focusManager", () => {
 
   describe("handleRovingTabindex", () => {
     it("handles ArrowRight navigation", () => {
-      container.innerHTML = `
-        <button tabindex="0">First</button>
-        <button tabindex="-1">Second</button>
-        <button tabindex="-1">Third</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { tabindex: "0" }, text: "First" },
+        { tag: "button", attrs: { tabindex: "-1" }, text: "Second" },
+        { tag: "button", attrs: { tabindex: "-1" }, text: "Third" },
+      ]);
 
       const elements = Array.from(container.querySelectorAll("button"));
       elements[0].focus();
@@ -311,10 +330,10 @@ describe("focusManager", () => {
     });
 
     it("handles ArrowLeft navigation", () => {
-      container.innerHTML = `
-        <button tabindex="-1">First</button>
-        <button tabindex="0">Second</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { tabindex: "-1" }, text: "First" },
+        { tag: "button", attrs: { tabindex: "0" }, text: "Second" },
+      ]);
 
       const elements = Array.from(container.querySelectorAll("button"));
       elements[1].focus();
@@ -334,10 +353,10 @@ describe("focusManager", () => {
     });
 
     it("wraps around at ends when wrap is true", () => {
-      container.innerHTML = `
-        <button tabindex="0">First</button>
-        <button tabindex="-1">Last</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { tabindex: "0" }, text: "First" },
+        { tag: "button", attrs: { tabindex: "-1" }, text: "Last" },
+      ]);
 
       const elements = Array.from(container.querySelectorAll("button"));
       elements[0].focus();
@@ -355,10 +374,10 @@ describe("focusManager", () => {
     });
 
     it("handles Home key", () => {
-      container.innerHTML = `
-        <button tabindex="-1">First</button>
-        <button tabindex="0">Second</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { tabindex: "-1" }, text: "First" },
+        { tag: "button", attrs: { tabindex: "0" }, text: "Second" },
+      ]);
 
       const elements = Array.from(container.querySelectorAll("button"));
       elements[1].focus();
@@ -377,10 +396,10 @@ describe("focusManager", () => {
     });
 
     it("handles End key", () => {
-      container.innerHTML = `
-        <button tabindex="0">First</button>
-        <button tabindex="-1">Last</button>
-      `;
+      buildDOM(container, [
+        { tag: "button", attrs: { tabindex: "0" }, text: "First" },
+        { tag: "button", attrs: { tabindex: "-1" }, text: "Last" },
+      ]);
 
       const elements = Array.from(container.querySelectorAll("button"));
       elements[0].focus();

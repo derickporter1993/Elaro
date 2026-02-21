@@ -5,7 +5,6 @@ import syncIssueStatus from "@salesforce/apex/JiraIntegrationService.syncIssueSt
 import addComment from "@salesforce/apex/JiraIntegrationService.addComment";
 import getAvailableTransitions from "@salesforce/apex/JiraIntegrationService.getAvailableTransitions";
 import transitionIssue from "@salesforce/apex/JiraIntegrationService.transitionIssue";
-import { refreshApex } from "@salesforce/apex";
 
 jest.mock(
   "@salesforce/apex/JiraIntegrationService.getIssueStatus",
@@ -36,6 +35,10 @@ jest.mock(
 jest.mock("@salesforce/apex", () => ({ refreshApex: jest.fn().mockResolvedValue(undefined) }), {
   virtual: true,
 });
+
+function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
 
 const MOCK_ISSUE = {
   key: "COMP-123",
@@ -134,13 +137,14 @@ describe("c-jira-issue-card", () => {
     });
     getIssueStatus.emit(MOCK_ISSUE);
     await flushPromises();
+    await flushPromises();
 
-    const syncBtn = element.shadowRoot.querySelector('lightning-button[label="Sync"]');
-    if (syncBtn) {
-      syncBtn.click();
-      await flushPromises();
-      expect(syncIssueStatus).toHaveBeenCalledWith({ gapId: "a00xx0000001" });
-    }
+    const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+    const syncBtn = Array.from(buttons).find((b) => b.label === "Sync");
+    expect(syncBtn).toBeTruthy();
+    syncBtn.click();
+    await flushPromises();
+    expect(syncIssueStatus).toHaveBeenCalledWith({ gapId: "a00xx0000001" });
   });
 
   it("adds comment to jira issue", async () => {
@@ -178,14 +182,15 @@ describe("c-jira-issue-card", () => {
     });
     getIssueStatus.emit(MOCK_ISSUE);
     await flushPromises();
+    await flushPromises();
 
-    const transitionBtn = element.shadowRoot.querySelector('lightning-button[label="Transition"]');
-    if (transitionBtn) {
-      transitionBtn.click();
-      await flushPromises();
-      expect(getAvailableTransitions).toHaveBeenCalledWith({
-        jiraKey: "COMP-123",
-      });
-    }
+    const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+    const transitionBtn = Array.from(buttons).find((b) => b.label === "Transition");
+    expect(transitionBtn).toBeTruthy();
+    transitionBtn.click();
+    await flushPromises();
+    expect(getAvailableTransitions).toHaveBeenCalledWith({
+      jiraKey: "COMP-123",
+    });
   });
 });

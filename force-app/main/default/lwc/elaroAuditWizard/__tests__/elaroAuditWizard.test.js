@@ -202,13 +202,12 @@ describe("c-elaro-audit-wizard", () => {
 
       // Go back
       const prevButton = Array.from(buttons).find((btn) => btn.label === "Previous");
-      if (prevButton) {
+      expect(prevButton).toBeTruthy();
         prevButton.click();
         await flushPromises();
 
         const progressIndicator = element.shadowRoot.querySelector("lightning-progress-indicator");
         expect(progressIndicator.currentStep).toBe("1");
-      }
     });
 
     it("enables Previous button on step 2", async () => {
@@ -275,21 +274,16 @@ describe("c-elaro-audit-wizard", () => {
       let dateInputs = element.shadowRoot.querySelectorAll('lightning-input[type="date"]');
 
       // If not found, try alternative selectors
-      if (dateInputs.length === 0) {
+      expect(dateInputs.length === 0).toBeTruthy();
         dateInputs = element.shadowRoot.querySelectorAll(
           'lightning-input[label="Start Date"], lightning-input[label="End Date"]'
         );
-      }
 
       // LWC rendering in Jest can be unpredictable - verify component is in correct step
       const progressIndicator = element.shadowRoot.querySelector("lightning-progress-indicator");
-      if (progressIndicator && progressIndicator.currentStep === "2") {
-        // We're on step 2, so date inputs should exist (even if not yet rendered)
-        expect(dateInputs.length === 2 || progressIndicator.currentStep === "2").toBe(true);
-      } else {
-        // Step navigation may not have completed, verify component is functional
-        expect(element.shadowRoot).not.toBeNull();
-      }
+      expect(progressIndicator).not.toBeNull();
+      expect(progressIndicator.currentStep).toBe("2");
+      expect(dateInputs.length === 2 || progressIndicator.currentStep === "2").toBe(true);
     });
 
     it("date inputs have required validation", async () => {
@@ -305,33 +299,37 @@ describe("c-elaro-audit-wizard", () => {
     it("updates dates when start date changes", async () => {
       const element = await createComponent();
       await goToStep2(element);
+      await flushPromises();
+      await flushPromises();
 
-      const startDateInput = element.shadowRoot.querySelector(
-        'lightning-input[type="date"][label="Start Date"]'
+      const inputs = element.shadowRoot.querySelectorAll("lightning-input");
+      const startDateInput = Array.from(inputs).find(
+        (inp) => inp.type === "date" && inp.label === "Start Date"
       );
-      if (startDateInput) {
-        startDateInput.dispatchEvent(
-          new CustomEvent("change", { detail: { value: "2024-01-01" } })
-        );
-        await flushPromises();
+      expect(startDateInput).toBeTruthy();
+      startDateInput.dispatchEvent(
+        new CustomEvent("change", { detail: { value: "2024-01-01" } })
+      );
+      await flushPromises();
 
-        expect(element).not.toBeNull();
-      }
+      expect(element).not.toBeNull();
     });
 
     it("updates dates when end date changes", async () => {
       const element = await createComponent();
       await goToStep2(element);
+      await flushPromises();
+      await flushPromises();
 
-      const endDateInput = element.shadowRoot.querySelector(
-        'lightning-input[type="date"][label="End Date"]'
+      const inputs = element.shadowRoot.querySelectorAll("lightning-input");
+      const endDateInput = Array.from(inputs).find(
+        (inp) => inp.type === "date" && inp.label === "End Date"
       );
-      if (endDateInput) {
-        endDateInput.dispatchEvent(new CustomEvent("change", { detail: { value: "2024-12-31" } }));
-        await flushPromises();
+      expect(endDateInput).toBeTruthy();
+      endDateInput.dispatchEvent(new CustomEvent("change", { detail: { value: "2024-12-31" } }));
+      await flushPromises();
 
-        expect(element).not.toBeNull();
-      }
+      expect(element).not.toBeNull();
     });
 
     it("displays quick select buttons", async () => {
@@ -348,13 +346,12 @@ describe("c-elaro-audit-wizard", () => {
 
       const buttons = element.shadowRoot.querySelectorAll("lightning-button");
       const lastMonthBtn = Array.from(buttons).find((btn) => btn.label === "Last Month");
-      if (lastMonthBtn) {
+      expect(lastMonthBtn).toBeTruthy();
         lastMonthBtn.click();
         await flushPromises();
 
         // Verify dates are set (component state)
         expect(element).not.toBeNull();
-      }
     });
 
     it("sets dates when Last Quarter is clicked", async () => {
@@ -363,12 +360,11 @@ describe("c-elaro-audit-wizard", () => {
 
       const buttons = element.shadowRoot.querySelectorAll("lightning-button");
       const lastQuarterBtn = Array.from(buttons).find((btn) => btn.label === "Last Quarter");
-      if (lastQuarterBtn) {
+      expect(lastQuarterBtn).toBeTruthy();
         lastQuarterBtn.click();
         await flushPromises();
 
         expect(element).not.toBeNull();
-      }
     });
 
     it("sets dates when Last Year is clicked", async () => {
@@ -377,12 +373,11 @@ describe("c-elaro-audit-wizard", () => {
 
       const buttons = element.shadowRoot.querySelectorAll("lightning-button");
       const lastYearBtn = Array.from(buttons).find((btn) => btn.label === "Last Year");
-      if (lastYearBtn) {
+      expect(lastYearBtn).toBeTruthy();
         lastYearBtn.click();
         await flushPromises();
 
         expect(element).not.toBeNull();
-      }
     });
 
     it("sets dates when YTD is clicked", async () => {
@@ -391,36 +386,38 @@ describe("c-elaro-audit-wizard", () => {
 
       const buttons = element.shadowRoot.querySelectorAll("lightning-button");
       const ytdBtn = Array.from(buttons).find((btn) => btn.label === "YTD");
-      if (ytdBtn) {
+      expect(ytdBtn).toBeTruthy();
         ytdBtn.click();
         await flushPromises();
 
         expect(element).not.toBeNull();
-      }
     });
 
     it("disables Next button when dates are not set", async () => {
       const element = await createComponent();
       await goToStep2(element);
+      await flushPromises();
+      await flushPromises();
 
       // Clear dates programmatically (simulating empty state)
-      const startDateInput = element.shadowRoot.querySelector(
-        'lightning-input[type="date"][label="Start Date"]'
+      const inputs = element.shadowRoot.querySelectorAll("lightning-input");
+      const startDateInput = Array.from(inputs).find(
+        (inp) => inp.type === "date" && inp.label === "Start Date"
       );
-      const endDateInput = element.shadowRoot.querySelector(
-        'lightning-input[type="date"][label="End Date"]'
+      const endDateInput = Array.from(inputs).find(
+        (inp) => inp.type === "date" && inp.label === "End Date"
       );
 
-      if (startDateInput && endDateInput) {
-        startDateInput.dispatchEvent(new CustomEvent("change", { detail: { value: "" } }));
-        endDateInput.dispatchEvent(new CustomEvent("change", { detail: { value: "" } }));
-        await flushPromises();
+      expect(startDateInput).toBeTruthy();
+      expect(endDateInput).toBeTruthy();
+      startDateInput.dispatchEvent(new CustomEvent("change", { detail: { value: "" } }));
+      endDateInput.dispatchEvent(new CustomEvent("change", { detail: { value: "" } }));
+      await flushPromises();
 
-        const buttons = element.shadowRoot.querySelectorAll("lightning-button");
-        const nextButton = Array.from(buttons).find((btn) => btn.label === "Next");
-        // Next should be disabled if dates are required but empty
-        expect(nextButton).not.toBeNull();
-      }
+      const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+      const nextButton = Array.from(buttons).find((btn) => btn.label === "Next");
+      // Next should be disabled if dates are required but empty
+      expect(nextButton).not.toBeNull();
     });
   });
 

@@ -75,7 +75,7 @@ export default class TrustCenterBadge extends LightningElement {
         month: "short",
         day: "numeric",
       });
-    } catch (_err) {
+    } catch (e) { // eslint-disable-line no-unused-vars
       return "--";
     }
   }

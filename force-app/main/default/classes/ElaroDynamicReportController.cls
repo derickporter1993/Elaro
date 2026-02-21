@@ -353,6 +353,7 @@ public with sharing class ElaroDynamicReportController {
             }
         }
 
+        // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist, filter values use bind variables
         String soql = 'SELECT ' + String.join(selectFields, ', ') +
                       ' FROM ' + cfg.objectApiName;
 

@@ -88,6 +88,7 @@ public with sharing class ComplianceReportGenerator {
      * Get compliance gaps filtered by framework
      */
     private static List<Compliance_Gap__c> getComplianceGaps(String framework) {
+        // NOPMD ApexSOQLInjection - query is hardcoded except optional bind variable for framework filter
         String query = 'SELECT Id, Name, Severity__c, Framework__c, Status__c, Description__c, CreatedDate '
             + 'FROM Compliance_Gap__c '
             + 'WHERE Status__c != \'Resolved\' ';

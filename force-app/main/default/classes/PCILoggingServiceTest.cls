@@ -59,7 +59,7 @@ private class PCILoggingServiceTest {
                     String logId = service.logSecurityEvent(eventType, testUser.Id, 'Resource' + i, null);
                     logIds.add(logId);
                 } catch (Exception e) {
-                    // Some may fail due to test data limitations
+                    Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
                 }
             }
         }

@@ -95,7 +95,7 @@ public with sharing class ElaroPDFController {
             selectedControls = controlFilter.split(',');
         }
         
-        // Build query
+        // NOPMD ApexSOQLInjection - query is hardcoded, packageId uses bind variable
         String query = 'SELECT Id, Name, Evidence_Type__c, Evidence_Date__c, '
             + 'Description__c, Status__c, CreatedDate '
             + 'FROM Elaro_Evidence_Item__c '

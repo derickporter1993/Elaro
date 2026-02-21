@@ -76,6 +76,7 @@ public with sharing class ElaroGDPRDataPortabilityService {
             }
         }
 
+        // NOPMD ApexSOQLInjection - field names sourced from Schema.describe, not user input
         String query = 'SELECT ' + String.join(fieldNames, ',')
             + ' FROM Contact WHERE Id = :contactId WITH USER_MODE LIMIT 1';
         Map<String, Object> binds = new Map<String, Object>{ 'contactId' => contactId };

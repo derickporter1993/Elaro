@@ -409,7 +409,9 @@ public with sharing class MobileAlertPublisher {
                 LIMIT 1
             ];
 
-            if (gaps.isEmpty()) return;
+            if (gaps.isEmpty()) {
+                return;
+            }
 
             Compliance_Gap__c gap = gaps[0];
 

@@ -11,6 +11,7 @@
  */
 public inherited sharing class AIDetectionEngine {
 
+    @SuppressWarnings('PMD.ApexSuggestUsingNamedCred') // NOPMD - endpoint is unused; actual callout uses Named Credential (callout:Salesforce_Tooling_API)
     private static final String METADATA_API_ENDPOINT = '/services/Soap/m/66.0';
     private static final List<String> AI_METADATA_TYPES = new List<String>{
         'MLPredictionDefinition',

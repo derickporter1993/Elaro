@@ -50,7 +50,7 @@ private class GDPRDataSubjectServiceTest {
                 Map<String, Object> result = service.handleAccessRequest(c.Id, c.Id);
                 results.add(result);
             } catch (Exception e) {
-                // Some may fail due to test data limitations
+                Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
             }
         }
         Test.stopTest();

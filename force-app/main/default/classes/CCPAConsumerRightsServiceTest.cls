@@ -62,7 +62,7 @@ private class CCPAConsumerRightsServiceTest {
                 Map<String, Object> result = service.handleKnowRequest(requests[i].Id, contacts[i].Id);
                 results.add(result);
             } catch (Exception e) {
-                // Some may fail due to test data limitations
+                Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
             }
         }
         Test.stopTest();

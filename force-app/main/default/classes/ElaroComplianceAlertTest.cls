@@ -437,6 +437,7 @@ private class ElaroComplianceAlertTest {
         } catch (Exception e) {
             // Bell notification may fail in test context without CustomNotificationType
             // The important thing is the dispatch pattern works without governor limit errors
+            Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
         }
         Test.stopTest();
 

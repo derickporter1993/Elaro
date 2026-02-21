@@ -50,6 +50,7 @@ public with sharing class ElaroExecutiveKPIController {
                 Description__c
             FROM Executive_KPI__mdt
             WHERE Is_Active__c = true
+            WITH USER_MODE
             ORDER BY Sort_Order__c NULLS LAST
             LIMIT 50
         ];
@@ -104,6 +105,7 @@ public with sharing class ElaroExecutiveKPIController {
             FROM Executive_KPI__mdt
             WHERE KPI_Name__c = :sanitizedName
             AND Is_Active__c = true
+            WITH USER_MODE
             LIMIT 1
         ];
 
@@ -121,7 +123,7 @@ public with sharing class ElaroExecutiveKPIController {
         // Validate and secure the query
         String safeQuery = validateAndSecureQuery(config.SOQL_Query__c);
 
-        // Execute the query with bind map (query is metadata-driven, no user-concatenated values)
+        // NOPMD ApexSOQLInjection - query sourced from Custom Metadata (admin-controlled), validated by validateAndSecureQuery()
         Map<String, Object> binds = new Map<String, Object>();
         List<AggregateResult> queryResults = (List<AggregateResult>) Database.queryWithBinds(
             safeQuery, binds, AccessLevel.USER_MODE

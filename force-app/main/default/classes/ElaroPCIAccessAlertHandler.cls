@@ -159,7 +159,9 @@ public with sharing class ElaroPCIAccessAlertHandler {
      * @return Record count
      */
     private static Integer extractRecordCount(String action) {
-        if (String.isBlank(action)) return 0;
+        if (String.isBlank(action)) {
+            return 0;
+        }
 
         // Pattern: "Bulk: 123 records"
         Pattern p = Pattern.compile('Bulk:\\s*(\\d+)\\s*records');

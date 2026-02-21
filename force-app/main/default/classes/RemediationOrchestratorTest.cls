@@ -76,8 +76,8 @@ private class RemediationOrchestratorTest {
         Boolean hasRevoke = false;
         Boolean hasLock = false;
         for (RemediationOrchestrator.ActionOption action : actions) {
-            if (action.value == 'REVOKE_PERMISSION') hasRevoke = true;
-            if (action.value == 'LOCK_USER') hasLock = true;
+            if (action.value == 'REVOKE_PERMISSION') { hasRevoke = true; }
+            if (action.value == 'LOCK_USER') { hasLock = true; }
         }
         Assert.isTrue(hasRevoke, 'LoginAs should have REVOKE_PERMISSION action');
         Assert.isTrue(hasLock, 'LoginAs should have LOCK_USER action');
@@ -91,7 +91,7 @@ private class RemediationOrchestratorTest {
 
         Boolean hasDisableAPI = false;
         for (RemediationOrchestrator.ActionOption action : actions) {
-            if (action.value == 'DISABLE_API_ACCESS') hasDisableAPI = true;
+            if (action.value == 'DISABLE_API_ACCESS') { hasDisableAPI = true; }
         }
         Assert.isTrue(hasDisableAPI, 'API event should have DISABLE_API_ACCESS action');
     }

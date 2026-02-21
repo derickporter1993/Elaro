@@ -11,9 +11,7 @@
 
 import { createElement } from "lwc";
 import ElaroDynamicReportBuilder from "c/elaroDynamicReportBuilder";
-import getAvailableObjects from "@salesforce/apex/ElaroDynamicReportController.getAvailableObjects";
 import getFieldMetadata from "@salesforce/apex/ElaroDynamicReportController.getFieldMetadata";
-import executeReport from "@salesforce/apex/ElaroDynamicReportController.executeReport";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 let mockObjectsCallbacks = new Set();
@@ -128,7 +126,7 @@ describe("c-elaro-dynamic-report-builder", () => {
     });
 
     it("handles wire adapter error", async () => {
-      const element = await createComponent();
+      await createComponent();
       await Promise.resolve();
 
       const error = {

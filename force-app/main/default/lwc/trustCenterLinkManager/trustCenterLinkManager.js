@@ -289,7 +289,7 @@ export default class TrustCenterLinkManager extends LightningElement {
           variant: "success",
         })
       );
-    } catch (_err) {
+    } catch (e) { // eslint-disable-line no-unused-vars
       // Clipboard copy failed silently
     }
     document.body.removeChild(textArea);

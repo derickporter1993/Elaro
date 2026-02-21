@@ -130,7 +130,7 @@ describe("c-flow-execution-monitor", () => {
     });
 
     it("loads flow data on connected", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -199,7 +199,7 @@ describe("c-flow-execution-monitor", () => {
 
   describe("Polling Manager Integration", () => {
     it("initializes polling on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Verify component renders and loads data (polling is internal)

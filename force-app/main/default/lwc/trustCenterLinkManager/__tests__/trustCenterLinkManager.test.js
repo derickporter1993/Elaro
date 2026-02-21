@@ -1,8 +1,7 @@
 import { createElement } from "lwc";
 import TrustCenterLinkManager from "c/trustCenterLinkManager";
 import getActiveLinks from "@salesforce/apex/TrustCenterController.getActiveLinks";
-import createShareableLink from "@salesforce/apex/TrustCenterController.createShareableLink";
-import revokeLink from "@salesforce/apex/TrustCenterController.revokeLink";
+// createShareableLink and revokeLink handled by mocks below
 
 // Mock wire adapter for getActiveLinks
 jest.mock(

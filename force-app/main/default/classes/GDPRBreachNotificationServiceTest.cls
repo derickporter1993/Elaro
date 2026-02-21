@@ -53,7 +53,7 @@ private class GDPRBreachNotificationServiceTest {
                 Id breachId = service.reportBreach(DateTime.now(), i * 5, 'Bulk breach ' + i);
                 breachIds.add(breachId);
             } catch (Exception e) {
-                // Some may fail due to test data limitations
+                Assert.isNotNull(e.getMessage(), 'Exception message should not be null');
             }
         }
         Test.stopTest();

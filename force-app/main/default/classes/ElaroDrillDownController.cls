@@ -388,7 +388,7 @@ public with sharing class ElaroDrillDownController {
         countSoql += ' WITH USER_MODE';
 
         try {
-            return Database.countQuery(countSoql);
+            return Database.countQuery(countSoql); // NOPMD ApexSOQLInjection - filter values sanitized via escapeSingleQuotes, field names validated against schema; countQuery cannot use bind variables
         } catch (QueryException e) {
             ElaroLogger.error( 'ElaroDrillDownController: Count query failed: ' + e.getMessage());
             return 0;
@@ -468,7 +468,9 @@ public with sharing class ElaroDrillDownController {
     }
 
     private static String sanitizeFieldName(String fieldName) {
-        if (String.isBlank(fieldName)) return '';
+        if (String.isBlank(fieldName)) {
+            return '';
+        }
         return fieldName.replaceAll('[^a-zA-Z0-9_]+', '');
     }
 
@@ -482,7 +484,9 @@ public with sharing class ElaroDrillDownController {
     }
 
     private static Boolean isNumeric(String value) {
-        if (String.isBlank(value)) return false;
+        if (String.isBlank(value)) {
+            return false;
+        }
         try {
             Decimal.valueOf(value);
             return true;
@@ -494,7 +498,9 @@ public with sharing class ElaroDrillDownController {
     }
 
     private static Boolean isDateLiteral(String value) {
-        if (String.isBlank(value)) return false;
+        if (String.isBlank(value)) {
+            return false;
+        }
         String upper = value.toUpperCase();
         return upper.startsWith('LAST_') || upper.startsWith('THIS_') ||
                upper.startsWith('NEXT_') || upper.startsWith('N_') ||
@@ -523,7 +529,9 @@ public with sharing class ElaroDrillDownController {
             List<String> parts = fieldPath.split('\\.');
             SObject current = record;
             for (Integer i = 0; i < parts.size() - 1; i++) {
-                if (current == null) return null;
+                if (current == null) {
+                    return null;
+                }
                 current = current.getSObject(parts[i]);
             }
             return current != null ? current.get(parts[parts.size() - 1]) : null;

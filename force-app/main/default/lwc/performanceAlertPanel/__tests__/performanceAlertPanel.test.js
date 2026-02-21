@@ -129,7 +129,7 @@ describe("c-performance-alert-panel", () => {
     });
 
     it("loads recent alerts on connected", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -140,7 +140,7 @@ describe("c-performance-alert-panel", () => {
 
     it("subscribes to platform events on connected", async () => {
       const subscribe = require("lightning/empApi").subscribe;
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -286,7 +286,7 @@ describe("c-performance-alert-panel", () => {
 
     it("registers EMP API error handler", async () => {
       const onError = require("lightning/empApi").onError;
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -295,7 +295,7 @@ describe("c-performance-alert-panel", () => {
 
     it("handles EMP API errors silently", async () => {
       const onError = require("lightning/empApi").onError;
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 

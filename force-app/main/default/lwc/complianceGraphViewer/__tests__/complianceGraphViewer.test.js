@@ -3,8 +3,7 @@ import ComplianceGraphViewer from "c/complianceGraphViewer";
 import getComplianceGraph from "@salesforce/apex/ComplianceGraphService.getComplianceGraph";
 import getGraphByFramework from "@salesforce/apex/ComplianceGraphService.getGraphByFramework";
 import getGraphStats from "@salesforce/apex/ComplianceGraphService.getGraphStats";
-import getNodeDetails from "@salesforce/apex/ComplianceGraphService.getNodeDetails";
-import analyzeImpact from "@salesforce/apex/ComplianceGraphService.analyzeImpact";
+// getNodeDetails and analyzeImpact are used via jest.mock below
 
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.getComplianceGraph",
@@ -27,6 +26,10 @@ jest.mock(
 jest.mock("@salesforce/apex/ComplianceGraphService.analyzeImpact", () => ({ default: jest.fn() }), {
   virtual: true,
 });
+
+function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
 
 const MOCK_GRAPH_DATA = {
   nodes: [
@@ -163,16 +166,12 @@ describe("c-compliance-graph-viewer", () => {
 
     const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
     const refreshBtn = Array.from(allButtons).find((btn) => btn.label === "Refresh");
-    if (refreshBtn) {
-      refreshBtn.click();
-      await flushPromises();
+    expect(refreshBtn).toBeTruthy();
+    refreshBtn.click();
+    await flushPromises();
 
-      expect(getComplianceGraph).toHaveBeenCalledTimes(2);
-      expect(getGraphStats).toHaveBeenCalledTimes(2);
-    } else {
-      // Button may not be rendered in test environment due to slotted content
-      expect(allButtons.length).toBeGreaterThanOrEqual(0);
-    }
+    expect(getComplianceGraph).toHaveBeenCalledTimes(2);
+    expect(getGraphStats).toHaveBeenCalledTimes(2);
   });
 
   it("computes severity variants correctly", async () => {
@@ -180,8 +179,7 @@ describe("c-compliance-graph-viewer", () => {
     const badges = element.shadowRoot.querySelectorAll("lightning-badge");
     const badgeArray = Array.from(badges);
     const criticalBadge = badgeArray.find((b) => b.label && b.label.includes("CRITICAL"));
-    if (criticalBadge) {
-      expect(criticalBadge.variant).toBe("error");
-    }
+    expect(criticalBadge).toBeTruthy();
+    expect(criticalBadge.variant).toBe("error");
   });
 });

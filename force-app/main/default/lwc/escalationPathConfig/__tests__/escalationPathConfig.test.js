@@ -179,7 +179,9 @@ describe("c-escalation-path-config", () => {
     await flushPromises();
     await flushPromises();
     await flushPromises();
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    await flushPromises();
+    await flushPromises();
   }
 
   async function createComponent() {
@@ -269,13 +271,10 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const level1Badge = element.shadowRoot.querySelector('lightning-badge[label="Level 1"]');
-
-      if (!level1Badge) {
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-      } else {
-        expect(level1Badge).not.toBeNull();
-      }
+      // lightning-badge attributes aren't reflected in Jest stubs; check text content
+      const textContent = element.shadowRoot.textContent;
+      expect(textContent).toContain("Team Lead Escalation");
+      expect(textContent).toContain("Team Lead John");
     });
 
     it("displays Level 2 paths in correct section", async () => {
@@ -284,13 +283,9 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const level2Badge = element.shadowRoot.querySelector('lightning-badge[label="Level 2"]');
-
-      if (!level2Badge) {
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-      } else {
-        expect(level2Badge).not.toBeNull();
-      }
+      const textContent = element.shadowRoot.textContent;
+      expect(textContent).toContain("Manager Escalation");
+      expect(textContent).toContain("Manager Jane");
     });
 
     it("displays Level 3 paths in correct section", async () => {
@@ -299,14 +294,9 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const level3Badge = element.shadowRoot.querySelector('lightning-badge[label="Level 3"]');
-
-      if (!level3Badge) {
-        // Wire data timing - verify component renders
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-      } else {
-        expect(level3Badge).not.toBeNull();
-      }
+      const textContent = element.shadowRoot.textContent;
+      expect(textContent).toContain("CISO/Director Escalation");
+      expect(textContent).toContain("CISO Bob");
     });
   });
 
@@ -344,14 +334,11 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const activeBadge = element.shadowRoot.querySelector('lightning-badge[label="Active"]');
+      // lightning-badge label isn't reflected as HTML attribute in Jest stubs; check property
+      const badges = element.shadowRoot.querySelectorAll("lightning-badge");
+      const activeBadge = Array.from(badges).find((b) => b.label === "Active");
 
-      if (!activeBadge) {
-        // Wire data timing - verify component renders
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-      } else {
-        expect(activeBadge).not.toBeNull();
-      }
+      expect(activeBadge).not.toBeNull();
     });
 
     it("displays Inactive badge for inactive paths", async () => {
@@ -361,15 +348,10 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const inactiveBadge = element.shadowRoot.querySelector('lightning-badge[label="Inactive"]');
+      const badges = element.shadowRoot.querySelectorAll("lightning-badge");
+      const inactiveBadge = Array.from(badges).find((b) => b.label === "Inactive");
 
-      // The badge may be rendered or may still be loading
-      if (!inactiveBadge) {
-        // Verify component is at least rendering
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-      } else {
-        expect(inactiveBadge).not.toBeNull();
-      }
+      expect(inactiveBadge).not.toBeNull();
     });
   });
 
@@ -415,8 +397,6 @@ describe("c-escalation-path-config", () => {
 
       const recordPicker = element.shadowRoot.querySelector("lightning-record-picker");
       const comboboxes = element.shadowRoot.querySelectorAll("lightning-combobox");
-      const checkbox = element.shadowRoot.querySelector('lightning-input[type="checkbox"]');
-
       expect(recordPicker).not.toBeNull();
       expect(comboboxes.length).toBeGreaterThan(0);
       // checkbox might not render exactly as type="checkbox" - just verify input exists
@@ -453,15 +433,13 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const editButton = element.shadowRoot.querySelector(
-        'lightning-button-icon[icon-name="utility:edit"]'
+      // icon-name isn't reflected as attribute in Jest stubs; use data-id + index
+      // First button-icon with data-id is edit, second is delete
+      const buttonIcons = element.shadowRoot.querySelectorAll(
+        'lightning-button-icon[data-id="path001"]'
       );
-
-      if (!editButton) {
-        // Wire data not rendered yet - verify component still works
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-        return;
-      }
+      const editButton = buttonIcons[0];
+      expect(editButton).not.toBeNull();
 
       editButton.click();
       await flushPromises();
@@ -481,14 +459,11 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const deleteButton = element.shadowRoot.querySelector(
-        'lightning-button-icon[icon-name="utility:delete"]'
+      const buttonIcons = element.shadowRoot.querySelectorAll(
+        'lightning-button-icon[data-id="path001"]'
       );
-
-      if (!deleteButton) {
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-        return;
-      }
+      const deleteButton = buttonIcons[1];
+      expect(deleteButton).not.toBeNull();
 
       deleteButton.click();
       await flushPromises();
@@ -503,39 +478,31 @@ describe("c-escalation-path-config", () => {
       await flushAll();
       await flushAll();
 
-      const deleteButton = element.shadowRoot.querySelector(
-        'lightning-button-icon[icon-name="utility:delete"]'
+      const buttonIcons = element.shadowRoot.querySelectorAll(
+        'lightning-button-icon[data-id="path001"]'
       );
-
-      if (!deleteButton) {
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-        return;
-      }
+      const deleteButton = buttonIcons[1];
+      expect(deleteButton).not.toBeNull();
 
       deleteButton.click();
       await flushPromises();
 
       const modalContent = element.shadowRoot.querySelector(".slds-modal__content");
-      if (modalContent) {
-        expect(modalContent.textContent).toContain("Team Lead John");
-      }
+      expect(modalContent).toBeTruthy();
+      expect(modalContent.textContent).toContain("Team Lead John");
     });
 
     it("closes delete modal when Cancel is clicked", async () => {
       const element = await createComponent();
       emitWireData([MOCK_LEVEL1_PATH]);
       await flushAll();
-      await flushAll(); // Extra flush to ensure re-render
+      await flushAll();
 
-      const deleteButton = element.shadowRoot.querySelector(
-        'lightning-button-icon[icon-name="utility:delete"]'
+      const buttonIcons = element.shadowRoot.querySelectorAll(
+        'lightning-button-icon[data-id="path001"]'
       );
-
-      // Skip if UI hasn't rendered (wire adapter timing)
-      if (!deleteButton) {
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-        return;
-      }
+      const deleteButton = buttonIcons[1];
+      expect(deleteButton).not.toBeNull();
 
       deleteButton.click();
       await flushPromises();
@@ -544,13 +511,12 @@ describe("c-escalation-path-config", () => {
         ".slds-modal_small lightning-button"
       );
       const cancelButton = Array.from(cancelButtons).find((btn) => btn.label === "Cancel");
-      if (cancelButton) {
-        cancelButton.click();
-        await flushPromises();
+      expect(cancelButton).toBeTruthy();
+      cancelButton.click();
+      await flushPromises();
 
-        const deleteModal = element.shadowRoot.querySelector(".slds-modal_small");
-        expect(deleteModal).toBeNull();
-      }
+      const deleteModal = element.shadowRoot.querySelector(".slds-modal_small");
+      expect(deleteModal).toBeNull();
     });
   });
 
@@ -618,17 +584,13 @@ describe("c-escalation-path-config", () => {
       const element = await createComponent();
       emitWireData([MOCK_LEVEL1_PATH]);
       await flushAll();
-      await flushAll(); // Extra flush to ensure re-render
+      await flushAll();
 
-      const deleteButton = element.shadowRoot.querySelector(
-        'lightning-button-icon[icon-name="utility:delete"]'
+      const buttonIcons = element.shadowRoot.querySelectorAll(
+        'lightning-button-icon[data-id="path001"]'
       );
-
-      // Skip if UI hasn't rendered (wire adapter timing)
-      if (!deleteButton) {
-        expect(element.shadowRoot.querySelector("lightning-card")).not.toBeNull();
-        return;
-      }
+      const deleteButton = buttonIcons[1];
+      expect(deleteButton).not.toBeNull();
 
       deleteButton.click();
       await flushPromises();

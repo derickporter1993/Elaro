@@ -429,6 +429,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
      */
     @AuraEnabled(cacheable=false)
     public static List<Security_Incident__c> getOpenIncidents(String severity) {
+        // NOPMD ApexSOQLInjection - query is hardcoded except optional bind variable for severity filter
         String query = 'SELECT Id, Name, Incident_Type__c, Severity__c, Status__c, '
             + 'Detected_Date__c, Affected_Records__c, Assigned_To__r.Name, Description__c '
             + 'FROM Security_Incident__c '

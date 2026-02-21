@@ -161,33 +161,30 @@ describe("c-elaro-setup-wizard", () => {
       const nextButton = Array.from(buttons).find((b) => b.label === "Next");
 
       // Navigate to step 2
-      if (nextButton) {
-        nextButton.click();
-        await Promise.resolve();
-        await Promise.resolve();
+      expect(nextButton).toBeTruthy();
+      nextButton.click();
+      await Promise.resolve();
+      await Promise.resolve();
 
-        // Select a framework to enable next
-        const frameworkButton = element.shadowRoot.querySelector(
-          '.framework-card[data-value="SOC2"]'
-        );
-        if (frameworkButton) {
-          frameworkButton.click();
-          await Promise.resolve();
-        }
+      // Select a framework to enable next
+      const frameworkButton = element.shadowRoot.querySelector(
+        '.framework-card[data-value="SOC2"]'
+      );
+      expect(frameworkButton).toBeTruthy();
+      frameworkButton.click();
+      await Promise.resolve();
 
-        // Navigate to step 3
-        const nextBtn2 = Array.from(element.shadowRoot.querySelectorAll("lightning-button")).find(
-          (b) => b.label === "Next"
-        );
-        if (nextBtn2) {
-          nextBtn2.click();
-          await Promise.resolve();
-          await Promise.resolve();
+      // Navigate to step 3
+      const nextBtn2 = Array.from(element.shadowRoot.querySelectorAll("lightning-button")).find(
+        (b) => b.label === "Next"
+      );
+      expect(nextBtn2).toBeTruthy();
+      nextBtn2.click();
+      await Promise.resolve();
+      await Promise.resolve();
 
-          const heading = element.shadowRoot.querySelector("#step3-heading");
-          expect(heading).not.toBeNull();
-        }
-      }
+      const heading = element.shadowRoot.querySelector("#step3-heading");
+      expect(heading).not.toBeNull();
     });
   });
 

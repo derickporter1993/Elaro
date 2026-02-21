@@ -438,7 +438,7 @@ private class AssessmentWizardServiceTest {
     @IsTest
     static void shouldRejectAutoScanWithInvalidSession() {
         // Use fabricated non-existent Id to test the sessions.isEmpty() validation path
-        Id fabricatedId = Compliance_Assessment_Session__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000';
+        Id fabricatedId = Compliance_Assessment_Session__c.SObjectType.getDescribe().getKeyPrefix() + '000000000000'; // NOPMD EagerlyLoadedDescribeSObjectResult
 
         Test.startTest();
         try {

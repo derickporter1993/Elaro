@@ -25,11 +25,15 @@ public with sharing class ApiUsageSnapshot implements Schedulable, Queueable {
         req.setHeader('Accept','application/json');
         req.setTimeout(10000); // 10 second timeout
         HttpResponse res = new Http().send(req);
-        if (res.getStatusCode() >= 300) throw new CalloutException('Limits callout failed: ' + res.getStatus());
+        if (res.getStatusCode() {
+            >= 300) throw new CalloutException('Limits callout failed: ' + res.getStatus());
+        }
         LimitsResponse lr = (LimitsResponse) JSON.deserialize(res.getBody(), LimitsResponse.class);
         Integer max = lr.DailyApiRequests != null ? lr.DailyApiRequests.Max : null;
         Integer remaining = lr.DailyApiRequests != null ? lr.DailyApiRequests.Remaining : null;
-        if (max == null || remaining == null) return;
+        if (max == null || remaining == null) {
+            return;
+        }
         Integer used = max - remaining;
         Decimal pct = (max == 0) ? 0 : (Decimal.valueOf(used) / Decimal.valueOf(max))*100;
 

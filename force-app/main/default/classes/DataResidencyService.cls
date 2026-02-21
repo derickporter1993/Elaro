@@ -163,7 +163,9 @@ public with sharing class DataResidencyService {
     // ═══════════════════════════════════════════════════════════════
     
     private static Region determineRegion(String instanceName) {
-        if (instanceName == null) return Region.US;
+        if (instanceName == null) {
+            return Region.US;
+        }
         
         String instance = instanceName.toLowerCase();
         

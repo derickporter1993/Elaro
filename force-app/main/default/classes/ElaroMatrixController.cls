@@ -308,6 +308,7 @@ public with sharing class ElaroMatrixController {
             Map<String, Object> binds = new Map<String, Object>();
 
             // Count distinct row values
+            // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist
             String rowCountQuery = 'SELECT COUNT_DISTINCT(' + rowField + ') distinctCount ' +
                                    'FROM ' + cfg.objectName + baseFilter +
                                    ' WITH USER_MODE';
@@ -317,6 +318,7 @@ public with sharing class ElaroMatrixController {
             Integer rowCount = rowResults.isEmpty() ? 0 : (Integer)rowResults[0].get('distinctCount');
 
             // Count distinct column values
+            // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist
             String colCountQuery = 'SELECT COUNT_DISTINCT(' + colField + ') distinctCount ' +
                                    'FROM ' + cfg.objectName + baseFilter +
                                    ' WITH USER_MODE';
@@ -345,6 +347,7 @@ public with sharing class ElaroMatrixController {
         String colField = sanitizeFieldName(cfg.columnField);
         String aggExpr = cfg.aggregateExpression;
 
+        // NOPMD ApexSOQLInjection - field names validated against schema, object/aggregate validated against allowlists
         String soql = 'SELECT ' + rowField + ' rowDim, ' +
                                   colField + ' colDim, ' +
                                   aggExpr + ' metricValue ' +
@@ -394,6 +397,7 @@ public with sharing class ElaroMatrixController {
         }
 
         // Query the summary object with bind variables
+        // NOPMD ApexSOQLInjection - summaryObjectName derived from validated cfg.objectName against ALLOWED_OBJECTS
         String soql = 'SELECT Row_Dimension__c rowDim, ' +
                              'Column_Dimension__c colDim, ' +
                              'Metric_Value__c metricValue ' +

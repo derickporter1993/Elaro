@@ -12,7 +12,6 @@
 import { createElement } from "lwc";
 import ElaroReadinessScore from "c/elaroReadinessScore";
 import generateEvidencePack from "@salesforce/apex/ElaroLegalDocumentGenerator.generateLegalAttestation";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 // Wire adapter callbacks
 let mockReadinessScoreCallbacks = new Set();

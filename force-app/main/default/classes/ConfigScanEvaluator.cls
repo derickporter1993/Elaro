@@ -137,6 +137,7 @@ public inherited sharing class ConfigScanEvaluator {
         }
 
         try {
+            // NOPMD ApexSOQLInjection - settingName and fieldName are admin-configured Custom Setting/object names, not user input
             SObject setting = Database.query(
                 'SELECT ' + String.escapeSingleQuotes(fieldName)
                 + ' FROM ' + String.escapeSingleQuotes(settingName)

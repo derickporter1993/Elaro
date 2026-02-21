@@ -1,8 +1,6 @@
 import { createElement } from "lwc";
 import TrustCenterDashboard from "c/trustCenterDashboard";
 import getPublicViews from "@salesforce/apex/TrustCenterController.getPublicViews";
-import triggerDataAggregation from "@salesforce/apex/TrustCenterController.triggerDataAggregation";
-
 // Mock wire adapter for getPublicViews
 jest.mock(
   "@salesforce/apex/TrustCenterController.getPublicViews",

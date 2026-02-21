@@ -324,6 +324,7 @@ public with sharing class ElaroTrendController {
             aggExpr = 'SUM(' + metricField + ')';
         }
 
+        // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist, monthsBack is bounded integer
         // LAST_N_MONTHS is a SOQL date literal and must be inlined
         String soql = 'SELECT ' + bucketExpr + ' bucketDate, ' +
                                   aggExpr + ' metricValue, ' +

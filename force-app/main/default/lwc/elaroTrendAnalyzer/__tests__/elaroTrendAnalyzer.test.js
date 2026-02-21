@@ -12,8 +12,7 @@
 import { createElement } from "lwc";
 import ElaroTrendAnalyzer from "c/elaroTrendAnalyzer";
 import getTimeSeries from "@salesforce/apex/ElaroTrendController.getTimeSeries";
-import getDateFields from "@salesforce/apex/ElaroTrendController.getDateFields";
-import getMetricFields from "@salesforce/apex/ElaroTrendController.getMetricFields";
+// getDateFields and getMetricFields handled by wire adapter mocks below
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 let mockDateFieldsCallbacks = new Set();

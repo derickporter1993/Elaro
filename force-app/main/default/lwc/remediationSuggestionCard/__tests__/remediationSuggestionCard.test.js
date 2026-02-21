@@ -3,9 +3,7 @@ import RemediationSuggestionCard from "c/remediationSuggestionCard";
 import getSuggestions from "@salesforce/apex/RemediationSuggestionService.getSuggestions";
 import generateSuggestions from "@salesforce/apex/RemediationSuggestionService.generateSuggestions";
 import approveSuggestion from "@salesforce/apex/RemediationSuggestionService.approveSuggestion";
-import rejectSuggestion from "@salesforce/apex/RemediationSuggestionService.rejectSuggestion";
 import executeRemediation from "@salesforce/apex/RemediationExecutor.executeRemediation";
-import markAsManuallyApplied from "@salesforce/apex/RemediationExecutor.markAsManuallyApplied";
 import { refreshApex } from "@salesforce/apex";
 
 jest.mock(
@@ -44,6 +42,10 @@ jest.mock(
 jest.mock("@salesforce/apex", () => ({ refreshApex: jest.fn().mockResolvedValue(undefined) }), {
   virtual: true,
 });
+
+function flushPromises() {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
 
 const MOCK_SUGGESTIONS = [
   {
@@ -156,17 +158,16 @@ describe("c-remediation-suggestion-card", () => {
     const element = createComponent({ recordId: "a00xx0000001" });
     getSuggestions.emit([]);
     await flushPromises();
+    await flushPromises();
 
-    const genBtn = element.shadowRoot.querySelector(
-      'lightning-button[label="Generate Suggestions"]'
-    );
-    if (genBtn) {
-      genBtn.click();
-      await flushPromises();
-      expect(generateSuggestions).toHaveBeenCalledWith({
-        gapId: "a00xx0000001",
-      });
-    }
+    const buttons = element.shadowRoot.querySelectorAll("lightning-button");
+    const genBtn = Array.from(buttons).find((b) => b.label === "Generate Suggestions");
+    expect(genBtn).toBeTruthy();
+    genBtn.click();
+    await flushPromises();
+    expect(generateSuggestions).toHaveBeenCalledWith({
+      gapId: "a00xx0000001",
+    });
   });
 
   it("approves a suggestion", async () => {
@@ -174,34 +175,32 @@ describe("c-remediation-suggestion-card", () => {
     const element = createComponent({ recordId: "a00xx0000001" });
     getSuggestions.emit(MOCK_SUGGESTIONS);
     await flushPromises();
+    await flushPromises();
 
-    const approveBtn = element.shadowRoot.querySelector(
-      'lightning-button[data-id="a03xx0000001"][label="Approve"]'
-    );
-    if (approveBtn) {
-      approveBtn.click();
-      await flushPromises();
-      expect(approveSuggestion).toHaveBeenCalledWith({
-        suggestionId: "a03xx0000001",
-      });
-    }
+    const approveButtons = element.shadowRoot.querySelectorAll('lightning-button[data-id="a03xx0000001"]');
+    const approveBtn = Array.from(approveButtons).find((b) => b.label === "Approve");
+    expect(approveBtn).toBeTruthy();
+    approveBtn.click();
+    await flushPromises();
+    expect(approveSuggestion).toHaveBeenCalledWith({
+      suggestionId: "a03xx0000001",
+    });
   });
 
   it("opens reject modal on reject click", async () => {
     const element = createComponent({ recordId: "a00xx0000001" });
     getSuggestions.emit(MOCK_SUGGESTIONS);
     await flushPromises();
+    await flushPromises();
 
-    const rejectBtn = element.shadowRoot.querySelector(
-      'lightning-button[data-id="a03xx0000001"][label="Reject"]'
-    );
-    if (rejectBtn) {
-      rejectBtn.click();
-      await flushPromises();
+    const rejectButtons = element.shadowRoot.querySelectorAll('lightning-button[data-id="a03xx0000001"]');
+    const rejectBtn = Array.from(rejectButtons).find((b) => b.label === "Reject");
+    expect(rejectBtn).toBeTruthy();
+    rejectBtn.click();
+    await flushPromises();
 
-      const modal = element.shadowRoot.querySelector("section[role='dialog']");
-      expect(modal).not.toBeNull();
-    }
+    const modal = element.shadowRoot.querySelector("section[role='dialog']");
+    expect(modal).not.toBeNull();
   });
 
   it("executes remediation for approved suggestion", async () => {
@@ -210,20 +209,26 @@ describe("c-remediation-suggestion-card", () => {
       message: "Applied",
       requiresDeployment: false,
     });
+    // Use a suggestion that is APPROVED and has Auto_Remediation_Available__c = true
+    const approvedAutoSuggestion = {
+      ...MOCK_SUGGESTIONS[1],
+      Auto_Remediation_Available__c: true,
+    };
     const element = createComponent({ recordId: "a00xx0000001" });
-    getSuggestions.emit(MOCK_SUGGESTIONS);
+    getSuggestions.emit([MOCK_SUGGESTIONS[0], approvedAutoSuggestion, MOCK_SUGGESTIONS[2]]);
+    await flushPromises();
     await flushPromises();
 
-    const executeBtn = element.shadowRoot.querySelector(
-      'lightning-button[data-id="a03xx0000002"][label="Execute"]'
+    const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+    const executeBtn = Array.from(allButtons).find(
+      (b) => b.label === "Execute Auto-Remediation"
     );
-    if (executeBtn) {
-      executeBtn.click();
-      await flushPromises();
-      expect(executeRemediation).toHaveBeenCalledWith({
-        suggestionId: "a03xx0000002",
-      });
-    }
+    expect(executeBtn).toBeTruthy();
+    executeBtn.click();
+    await flushPromises();
+    expect(executeRemediation).toHaveBeenCalledWith({
+      suggestionId: "a03xx0000002",
+    });
   });
 
   it("maps suggestion type labels correctly", async () => {
@@ -238,12 +243,13 @@ describe("c-remediation-suggestion-card", () => {
     const element = createComponent({ recordId: "a00xx0000001" });
     getSuggestions.emit(MOCK_SUGGESTIONS);
     await flushPromises();
+    await flushPromises();
 
-    const refreshBtn = element.shadowRoot.querySelector('lightning-button[label="Refresh"]');
-    if (refreshBtn) {
-      refreshBtn.click();
-      await flushPromises();
-      expect(refreshApex).toHaveBeenCalled();
-    }
+    const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
+    const refreshBtn = Array.from(allButtons).find((b) => b.label === "Refresh");
+    expect(refreshBtn).toBeTruthy();
+    refreshBtn.click();
+    await flushPromises();
+    expect(refreshApex).toHaveBeenCalled();
   });
 });

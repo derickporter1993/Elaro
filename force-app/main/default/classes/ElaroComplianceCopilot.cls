@@ -248,17 +248,35 @@ public with sharing class ElaroComplianceCopilot {
         }
 
         // Detect framework
-        if (lowerQuery.contains('hipaa')) result.framework = ElaroConstants.FRAMEWORK_HIPAA;
-        else if (lowerQuery.contains('soc2') || lowerQuery.contains('soc 2')) result.framework = ElaroConstants.FRAMEWORK_SOC2;
-        else if (lowerQuery.contains('nist')) result.framework = ElaroConstants.FRAMEWORK_NIST;
-        else if (lowerQuery.contains('fedramp')) result.framework = ElaroConstants.FRAMEWORK_FEDRAMP;
-        else if (lowerQuery.contains('gdpr')) result.framework = ElaroConstants.FRAMEWORK_GDPR;
+        if (lowerQuery.contains('hipaa')) {
+            result.framework = ElaroConstants.FRAMEWORK_HIPAA;
+        }
+        else if (lowerQuery.contains('soc2') || lowerQuery.contains('soc 2')) {
+            result.framework = ElaroConstants.FRAMEWORK_SOC2;
+        }
+        else if (lowerQuery.contains('nist')) {
+            result.framework = ElaroConstants.FRAMEWORK_NIST;
+        }
+        else if (lowerQuery.contains('fedramp')) {
+            result.framework = ElaroConstants.FRAMEWORK_FEDRAMP;
+        }
+        else if (lowerQuery.contains('gdpr')) {
+            result.framework = ElaroConstants.FRAMEWORK_GDPR;
+        }
 
         // Detect timeframe
-        if (lowerQuery.contains('today')) result.timeframe = 'TODAY';
-        else if (lowerQuery.contains('yesterday')) result.timeframe = 'YESTERDAY';
-        else if (lowerQuery.contains('this week')) result.timeframe = 'THIS_WEEK';
-        else if (lowerQuery.contains('this month')) result.timeframe = 'THIS_MONTH';
+        if (lowerQuery.contains('today')) {
+            result.timeframe = 'TODAY';
+        }
+        else if (lowerQuery.contains('yesterday')) {
+            result.timeframe = 'YESTERDAY';
+        }
+        else if (lowerQuery.contains('this week')) {
+            result.timeframe = 'THIS_WEEK';
+        }
+        else if (lowerQuery.contains('this month')) {
+            result.timeframe = 'THIS_MONTH';
+        }
         else if (lowerQuery.contains('q1') || lowerQuery.contains('q2') || lowerQuery.contains('q3') || lowerQuery.contains('q4')) {
             result.timeframe = 'QUARTER';
         }
@@ -315,13 +333,23 @@ public with sharing class ElaroComplianceCopilot {
      * Calculate risk score from setup action
      */
     private static Decimal calculateRiskFromAction(String action) {
-        if (String.isBlank(action)) return 3.0;
+        if (String.isBlank(action)) {
+            return 3.0;
+        }
         String lowerAction = action.toLowerCase();
 
-        if (lowerAction.contains('delete') || lowerAction.contains('removed')) return 8.0;
-        if (lowerAction.contains('permission') || lowerAction.contains('profile')) return 7.0;
-        if (lowerAction.contains('field') || lowerAction.contains('object')) return 6.0;
-        if (lowerAction.contains('user') || lowerAction.contains('role')) return 5.0;
+        if (lowerAction.contains('delete') || lowerAction.contains('removed')) {
+            return 8.0;
+        }
+        if (lowerAction.contains('permission') || lowerAction.contains('profile')) {
+            return 7.0;
+        }
+        if (lowerAction.contains('field') || lowerAction.contains('object')) {
+            return 6.0;
+        }
+        if (lowerAction.contains('user') || lowerAction.contains('role')) {
+            return 5.0;
+        }
         return 4.0;
     }
 
@@ -592,16 +620,36 @@ public with sharing class ElaroComplianceCopilot {
      * Detects compliance framework from topic string
      */
     private static String detectFrameworkFromTopic(String lowerTopic) {
-        if (lowerTopic.contains('hipaa')) return ElaroConstants.FRAMEWORK_HIPAA;
-        if (lowerTopic.contains('soc2') || lowerTopic.contains('soc 2')) return ElaroConstants.FRAMEWORK_SOC2;
-        if (lowerTopic.contains('nist')) return ElaroConstants.FRAMEWORK_NIST;
-        if (lowerTopic.contains('fedramp')) return ElaroConstants.FRAMEWORK_FEDRAMP;
-        if (lowerTopic.contains('gdpr')) return ElaroConstants.FRAMEWORK_GDPR;
-        if (lowerTopic.contains('sox')) return ElaroConstants.FRAMEWORK_SOX;
-        if (lowerTopic.contains('pci') || lowerTopic.contains('pci-dss')) return ElaroConstants.FRAMEWORK_PCI_DSS;
-        if (lowerTopic.contains('ccpa')) return ElaroConstants.FRAMEWORK_CCPA;
-        if (lowerTopic.contains('glba')) return ElaroConstants.FRAMEWORK_GLBA;
-        if (lowerTopic.contains('iso') || lowerTopic.contains('27001')) return ElaroConstants.FRAMEWORK_ISO27001;
+        if (lowerTopic.contains('hipaa')) {
+            return ElaroConstants.FRAMEWORK_HIPAA;
+        }
+        if (lowerTopic.contains('soc2') || lowerTopic.contains('soc 2')) {
+            return ElaroConstants.FRAMEWORK_SOC2;
+        }
+        if (lowerTopic.contains('nist')) {
+            return ElaroConstants.FRAMEWORK_NIST;
+        }
+        if (lowerTopic.contains('fedramp')) {
+            return ElaroConstants.FRAMEWORK_FEDRAMP;
+        }
+        if (lowerTopic.contains('gdpr')) {
+            return ElaroConstants.FRAMEWORK_GDPR;
+        }
+        if (lowerTopic.contains('sox')) {
+            return ElaroConstants.FRAMEWORK_SOX;
+        }
+        if (lowerTopic.contains('pci') || lowerTopic.contains('pci-dss')) {
+            return ElaroConstants.FRAMEWORK_PCI_DSS;
+        }
+        if (lowerTopic.contains('ccpa')) {
+            return ElaroConstants.FRAMEWORK_CCPA;
+        }
+        if (lowerTopic.contains('glba')) {
+            return ElaroConstants.FRAMEWORK_GLBA;
+        }
+        if (lowerTopic.contains('iso') || lowerTopic.contains('27001')) {
+            return ElaroConstants.FRAMEWORK_ISO27001;
+        }
         return null;
     }
 

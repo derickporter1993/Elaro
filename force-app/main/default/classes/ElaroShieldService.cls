@@ -202,6 +202,7 @@ public with sharing class ElaroShieldService {
             
             // Check for Platform Encryption (TenantSecret object)
             try {
+                // NOPMD ApexSOQLInjection - query is hardcoded, no user input
                 Integer tenantSecretCount = Database.countQuery(
                     'SELECT COUNT() FROM TenantSecret WHERE Status = \'Active\' WITH USER_MODE'
                 );

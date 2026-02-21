@@ -22,6 +22,7 @@ public with sharing class ElaroDashboardController {
             framework = null;
         }
         
+        // NOPMD ApexSOQLInjection - query is hardcoded except optional bind variable for framework filter
         String soql = 'SELECT Id, Name, Package_Name__c, Framework__c, Status__c, '
             + 'Audit_Period_Start__c, Audit_Period_End__c, CreatedDate, '
             + 'Created_By__r.Name, LastModifiedDate '

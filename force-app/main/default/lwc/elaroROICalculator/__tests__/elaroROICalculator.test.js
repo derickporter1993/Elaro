@@ -194,11 +194,10 @@ describe("c-elaro-roi-calculator", () => {
       // Component calculates and shows results with default values
       const resultsSection = getResultsSection(element);
       // Results may be visible with default calculation values
-      if (resultsSection) {
+      expect(resultsSection).toBeTruthy();
         const resultCards = getResultCards(element);
         // Result cards are shown based on default calculation
         expect(resultCards.length).toBeGreaterThanOrEqual(0);
-      }
     });
 
     it("shows results section after inputs are set", async () => {
@@ -238,7 +237,7 @@ describe("c-elaro-roi-calculator", () => {
       await Promise.resolve();
 
       const resultsSection = getResultsSection(element);
-      if (resultsSection) {
+      expect(resultsSection).toBeTruthy();
         // Check for time savings card
         const savingsCard = element.shadowRoot.querySelector(".result-card.savings");
         expect(savingsCard).not.toBeNull();
@@ -246,7 +245,6 @@ describe("c-elaro-roi-calculator", () => {
         // Check that it contains "hours" text
         const resultValue = savingsCard?.querySelector(".result-value");
         expect(resultValue?.textContent).toContain("hours");
-      }
     });
 
     it("displays ROI percentage in results", async () => {
@@ -263,7 +261,7 @@ describe("c-elaro-roi-calculator", () => {
       await Promise.resolve();
 
       const resultsSection = getResultsSection(element);
-      if (resultsSection) {
+      expect(resultsSection).toBeTruthy();
         // Check for ROI card
         const roiCard = element.shadowRoot.querySelector(".result-card.roi");
         expect(roiCard).not.toBeNull();
@@ -271,7 +269,6 @@ describe("c-elaro-roi-calculator", () => {
         // Check that it contains "%" text
         const resultValue = roiCard?.querySelector(".result-value");
         expect(resultValue?.textContent).toContain("%");
-      }
     });
   });
 });

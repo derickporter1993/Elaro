@@ -143,7 +143,7 @@ describe("c-deployment-monitor-dashboard", () => {
     });
 
     it("loads deployment data on connected", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
       await flushPromises();
 
@@ -213,7 +213,7 @@ describe("c-deployment-monitor-dashboard", () => {
 
   describe("Polling Manager Integration", () => {
     it("initializes polling on connectedCallback", async () => {
-      const element = await createComponent();
+      await createComponent();
       await flushPromises();
 
       // Verify component renders and loads data (polling is internal)

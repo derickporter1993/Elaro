@@ -204,24 +204,14 @@ describe("c-elaro-copilot", () => {
 
       // Click the send button to trigger submit
       const sendButton = element.shadowRoot.querySelector(".send-button");
-      if (sendButton && !sendButton.disabled) {
-        sendButton.click();
-        await flushPromises();
-        await Promise.resolve();
-        await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(sendButton && !sendButton.disabled).toBeTruthy();
+      sendButton.click();
+      await flushPromises();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
-        // Verify the mock was called or component is in expected state
-        if (mockAskCopilot.mock.calls.length > 0) {
-          expect(mockAskCopilot).toHaveBeenCalled();
-        } else {
-          // Component may not have triggered due to LWC reactivity in Jest
-          // Verify component is functional
-          expect(element.shadowRoot).not.toBeNull();
-        }
-      } else {
-        // Send button may be disabled or not rendered
-        expect(element).not.toBeNull();
-      }
+      // Verify component is functional after submit
+      expect(element.shadowRoot).not.toBeNull();
     });
   });
 
@@ -245,23 +235,8 @@ describe("c-elaro-copilot", () => {
       const sendButton = element.shadowRoot.querySelector(".send-button");
       expect(sendButton).not.toBeNull();
 
-      if (!sendButton.disabled) {
-        sendButton.click();
-        await flushPromises();
-        await Promise.resolve();
-        await new Promise((resolve) => setTimeout(resolve, 200));
-
-        // Verify mock was called or component handled the action
-        if (mockAskCopilot.mock.calls.length > 0) {
-          expect(mockAskCopilot).toHaveBeenCalled();
-        } else {
-          // LWC reactivity may not work as expected in Jest
-          expect(element.shadowRoot).not.toBeNull();
-        }
-      } else {
-        // Button may be disabled due to LWC binding issues in Jest
-        expect(element).not.toBeNull();
-      }
+      // Button may be disabled due to LWC binding issues in Jest
+      expect(element).not.toBeNull();
     });
 
     it("supports keyboard activation with Enter", async () => {
@@ -348,24 +323,14 @@ describe("c-elaro-copilot", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const sendButton = element.shadowRoot.querySelector(".send-button");
-      if (sendButton && !sendButton.disabled) {
-        sendButton.click();
-        await flushPromises();
-        await Promise.resolve();
-        await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(sendButton && !sendButton.disabled).toBeTruthy();
+      sendButton.click();
+      await flushPromises();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
-        // Check for loading indicator or verify component state
-        const loading = element.shadowRoot.querySelector(".loading-message");
-        if (loading) {
-          expect(loading).not.toBeNull();
-        } else {
-          // Loading state may not be visible due to LWC timing in Jest
-          expect(element.shadowRoot).not.toBeNull();
-        }
-      } else {
-        // Component is functional even if button state differs
-        expect(element).not.toBeNull();
-      }
+      // Verify component is functional during loading
+      expect(element.shadowRoot).not.toBeNull();
     });
 
     it("disables input during loading", async () => {
@@ -385,23 +350,14 @@ describe("c-elaro-copilot", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const sendButton = element.shadowRoot.querySelector(".send-button");
-      if (sendButton && !sendButton.disabled) {
-        sendButton.click();
-        await flushPromises();
-        await Promise.resolve();
-        await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(sendButton && !sendButton.disabled).toBeTruthy();
+      sendButton.click();
+      await flushPromises();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
-        // Check if input is disabled or verify component is functional
-        if (input.disabled === true) {
-          expect(input.disabled).toBe(true);
-        } else {
-          // LWC state binding may not work as expected in Jest
-          expect(element.shadowRoot).not.toBeNull();
-        }
-      } else {
-        // Component is functional
-        expect(element).not.toBeNull();
-      }
+      // Verify component is functional during loading
+      expect(element.shadowRoot).not.toBeNull();
     });
   });
 
@@ -511,21 +467,16 @@ describe("c-elaro-copilot", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const sendButton = element.shadowRoot.querySelector(".send-button");
-      if (sendButton && !sendButton.disabled) {
-        sendButton.click();
-        await flushPromises();
-        await Promise.resolve();
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        await flushPromises();
+      expect(sendButton && !sendButton.disabled).toBeTruthy();
+      sendButton.click();
+      await flushPromises();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await flushPromises();
 
-        const evidenceSection = element.shadowRoot.querySelector(".evidence-section");
-        // Evidence section rendering depends on successful API call and LWC reactivity
-        // Verify component is functional regardless of section visibility
-        expect(element.shadowRoot).not.toBeNull();
-      } else {
-        // Component is functional
-        expect(element).not.toBeNull();
-      }
+      // Evidence section rendering depends on successful API call and LWC reactivity
+      // Verify component is functional regardless of section visibility
+      expect(element.shadowRoot).not.toBeNull();
     });
 
     it("displays action buttons when available", async () => {
@@ -539,27 +490,22 @@ describe("c-elaro-copilot", () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       const sendButton = element.shadowRoot.querySelector(".send-button");
-      if (sendButton && !sendButton.disabled) {
-        sendButton.click();
-        await flushPromises();
-        await Promise.resolve();
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        await flushPromises();
+      expect(sendButton && !sendButton.disabled).toBeTruthy();
+      sendButton.click();
+      await flushPromises();
+      await Promise.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      await flushPromises();
 
-        const actionSection = element.shadowRoot.querySelector(".actions-section");
-        // Action section rendering depends on successful API call and LWC reactivity
-        // Verify component is functional regardless of section visibility
-        expect(element.shadowRoot).not.toBeNull();
-      } else {
-        // Component is functional
-        expect(element).not.toBeNull();
-      }
+      // Action section rendering depends on successful API call and LWC reactivity
+      // Verify component is functional regardless of section visibility
+      expect(element.shadowRoot).not.toBeNull();
     });
   });
 
   describe("Component Cleanup", () => {
     it("cleans up debounce timer on disconnect", async () => {
-      const element = await createComponent();
+      await createComponent();
 
       // Should not throw error when using safeCleanupDom
       safeCleanupDom();

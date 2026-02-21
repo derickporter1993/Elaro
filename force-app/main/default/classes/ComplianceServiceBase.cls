@@ -222,9 +222,15 @@ public abstract with sharing class ComplianceServiceBase implements IRiskScoring
      * @return Severity string
      */
     protected String getSeverityFromScore(Decimal riskScore) {
-        if (riskScore >= 9.0) return 'CRITICAL';
-        if (riskScore >= 7.0) return 'HIGH';
-        if (riskScore >= 5.0) return 'MEDIUM';
+        if (riskScore >= 9.0) {
+            return 'CRITICAL';
+        }
+        if (riskScore >= 7.0) {
+            return 'HIGH';
+        }
+        if (riskScore >= 5.0) {
+            return 'MEDIUM';
+        }
         return 'LOW';
     }
 

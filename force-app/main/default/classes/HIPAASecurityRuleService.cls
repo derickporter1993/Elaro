@@ -311,7 +311,9 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
                             break;
                         }
                     }
-                    if (!hasTracking) return false;
+                    if (!hasTracking) {
+                        return false;
+                    }
                 }
             } catch (Exception e) {
                 return false;
@@ -330,7 +332,9 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         Set<String> phiPatterns = new Set<String>{'SSN', 'DOB', 'BIRTH', 'MEDICAL', 'HEALTH'};
         String upper = fieldName.toUpperCase();
         for (String pattern : phiPatterns) {
-            if (upper.contains(pattern)) return true;
+            if (upper.contains(pattern)) {
+                return true;
+            }
         }
         return false;
     }

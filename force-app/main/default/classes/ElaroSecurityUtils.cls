@@ -63,7 +63,9 @@ public with sharing class ElaroSecurityUtils {
     public static Boolean hasFieldReadAccess(String sObjectType, String fieldName) {
         try {
             Schema.SObjectType objType = Schema.getGlobalDescribe().get(sObjectType);
-            if (objType == null) return false;
+            if (objType == null) {
+                return false;
+            }
             
             Schema.DescribeSObjectResult objDescribe = objType.getDescribe();
             Schema.DescribeFieldResult fieldDescribe = objDescribe.fields.getMap().get(fieldName)?.getDescribe();
@@ -81,7 +83,9 @@ public with sharing class ElaroSecurityUtils {
     public static Boolean hasFieldWriteAccess(String sObjectType, String fieldName) {
         try {
             Schema.SObjectType objType = Schema.getGlobalDescribe().get(sObjectType);
-            if (objType == null) return false;
+            if (objType == null) {
+                return false;
+            }
             
             Schema.DescribeSObjectResult objDescribe = objType.getDescribe();
             Schema.DescribeFieldResult fieldDescribe = objDescribe.fields.getMap().get(fieldName)?.getDescribe();

@@ -32,6 +32,7 @@ public inherited sharing class SOQLQueryEvaluator {
         }
 
         try {
+            // NOPMD ApexSOQLInjection - Evaluation_Query__c is stored in Compliance_Rule__mdt (Custom Metadata), admin-controlled
             List<SObject> queryResults = Database.query(
                 rule.Evaluation_Query__c, AccessLevel.USER_MODE
             );
