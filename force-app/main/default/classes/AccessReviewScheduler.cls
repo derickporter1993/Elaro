@@ -34,6 +34,7 @@ public with sharing class AccessReviewScheduler implements Schedulable {
      */
     public class AccessReviewQueueable implements Queueable {
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new AccessReviewQueueableFinalizer());
             try {
                 AccessReviewScheduler scheduler = new AccessReviewScheduler();
                 scheduler.performAccessReview();
@@ -43,6 +44,17 @@ public with sharing class AccessReviewScheduler implements Schedulable {
             } catch (Exception e) {
                 ElaroLogger.error('AccessReviewScheduler.AccessReviewQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class AccessReviewQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('AccessReviewQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

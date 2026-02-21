@@ -38,6 +38,7 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
      */
     public class ComplianceSnapshotQueueable implements Queueable {
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new ComplianceSnapshotQueueableFinalizer());
             try {
                 ComplianceScoreSnapshotScheduler scheduler = new ComplianceScoreSnapshotScheduler();
                 scheduler.captureSnapshots();
@@ -47,6 +48,17 @@ public with sharing class ComplianceScoreSnapshotScheduler implements Schedulabl
             } catch (Exception e) {
                 ElaroLogger.error('ComplianceScoreSnapshotScheduler.ComplianceSnapshotQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class ComplianceSnapshotQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('ComplianceSnapshotQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

@@ -137,6 +137,7 @@ public with sharing class ElaroComplianceAlert {
         }
         
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new AlertNotificationQueueableFinalizer());
             try {
                 Map<String, Object> alertData = (Map<String, Object>)JSON.deserializeUntyped(alertDataJson);
                 
@@ -158,8 +159,19 @@ public with sharing class ElaroComplianceAlert {
                 ElaroLogger.info('ElaroComplianceAlert.AlertNotificationQueueable', 
                     'Successfully sent alert notification via ' + channel);
             } catch (Exception e) {
-                ElaroLogger.error('ElaroComplianceAlert.AlertNotificationQueueable', 
+                ElaroLogger.error('ElaroComplianceAlert.AlertNotificationQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class AlertNotificationQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('AlertNotificationQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

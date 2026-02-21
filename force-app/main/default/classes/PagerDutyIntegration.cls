@@ -39,18 +39,20 @@ public with sharing class PagerDutyIntegration {
     }
     
     /**
-     * Queueable implementation for PagerDuty incident triggering
+     * @description Queueable implementation for PagerDuty incident triggering
      */
     public class PagerDutyTriggerQueueable implements Queueable, Database.AllowsCallouts {
         private String alertDataJson;
         private String action;
-        
+
         public PagerDutyTriggerQueueable(String alertDataJson, String action) {
             this.alertDataJson = alertDataJson;
             this.action = action;
         }
-        
+
+        /** Deserializes alert data, builds a PagerDuty Events API v2 payload, and sends it. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new PagerDutyTriggerQueueableFinalizer());
             try {
                 String routingKey = getRoutingKey();
                 if (String.isBlank(routingKey)) {
@@ -101,21 +103,34 @@ public with sharing class PagerDutyIntegration {
                     e.getMessage(), e.getStackTraceString());
             }
         }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class PagerDutyTriggerQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('PagerDutyTriggerQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
+            }
+        }
     }
     
     /**
-     * Queueable implementation for PagerDuty incident resolution/acknowledgement
+     * @description Queueable implementation for PagerDuty incident resolution/acknowledgement
      */
     public class PagerDutyResolveQueueable implements Queueable, Database.AllowsCallouts {
         private String dedupKey;
         private String action;
-        
+
         public PagerDutyResolveQueueable(String dedupKey, String action) {
             this.dedupKey = dedupKey;
             this.action = action;
         }
-        
+
+        /** Sends a resolve or acknowledge event to PagerDuty for the given dedup key. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new PagerDutyResolveQueueableFinalizer());
             try {
                 String routingKey = getRoutingKey();
                 if (String.isBlank(routingKey)) {
@@ -136,6 +151,17 @@ public with sharing class PagerDutyIntegration {
             } catch (Exception e) {
                 ElaroLogger.error('PagerDutyIntegration.PagerDutyResolveQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class PagerDutyResolveQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('PagerDutyResolveQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

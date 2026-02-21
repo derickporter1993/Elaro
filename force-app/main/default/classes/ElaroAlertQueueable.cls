@@ -12,6 +12,7 @@ public with sharing class ElaroAlertQueueable implements Queueable, Database.All
     }
     
     public void execute(QueueableContext context) {
+        System.attachFinalizer(new ElaroAlertQueueableFinalizer());
         if (queueItem == null) {
             return;
         }
@@ -37,10 +38,21 @@ public with sharing class ElaroAlertQueueable implements Queueable, Database.All
     }
     
     private String buildAlertMessage(ElaroComplianceAlert.AlertQueueItem item) {
-        String eventType = item.eventData.containsKey('eventType') 
-            ? (String)item.eventData.get('eventType') 
+        String eventType = item.eventData.containsKey('eventType')
+            ? (String)item.eventData.get('eventType')
             : 'Unknown';
-        
+
         return 'A ' + item.severity + ' compliance alert has been triggered for ' + eventType + ' event.';
+    }
+
+    /**
+     * Transaction Finalizer for error logging and optional retry.
+     */
+    private class ElaroAlertQueueableFinalizer implements Finalizer {
+        public void execute(FinalizerContext ctx) {
+            if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                ElaroLogger.error('ElaroAlertQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+            }
+        }
     }
 }

@@ -36,6 +36,7 @@ public with sharing class BreachDeadlineMonitor implements Schedulable {
      */
     public class BreachDeadlineQueueable implements Queueable {
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new BreachDeadlineQueueableFinalizer());
             try {
                 BreachDeadlineMonitor monitor = new BreachDeadlineMonitor();
                 monitor.monitorDeadlines();
@@ -45,6 +46,17 @@ public with sharing class BreachDeadlineMonitor implements Schedulable {
             } catch (Exception e) {
                 ElaroLogger.error('BreachDeadlineMonitor.BreachDeadlineQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class BreachDeadlineQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('BreachDeadlineQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

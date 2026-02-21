@@ -1,14 +1,30 @@
+/**
+ * Captures a daily API usage snapshot by querying the Salesforce Limits REST API.
+ * Calculates usage percentage and projected exhaustion time, then stores the result.
+ *
+ * @author Elaro Team
+ * @group DevOps
+ */
 public with sharing class ApiUsageSnapshot implements Schedulable, Queueable {
     public class LimitsResponse {
         public class DailyLimit { public Integer Max; public Integer Remaining; }
         public DailyLimit DailyApiRequests;
     }
 
-    public void execute(QueueableContext qc) { run(); }
+    /** Executes the API usage snapshot as a Queueable job. */
+    public void execute(QueueableContext qc) { System.attachFinalizer(new ApiUsageSnapshotFinalizer()); run(); }
+    /** Executes the API usage snapshot as a Scheduled job. */
     public void execute(SchedulableContext sc) { run(); }
 
+    /** Enqueues the snapshot for asynchronous execution. */
     public static void runAsync() { System.enqueueJob(new ApiUsageSnapshot()); }
 
+    /**
+     * Queries the Salesforce Limits API, calculates daily API usage percentage and
+     * projected exhaustion time, then inserts an API_Usage_Snapshot__c record.
+     *
+     * @throws CalloutException if the Limits API returns a non-success status
+     */
     public static void run() {
         HttpRequest req = new HttpRequest();
         req.setEndpoint('callout:SF_Limits/services/data/v65.0/limits');
@@ -43,5 +59,16 @@ public with sharing class ApiUsageSnapshot implements Schedulable, Queueable {
             Percent_Used__c = pct.setScale(2),
             Projected_Exhaustion__c = projected
         );
+    }
+
+    /**
+     * Transaction Finalizer for error logging and optional retry.
+     */
+    private class ApiUsageSnapshotFinalizer implements Finalizer {
+        public void execute(FinalizerContext ctx) {
+            if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                ElaroLogger.error('ApiUsageSnapshot: Unhandled exception: ' + ctx.getException().getMessage());
+            }
+        }
     }
 }

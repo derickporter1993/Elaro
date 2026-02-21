@@ -39,16 +39,18 @@ public with sharing class ServiceNowIntegration {
     }
     
     /**
-     * Queueable implementation for syncing controls to ServiceNow
+     * @description Queueable implementation for syncing controls to ServiceNow
      */
     public class ServiceNowSyncControlsQueueable implements Queueable, Database.AllowsCallouts {
         private String frameworkName;
-        
+
         public ServiceNowSyncControlsQueueable(String frameworkName) {
             this.frameworkName = frameworkName;
         }
-        
+
+        /** Retrieves framework controls and syncs each to ServiceNow GRC via REST API. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new ServiceNowSyncControlsQueueableFinalizer());
             try {
                 // Get controls based on framework
                 List<Map<String, Object>> controls = getControlsForFramework(frameworkName);
@@ -64,19 +66,32 @@ public with sharing class ServiceNowIntegration {
                     e.getMessage(), e.getStackTraceString());
             }
         }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class ServiceNowSyncControlsQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('ServiceNowSyncControlsQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
+            }
+        }
     }
     
     /**
-     * Queueable implementation for pushing evidence to ServiceNow
+     * @description Queueable implementation for pushing evidence to ServiceNow
      */
     public class ServiceNowPushEvidenceQueueable implements Queueable, Database.AllowsCallouts {
         private String evidenceId;
-        
+
         public ServiceNowPushEvidenceQueueable(String evidenceId) {
             this.evidenceId = evidenceId;
         }
-        
+
+        /** Queries the evidence item and pushes it to ServiceNow's compliance evidence table. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new ServiceNowPushEvidenceQueueableFinalizer());
             try {
                 Elaro_Evidence_Item__c evidence = [
                     SELECT Id, Name, Evidence_Type__c, Description__c, Evidence_Date__c, Status__c
@@ -118,19 +133,32 @@ public with sharing class ServiceNowIntegration {
                     e.getMessage(), e.getStackTraceString());
             }
         }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class ServiceNowPushEvidenceQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('ServiceNowPushEvidenceQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
+            }
+        }
     }
     
     /**
-     * Queueable implementation for syncing compliance status to ServiceNow
+     * @description Queueable implementation for syncing compliance status to ServiceNow
      */
     public class ServiceNowSyncStatusQueueable implements Queueable, Database.AllowsCallouts {
         private String auditPackageId;
-        
+
         public ServiceNowSyncStatusQueueable(String auditPackageId) {
             this.auditPackageId = auditPackageId;
         }
-        
+
+        /** Calculates the current compliance score and posts it to ServiceNow's status table. */
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new ServiceNowSyncStatusQueueableFinalizer());
             try {
                 Elaro_Audit_Package__c pkg = [
                     SELECT Id, Name, Package_Name__c, Framework__c, Status__c
@@ -174,6 +202,17 @@ public with sharing class ServiceNowIntegration {
             } catch (Exception e) {
                 ElaroLogger.error('ServiceNowIntegration.ServiceNowSyncStatusQueueable',
                     e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class ServiceNowSyncStatusQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('ServiceNowSyncStatusQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

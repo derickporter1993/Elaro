@@ -302,6 +302,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         }
         
         public void execute(QueueableContext context) {
+            System.attachFinalizer(new SlackDigestQueueableFinalizer());
             try {
                 // Build Slack message
                 Map<String, Object> slackMessage = buildSlackMessage(digest);
@@ -326,6 +327,17 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             } catch (Exception e) {
                 ElaroLogger.error('ElaroDailyDigest.SlackDigestQueueable',
                     'Slack digest send failed: ' + e.getMessage(), e.getStackTraceString());
+            }
+        }
+
+        /**
+         * Transaction Finalizer for error logging and optional retry.
+         */
+        private class SlackDigestQueueableFinalizer implements Finalizer {
+            public void execute(FinalizerContext ctx) {
+                if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                    ElaroLogger.error('SlackDigestQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+                }
             }
         }
     }

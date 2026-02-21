@@ -35,6 +35,7 @@ public with sharing class ElaroSlackNotifierQueueable implements Queueable, Data
      * Execute method for Queueable interface
      */
     public void execute(QueueableContext context) {
+        System.attachFinalizer(new ElaroSlackNotifierQueueableFinalizer());
         try {
             // Validate payload size before sending
             if (String.isBlank(payload)) {
@@ -196,5 +197,16 @@ public with sharing class ElaroSlackNotifierQueueable implements Queueable, Data
      */
     private String generateCorrelationId() {
         return 'SLACK-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
+    }
+
+    /**
+     * Transaction Finalizer for error logging and optional retry.
+     */
+    private class ElaroSlackNotifierQueueableFinalizer implements Finalizer {
+        public void execute(FinalizerContext ctx) {
+            if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                ElaroLogger.error('ElaroSlackNotifierQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+            }
+        }
     }
 }

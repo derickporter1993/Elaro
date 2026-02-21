@@ -35,6 +35,7 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
      * Execute method for Queueable interface
      */
     public void execute(QueueableContext context) {
+        System.attachFinalizer(new ElaroTeamsNotifierQueueableFinalizer());
         try {
             // Validate payload size before sending
             if (String.isBlank(payload)) {
@@ -202,5 +203,16 @@ public with sharing class ElaroTeamsNotifierQueueable implements Queueable, Data
      */
     private String generateCorrelationId() {
         return 'TEAMS-' + System.now().getTime() + '-' + Crypto.getRandomInteger();
+    }
+
+    /**
+     * Transaction Finalizer for error logging and optional retry.
+     */
+    private class ElaroTeamsNotifierQueueableFinalizer implements Finalizer {
+        public void execute(FinalizerContext ctx) {
+            if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
+                ElaroLogger.error('ElaroTeamsNotifierQueueable: Unhandled exception: ' + ctx.getException().getMessage());
+            }
+        }
     }
 }
