@@ -2,15 +2,21 @@
  * Multi-org management service for enterprise deployments.
  * Manages connected orgs, policy sync, and cross-org compliance status.
  *
+ * Async operations (policy sync, connection testing) are delegated to
+ * {@link MultiOrgManagerQueueable} with {@link AsyncOptions} and
+ * {@link QueueableDuplicateSignature} for duplicate prevention.
+ *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  * @group Enterprise Features
+ * @see MultiOrgManagerQueueable
  * @see ElaroComplianceScorer
  */
 public with sharing class MultiOrgManager {
 
     /**
-     * Registers a connected org with the provided configuration.
+     * Registers a connected org with the provided configuration and enqueues
+     * an asynchronous connection test via {@link MultiOrgManagerQueueable}.
      *
      * @param orgConfig Configuration map containing name, orgId, instanceUrl, environmentType, region
      * @return Id of the created Elaro_Connected_Org__c record
@@ -33,12 +39,12 @@ public with sharing class MultiOrgManager {
 
         insert as user connectedOrg;
 
-        // Test connection
-        testOrgConnection(connectedOrg.Id);
+        // Enqueue async connection test (single org)
+        enqueueConnectionTest(new List<Id>{ connectedOrg.Id });
 
         return connectedOrg.Id;
     }
-    
+
     /**
      * Retrieves the multi-org compliance status including current org
      * and all active connected orgs with aggregate scoring.
@@ -61,10 +67,10 @@ public with sharing class MultiOrgManager {
             WITH USER_MODE
             ORDER BY Name
         ];
-        
+
         Decimal totalScore = status.currentOrg.complianceScore;
         Integer orgCount = 1;
-        
+
         for (Elaro_Connected_Org__c org : orgs) {
             OrgStatus os = new OrgStatus();
             os.orgId = org.Id;
@@ -75,49 +81,55 @@ public with sharing class MultiOrgManager {
             os.connectionStatus = org.Connection_Status__c;
             os.lastSync = org.Last_Sync__c;
             os.complianceScore = org.Compliance_Score__c != null ? org.Compliance_Score__c : 0;
-            
+
             status.connectedOrgs.add(os);
             totalScore += os.complianceScore;
             orgCount++;
         }
-        
+
         status.aggregateScore = totalScore / orgCount;
         status.totalOrgs = orgCount;
-        
+
         return status;
     }
-    
+
     /**
-     * Syncs compliance policies to all active connected orgs.
+     * Enqueues an asynchronous job to sync compliance policies to all active
+     * connected orgs. Replaces the legacy {@code @future} syncPolicies method
+     * with a {@link MultiOrgManagerQueueable} that supports callouts, retry
+     * via Transaction Finalizers, and duplicate prevention via AsyncOptions.
      *
      * @param policyIds List of policy record IDs or DeveloperNames to sync
+     * @throws AuraHandledException if the Queueable cannot be enqueued
      */
-    @future(callout=true)
-    public static void syncPolicies(List<String> policyIds) {
-        List<Elaro_Connected_Org__c> activeOrgs = [
-            SELECT Id, Instance_URL__c, Org_Id__c
-            FROM Elaro_Connected_Org__c
-            WHERE Is_Active__c = true AND Connection_Status__c = 'Connected'
-            WITH USER_MODE
-        ];
+    @AuraEnabled
+    public static void syncPoliciesAsync(List<String> policyIds) {
+        try {
+            MultiOrgManagerQueueable job = new MultiOrgManagerQueueable(
+                MultiOrgManagerQueueable.Operation.SYNC_POLICIES,
+                policyIds
+            );
 
-        // Query policies to sync
-        List<Compliance_Policy__mdt> policies = [
-            SELECT DeveloperName, Label, MasterLabel, Description__c, Framework__c
-            FROM Compliance_Policy__mdt
-            WHERE Id IN :policyIds OR DeveloperName IN :policyIds
-            WITH USER_MODE
-        ];
-        
-        for (Elaro_Connected_Org__c org : activeOrgs) {
-            syncPoliciesToOrg(org, policies);
+            AsyncOptions options = new AsyncOptions();
+            options.setMaximumQueueableStackDepth(5);
+            options.setDuplicateSignature(
+                new QueueableDuplicateSignature.Builder()
+                    .addString('MultiOrgManager_SyncPolicies')
+                    .build()
+            );
+
+            System.enqueueJob(job, options);
+        } catch (Exception e) {
+            ElaroLogger.error('MultiOrgManager.syncPoliciesAsync', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to start policy sync. Please try again.');
         }
     }
-    
+
     /**
      * Removes a connected org by deactivating and deleting its record.
      *
      * @param orgId The connected org record ID to remove
+     * @throws AuraHandledException if the record cannot be found or deleted
      */
     @AuraEnabled
     public static void removeOrg(String orgId) {
@@ -129,9 +141,15 @@ public with sharing class MultiOrgManager {
         ];
         delete as user org;
     }
-    
+
     /**
-     * Refreshes the connection status for all active connected orgs.
+     * Refreshes the connection status for all active connected orgs by
+     * enqueuing a single {@link MultiOrgManagerQueueable} that tests all
+     * connections in bulk with a single DML update. This replaces the legacy
+     * pattern of calling an {@code @future} method per org in a loop, which
+     * risked hitting async job limits (async job storm).
+     *
+     * @throws AuraHandledException if the Queueable cannot be enqueued
      */
     @AuraEnabled
     public static void refreshAllConnections() {
@@ -140,12 +158,19 @@ public with sharing class MultiOrgManager {
             WHERE Is_Active__c = true
             WITH USER_MODE
         ];
-        
-        for (Elaro_Connected_Org__c org : orgs) {
-            testOrgConnection(org.Id);
+
+        if (orgs.isEmpty()) {
+            return;
         }
+
+        List<Id> orgIds = new List<Id>();
+        for (Elaro_Connected_Org__c org : orgs) {
+            orgIds.add(org.Id);
+        }
+
+        enqueueConnectionTest(orgIds);
     }
-    
+
     /**
      * Aggregates compliance metrics from the current org and all connected orgs.
      *
@@ -154,16 +179,16 @@ public with sharing class MultiOrgManager {
     @AuraEnabled(cacheable=true)
     public static AggregateMetrics getAggregateMetrics() {
         AggregateMetrics metrics = new AggregateMetrics();
-        
+
         // Get current org metrics
         Map<String, Object> currentScore = ElaroComplianceScorer.calculateComplianceScore();
         metrics.totalEvents = 0;
         metrics.totalAlerts = 0;
         metrics.avgComplianceScore = (Decimal)currentScore.get('overallScore');
-        
+
         // Count events
         metrics.totalEvents = [SELECT COUNT() FROM Elaro_Evidence_Item__c WHERE CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE];
-        
+
         // Get connected org metrics
         List<Elaro_Connected_Org__c> orgs = [
             SELECT Compliance_Score__c, Event_Count__c, Alert_Count__c
@@ -171,10 +196,10 @@ public with sharing class MultiOrgManager {
             WHERE Is_Active__c = true
             WITH USER_MODE
         ];
-        
+
         Decimal scoreSum = metrics.avgComplianceScore;
         Integer count = 1;
-        
+
         for (Elaro_Connected_Org__c org : orgs) {
             if (org.Compliance_Score__c != null) {
                 scoreSum += org.Compliance_Score__c;
@@ -183,17 +208,42 @@ public with sharing class MultiOrgManager {
             metrics.totalEvents += org.Event_Count__c != null ? (Integer)org.Event_Count__c : 0;
             metrics.totalAlerts += org.Alert_Count__c != null ? (Integer)org.Alert_Count__c : 0;
         }
-        
+
         metrics.avgComplianceScore = scoreSum / count;
         metrics.orgCount = count;
-        
+
         return metrics;
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // PRIVATE METHODS
     // ═══════════════════════════════════════════════════════════════
-    
+
+    /**
+     * Enqueues a {@link MultiOrgManagerQueueable} to test connectivity for the
+     * provided org record IDs. Uses {@link AsyncOptions} with a
+     * {@link QueueableDuplicateSignature} to prevent duplicate connection test
+     * jobs from being enqueued concurrently.
+     *
+     * @param orgIds List of Elaro_Connected_Org__c record IDs to test
+     */
+    private static void enqueueConnectionTest(List<Id> orgIds) {
+        MultiOrgManagerQueueable job = new MultiOrgManagerQueueable(
+            MultiOrgManagerQueueable.Operation.TEST_CONNECTION,
+            orgIds
+        );
+
+        AsyncOptions options = new AsyncOptions();
+        options.setMaximumQueueableStackDepth(5);
+        options.setDuplicateSignature(
+            new QueueableDuplicateSignature.Builder()
+                .addString('MultiOrgManager_TestConnection')
+                .build()
+        );
+
+        System.enqueueJob(job, options);
+    }
+
     private static void validateOrgConfig(Map<String, Object> config) {
         if (String.isBlank((String)config.get('name'))) {
             throw new AuraHandledException('Org name is required');
@@ -205,7 +255,7 @@ public with sharing class MultiOrgManager {
             throw new AuraHandledException('Instance URL is required');
         }
     }
-    
+
     private static OrgStatus getCurrentOrgStatus() {
         OrgStatus status = new OrgStatus();
         status.orgId = UserInfo.getOrganizationId();
@@ -215,55 +265,45 @@ public with sharing class MultiOrgManager {
         status.region = 'Current';
         status.connectionStatus = 'Connected';
         status.lastSync = Datetime.now();
-        
+
         Map<String, Object> scoreData = ElaroComplianceScorer.calculateComplianceScore();
         status.complianceScore = (Decimal)scoreData.get('overallScore');
-        
+
         return status;
     }
-    
-    @future(callout=true)
-    private static void testOrgConnection(Id orgRecordId) {
-        Elaro_Connected_Org__c org = [
-            SELECT Id, Instance_URL__c FROM Elaro_Connected_Org__c WHERE Id = :orgRecordId
-            WITH USER_MODE
-        ];
-        
-        try {
-            HttpRequest req = new HttpRequest();
-            req.setEndpoint(org.Instance_URL__c + '/services/data/v66.0/');
-            req.setMethod('GET');
-            req.setTimeout(15000);
 
-            // In production, use Named Credential with OAuth
-            // This is a simplified connection test
-
-            org.Connection_Status__c = 'Connected';
-            org.Last_Sync__c = Datetime.now();
-        } catch (Exception e) {
-            org.Connection_Status__c = 'Error: ' + e.getMessage().left(100);
-        }
-
-        update as user org;
-    }
-    
+    /**
+     * Syncs a set of compliance policies to a single connected org via callout.
+     * Retained as a package-private utility for direct invocation in synchronous
+     * test contexts.
+     *
+     * @param org The target connected org
+     * @param policies The compliance policies to sync
+     */
+    @TestVisible
     private static void syncPoliciesToOrg(Elaro_Connected_Org__c org, List<Compliance_Policy__mdt> policies) {
         // In production, this would call the connected org's API
         // to create/update policy records
-        ElaroLogger.info('MultiOrgManager.syncPoliciesToOrg: Syncing ' + policies.size() + ' policies to org ' + org.Id);
+        ElaroLogger.info('MultiOrgManager.syncPoliciesToOrg', 'Syncing ' + policies.size() + ' policies to org ' + org.Id);
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // INNER CLASSES
     // ═══════════════════════════════════════════════════════════════
-    
+
+    /**
+     * Wrapper containing the full multi-org compliance status overview.
+     */
     public class MultiOrgStatus {
         @AuraEnabled public OrgStatus currentOrg;
         @AuraEnabled public List<OrgStatus> connectedOrgs;
         @AuraEnabled public Decimal aggregateScore;
         @AuraEnabled public Integer totalOrgs;
     }
-    
+
+    /**
+     * Status snapshot for a single org (current or connected).
+     */
     public class OrgStatus {
         @AuraEnabled public String orgId;
         @AuraEnabled public String name;
@@ -274,7 +314,10 @@ public with sharing class MultiOrgManager {
         @AuraEnabled public Datetime lastSync;
         @AuraEnabled public Decimal complianceScore;
     }
-    
+
+    /**
+     * Aggregate compliance metrics across all orgs.
+     */
     public class AggregateMetrics {
         @AuraEnabled public Integer totalEvents;
         @AuraEnabled public Integer totalAlerts;

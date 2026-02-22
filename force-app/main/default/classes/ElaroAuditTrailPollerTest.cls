@@ -1,7 +1,7 @@
 @IsTest(testFor=ElaroAuditTrailPoller.class)
 private class ElaroAuditTrailPollerTest {
     
-    @isTest
+    @IsTest
     static void testSchedule() {
         Test.startTest();
         String jobId = ElaroAuditTrailPoller.schedule();
@@ -20,7 +20,7 @@ private class ElaroAuditTrailPollerTest {
         Assert.areEqual('Elaro Audit Trail Poller', jobs[0].CronJobDetail.Name);
     }
     
-    @isTest
+    @IsTest
     static void testUnschedule() {
         // First schedule a job
         String jobId = ElaroAuditTrailPoller.schedule();
@@ -39,7 +39,7 @@ private class ElaroAuditTrailPollerTest {
         Assert.areEqual(0, jobs.size(), 'Job should be unscheduled');
     }
     
-    @isTest
+    @IsTest
     static void testExecute() {
         ElaroAuditTrailPoller poller = new ElaroAuditTrailPoller();
         SchedulableContext ctx = null;
@@ -56,7 +56,7 @@ private class ElaroAuditTrailPollerTest {
         Assert.isNull(caughtEx, 'Poller execute should complete without throwing an exception');
     }
     
-    @isTest
+    @IsTest
     static void testPollAuditTrail() {
         Exception caughtEx;
         Test.startTest();

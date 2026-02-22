@@ -7,7 +7,7 @@
 @IsTest(testFor=ElaroRemediationEngine.class)
 private class ElaroRemediationEngineTest {
     
-    @isTest
+    @IsTest
     static void testEvaluateAndRemediate() {
         Test.startTest();
         ElaroRemediationEngine.RemediationResult result = 
@@ -20,7 +20,7 @@ private class ElaroRemediationEngineTest {
         Assert.areNotEqual(null, result.remediationId, 'Remediation ID should be set');
     }
     
-    @isTest
+    @IsTest
     static void testRollbackRemediation() {
         Test.startTest();
         ElaroRemediationEngine.RemediationResult result = 
@@ -32,7 +32,7 @@ private class ElaroRemediationEngineTest {
         Assert.areEqual('ROLLBACK_UNAVAILABLE', result.action, 'Action should be ROLLBACK_UNAVAILABLE');
     }
     
-    @isTest
+    @IsTest
     static void testGetPendingRemediations() {
         Test.startTest();
         List<ElaroRemediationEngine.RemediationResult> results = 
@@ -43,7 +43,7 @@ private class ElaroRemediationEngineTest {
         Assert.areEqual(0, results.size(), 'Stub should return empty list');
     }
     
-    @isTest
+    @IsTest
     static void testApproveRemediation() {
         Test.startTest();
         ElaroRemediationEngine.RemediationResult result = 
@@ -55,7 +55,7 @@ private class ElaroRemediationEngineTest {
         Assert.areEqual('APPROVED', result.action, 'Action should be APPROVED');
     }
     
-    @isTest
+    @IsTest
     static void testRemediationResultDefaults() {
         ElaroRemediationEngine.RemediationResult result = 
             new ElaroRemediationEngine.RemediationResult();

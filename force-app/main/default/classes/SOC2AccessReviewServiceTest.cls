@@ -24,7 +24,7 @@ public class SOC2AccessReviewServiceTest {
         insert reviews;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -35,7 +35,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areEqual('SOC2', frameworkName, 'Framework name should be SOC2');
     }
 
-    @isTest
+    @IsTest
     static void testInitiateAccessReview() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -47,7 +47,7 @@ public class SOC2AccessReviewServiceTest {
         // Just verify no exception is thrown
     }
 
-    @isTest
+    @IsTest
     static void testGetReviewStatus() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -61,7 +61,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areNotEqual(null, status, 'Status should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetExcessiveAccessUsers() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -72,7 +72,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areNotEqual(null, users, 'Users list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testRevokeAccess() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -85,7 +85,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areEqual(false, result.success, 'Should fail with empty user list');
     }
 
-    @isTest
+    @IsTest
     static void testGetStalePermissions() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -96,7 +96,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areNotEqual(null, stalePerms, 'Stale permissions list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testValidateNeedToKnow() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -108,7 +108,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areEqual(UserInfo.getUserId(), result.userId, 'User ID should match');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -119,7 +119,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -130,7 +130,7 @@ public class SOC2AccessReviewServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testInitiateAnnualReview() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -141,7 +141,7 @@ public class SOC2AccessReviewServiceTest {
         // Verify no exception thrown
     }
 
-    @isTest
+    @IsTest
     static void testInitiateAdHocReview() {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
@@ -152,7 +152,7 @@ public class SOC2AccessReviewServiceTest {
         // Verify no exception thrown
     }
 
-    @isTest
+    @IsTest
     static void testBulkAccessReview() {
         // Create bulk access review records
         List<Access_Review__c> bulkReviews = new List<Access_Review__c>();

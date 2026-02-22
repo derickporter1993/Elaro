@@ -27,7 +27,7 @@ private class ElaroDailyDigestTest {
     // execute Tests (Schedulable)
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testExecute_Success() {
         ElaroDailyDigest scheduler = new ElaroDailyDigest();
         
@@ -46,7 +46,7 @@ private class ElaroDailyDigestTest {
         Assert.isNull(caughtEx, 'Digest should execute successfully without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testExecute_WithData() {
         ElaroDailyDigest scheduler = new ElaroDailyDigest();
 
@@ -69,7 +69,7 @@ private class ElaroDailyDigestTest {
     // scheduleDigest Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testScheduleDigest() {
         String cronExpression = '0 0 6 * * ?'; // Daily at 6 AM
         
@@ -91,7 +91,7 @@ private class ElaroDailyDigestTest {
             'Job name should contain Elaro_Daily_Digest_');
     }
     
-    @isTest
+    @IsTest
     static void testScheduleDigest_DefaultCron() {
         Test.startTest();
         Id jobId = ElaroDailyDigest.scheduleDigest(null);
@@ -109,7 +109,7 @@ private class ElaroDailyDigestTest {
         Assert.areEqual('0 0 6 * * ?', ct.CronExpression, 'Should use default cron expression');
     }
     
-    @isTest
+    @IsTest
     static void testScheduleDigest_RemovesExistingJob() {
         // Schedule first job
         String cronExpression = '0 0 6 * * ?';
@@ -135,7 +135,7 @@ private class ElaroDailyDigestTest {
     // generateAndSendDigest Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateAndSendDigest_Success() {
         Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(200, '{"ok":true}'));
         
@@ -152,7 +152,7 @@ private class ElaroDailyDigestTest {
         Assert.isNull(caughtEx, 'Digest should be generated and sent without throwing');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateAndSendDigest_WithSlackError() {
         Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(500, '{"ok":false}'));
         
@@ -173,7 +173,7 @@ private class ElaroDailyDigestTest {
     // getDigestPreview Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetDigestPreview() {
         Test.startTest();
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
@@ -189,7 +189,7 @@ private class ElaroDailyDigestTest {
         Assert.areNotEqual(null, digest.aiSummary, 'Should have AI summary');
     }
     
-    @isTest
+    @IsTest
     static void testGetDigestPreview_Statistics() {
         Test.startTest();
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
@@ -201,7 +201,7 @@ private class ElaroDailyDigestTest {
         Assert.areNotEqual(null, digest.statistics.eventsByType, 'Should have events by type');
     }
     
-    @isTest
+    @IsTest
     static void testGetDigestPreview_TopRisks() {
         Test.startTest();
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
@@ -216,7 +216,7 @@ private class ElaroDailyDigestTest {
         }
     }
     
-    @isTest
+    @IsTest
     static void testGetDigestPreview_NoData() {
         // Test with minimal data
         Test.startTest();
@@ -232,7 +232,7 @@ private class ElaroDailyDigestTest {
     // Bulk Operations Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBulkDigestGeneration() {
         // Create many evidence items
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
@@ -253,7 +253,7 @@ private class ElaroDailyDigestTest {
     // Error Handling Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateAndSendDigest_ExceptionHandling() {
         Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(200, '{"ok":true}'));
         
@@ -269,7 +269,7 @@ private class ElaroDailyDigestTest {
         Assert.isNotNull(Test.isRunningTest(), 'Test execution should complete without unhandled exceptions');
     }
     
-    @isTest
+    @IsTest
     static void testGetDigestPreview_ExceptionHandling() {
         Test.startTest();
         // Should handle exceptions in data compilation
@@ -286,7 +286,7 @@ private class ElaroDailyDigestTest {
     // Data Validation Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testDigestData_Structure() {
         Test.startTest();
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();
@@ -301,7 +301,7 @@ private class ElaroDailyDigestTest {
         Assert.areNotEqual(null, digest.trendingDown, 'Should have trendingDown');
     }
     
-    @isTest
+    @IsTest
     static void testEventStatistics_Structure() {
         Test.startTest();
         ElaroDailyDigest.DigestData digest = ElaroDailyDigest.getDigestPreview();

@@ -63,7 +63,7 @@ private class MobileAlertEscalatorTest {
         insert gap;
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_FirstLevelEscalation() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 
@@ -82,7 +82,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 1');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_SecondLevelEscalation() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Alert_Escalation_Level__c = 1;
@@ -102,7 +102,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(2, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 2');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_ThirdLevelEscalation() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Alert_Escalation_Level__c = 2;
@@ -122,7 +122,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(3, updatedGap.Alert_Escalation_Level__c, 'Gap should be at escalation level 3');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_MaxLevelReached() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Alert_Escalation_Level__c = 3;
@@ -143,7 +143,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(3, updatedGap.Alert_Escalation_Level__c, 'Gap should remain at max escalation level 3');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_AlreadyAcknowledged() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Alert_Acknowledged__c = true;
@@ -164,7 +164,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(null, updatedGap.Alert_Escalation_Level__c, 'Escalation should not occur for acknowledged gaps');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_Snoozed() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Alert_Snoozed_Until__c = Datetime.now().addHours(2);
@@ -185,7 +185,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(null, updatedGap.Alert_Escalation_Level__c, 'Escalation should not occur for snoozed gaps');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_SnoozeExpired() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Alert_Snoozed_Until__c = Datetime.now().addMinutes(-5); // Expired snooze
@@ -206,7 +206,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Escalation should proceed after snooze expires');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_InvalidAlertId() {
         Exception caughtEx;
         Test.startTest();
@@ -222,7 +222,7 @@ private class MobileAlertEscalatorTest {
         Assert.isNull(caughtEx, 'Escalator should handle invalid ID gracefully without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_NoEscalationRecipients() {
         // Deactivate all escalation paths
         List<Elaro_Escalation_Path__c> paths = [SELECT Id FROM Elaro_Escalation_Path__c];
@@ -248,7 +248,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(null, updatedGap.Alert_Escalation_Level__c, 'No escalation without recipients');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_SchedulableInterface() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 
@@ -268,7 +268,7 @@ private class MobileAlertEscalatorTest {
         System.abortJob(jobId);
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_Constructor() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 
@@ -279,7 +279,7 @@ private class MobileAlertEscalatorTest {
         Assert.areNotEqual(null, escalator, 'Escalator should be instantiated');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_NullSnooze() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         // Ensure snooze is null (not set)
@@ -300,7 +300,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Escalation should occur with null snooze');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_ProgressiveLevels() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 
@@ -328,7 +328,7 @@ private class MobileAlertEscalatorTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_WithDescription() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Gap_Description__c = 'This is a very long description that should be abbreviated for the notification message. '.repeat(10);
@@ -347,7 +347,7 @@ private class MobileAlertEscalatorTest {
         Assert.areEqual(1, updatedGap.Alert_Escalation_Level__c, 'Escalator should process gap with long description');
     }
 
-    @isTest
+    @IsTest
     static void testEscalator_NullDescription() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         gap.Gap_Description__c = null;

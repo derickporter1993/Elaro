@@ -45,7 +45,7 @@ public class SOC2IncidentResponseServiceTest {
         insert incidents;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
@@ -56,7 +56,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areEqual('SOC2', frameworkName, 'Framework name should be SOC2');
     }
 
-    @isTest
+    @IsTest
     static void testAssessBreach() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
@@ -78,7 +78,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areEqual(true, assessment.notificationRequired, 'Notification should be required');
     }
 
-    @isTest
+    @IsTest
     static void testAssessBreachLowRisk() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
@@ -96,7 +96,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.isTrue(assessment.riskScore < 7.0, 'Risk score should be lower for minor incident');
     }
 
-    @isTest
+    @IsTest
     static void testCreateNotification() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
         Security_Incident__c incident = [SELECT Id FROM Security_Incident__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
@@ -108,7 +108,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areNotEqual(null, evidenceId, 'Evidence ID should be created');
     }
 
-    @isTest
+    @IsTest
     static void testGetNotificationDeadline() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
         Security_Incident__c incident = [SELECT Id FROM Security_Incident__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
@@ -122,7 +122,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.isTrue(deadline > DateTime.now(), 'Deadline should be in the future');
     }
 
-    @isTest
+    @IsTest
     static void testGetNotificationStatus() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
         Security_Incident__c incident = [SELECT Id FROM Security_Incident__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
@@ -135,7 +135,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areEqual(incident.Id, status.breachId, 'Breach ID should match');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateBreachReport() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
         Security_Incident__c incident = [SELECT Id FROM Security_Incident__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
@@ -147,7 +147,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areNotEqual(null, docId, 'Document ID should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetOpenBreaches() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
@@ -159,7 +159,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.isTrue(breaches.size() >= 2, 'Should have at least 2 open breaches from test data');
     }
 
-    @isTest
+    @IsTest
     static void testGetBreachMetrics() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
@@ -171,7 +171,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.isTrue(metrics.totalBreaches >= 3, 'Should have at least 3 breaches from test data');
     }
 
-    @isTest
+    @IsTest
     static void testCreateIncident() {
         SOC2IncidentResponseService.IncidentRequest request = new SOC2IncidentResponseService.IncidentRequest();
         request.incidentType = 'MALWARE';
@@ -185,7 +185,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areNotEqual(null, incidentId, 'Incident ID should be created');
     }
 
-    @isTest
+    @IsTest
     static void testEscalateIncident() {
         Security_Incident__c incident = [SELECT Id, Severity__c FROM Security_Incident__c WHERE Severity__c = 'MEDIUM' LIMIT 1];
 
@@ -197,7 +197,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areEqual('HIGH', incident.Severity__c, 'Severity should be escalated to HIGH');
     }
 
-    @isTest
+    @IsTest
     static void testResolveIncident() {
         Security_Incident__c incident = [SELECT Id FROM Security_Incident__c WHERE Status__c = 'OPEN' LIMIT 1];
 
@@ -210,7 +210,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areNotEqual(null, incident.Resolution__c, 'Resolution should be set');
     }
 
-    @isTest
+    @IsTest
     static void testGetOpenIncidents() {
         Test.startTest();
         List<Security_Incident__c> incidents = SOC2IncidentResponseService.getOpenIncidents(null);
@@ -219,7 +219,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areNotEqual(null, incidents, 'Incidents list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetOpenIncidentsBySeverity() {
         Test.startTest();
         List<Security_Incident__c> incidents = SOC2IncidentResponseService.getOpenIncidents('CRITICAL');
@@ -231,7 +231,7 @@ public class SOC2IncidentResponseServiceTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testGetIncidentMetrics() {
         Test.startTest();
         SOC2IncidentResponseService.IncidentMetrics metrics = SOC2IncidentResponseService.getIncidentMetrics(30);
@@ -241,7 +241,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.isTrue(metrics.totalIncidents >= 3, 'Should have at least 3 incidents from test data');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
@@ -252,7 +252,7 @@ public class SOC2IncidentResponseServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testBulkIncidentProcessing() {
         // Create bulk incidents
         List<Security_Incident__c> bulkIncidents = new List<Security_Incident__c>();

@@ -7,7 +7,7 @@
 @IsTest(testFor=ElaroEventScheduler.class)
 private class ElaroEventSchedulerTest {
 
-    @isTest
+    @IsTest
     static void testDefaultConstructor() {
         // Act
         Test.startTest();
@@ -18,7 +18,7 @@ private class ElaroEventSchedulerTest {
         Assert.areNotEqual(null, scheduler, 'Scheduler should be created with default constructor');
     }
 
-    @isTest
+    @IsTest
     static void testParameterizedConstructor() {
         // Arrange
         String eventType = 'LOGIN';
@@ -34,7 +34,7 @@ private class ElaroEventSchedulerTest {
         Assert.areNotEqual(null, scheduler, 'Scheduler should be created with parameters');
     }
 
-    @isTest
+    @IsTest
     static void testParameterizedConstructorWithNulls() {
         // Arrange - null values should use defaults
         String eventType = 'API';
@@ -48,7 +48,7 @@ private class ElaroEventSchedulerTest {
         Assert.areNotEqual(null, scheduler, 'Scheduler should handle null parameters');
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerExecution() {
         // Arrange
         String cronExpression = '0 0 6 * * ?';
@@ -64,7 +64,7 @@ private class ElaroEventSchedulerTest {
         Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMethod() {
         // Arrange
         ElaroEventScheduler scheduler = new ElaroEventScheduler('LOGIN', 7, 'SOC2');
@@ -83,7 +83,7 @@ private class ElaroEventSchedulerTest {
         Assert.isNull(caughtEx, 'Execute method should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteWithDifferentEventTypes() {
         // Test with different event types
         List<String> eventTypes = new List<String>{'LOGIN', 'API', 'REPORT_EXPORT', 'APEX_EXECUTION'};
@@ -104,7 +104,7 @@ private class ElaroEventSchedulerTest {
         Assert.isNull(caughtEx, 'All event types should be processed without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerWithDifferentFrameworks() {
         // Test with different compliance frameworks
         List<String> frameworks = new List<String>{'SOC2', 'HIPAA', 'GDPR', 'NIST'};

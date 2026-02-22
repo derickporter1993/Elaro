@@ -9,7 +9,7 @@
 @IsTest(testFor=ElaroExecutiveKPIController.class)
 private class ElaroExecutiveKPIControllerTest {
 
-    @isTest
+    @IsTest
     static void testGetKPIMetricsEmpty() {
         // Test with no metadata records (expected scenario in test org)
         Test.startTest();
@@ -20,7 +20,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areNotEqual(null, metrics, 'Should return metrics list (even if empty)');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIMetricsWithNull() {
         Test.startTest();
         List<ElaroExecutiveKPIController.KPIMetric> metrics =
@@ -30,7 +30,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areNotEqual(null, metrics, 'Should return metrics list');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIMetricsWithRecordIds() {
         Test.startTest();
         List<ElaroExecutiveKPIController.KPIMetric> metrics =
@@ -40,7 +40,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areNotEqual(null, metrics, 'Should return metrics list');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIByNameEmptyName() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -53,7 +53,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for blank name');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIByNameNull() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -66,7 +66,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null name');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIByNameNotFound() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -79,7 +79,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for non-existent KPI');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIByNameWithSpecialCharacters() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -94,7 +94,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception or sanitized input');
     }
 
-    @isTest
+    @IsTest
     static void testGetKPIByNameWithUnderscores() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -107,7 +107,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception (not found)');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricClassStructure() {
         ElaroExecutiveKPIController.KPIMetric metric =
             new ElaroExecutiveKPIController.KPIMetric();
@@ -145,7 +145,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual(null, metric.errorMessage, 'Error message should be null');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricWithError() {
         ElaroExecutiveKPIController.KPIMetric metric =
             new ElaroExecutiveKPIController.KPIMetric();
@@ -160,7 +160,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual('Unable to calculate metric', metric.errorMessage, 'Error message should be set');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricCurrencyFormat() {
         ElaroExecutiveKPIController.KPIMetric metric =
             new ElaroExecutiveKPIController.KPIMetric();
@@ -173,7 +173,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual('currency', metric.formatType, 'Format type should be currency');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricPercentFormat() {
         ElaroExecutiveKPIController.KPIMetric metric =
             new ElaroExecutiveKPIController.KPIMetric();
@@ -186,7 +186,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual('percent', metric.formatType, 'Format type should be percent');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricDaysFormat() {
         ElaroExecutiveKPIController.KPIMetric metric =
             new ElaroExecutiveKPIController.KPIMetric();
@@ -201,7 +201,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual('lower_is_better', metric.trendDirection, 'Trend direction should be lower_is_better');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricAllStatuses() {
         // Test green status
         ElaroExecutiveKPIController.KPIMetric greenMetric =
@@ -228,7 +228,7 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual('unknown', unknownMetric.status, 'Status should be unknown');
     }
 
-    @isTest
+    @IsTest
     static void testKPIMetricNullValues() {
         ElaroExecutiveKPIController.KPIMetric metric =
             new ElaroExecutiveKPIController.KPIMetric();

@@ -23,7 +23,7 @@ public class HIPAAAuditControlServiceTest {
         insert contacts;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         HIPAAAuditControlService service = new HIPAAAuditControlService();
 
@@ -34,7 +34,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         HIPAAAuditControlService service = new HIPAAAuditControlService();
 
@@ -45,7 +45,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         HIPAAAuditControlService service = new HIPAAAuditControlService();
 
@@ -56,7 +56,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testEvaluateAuditCompliance() {
         Test.startTest();
         HIPAAAuditControlService.AuditComplianceResult result =
@@ -70,7 +70,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, result.overallScore, 'Overall score should be set');
     }
 
-    @isTest
+    @IsTest
     static void testGetPHIAccessLogs() {
         Test.startTest();
         List<HIPAAAuditControlService.PHIAccessLog> logs =
@@ -83,7 +83,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, logs, 'Logs should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetUserAccessStats() {
         Test.startTest();
         List<HIPAAAuditControlService.UserAccessStats> stats =
@@ -93,7 +93,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, stats, 'Stats should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetUserAccessStatsDefaultDays() {
         Test.startTest();
         List<HIPAAAuditControlService.UserAccessStats> stats =
@@ -103,7 +103,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, stats, 'Stats should not be null with null days');
     }
 
-    @isTest
+    @IsTest
     static void testGetUserAccessStatsInvalidDays() {
         Test.startTest();
         List<HIPAAAuditControlService.UserAccessStats> stats =
@@ -113,7 +113,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, stats, 'Stats should not be null with negative days');
     }
 
-    @isTest
+    @IsTest
     static void testDetectSuspiciousAccessPatterns() {
         Test.startTest();
         List<HIPAAAuditControlService.SuspiciousAccess> suspicious =
@@ -123,7 +123,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, suspicious, 'Suspicious list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateAuditReport() {
         Test.startTest();
         Id docId = HIPAAAuditControlService.generateAuditReport(
@@ -138,7 +138,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.isTrue(doc.Title.contains('HIPAA_Audit_Report'), 'Title should contain HIPAA_Audit_Report');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateAuditReportDefaultDates() {
         Test.startTest();
         Id docId = HIPAAAuditControlService.generateAuditReport(null, null);
@@ -147,7 +147,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, docId, 'Document ID should not be null with default dates');
     }
 
-    @isTest
+    @IsTest
     static void testGetRetentionStatus() {
         Test.startTest();
         HIPAAAuditControlService.RetentionStatus status =
@@ -159,7 +159,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, status.recommendation, 'Recommendation should be set');
     }
 
-    @isTest
+    @IsTest
     static void testAuditCoverageResult() {
         Test.startTest();
         HIPAAAuditControlService.AuditComplianceResult result =
@@ -173,7 +173,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, coverage.gaps, 'Gaps should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testAccessPatternResult() {
         Test.startTest();
         HIPAAAuditControlService.AuditComplianceResult result =
@@ -186,7 +186,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, patterns.suspiciousCount, 'Suspicious count should be set');
     }
 
-    @isTest
+    @IsTest
     static void testBulkProcessing() {
         // Create bulk contacts for audit
         List<Contact> bulkContacts = new List<Contact>();
@@ -207,7 +207,7 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, result, 'Should handle bulk data');
     }
 
-    @isTest
+    @IsTest
     static void testFullComplianceEvaluation() {
         HIPAAAuditControlService service = new HIPAAAuditControlService();
 

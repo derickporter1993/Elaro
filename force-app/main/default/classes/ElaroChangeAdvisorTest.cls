@@ -1,7 +1,7 @@
 @IsTest(testFor=ElaroChangeAdvisor.class)
 private class ElaroChangeAdvisorTest {
     
-    @isTest
+    @IsTest
     static void testAnalyzeProposedChange_GrantAdmin() {
         Map<String, Object> proposedConfig = new Map<String, Object>{
             'userCount' => 5
@@ -19,7 +19,7 @@ private class ElaroChangeAdvisorTest {
         Assert.isTrue(!impact.alternatives.isEmpty(), 'Should have at least one alternative');
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeProposedChange_ModifySharing() {
         Map<String, Object> proposedConfig = new Map<String, Object>{
             'sharingLevel' => 'Public Read/Write'
@@ -34,7 +34,7 @@ private class ElaroChangeAdvisorTest {
         Assert.isTrue(impact.frameworkImpact.containsKey('HIPAA'), 'Should include HIPAA impact');
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeProposedChange_AssignPermissionSet() {
         // Create a permission set with Modify All Data
         PermissionSet ps = new PermissionSet(

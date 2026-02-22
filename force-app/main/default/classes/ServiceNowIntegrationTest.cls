@@ -53,7 +53,7 @@ private class ServiceNowIntegrationTest {
         insert evidence;
     }
 
-    @isTest
+    @IsTest
     static void testSyncControls() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowMock());
 
@@ -65,7 +65,7 @@ private class ServiceNowIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for sync callout');
     }
 
-    @isTest
+    @IsTest
     static void testSyncControlsSOC2() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowMock());
 
@@ -77,7 +77,7 @@ private class ServiceNowIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for sync callout');
     }
 
-    @isTest
+    @IsTest
     static void testPushEvidence() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowMock());
         Elaro_Evidence_Item__c evidence = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
@@ -90,7 +90,7 @@ private class ServiceNowIntegrationTest {
         Assert.areNotEqual(null, evidence.Id, 'Evidence ID should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testCreateIncident() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowMock());
 
@@ -108,7 +108,7 @@ private class ServiceNowIntegrationTest {
         Assert.areNotEqual(null, sysId, 'Incident sys_id should be returned');
     }
 
-    @isTest
+    @IsTest
     static void testGetIncidentStatus() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowMock());
 
@@ -119,7 +119,7 @@ private class ServiceNowIntegrationTest {
         Assert.areNotEqual(null, status, 'Status should be returned');
     }
 
-    @isTest
+    @IsTest
     static void testSyncComplianceStatus() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowMock());
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
@@ -132,7 +132,7 @@ private class ServiceNowIntegrationTest {
         Assert.areNotEqual(null, pkg.Id, 'Package ID should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testCreateIncidentWithError() {
         Test.setMock(HttpCalloutMock.class, new ServiceNowErrorMock());
 

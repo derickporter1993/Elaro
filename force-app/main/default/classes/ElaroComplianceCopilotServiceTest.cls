@@ -16,7 +16,7 @@ private class ElaroComplianceCopilotServiceTest {
     // analyzeEventPattern Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testAnalyzeEventPattern_ReturnsRecommendation() {
         List&lt;Elaro_Evidence_Item__c&gt; items = [
             SELECT Id FROM Elaro_Evidence_Item__c LIMIT 5
@@ -40,7 +40,7 @@ private class ElaroComplianceCopilotServiceTest {
         Assert.isTrue(rec.confidence &gt;= 0 &amp;&amp; rec.confidence &lt;= 100, 'Confidence should be 0-100');
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeEventPattern_EmptyList_ReturnsDefaultRecommendation() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
         
@@ -53,7 +53,7 @@ private class ElaroComplianceCopilotServiceTest {
         Assert.isTrue(rec.recommendation.contains('No events'), 'Should indicate no events');
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeEventPattern_NullList_ReturnsDefaultRecommendation() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
         
@@ -69,7 +69,7 @@ private class ElaroComplianceCopilotServiceTest {
     // generateAuditSummary Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateAuditSummary_ReturnsSummaryText() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -83,7 +83,7 @@ private class ElaroComplianceCopilotServiceTest {
         Assert.isTrue(summary.length() &gt; 0, 'Summary should not be empty');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateAuditSummary_NullPackageId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
         
@@ -97,7 +97,7 @@ private class ElaroComplianceCopilotServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testGenerateAuditSummary_BlankPackageId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
         
@@ -115,7 +115,7 @@ private class ElaroComplianceCopilotServiceTest {
     // predictComplianceRisks Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testPredictComplianceRisks_ReturnsPredictions() {
         Test.setMock(HttpCalloutMock.class, new ClaudeRiskPredictionMock());
         
@@ -128,7 +128,7 @@ private class ElaroComplianceCopilotServiceTest {
         // May be empty if no relevant data
     }
     
-    @isTest
+    @IsTest
     static void testPredictComplianceRisks_NullFramework_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new ClaudeRiskPredictionMock());
         
@@ -146,7 +146,7 @@ private class ElaroComplianceCopilotServiceTest {
     // categorizeEvents Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testCategorizeEvents_ReturnsMappings() {
         List&lt;Elaro_Evidence_Item__c&gt; items = [
             SELECT Id FROM Elaro_Evidence_Item__c LIMIT 3
@@ -167,7 +167,7 @@ private class ElaroComplianceCopilotServiceTest {
         Assert.areNotEqual(null, mappings, 'Should return mappings');
     }
     
-    @isTest
+    @IsTest
     static void testCategorizeEvents_EmptyInput() {
         Test.setMock(HttpCalloutMock.class, new ClaudeCategorizationMock());
         
@@ -179,7 +179,7 @@ private class ElaroComplianceCopilotServiceTest {
         Assert.areEqual(0, mappings.size(), 'Should return empty map for empty input');
     }
     
-    @isTest
+    @IsTest
     static void testCategorizeEvents_NullFramework() {
         List&lt;Elaro_Evidence_Item__c&gt; items = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
         

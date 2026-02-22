@@ -16,7 +16,7 @@ private class ElaroTrendControllerTest {
         insert accounts;
     }
 
-    @isTest
+    @IsTest
     static void testGetDateFields() {
         Test.startTest();
         List<ElaroTrendController.DateFieldOption> fields =
@@ -27,7 +27,7 @@ private class ElaroTrendControllerTest {
         Assert.areEqual(true, !fields.isEmpty(), 'Should return at least some date fields');
     }
 
-    @isTest
+    @IsTest
     static void testGetDateFieldsInvalidObject() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -40,7 +40,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testGetMetricFields() {
         Test.startTest();
         List<ElaroTrendController.MetricFieldOption> fields =
@@ -51,7 +51,7 @@ private class ElaroTrendControllerTest {
         Assert.areEqual(true, !fields.isEmpty(), 'Should return at least COUNT option');
     }
 
-    @isTest
+    @IsTest
     static void testGetMetricFieldsInvalidObject() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -64,7 +64,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeries() {
         Test.startTest();
         try {
@@ -85,7 +85,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesDay() {
         Test.startTest();
         try {
@@ -105,7 +105,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesWeek() {
         Test.startTest();
         try {
@@ -125,7 +125,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesQuarter() {
         Test.startTest();
         try {
@@ -145,7 +145,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesYear() {
         Test.startTest();
         try {
@@ -165,7 +165,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesInvalidObject() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -185,7 +185,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesNullObjectApiName() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -205,7 +205,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null object API name');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesInvalidGranularity() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -225,7 +225,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid granularity');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesBlankDateField() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -245,7 +245,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for blank date field');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesBlankMetricField() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -265,7 +265,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for blank metric field');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesBlankGranularity() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -285,7 +285,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for blank granularity');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesWithFilters() {
         Test.startTest();
         try {
@@ -305,7 +305,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesNullMonths() {
         Test.startTest();
         try {
@@ -325,7 +325,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesLargeMonths() {
         Test.startTest();
         try {
@@ -345,7 +345,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesSmallMonths() {
         Test.startTest();
         try {
@@ -365,7 +365,7 @@ private class ElaroTrendControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesNonDateField() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -385,7 +385,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for non-date field');
     }
 
-    @isTest
+    @IsTest
     static void testGetTimeSeriesInvalidField() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -405,7 +405,7 @@ private class ElaroTrendControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid field');
     }
 
-    @isTest
+    @IsTest
     static void testTrendResultClassStructure() {
         ElaroTrendController.TrendResult result =
             new ElaroTrendController.TrendResult();
@@ -428,7 +428,7 @@ private class ElaroTrendControllerTest {
         Assert.areEqual('up', result.trendDirection, 'Trend direction should be set');
     }
 
-    @isTest
+    @IsTest
     static void testTimeBucketClassStructure() {
         ElaroTrendController.TimeBucket bucket =
             new ElaroTrendController.TimeBucket();
@@ -445,7 +445,7 @@ private class ElaroTrendControllerTest {
         Assert.areEqual(10, bucket.changeFromPrevious, 'Change from previous should be set');
     }
 
-    @isTest
+    @IsTest
     static void testMetricFieldOptionClassStructure() {
         ElaroTrendController.MetricFieldOption opt =
             new ElaroTrendController.MetricFieldOption();
@@ -459,7 +459,7 @@ private class ElaroTrendControllerTest {
         Assert.areEqual('CURRENCY', opt.fieldType, 'Field type should be set');
     }
 
-    @isTest
+    @IsTest
     static void testDateFieldOptionClassStructure() {
         ElaroTrendController.DateFieldOption opt =
             new ElaroTrendController.DateFieldOption();

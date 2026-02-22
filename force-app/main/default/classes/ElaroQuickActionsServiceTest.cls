@@ -1,7 +1,7 @@
 @IsTest(testFor=ElaroQuickActionsService.class)
 private class ElaroQuickActionsServiceTest {
     
-    @isTest
+    @IsTest
     static void testAutoRemediateTopViolations() {
         Test.startTest();
         ElaroQuickActionsService.RemediationResult result = 
@@ -12,7 +12,7 @@ private class ElaroQuickActionsServiceTest {
         Assert.areNotEqual(null, result.messages, 'Should have messages');
     }
     
-    @isTest
+    @IsTest
     static void testRevokeModifyAllData() {
         // Create test user
         Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
@@ -38,7 +38,7 @@ private class ElaroQuickActionsServiceTest {
         Assert.areNotEqual(null, result, 'Should return action result');
     }
     
-    @isTest
+    @IsTest
     static void testDeactivateInactiveUsers() {
         Test.startTest();
         ElaroQuickActionsService.ActionResult result = 
@@ -48,7 +48,7 @@ private class ElaroQuickActionsServiceTest {
         Assert.areNotEqual(null, result, 'Should return action result');
     }
     
-    @isTest
+    @IsTest
     static void testRemovePermissionSetAssignment() {
         // Create permission set and assignment
         PermissionSet ps = new PermissionSet(

@@ -4,7 +4,7 @@
 @IsTest(testFor=PerformanceAlertPublisher.class)
 private class PerformanceAlertPublisherTest {
 
-    @isTest
+    @IsTest
     static void testPublishSuccess() {
         Test.startTest();
         PerformanceAlertPublisher.publish('CPU', 8500, 10000, null, 'Test stack trace');
@@ -21,7 +21,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(10000, alerts[0].Threshold__c, 'Threshold should match');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithNullMetric() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -35,7 +35,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(exceptionThrown, 'Expected AuraHandledException to be thrown');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithBlankMetric() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -49,7 +49,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(exceptionThrown, 'Expected AuraHandledException to be thrown');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithNullValue() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -63,7 +63,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(exceptionThrown, 'Expected AuraHandledException to be thrown');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithNullThreshold() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -77,7 +77,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(exceptionThrown, 'Expected AuraHandledException to be thrown');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithLongStackTrace() {
         String longStack = '';
         for (Integer i = 0; i < 4000; i++) {
@@ -97,7 +97,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(alerts[0].Stack__c.length() <= 32768, 'Stack should be truncated');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithVeryLongStackTrace() {
         // Create a stack trace longer than 32768 characters
         String veryLongStack = '';
@@ -119,7 +119,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(alerts[0].Stack__c.endsWith('...'), 'Stack should end with ellipsis when truncated');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithXSSInStackTrace() {
         String xssStack = '<script>alert("xss")</script>';
 
@@ -139,7 +139,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(alerts[0].Stack__c.contains('&gt;'), 'Greater than should be escaped');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithContextRecord() {
         Account testAccount = new Account(Name = 'Test Account');
         insert testAccount;
@@ -157,7 +157,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(testAccount.Id, alerts[0].Context_Record__c, 'Context record should match');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithNullStack() {
         Test.startTest();
         PerformanceAlertPublisher.publish('CPU_TIME', 9000, 10000, null, null);
@@ -172,7 +172,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(null, alerts[0].Stack__c, 'Stack should be null');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithEmptyStack() {
         Test.startTest();
         PerformanceAlertPublisher.publish('HEAP_SIZE', 5000, 6000, null, '');
@@ -186,7 +186,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(1, alerts.size(), 'Expected one alert to be saved');
     }
 
-    @isTest
+    @IsTest
     static void testPublishMultipleAlerts() {
         Test.startTest();
         PerformanceAlertPublisher.publish('METRIC_1', 100, 50, null, 'Stack 1');
@@ -202,7 +202,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(3, alerts.size(), 'Expected three alerts to be saved');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithDecimalValues() {
         Test.startTest();
         PerformanceAlertPublisher.publish('DECIMAL_TEST', 85.75, 90.50, null, 'Decimal test');
@@ -218,7 +218,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(90.50, alerts[0].Threshold__c, 'Threshold should match decimal');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithNegativeValues() {
         Test.startTest();
         PerformanceAlertPublisher.publish('NEGATIVE_TEST', -10, 0, null, 'Negative test');
@@ -233,7 +233,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(-10, alerts[0].Value__c, 'Negative value should be saved');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithZeroValues() {
         Test.startTest();
         PerformanceAlertPublisher.publish('ZERO_TEST', 0, 0, null, 'Zero test');
@@ -249,7 +249,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(0, alerts[0].Threshold__c, 'Zero threshold should be saved');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithSpecialCharactersInMetric() {
         Test.startTest();
         PerformanceAlertPublisher.publish('CPU_TIME_MS', 8500, 10000, null, 'Special chars test');
@@ -263,7 +263,7 @@ private class PerformanceAlertPublisherTest {
         Assert.areEqual(1, alerts.size(), 'Expected one alert to be saved');
     }
 
-    @isTest
+    @IsTest
     static void testPublishWithWhitespaceMetric() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -277,7 +277,7 @@ private class PerformanceAlertPublisherTest {
         Assert.isTrue(exceptionThrown, 'Expected AuraHandledException for whitespace metric');
     }
 
-    @isTest
+    @IsTest
     static void testPublishBulk200Alerts() {
         // Test publishing 200+ alerts to verify governor limit handling
         Test.startTest();
@@ -307,7 +307,7 @@ private class PerformanceAlertPublisherTest {
             'DML statements should be within limits: ' + Limits.getDmlStatements());
     }
 
-    @isTest
+    @IsTest
     static void testPublishBulkWithMixedMetrics() {
         // Test bulk publishing with various metric types
         List<String> metricTypes = new List<String>{

@@ -59,7 +59,7 @@ private class JiraIntegrationServiceTest {
     // Create Issue Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testCreateIssue_Success() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
 
@@ -78,7 +78,7 @@ private class JiraIntegrationServiceTest {
         Assert.areNotEqual(null, updatedGap.Jira_Issue_URL__c, 'Gap should have Jira URL');
     }
 
-    @isTest
+    @IsTest
     static void testCreateIssue_WithPriorityOverride() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
 
@@ -91,7 +91,7 @@ private class JiraIntegrationServiceTest {
         Assert.areNotEqual(null, result, 'Should return issue');
     }
 
-    @isTest
+    @IsTest
     static void testCreateIssue_AlreadyLinked() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c != NULL LIMIT 1];
 
@@ -105,7 +105,7 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateIssue_ApiFailure() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
 
@@ -121,7 +121,7 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateIssue_InvalidGapId() {
         Test.startTest();
         try {
@@ -133,7 +133,7 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateIssueAsync() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
 
@@ -150,7 +150,7 @@ private class JiraIntegrationServiceTest {
         Assert.areNotEqual(null, updatedGap.Jira_Issue_Key__c, 'Async method should link gap to Jira issue');
     }
 
-    @isTest
+    @IsTest
     static void testJiraIssueCreationQueueable_Execute() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
 
@@ -172,7 +172,7 @@ private class JiraIntegrationServiceTest {
         Assert.areNotEqual(null, updatedGap.Jira_Issue_Key__c, 'Gap should be linked to Jira after Queueable execution');
     }
 
-    @isTest
+    @IsTest
     static void testJiraIssueCreationQueueable_HandleError() {
         // Use an invalid gap ID to trigger an error
         JiraIntegrationService.JiraIssueCreationQueueable queueable =
@@ -191,7 +191,7 @@ private class JiraIntegrationServiceTest {
     // Get Issue Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testGetIssueStatus_Success() {
         Test.setMock(HttpCalloutMock.class, new JiraGetIssueMock(true));
 
@@ -204,7 +204,7 @@ private class JiraIntegrationServiceTest {
         Assert.areEqual('In Progress', result.status, 'Should have status');
     }
 
-    @isTest
+    @IsTest
     static void testGetIssueStatus_NotFound() {
         Test.setMock(HttpCalloutMock.class, new JiraGetIssueMock(false));
 
@@ -218,7 +218,7 @@ private class JiraIntegrationServiceTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetIssueStatus_BlankKey() {
         Test.startTest();
         try {
@@ -234,7 +234,7 @@ private class JiraIntegrationServiceTest {
     // Sync Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testSyncIssueStatus() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c != NULL LIMIT 1];
 
@@ -249,7 +249,7 @@ private class JiraIntegrationServiceTest {
         Assert.areNotEqual(null, updatedGap.Jira_Last_Sync__c, 'Sync timestamp should be set');
     }
 
-    @isTest
+    @IsTest
     static void testSyncIssueStatus_NoJiraLink() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = NULL LIMIT 1];
 
@@ -267,7 +267,7 @@ private class JiraIntegrationServiceTest {
     // Bulk Operations Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testCreateBulkIssues() {
         List<Compliance_Gap__c> newGaps = new List<Compliance_Gap__c>();
         for (Integer i = 0; i < 3; i++) {
@@ -300,7 +300,7 @@ private class JiraIntegrationServiceTest {
     // Comment Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testAddComment_Success() {
         Test.setMock(HttpCalloutMock.class, new JiraCommentMock(true));
 
@@ -316,7 +316,7 @@ private class JiraIntegrationServiceTest {
         Assert.isNull(caughtEx, 'Comment should be added without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testAddComment_BlankParams() {
         Test.startTest();
         try {
@@ -332,7 +332,7 @@ private class JiraIntegrationServiceTest {
     // Transition Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testGetAvailableTransitions() {
         Test.setMock(HttpCalloutMock.class, new JiraTransitionsMock());
 
@@ -344,7 +344,7 @@ private class JiraIntegrationServiceTest {
         Assert.isTrue(transitions.size() > 0, 'Should have at least one transition');
     }
 
-    @isTest
+    @IsTest
     static void testTransitionIssue() {
         Test.setMock(HttpCalloutMock.class, new JiraTransitionMock(true));
 
@@ -364,7 +364,7 @@ private class JiraIntegrationServiceTest {
     // Configuration Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testIsConfigured_True() {
         Test.setMock(HttpCalloutMock.class, new JiraProjectMock(true));
 
@@ -375,7 +375,7 @@ private class JiraIntegrationServiceTest {
         Assert.areEqual(true, configured, 'Should be configured');
     }
 
-    @isTest
+    @IsTest
     static void testIsConfigured_False() {
         // Clear settings
         delete [SELECT Id FROM Elaro_Jira_Settings__c];
@@ -387,7 +387,7 @@ private class JiraIntegrationServiceTest {
         Assert.areEqual(false, configured, 'Should not be configured');
     }
 
-    @isTest
+    @IsTest
     static void testGetLinkedGaps() {
         Test.startTest();
         List<Compliance_Gap__c> linkedGaps = JiraIntegrationService.getLinkedGaps();

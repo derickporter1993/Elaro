@@ -18,7 +18,7 @@
  *     // Test code with auditor permissions
  * }
  */
-@isTest
+@IsTest
 public class ElaroTestUserFactory {
 
     private static Integer userCounter = 0;

@@ -23,7 +23,7 @@ public class HIPAASecurityRuleServiceTest {
         insert contacts;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         HIPAASecurityRuleService service = new HIPAASecurityRuleService();
 
@@ -34,7 +34,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         HIPAASecurityRuleService service = new HIPAASecurityRuleService();
 
@@ -45,7 +45,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         HIPAASecurityRuleService service = new HIPAASecurityRuleService();
 
@@ -56,7 +56,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testEvaluateTechnicalSafeguards() {
         Test.startTest();
         HIPAASecurityRuleService.TechnicalSafeguardResult result =
@@ -71,7 +71,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result.transmissionResult, 'Transmission result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testCheckAccessControls() {
         Test.startTest();
         HIPAASecurityRuleService.AccessControlResult result =
@@ -84,7 +84,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result.violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testCheckAuditControls() {
         Test.startTest();
         HIPAASecurityRuleService.AuditControlResult result =
@@ -96,7 +96,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result.retentionPeriodDays, 'Retention period should be set');
     }
 
-    @isTest
+    @IsTest
     static void testCheckIntegrityControls() {
         Test.startTest();
         HIPAASecurityRuleService.IntegrityControlResult result =
@@ -107,7 +107,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result.score, 'Score should be set');
     }
 
-    @isTest
+    @IsTest
     static void testCheckTransmissionSecurity() {
         Test.startTest();
         HIPAASecurityRuleService.TransmissionResult result =
@@ -119,7 +119,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areEqual(true, result.tlsCompliant, 'Should be TLS compliant');
     }
 
-    @isTest
+    @IsTest
     static void testGetEncryptionStatus() {
         Test.startTest();
         Map<String, HIPAASecurityRuleService.EncryptionInfo> status =
@@ -133,7 +133,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.isTrue(status.containsKey('Case'), 'Should include Case object');
     }
 
-    @isTest
+    @IsTest
     static void testEncryptionInfoDetails() {
         Test.startTest();
         Map<String, HIPAASecurityRuleService.EncryptionInfo> status =
@@ -147,7 +147,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, contactInfo.unencryptedPHIFields, 'Unencrypted PHI fields list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testOverallComplianceCalculation() {
         Test.startTest();
         HIPAASecurityRuleService.TechnicalSafeguardResult result =
@@ -161,7 +161,7 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result.gaps, 'Gaps list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testBulkProcessing() {
         // Create bulk contacts
         List<Contact> bulkContacts = new List<Contact>();

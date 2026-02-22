@@ -15,7 +15,7 @@ private class NaturalLanguageQueryServiceTest {
     // executeNaturalLanguageQuery Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testExecuteNaturalLanguageQuery_ReturnsResults() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -30,7 +30,7 @@ private class NaturalLanguageQueryServiceTest {
         Assert.isTrue(result.confidence &gt;= 0, 'Should have confidence score');
     }
     
-    @isTest
+    @IsTest
     static void testExecuteNaturalLanguageQuery_BlankQuery_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -44,7 +44,7 @@ private class NaturalLanguageQueryServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testExecuteNaturalLanguageQuery_NullQuery_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -58,7 +58,7 @@ private class NaturalLanguageQueryServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testExecuteNaturalLanguageQuery_EvidenceQuery() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -74,7 +74,7 @@ private class NaturalLanguageQueryServiceTest {
     // getQuerySuggestions Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetQuerySuggestions_EmptyInput_ReturnsExamples() {
         Test.startTest();
         List&lt;String&gt; suggestions = NaturalLanguageQueryService.getQuerySuggestions('');
@@ -83,7 +83,7 @@ private class NaturalLanguageQueryServiceTest {
         Assert.isTrue(!suggestions.isEmpty(), 'Should return example suggestions');
     }
     
-    @isTest
+    @IsTest
     static void testGetQuerySuggestions_NullInput_ReturnsExamples() {
         Test.startTest();
         List&lt;String&gt; suggestions = NaturalLanguageQueryService.getQuerySuggestions(null);
@@ -92,7 +92,7 @@ private class NaturalLanguageQueryServiceTest {
         Assert.isTrue(!suggestions.isEmpty(), 'Should return example suggestions for null');
     }
     
-    @isTest
+    @IsTest
     static void testGetQuerySuggestions_PartialMatch() {
         Test.startTest();
         List&lt;String&gt; suggestions = NaturalLanguageQueryService.getQuerySuggestions('admin');
@@ -109,7 +109,7 @@ private class NaturalLanguageQueryServiceTest {
         Assert.isTrue(hasAdminSuggestion, 'Should include admin-related suggestions');
     }
     
-    @isTest
+    @IsTest
     static void testGetQuerySuggestions_ExportKeyword() {
         Test.startTest();
         List&lt;String&gt; suggestions = NaturalLanguageQueryService.getQuerySuggestions('export');
@@ -122,7 +122,7 @@ private class NaturalLanguageQueryServiceTest {
     // validateQuery Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testValidateQuery_ValidQuery() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -136,7 +136,7 @@ private class NaturalLanguageQueryServiceTest {
         Assert.areNotEqual(null, result.generatedSOQL, 'Should have generated SOQL');
     }
     
-    @isTest
+    @IsTest
     static void testValidateQuery_EmptyQuery() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -149,7 +149,7 @@ private class NaturalLanguageQueryServiceTest {
         Assert.isTrue(result.message.contains('empty'), 'Should mention empty');
     }
     
-    @isTest
+    @IsTest
     static void testValidateQuery_NullQuery() {
         Test.setMock(HttpCalloutMock.class, new NLQueryMock());
         
@@ -165,7 +165,7 @@ private class NaturalLanguageQueryServiceTest {
     // getRecentQueries Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetRecentQueries_ReturnsEmptyList() {
         Test.startTest();
         List&lt;String&gt; queries = NaturalLanguageQueryService.getRecentQueries();

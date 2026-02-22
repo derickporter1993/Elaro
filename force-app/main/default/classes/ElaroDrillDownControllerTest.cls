@@ -16,7 +16,7 @@ private class ElaroDrillDownControllerTest {
         insert accounts;
     }
 
-    @isTest
+    @IsTest
     static void testGetRecords() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -36,7 +36,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, result.columns, 'Columns should be set');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsWithFilters() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -60,7 +60,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsPagination() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -80,7 +80,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areEqual(5, result.pageSize, 'Page size should match');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsHasMore() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -101,7 +101,7 @@ private class ElaroDrillDownControllerTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsEmptyContext() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -114,7 +114,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for empty context');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsNullContext() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -127,7 +127,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null context');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsInvalidJson() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -140,7 +140,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid JSON');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsInvalidObject() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Invalid__c',
@@ -161,7 +161,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsNullPageSize() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -179,7 +179,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsNullOffset() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -198,7 +198,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areEqual(0, result.currentOffset, 'Offset should default to 0');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsWithOrderBy() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -218,7 +218,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetRecordsNullFilter() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -242,7 +242,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExportToCSV() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -260,7 +260,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(csv.contains('Name'), 'CSV should contain headers');
     }
 
-    @isTest
+    @IsTest
     static void testExportToCSVEmptyContext() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -273,7 +273,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for empty context');
     }
 
-    @isTest
+    @IsTest
     static void testExportToCSVNullContext() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -286,7 +286,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null context');
     }
 
-    @isTest
+    @IsTest
     static void testExportToCSVInvalidJson() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -299,7 +299,7 @@ private class ElaroDrillDownControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid JSON');
     }
 
-    @isTest
+    @IsTest
     static void testExportToCSVWithFilters() {
         String contextJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -322,7 +322,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, csv, 'CSV should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExportToCSVRelationshipField() {
         Account acc = new Account(Name = 'Parent Account');
         insert acc;
@@ -344,7 +344,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areNotEqual(null, csv, 'CSV should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testDrillDownResultClassStructure() {
         ElaroDrillDownController.DrillDownResult result =
             new ElaroDrillDownController.DrillDownResult();
@@ -363,7 +363,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areEqual(5, result.pageSize, 'Page size should be set');
     }
 
-    @isTest
+    @IsTest
     static void testColumnDefClassStructure() {
         ElaroDrillDownController.ColumnDef col =
             new ElaroDrillDownController.ColumnDef();
@@ -379,7 +379,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areEqual(true, col.sortable, 'Sortable should be set');
     }
 
-    @isTest
+    @IsTest
     static void testFilterContextClassStructure() {
         ElaroDrillDownController.FilterContext ctx =
             new ElaroDrillDownController.FilterContext();
@@ -395,7 +395,7 @@ private class ElaroDrillDownControllerTest {
         Assert.areEqual('Account', ctx.objectApiName, 'Object API name should be set');
     }
 
-    @isTest
+    @IsTest
     static void testFilterClassStructure() {
         ElaroDrillDownController.Filter f =
             new ElaroDrillDownController.Filter();

@@ -35,7 +35,7 @@ private class ConsentExpirationSchedulerTest {
         insert consents;
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerExecution() {
         // Arrange
         String cronExpression = '0 0 8 * * ?';
@@ -51,7 +51,7 @@ private class ConsentExpirationSchedulerTest {
         Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
-    @isTest
+    @IsTest
     static void testScheduleStaticMethod() {
         // Act
         Test.startTest();
@@ -64,7 +64,7 @@ private class ConsentExpirationSchedulerTest {
         Assert.areEqual(1, jobs.size(), 'Scheduled job should exist');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMethod() {
         // Arrange
         ConsentExpirationScheduler scheduler = new ConsentExpirationScheduler();
@@ -84,7 +84,7 @@ private class ConsentExpirationSchedulerTest {
         Assert.isTrue(jobs.size() > 0, 'Batch job should have been queued');
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerWithNoConsents() {
         // Arrange - delete all consents
         delete [SELECT Id FROM Consent__c];

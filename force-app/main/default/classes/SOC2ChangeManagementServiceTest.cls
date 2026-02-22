@@ -27,7 +27,7 @@ public class SOC2ChangeManagementServiceTest {
         insert changes;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         SOC2ChangeManagementService service = new SOC2ChangeManagementService();
 
@@ -38,7 +38,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.areEqual('SOC2', frameworkName, 'Framework name should be SOC2');
     }
 
-    @isTest
+    @IsTest
     static void testEvaluateChangeControls() {
         Test.startTest();
         SOC2ChangeManagementService.ChangeControlResult result =
@@ -51,7 +51,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.isTrue(result.controlResults.size() > 0, 'Should have control results');
     }
 
-    @isTest
+    @IsTest
     static void testGetUnauthorizedChanges() {
         Test.startTest();
         List<SOC2ChangeManagementService.UnauthorizedChange> changes =
@@ -62,7 +62,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.isTrue(changes.size() > 0, 'Should find unauthorized changes from test data');
     }
 
-    @isTest
+    @IsTest
     static void testGetUnauthorizedChangesDefaultDays() {
         Test.startTest();
         List<SOC2ChangeManagementService.UnauthorizedChange> changes =
@@ -72,7 +72,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.areNotEqual(null, changes, 'Changes list should not be null with null days');
     }
 
-    @isTest
+    @IsTest
     static void testLinkChangeToTicket() {
         Metadata_Change__c change = [
             SELECT Id, Ticket_Reference__c
@@ -89,7 +89,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.areEqual('JIRA-999', change.Ticket_Reference__c, 'Ticket should be linked');
     }
 
-    @isTest
+    @IsTest
     static void testLinkChangeToTicketBlankTicket() {
         Metadata_Change__c change = [SELECT Id FROM Metadata_Change__c LIMIT 1];
 
@@ -103,7 +103,7 @@ public class SOC2ChangeManagementServiceTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetChangesRequiringApproval() {
         Test.startTest();
         List<Metadata_Change__c> changes = SOC2ChangeManagementService.getChangesRequiringApproval();
@@ -112,7 +112,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.areNotEqual(null, changes, 'Changes list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateChangeReport() {
         Test.startTest();
         Id docId = SOC2ChangeManagementService.generateChangeReport(
@@ -128,7 +128,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.isTrue(doc.Title.contains('SOC2_Change_Report'), 'Title should contain SOC2_Change_Report');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateChangeReportDefaultDates() {
         Test.startTest();
         Id docId = SOC2ChangeManagementService.generateChangeReport(null, null);
@@ -137,7 +137,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.areNotEqual(null, docId, 'Document ID should not be null with default dates');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         SOC2ChangeManagementService service = new SOC2ChangeManagementService();
 
@@ -148,7 +148,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         SOC2ChangeManagementService service = new SOC2ChangeManagementService();
 
@@ -159,7 +159,7 @@ public class SOC2ChangeManagementServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testBulkChangeEvaluation() {
         // Create bulk metadata changes
         List<Metadata_Change__c> bulkChanges = new List<Metadata_Change__c>();

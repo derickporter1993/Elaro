@@ -18,7 +18,7 @@ private class ElaroScheduledDeliveryTest {
     // execute Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testExecute_Success() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com', 'admin@example.com'};
@@ -41,7 +41,7 @@ private class ElaroScheduledDeliveryTest {
         Assert.isNull(caughtEx, 'Scheduled delivery should execute without throwing');
     }
     
-    @isTest
+    @IsTest
     static void testExecute_InvalidPackageId() {
         String invalidPackageId = 'a0000000000000AAA';
         List<String> recipients = new List<String>{'test@example.com'};
@@ -63,7 +63,7 @@ private class ElaroScheduledDeliveryTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testExecute_EmptyRecipients() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>();
@@ -86,7 +86,7 @@ private class ElaroScheduledDeliveryTest {
         Assert.isNull(caughtEx, 'Should handle empty recipients without throwing');
     }
     
-    @isTest
+    @IsTest
     static void testExecute_ErrorNotification() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};
@@ -117,7 +117,7 @@ private class ElaroScheduledDeliveryTest {
     // scheduleDelivery Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testScheduleDelivery() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};
@@ -145,7 +145,7 @@ private class ElaroScheduledDeliveryTest {
             'Job name should contain Elaro_Delivery_');
     }
     
-    @isTest
+    @IsTest
     static void testScheduleDelivery_MultipleRecipients() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{
@@ -170,7 +170,7 @@ private class ElaroScheduledDeliveryTest {
     // scheduleWeekly Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testScheduleWeekly() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};
@@ -195,7 +195,7 @@ private class ElaroScheduledDeliveryTest {
     // scheduleMonthly Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testScheduleMonthly() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};
@@ -220,7 +220,7 @@ private class ElaroScheduledDeliveryTest {
     // scheduleQuarterly Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testScheduleQuarterly() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};
@@ -245,7 +245,7 @@ private class ElaroScheduledDeliveryTest {
     // Bulk Operations Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBulkDelivery() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -276,7 +276,7 @@ private class ElaroScheduledDeliveryTest {
     // Error Handling Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testExecute_ExceptionHandling() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};
@@ -298,7 +298,7 @@ private class ElaroScheduledDeliveryTest {
         Assert.isNotNull(scheduler, 'Scheduler should exist after exception handling');
     }
     
-    @isTest
+    @IsTest
     static void testScheduleDelivery_InvalidCron() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List<String> recipients = new List<String>{'test@example.com'};

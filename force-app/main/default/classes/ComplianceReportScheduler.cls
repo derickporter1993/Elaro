@@ -233,62 +233,65 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
     }
 
     /**
-     * Build HTML email body
+     * Build HTML email body using List-based string assembly to avoid
+     * string concatenation in loops (heap-efficient for large reports).
      */
     private static String buildEmailBody(String framework, ComplianceReportGenerator.ReportData reportData) {
         String scoreColor = ElaroConstants.getScoreColor(reportData.scoreResult.overallScore);
         String frameworkLabel = framework == 'ALL' ? 'All Frameworks' : framework;
 
-        String html = '<html><head><style>';
-        html += 'body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }';
-        html += '.container { max-width: 600px; margin: 0 auto; padding: 20px; }';
-        html += '.header { background: #1a365d; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }';
-        html += '.score-box { background: #f7fafc; padding: 20px; text-align: center; border: 1px solid #e2e8f0; }';
-        html += '.score { font-size: 48px; font-weight: bold; color: ' + scoreColor + '; }';
-        html += '.rating { font-size: 18px; color: #4a5568; }';
-        html += '.section { padding: 20px; border: 1px solid #e2e8f0; border-top: none; }';
-        html += '.gap-table { width: 100%; border-collapse: collapse; margin-top: 10px; }';
-        html += '.gap-table th, .gap-table td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; }';
-        html += '.gap-table th { background: #edf2f7; }';
-        html += '.critical { color: #c53030; font-weight: bold; }';
-        html += '.high { color: #dd6b20; }';
-        html += '.medium { color: #d69e2e; }';
-        html += '.low { color: #38a169; }';
-        html += '.footer { background: #f7fafc; padding: 15px; text-align: center; font-size: 12px; color: #718096; border-radius: 0 0 8px 8px; }';
-        html += '</style></head><body><div class="container">';
+        List<String> parts = new List<String>();
+
+        parts.add('<html><head><style>');
+        parts.add('body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }');
+        parts.add('.container { max-width: 600px; margin: 0 auto; padding: 20px; }');
+        parts.add('.header { background: #1a365d; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }');
+        parts.add('.score-box { background: #f7fafc; padding: 20px; text-align: center; border: 1px solid #e2e8f0; }');
+        parts.add('.score { font-size: 48px; font-weight: bold; color: ' + scoreColor + '; }');
+        parts.add('.rating { font-size: 18px; color: #4a5568; }');
+        parts.add('.section { padding: 20px; border: 1px solid #e2e8f0; border-top: none; }');
+        parts.add('.gap-table { width: 100%; border-collapse: collapse; margin-top: 10px; }');
+        parts.add('.gap-table th, .gap-table td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; }');
+        parts.add('.gap-table th { background: #edf2f7; }');
+        parts.add('.critical { color: #c53030; font-weight: bold; }');
+        parts.add('.high { color: #dd6b20; }');
+        parts.add('.medium { color: #d69e2e; }');
+        parts.add('.low { color: #38a169; }');
+        parts.add('.footer { background: #f7fafc; padding: 15px; text-align: center; font-size: 12px; color: #718096; border-radius: 0 0 8px 8px; }');
+        parts.add('</style></head><body><div class="container">');
 
         // Header
-        html += '<div class="header">';
-        html += '<h1>Elaro Compliance Report</h1>';
-        html += '<p>' + frameworkLabel + ' | ' + Date.today().format() + '</p>';
-        html += '</div>';
+        parts.add('<div class="header">');
+        parts.add('<h1>Elaro Compliance Report</h1>');
+        parts.add('<p>' + frameworkLabel + ' | ' + Date.today().format() + '</p>');
+        parts.add('</div>');
 
         // Score Box
-        html += '<div class="score-box">';
-        html += '<div class="score">' + reportData.scoreResult.overallScore.setScale(0) + '/100</div>';
-        html += '<div class="rating">' + reportData.scoreResult.rating + '</div>';
-        html += '</div>';
+        parts.add('<div class="score-box">');
+        parts.add('<div class="score">' + reportData.scoreResult.overallScore.setScale(0) + '/100</div>');
+        parts.add('<div class="rating">' + reportData.scoreResult.rating + '</div>');
+        parts.add('</div>');
 
         // Framework Scores Section
-        html += '<div class="section">';
-        html += '<h2>Framework Scores</h2>';
-        html += '<table class="gap-table">';
-        html += '<tr><th>Framework</th><th>Score</th><th>Status</th></tr>';
+        parts.add('<div class="section">');
+        parts.add('<h2>Framework Scores</h2>');
+        parts.add('<table class="gap-table">');
+        parts.add('<tr><th>Framework</th><th>Score</th><th>Status</th></tr>');
 
         for (String fw : reportData.scoreResult.frameworkScores.keySet()) {
             Decimal score = reportData.scoreResult.frameworkScores.get(fw);
             String status = ElaroConstants.getRatingFromScore(score);
             String statusClass = score >= 80 ? 'low' : (score >= 60 ? 'medium' : (score >= 40 ? 'high' : 'critical'));
-            html += '<tr><td>' + fw + '</td><td>' + score.setScale(1) + '</td><td class="' + statusClass + '">' + status + '</td></tr>';
+            parts.add('<tr><td>' + fw + '</td><td>' + score.setScale(1) + '</td><td class="' + statusClass + '">' + status + '</td></tr>');
         }
-        html += '</table></div>';
+        parts.add('</table></div>');
 
         // Open Gaps Section
         if (reportData.gaps != null && !reportData.gaps.isEmpty()) {
-            html += '<div class="section">';
-            html += '<h2>Open Compliance Gaps (' + reportData.gaps.size() + ')</h2>';
-            html += '<table class="gap-table">';
-            html += '<tr><th>Gap</th><th>Severity</th><th>Framework</th><th>Status</th></tr>';
+            parts.add('<div class="section">');
+            parts.add('<h2>Open Compliance Gaps (' + reportData.gaps.size() + ')</h2>');
+            parts.add('<table class="gap-table">');
+            parts.add('<tr><th>Gap</th><th>Severity</th><th>Framework</th><th>Status</th></tr>');
 
             Integer maxGaps = Math.min(reportData.gaps.size(), 10);
             for (Integer i = 0; i < maxGaps; i++) {
@@ -296,58 +299,62 @@ public with sharing class ComplianceReportScheduler implements Schedulable {
                 String severityClass = gap.Severity__c == 'Critical' ? 'critical' :
                                        (gap.Severity__c == 'High' ? 'high' :
                                        (gap.Severity__c == 'Medium' ? 'medium' : 'low'));
-                html += '<tr>';
-                html += '<td>' + String.valueOf(gap.Name).abbreviate(50) + '</td>';
-                html += '<td class="' + severityClass + '">' + gap.Severity__c + '</td>';
-                html += '<td>' + (gap.Framework__c != null ? gap.Framework__c : 'N/A') + '</td>';
-                html += '<td>' + (gap.Status__c != null ? gap.Status__c : 'Open') + '</td>';
-                html += '</tr>';
+                parts.add('<tr>');
+                parts.add('<td>' + String.valueOf(gap.Name).abbreviate(50) + '</td>');
+                parts.add('<td class="' + severityClass + '">' + gap.Severity__c + '</td>');
+                parts.add('<td>' + (gap.Framework__c != null ? gap.Framework__c : 'N/A') + '</td>');
+                parts.add('<td>' + (gap.Status__c != null ? gap.Status__c : 'Open') + '</td>');
+                parts.add('</tr>');
             }
 
             if (reportData.gaps.size() > 10) {
-                html += '<tr><td colspan="4" style="text-align:center; font-style:italic;">... and ' + (reportData.gaps.size() - 10) + ' more gaps (see attached CSV)</td></tr>';
+                parts.add('<tr><td colspan="4" style="text-align:center; font-style:italic;">... and ' + (reportData.gaps.size() - 10) + ' more gaps (see attached CSV)</td></tr>');
             }
-            html += '</table></div>';
+            parts.add('</table></div>');
         }
 
         // Top Risks Section
         if (reportData.scoreResult.topRisks != null && !reportData.scoreResult.topRisks.isEmpty()) {
-            html += '<div class="section">';
-            html += '<h2>Top Risks</h2>';
-            html += '<ul>';
+            parts.add('<div class="section">');
+            parts.add('<h2>Top Risks</h2>');
+            parts.add('<ul>');
             for (ElaroComplianceScorer.Risk risk : reportData.scoreResult.topRisks) {
-                html += '<li><strong>' + risk.title + '</strong> (' + risk.severity + ')<br/>';
-                html += '<span style="color:#718096">' + risk.description + '</span></li>';
+                parts.add('<li><strong>' + risk.title + '</strong> (' + risk.severity + ')<br/>');
+                parts.add('<span style="color:#718096">' + risk.description + '</span></li>');
             }
-            html += '</ul></div>';
+            parts.add('</ul></div>');
         }
 
         // Footer
-        html += '<div class="footer">';
-        html += '<p>Generated by Elaro Compliance Platform</p>';
-        html += '<p>Report generated at ' + Datetime.now().format('yyyy-MM-dd HH:mm:ss z') + '</p>';
-        html += '</div>';
+        parts.add('<div class="footer">');
+        parts.add('<p>Generated by Elaro Compliance Platform</p>');
+        parts.add('<p>Report generated at ' + Datetime.now().format('yyyy-MM-dd HH:mm:ss z') + '</p>');
+        parts.add('</div>');
 
-        html += '</div></body></html>';
-        return html;
+        parts.add('</div></body></html>');
+        return String.join(parts, '');
     }
 
     /**
-     * Build CSV content for attachment
+     * Build CSV content for attachment using List-based string assembly
+     * to avoid string concatenation in loops (heap-efficient for large datasets).
      */
     private static String buildCsvContent(ComplianceReportGenerator.ReportData reportData) {
-        String csv = 'Gap Name,Severity,Framework,Status,Description,Created Date\n';
+        List<String> rows = new List<String>();
+        rows.add('Gap Name,Severity,Framework,Status,Description,Created Date');
 
         for (Compliance_Gap__c gap : reportData.gaps) {
-            csv += '"' + String.valueOf(gap.Name).replace('"', '""') + '",';
-            csv += '"' + (gap.Severity__c != null ? gap.Severity__c : '') + '",';
-            csv += '"' + (gap.Framework__c != null ? gap.Framework__c : '') + '",';
-            csv += '"' + (gap.Status__c != null ? gap.Status__c : '') + '",';
-            csv += '"' + (gap.Description__c != null ? gap.Description__c.replace('"', '""').abbreviate(200) : '') + '",';
-            csv += '"' + (gap.CreatedDate != null ? gap.CreatedDate.format('yyyy-MM-dd') : '') + '"\n';
+            List<String> fields = new List<String>();
+            fields.add('"' + String.valueOf(gap.Name).replace('"', '""') + '"');
+            fields.add('"' + (gap.Severity__c != null ? gap.Severity__c : '') + '"');
+            fields.add('"' + (gap.Framework__c != null ? gap.Framework__c : '') + '"');
+            fields.add('"' + (gap.Status__c != null ? gap.Status__c : '') + '"');
+            fields.add('"' + (gap.Description__c != null ? gap.Description__c.replace('"', '""').abbreviate(200) : '') + '"');
+            fields.add('"' + (gap.CreatedDate != null ? gap.CreatedDate.format('yyyy-MM-dd') : '') + '"');
+            rows.add(String.join(fields, ','));
         }
 
-        return csv;
+        return String.join(rows, '\n');
     }
 
     /**

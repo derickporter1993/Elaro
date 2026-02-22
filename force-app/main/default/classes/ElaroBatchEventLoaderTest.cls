@@ -23,7 +23,7 @@ private class ElaroBatchEventLoaderTest {
         insert logs;
     }
 
-    @isTest
+    @IsTest
     static void testBasicFunctionality() {
         Test.startTest();
         ElaroBatchEventLoader batch = new ElaroBatchEventLoader(
@@ -44,7 +44,7 @@ private class ElaroBatchEventLoaderTest {
         Assert.isTrue(jobs.size() > 0, 'Batch job should have been executed');
     }
 
-    @isTest
+    @IsTest
     static void testBatch_BulkExecution() {
         Test.startTest();
         ElaroBatchEventLoader batch = new ElaroBatchEventLoader(
@@ -61,7 +61,7 @@ private class ElaroBatchEventLoaderTest {
         Assert.isTrue(Limits.getDmlStatements() < 150, 'Should stay under DML limit');
     }
 
-    @isTest
+    @IsTest
     static void testBatch_SmallBatchSize() {
         Test.startTest();
         ElaroBatchEventLoader batch = new ElaroBatchEventLoader(
@@ -82,7 +82,7 @@ private class ElaroBatchEventLoaderTest {
         Assert.isTrue(jobs.size() > 0, 'Batch should execute with small batch size');
     }
 
-    @isTest
+    @IsTest
     static void testBatch_AllFrameworks() {
         List<String> frameworks = new List<String>{'SOC2', 'HIPAA', 'GDPR', 'PCI-DSS', 'NIST'};
 
@@ -107,7 +107,7 @@ private class ElaroBatchEventLoaderTest {
         Assert.areEqual(frameworks.size(), jobs.size(), 'Should have one batch job per framework');
     }
 
-    @isTest
+    @IsTest
     static void testBatch_DateRanges() {
         Test.startTest();
 

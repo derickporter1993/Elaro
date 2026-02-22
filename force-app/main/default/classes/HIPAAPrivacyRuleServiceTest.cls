@@ -33,7 +33,7 @@ public class HIPAAPrivacyRuleServiceTest {
         insert contacts;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         HIPAAPrivacyRuleService service = new HIPAAPrivacyRuleService();
 
@@ -44,7 +44,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         HIPAAPrivacyRuleService service = new HIPAAPrivacyRuleService();
 
@@ -55,7 +55,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         HIPAAPrivacyRuleService service = new HIPAAPrivacyRuleService();
 
@@ -66,7 +66,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testIdentifyPHIObjects() {
         Test.startTest();
         List<HIPAAPrivacyRuleService.PHIObjectInfo> phiObjects =
@@ -77,7 +77,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.isTrue(phiObjects.size() > 0, 'Should identify at least one PHI object');
     }
 
-    @isTest
+    @IsTest
     static void testEvaluateMinimumNecessary() {
         Test.startTest();
         HIPAAPrivacyRuleService.MinimumNecessaryResult result =
@@ -89,7 +89,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, result.profileAssessments, 'Profile assessments should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetPHIAccessAudit() {
         Test.startTest();
         List<HIPAAPrivacyRuleService.PHIAccessRecord> accessRecords =
@@ -99,7 +99,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, accessRecords, 'Access records should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetPHIAccessAuditDefaultDays() {
         Test.startTest();
         List<HIPAAPrivacyRuleService.PHIAccessRecord> accessRecords =
@@ -109,7 +109,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, accessRecords, 'Access records should not be null with null days');
     }
 
-    @isTest
+    @IsTest
     static void testGeneratePHIDisclosureLog() {
         Test.startTest();
         Id docId = HIPAAPrivacyRuleService.generatePHIDisclosureLog(
@@ -124,7 +124,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.isTrue(doc.Title.contains('PHI_Disclosure_Log'), 'Title should contain PHI_Disclosure_Log');
     }
 
-    @isTest
+    @IsTest
     static void testGeneratePHIDisclosureLogDefaultDates() {
         Test.startTest();
         Id docId = HIPAAPrivacyRuleService.generatePHIDisclosureLog(null, null);
@@ -133,7 +133,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, docId, 'Document ID should not be null with default dates');
     }
 
-    @isTest
+    @IsTest
     static void testBulkProcessing() {
         // Create bulk contacts
         List<Contact> bulkContacts = new List<Contact>();
@@ -154,7 +154,7 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, phiObjects, 'Should handle bulk data');
     }
 
-    @isTest
+    @IsTest
     static void testPrivacyRuleEvaluation() {
         HIPAAPrivacyRuleService service = new HIPAAPrivacyRuleService();
 

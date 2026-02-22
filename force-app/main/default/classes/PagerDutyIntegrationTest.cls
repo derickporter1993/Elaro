@@ -40,7 +40,7 @@ private class PagerDutyIntegrationTest {
     // triggerIncident Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testTriggerIncident_Success() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success","dedup_key":"test-key"}'));
         
@@ -63,7 +63,7 @@ private class PagerDutyIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for callout');
     }
     
-    @isTest
+    @IsTest
     static void testTriggerIncident_HTTPError() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(500, '{"status":"error","message":"Internal Server Error"}'));
         
@@ -87,7 +87,7 @@ private class PagerDutyIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML on error');
     }
     
-    @isTest
+    @IsTest
     static void testTriggerIncident_InvalidData() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -108,7 +108,7 @@ private class PagerDutyIntegrationTest {
     // resolveIncident Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testResolveIncident_Success() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -122,7 +122,7 @@ private class PagerDutyIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for resolve callout');
     }
     
-    @isTest
+    @IsTest
     static void testResolveIncident_HTTPError() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(404, '{"status":"error","message":"Not Found"}'));
         
@@ -140,7 +140,7 @@ private class PagerDutyIntegrationTest {
     // acknowledgeIncident Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testAcknowledgeIncident_Success() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -158,7 +158,7 @@ private class PagerDutyIntegrationTest {
     // createIncident Tests (@AuraEnabled)
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testCreateIncident_Success() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success","dedup_key":"test-key"}'));
         
@@ -175,7 +175,7 @@ private class PagerDutyIntegrationTest {
         Assert.isTrue(dedupKey.startsWith('elaro-'), 'Dedup key should start with elaro-');
     }
     
-    @isTest
+    @IsTest
     static void testCreateIncident_WithoutAlertId() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -195,7 +195,7 @@ private class PagerDutyIntegrationTest {
     // getRecentIncidents Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetRecentIncidents() {
         Test.startTest();
         List<Map<String, Object>> incidents = PagerDutyIntegration.getRecentIncidents();
@@ -210,7 +210,7 @@ private class PagerDutyIntegrationTest {
     // Severity Mapping Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testSeverityMapping() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -247,7 +247,7 @@ private class PagerDutyIntegrationTest {
     // Bulk Operations Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBulkIncidentTrigger() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -281,7 +281,7 @@ private class PagerDutyIntegrationTest {
     // Error Handling Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testTriggerIncident_ExceptionHandling() {
         // Mock that throws exception
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(200, null));

@@ -56,7 +56,7 @@ private class ElaroInstallHandlerTest {
      * Test new installation scenario
      * Should create AI settings and audit log
      */
-    @isTest
+    @IsTest
     static void testOnInstall_NewInstallation_CreatesDefaultSettings() {
         // Arrange
         MockInstallContext context = new MockInstallContext(true, false, false, null);
@@ -97,7 +97,7 @@ private class ElaroInstallHandlerTest {
      * Test upgrade scenario
      * Should NOT recreate AI settings if they exist
      */
-    @isTest
+    @IsTest
     static void testOnInstall_Upgrade_PreservesExistingSettings() {
         // Arrange - Create existing AI settings with custom values
         Elaro_AI_Settings__c existingSettings = new Elaro_AI_Settings__c(
@@ -139,7 +139,7 @@ private class ElaroInstallHandlerTest {
     /**
      * Test push upgrade scenario
      */
-    @isTest
+    @IsTest
     static void testOnInstall_PushUpgrade_LogsCorrectly() {
         // Arrange
         Version previousVersion = new Version(3, 0, 0);
@@ -165,7 +165,7 @@ private class ElaroInstallHandlerTest {
      * Test error handling in install handler
      * Should not throw exceptions, only log errors
      */
-    @isTest
+    @IsTest
     static void testOnInstall_HandlesErrorsGracefully() {
         // Arrange - Use a context that will work
         MockInstallContext context = new MockInstallContext(true, false, false, null);
@@ -193,7 +193,7 @@ private class ElaroInstallHandlerTest {
      * Test Chatter notification creation
      * Should create FeedItem for installer
      */
-    @isTest
+    @IsTest
     static void testOnInstall_CreatesChatterNotification() {
         // Arrange
         MockInstallContext context = new MockInstallContext(true, false, false, null);
@@ -224,7 +224,7 @@ private class ElaroInstallHandlerTest {
     /**
      * Test getInstallationSummary static method
      */
-    @isTest
+    @IsTest
     static void testGetInstallationSummary_ReturnsFormattedString() {
         // Arrange
         MockInstallContext context = new MockInstallContext(true, false, false, null);
@@ -245,7 +245,7 @@ private class ElaroInstallHandlerTest {
     /**
      * Test getInstallationSummary for upgrade
      */
-    @isTest
+    @IsTest
     static void testGetInstallationSummary_Upgrade_IncludesPreviousVersion() {
         // Arrange
         Version previousVersion = new Version(2, 5, 3);
@@ -265,7 +265,7 @@ private class ElaroInstallHandlerTest {
      * Test AI settings initialization when object doesn't exist
      * (Edge case: deployment without all metadata)
      */
-    @isTest
+    @IsTest
     static void testOnInstall_MissingAISettings_HandlesGracefully() {
         // Arrange
         MockInstallContext context = new MockInstallContext(true, false, false, null);
@@ -289,7 +289,7 @@ private class ElaroInstallHandlerTest {
      * Test audit log creation when object is not accessible
      * Should handle permission errors gracefully
      */
-    @isTest
+    @IsTest
     static void testOnInstall_InsufficientPermissions_ContinuesExecution() {
         // Arrange
         MockInstallContext context = new MockInstallContext(true, false, false, null);
@@ -311,7 +311,7 @@ private class ElaroInstallHandlerTest {
     /**
      * Test multiple sequential installations don't duplicate settings
      */
-    @isTest
+    @IsTest
     static void testOnInstall_MultipleInstalls_NoDuplicateSettings() {
         // Arrange
         MockInstallContext context1 = new MockInstallContext(true, false, false, null);
@@ -342,7 +342,7 @@ private class ElaroInstallHandlerTest {
      * Test that all installation paths execute without errors
      * Comprehensive smoke test
      */
-    @isTest
+    @IsTest
     static void testOnInstall_AllPaths_ExecuteSuccessfully() {
         // Test all three installation types
         List<MockInstallContext> contexts = new List<MockInstallContext>{

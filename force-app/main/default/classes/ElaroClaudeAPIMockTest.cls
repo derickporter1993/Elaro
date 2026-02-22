@@ -6,7 +6,7 @@
 @IsTest(testFor=ElaroClaudeAPIMock.class)
 private class ElaroClaudeAPIMockTest {
     
-    @isTest
+    @IsTest
     static void testSuccessResponse() {
         Test.startTest();
         
@@ -29,7 +29,7 @@ private class ElaroClaudeAPIMockTest {
         Assert.isTrue(res.getBody().contains('claude-sonnet'), 'Should contain model information');
     }
     
-    @isTest
+    @IsTest
     static void testErrorResponse() {
         Test.startTest();
         
@@ -50,7 +50,7 @@ private class ElaroClaudeAPIMockTest {
         Assert.isTrue(res.getBody().contains('invalid_request_error'), 'Should contain error type');
     }
     
-    @isTest
+    @IsTest
     static void testRateLimitedResponse() {
         Test.startTest();
         
@@ -68,7 +68,7 @@ private class ElaroClaudeAPIMockTest {
         Assert.isTrue(res.getBody().contains('rate_limit_error'), 'Should indicate rate limiting');
     }
     
-    @isTest
+    @IsTest
     static void testTimeoutResponse() {
         Test.startTest();
         
@@ -86,7 +86,7 @@ private class ElaroClaudeAPIMockTest {
         Assert.isTrue(res.getBody().contains('timeout_error'), 'Should indicate timeout');
     }
     
-    @isTest
+    @IsTest
     static void testCustomResponse() {
         Test.startTest();
         

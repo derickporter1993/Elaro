@@ -37,7 +37,7 @@ private class BlockchainVerificationTest {
         insert cdl;
     }
 
-    @isTest
+    @IsTest
     static void testAnchorEvidence() {
         ContentVersion cv = [SELECT Id FROM ContentVersion WHERE Title = 'Test Evidence Document' LIMIT 1];
 
@@ -51,7 +51,7 @@ private class BlockchainVerificationTest {
         Assert.areEqual('Ethereum', result.blockchainNetwork, 'Network should be Ethereum');
     }
 
-    @isTest
+    @IsTest
     static void testVerifyEvidenceNotAnchored() {
         // Create new content that hasn't been anchored
         ContentVersion cv = new ContentVersion(
@@ -70,7 +70,7 @@ private class BlockchainVerificationTest {
         Assert.areEqual('NOT_ANCHORED', result.status, 'Status should be NOT_ANCHORED');
     }
 
-    @isTest
+    @IsTest
     static void testVerifyEvidenceAfterAnchor() {
         ContentVersion cv = [SELECT Id FROM ContentVersion WHERE Title = 'Test Evidence Document' LIMIT 1];
 
@@ -86,7 +86,7 @@ private class BlockchainVerificationTest {
         Assert.areNotEqual(null, result.transactionId, 'Transaction ID should be present');
     }
 
-    @isTest
+    @IsTest
     static void testBatchAnchorEvidence() {
         // Create additional content
         List<ContentVersion> contentVersions = new List<ContentVersion>();
@@ -115,7 +115,7 @@ private class BlockchainVerificationTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testGetVerificationHistory() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ContentVersion cv = [SELECT Id FROM ContentVersion WHERE Title = 'Test Evidence Document' LIMIT 1];
@@ -130,7 +130,7 @@ private class BlockchainVerificationTest {
         Assert.isTrue(history.size() > 0, 'Should have verification records');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateCertificate() {
         ContentVersion cv = [SELECT Id FROM ContentVersion WHERE Title = 'Test Evidence Document' LIMIT 1];
 
@@ -145,7 +145,7 @@ private class BlockchainVerificationTest {
         Assert.isTrue(certificate.contains('AUTHENTIC'), 'Certificate should confirm authenticity');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateCertificateUnverified() {
         // Create unanchored content
         ContentVersion cv = new ContentVersion(

@@ -1,19 +1,20 @@
 /**
- * ElaroScoreCallback
- * 
- * REST endpoint that receives score results from AWS Lambda and updates
+ * REST callback endpoint that receives score results from AWS Lambda and updates
  * Compliance_Score__c records. Also publishes Platform Events for real-time UI updates.
- * 
- * Security Features:
- * - API key authentication via Custom Metadata
- * - Replay protection (timestamp + nonce validation)
- * - HMAC signature validation (optional, if configured)
- * - Rate limiting via Platform Cache
- * - Correlation IDs for audit logging
- * - Sanitized error responses (no stack traces)
- * 
- * External API callback runs in system context for Compliance_Score__c updates.
- * CRUD/FLS is enforced via Security.stripInaccessible and AccessLevel.USER_MODE.
+ *
+ * SECURITY: global access modifier is REQUIRED by the @RestResource annotation.
+ * SECURITY: without sharing is REQUIRED because this REST endpoint receives callbacks
+ * from an external AWS Lambda service using API key authentication. The callback must
+ * update Compliance_Score__c records regardless of the calling user's record access,
+ * as the external system authenticates via API key (validated in handleScoreCallback),
+ * not via a Salesforce user session. CRUD/FLS is enforced via Security.stripInaccessible
+ * and AccessLevel.USER_MODE on all DML operations.
+ *
+ * @author Elaro Team
+ * @since v3.1.0 (Spring '26)
+ * @group Integration
+ * @see Compliance_Score__c
+ * @see Elaro_Score_Result__e
  */
 @RestResource(urlMapping='/elaro/score/callback')
 global without sharing class ElaroScoreCallback {

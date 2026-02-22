@@ -21,7 +21,7 @@ private class RetentionEnforcementBatchTest {
         insert activities;
     }
 
-    @isTest
+    @IsTest
     static void testBatchExecution() {
         // Arrange
         Integer activityCount = [SELECT COUNT() FROM Data_Processing_Activity__c];
@@ -38,7 +38,7 @@ private class RetentionEnforcementBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete successfully');
     }
 
-    @isTest
+    @IsTest
     static void testBatchWithNoActivities() {
         // Arrange - delete all activities
         delete [SELECT Id FROM Data_Processing_Activity__c];
@@ -54,7 +54,7 @@ private class RetentionEnforcementBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete even with no activities');
     }
 
-    @isTest
+    @IsTest
     static void testBatchWithNullRetentionPeriod() {
         // Arrange - create activity without retention period
         Data_Processing_Activity__c activityNoRetention = new Data_Processing_Activity__c(
@@ -74,7 +74,7 @@ private class RetentionEnforcementBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should handle null retention periods');
     }
 
-    @isTest
+    @IsTest
     static void testBatchBulkProcessing() {
         // Arrange - create 200+ activities for bulk testing
         List<Data_Processing_Activity__c> bulkActivities = new List<Data_Processing_Activity__c>();
@@ -99,7 +99,7 @@ private class RetentionEnforcementBatchTest {
         Assert.areEqual(0, job.NumberOfErrors, 'Batch should complete without errors');
     }
 
-    @isTest
+    @IsTest
     static void testStartMethod() {
         // Arrange
         RetentionEnforcementBatch batch = new RetentionEnforcementBatch();

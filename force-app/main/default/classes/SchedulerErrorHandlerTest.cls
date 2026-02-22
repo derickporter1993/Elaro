@@ -7,7 +7,7 @@
 @IsTest(testFor=SchedulerErrorHandler.class)
 private class SchedulerErrorHandlerTest {
 
-    @isTest
+    @IsTest
     static void testLogError() {
         Exception testException = new DmlException('Test error message');
 
@@ -26,7 +26,7 @@ private class SchedulerErrorHandlerTest {
         Assert.areEqual('Test error message', errors[0].Error_Message__c, 'Should capture error message');
     }
 
-    @isTest
+    @IsTest
     static void testLogSuccess() {
         Test.startTest();
         SchedulerErrorHandler.logSuccess('TestScheduler', 'Processed 100 records successfully');
@@ -43,7 +43,7 @@ private class SchedulerErrorHandlerTest {
         Assert.isTrue(logs[0].Error_Message__c.contains('100 records'), 'Should capture success details');
     }
 
-    @isTest
+    @IsTest
     static void testGetCronExpressionWithConfig() {
         // Custom Metadata is available in tests
         Test.startTest();
@@ -55,7 +55,7 @@ private class SchedulerErrorHandlerTest {
         Assert.isTrue(cron.contains('*'), 'Should be a valid CRON expression');
     }
 
-    @isTest
+    @IsTest
     static void testGetCronExpressionWithDefault() {
         String defaultCron = '0 0 12 * * ?';
 
@@ -66,7 +66,7 @@ private class SchedulerErrorHandlerTest {
         Assert.areEqual(defaultCron, cron, 'Should return default CRON when config not found');
     }
 
-    @isTest
+    @IsTest
     static void testGetBatchSizeWithConfig() {
         Test.startTest();
         Integer batchSize = SchedulerErrorHandler.getBatchSize('DormantAccountAlert', 100);
@@ -76,7 +76,7 @@ private class SchedulerErrorHandlerTest {
         Assert.isTrue(batchSize > 0, 'Should return a positive batch size');
     }
 
-    @isTest
+    @IsTest
     static void testGetBatchSizeWithDefault() {
         Integer defaultSize = 250;
 
@@ -87,7 +87,7 @@ private class SchedulerErrorHandlerTest {
         Assert.areEqual(defaultSize, batchSize, 'Should return default batch size when config not found');
     }
 
-    @isTest
+    @IsTest
     static void testIsSchedulerActive() {
         Test.startTest();
         Boolean isActive = SchedulerErrorHandler.isSchedulerActive('CCPASLAMonitor');
@@ -97,7 +97,7 @@ private class SchedulerErrorHandlerTest {
         Assert.areNotEqual(null, isActive, 'Should return a boolean value');
     }
 
-    @isTest
+    @IsTest
     static void testIsSchedulerActiveDefault() {
         Test.startTest();
         Boolean isActive = SchedulerErrorHandler.isSchedulerActive('NonExistentScheduler');
@@ -106,7 +106,7 @@ private class SchedulerErrorHandlerTest {
         Assert.areEqual(true, isActive, 'Should default to active when config not found');
     }
 
-    @isTest
+    @IsTest
     static void testNotifyOnFailure() {
         Exception testException = new DmlException('Test failure notification');
 
@@ -124,7 +124,7 @@ private class SchedulerErrorHandlerTest {
         Assert.isNull(caughtEx, 'notifyOnFailure should handle missing SlackNotifier gracefully without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testLogErrorWithLongMessage() {
         // Test with a very long error message to verify truncation
         String longMessage = 'A'.repeat(500);

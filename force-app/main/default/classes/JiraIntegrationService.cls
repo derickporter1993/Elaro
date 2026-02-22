@@ -120,21 +120,70 @@ public with sharing class JiraIntegrationService {
     }
 
     /**
-     * Creates Jira issues for multiple gaps
+     * Creates Jira issues for multiple gaps with bulk DML optimization.
+     * Queries all gaps upfront, performs callouts in the loop, and executes
+     * a single bulk DML update after all issues are created.
+     *
      * @param gapIds List of Compliance_Gap__c IDs
      * @return List of created JiraIssue wrappers
      */
     @AuraEnabled
     public static List<JiraIssue> createBulkIssues(List<String> gapIds) {
         List<JiraIssue> createdIssues = new List<JiraIssue>();
+        List<Compliance_Gap__c> gapsToUpdate = new List<Compliance_Gap__c>();
+        JiraSettings settings = getSettings();
+
+        // Query all gaps upfront — single SOQL
+        Map<Id, Compliance_Gap__c> gapMap = new Map<Id, Compliance_Gap__c>([
+            SELECT Id, Name, Framework__c, Severity__c, Status__c, Gap_Description__c,
+                   Policy_Reference__c, Remediation_Plan__c, Risk_Score__c,
+                   Jira_Issue_Key__c, Jira_Issue_URL__c, Jira_Status__c, Jira_Last_Sync__c
+            FROM Compliance_Gap__c
+            WHERE Id IN :gapIds
+            WITH USER_MODE
+        ]);
 
         for (String gapId : gapIds) {
-            try {
-                JiraIssue issue = createIssue(gapId, null);
-                createdIssues.add(issue);
-            } catch (Exception e) {
-                ElaroLogger.warn('Failed to create issue for gap ' + gapId + ': ' + e.getMessage());
+            Compliance_Gap__c gap = gapMap.get(gapId);
+            if (gap == null) {
+                ElaroLogger.warn('JiraIntegrationService.createBulkIssues', 'Gap not found: ' + gapId);
+                continue;
             }
+
+            if (String.isNotBlank(gap.Jira_Issue_Key__c)) {
+                ElaroLogger.warn('JiraIntegrationService.createBulkIssues', 'Jira issue already exists for gap ' + gapId + ': ' + gap.Jira_Issue_Key__c);
+                continue;
+            }
+
+            try {
+                String effectivePriority = settings.defaultPriority;
+                Map<String, Object> issuePayload = buildIssuePayload(gap, settings, effectivePriority);
+                HttpResponse response = makeCallout('POST', API_VERSION + '/issue', JSON.serialize(issuePayload));
+
+                if (response.getStatusCode() != 201) {
+                    ElaroLogger.warn('JiraIntegrationService.createBulkIssues', 'Failed to create Jira issue for gap ' + gapId + ': ' + response.getBody());
+                    continue;
+                }
+
+                Map<String, Object> responseBody = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+                String issueKey = (String) responseBody.get('key');
+
+                // Update gap fields (no DML yet — collect for bulk update)
+                gap.Jira_Issue_Key__c = issueKey;
+                gap.Jira_Issue_URL__c = settings.jiraInstanceUrl + '/browse/' + issueKey;
+                gap.Jira_Status__c = 'To Do';
+                gap.Jira_Last_Sync__c = Datetime.now();
+                gapsToUpdate.add(gap);
+
+                createdIssues.add(buildJiraIssueFromResponse(responseBody, settings.jiraInstanceUrl));
+            } catch (Exception e) {
+                ElaroLogger.warn('JiraIntegrationService.createBulkIssues', 'Failed to create issue for gap ' + gapId + ': ' + e.getMessage());
+            }
+        }
+
+        // Single bulk DML outside the loop
+        if (!gapsToUpdate.isEmpty()) {
+            update as user gapsToUpdate;
         }
 
         return createdIssues;

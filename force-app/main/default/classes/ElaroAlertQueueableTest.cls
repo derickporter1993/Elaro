@@ -8,7 +8,7 @@
 @IsTest(testFor=ElaroAlertQueueable.class)
 private class ElaroAlertQueueableTest {
 
-    @isTest
+    @IsTest
     static void testQueueableExecution() {
         // Create mock queue item
         ElaroComplianceAlert.AlertQueueItem queueItem = new ElaroComplianceAlert.AlertQueueItem();
@@ -35,7 +35,7 @@ private class ElaroAlertQueueableTest {
         Assert.isTrue(jobs.size() > 0, 'Queueable job should have been executed');
     }
 
-    @isTest
+    @IsTest
     static void testQueueableWithNullItem() {
         Test.startTest();
         ElaroAlertQueueable queueable = new ElaroAlertQueueable(null);
@@ -51,7 +51,7 @@ private class ElaroAlertQueueableTest {
         Assert.isTrue(jobs.size() > 0, 'Queueable job should complete even with null item');
     }
 
-    @isTest
+    @IsTest
     static void testQueueableWithMinimalData() {
         ElaroComplianceAlert.AlertQueueItem queueItem = new ElaroComplianceAlert.AlertQueueItem();
         queueItem.alertId = 'ALERT-002';
@@ -73,7 +73,7 @@ private class ElaroAlertQueueableTest {
         Assert.isTrue(jobs.size() > 0, 'Queueable job should complete with minimal data');
     }
 
-    @isTest
+    @IsTest
     static void testQueueableWithCriticalSeverity() {
         ElaroComplianceAlert.AlertQueueItem queueItem = new ElaroComplianceAlert.AlertQueueItem();
         queueItem.alertId = 'ALERT-003';

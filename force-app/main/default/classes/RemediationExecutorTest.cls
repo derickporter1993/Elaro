@@ -78,7 +78,7 @@ private class RemediationExecutorTest {
         insert suggestions;
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_Success() {
         Remediation_Suggestion__c suggestion = [
             SELECT Id FROM Remediation_Suggestion__c
@@ -102,7 +102,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(UserInfo.getUserId(), updated.Applied_By__c, 'Applied by should be current user');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_NotApproved() {
         Remediation_Suggestion__c suggestion = [
             SELECT Id FROM Remediation_Suggestion__c
@@ -118,7 +118,7 @@ private class RemediationExecutorTest {
         Assert.isTrue(result.errorMessage.contains('approved'), 'Error should mention approval');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_NoAutoRemediation() {
         Remediation_Suggestion__c suggestion = [
             SELECT Id FROM Remediation_Suggestion__c
@@ -134,7 +134,7 @@ private class RemediationExecutorTest {
         Assert.isTrue(result.errorMessage.contains('not available'), 'Error should mention auto-remediation not available');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_NotFound() {
         Test.startTest();
         RemediationExecutor.RemediationResult result = RemediationExecutor.executeRemediation('a00000000000000AAA');
@@ -144,7 +144,7 @@ private class RemediationExecutorTest {
         Assert.isTrue(result.errorMessage.contains('not found'), 'Error should mention not found');
     }
 
-    @isTest
+    @IsTest
     static void testMarkAsManuallyApplied() {
         Remediation_Suggestion__c suggestion = [
             SELECT Id, Compliance_Gap__c FROM Remediation_Suggestion__c
@@ -169,7 +169,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(Date.today(), gap.Actual_Remediation_Date__c, 'Remediation date should be today');
     }
 
-    @isTest
+    @IsTest
     static void testMarkAsManuallyApplied_NotApproved() {
         Remediation_Suggestion__c suggestion = [
             SELECT Id FROM Remediation_Suggestion__c
@@ -187,7 +187,7 @@ private class RemediationExecutorTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testMarkAsManuallyApplied_NotFound() {
         Test.startTest();
         try {
@@ -199,7 +199,7 @@ private class RemediationExecutorTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetExecutionHistory() {
         // First execute a remediation to create history
         Remediation_Suggestion__c suggestion = [
@@ -220,7 +220,7 @@ private class RemediationExecutorTest {
         Assert.areEqual('APPLIED', item.status, 'Status should be APPLIED');
     }
 
-    @isTest
+    @IsTest
     static void testBulkExecute() {
         // Create additional approved auto-remediable suggestions
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
@@ -260,7 +260,7 @@ private class RemediationExecutorTest {
         Assert.areNotEqual(null, result.results, 'Results list should be set');
     }
 
-    @isTest
+    @IsTest
     static void testRemediationResultWrapper() {
         RemediationExecutor.RemediationResult result = new RemediationExecutor.RemediationResult();
         result.suggestionId = 'test123';
@@ -274,7 +274,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(true, result.requiresDeployment, 'Requires deployment should match');
     }
 
-    @isTest
+    @IsTest
     static void testExecutionHistoryWrapper() {
         RemediationExecutor.ExecutionHistory item = new RemediationExecutor.ExecutionHistory();
         item.suggestionId = null;
@@ -291,7 +291,7 @@ private class RemediationExecutorTest {
         Assert.areEqual('APPLIED', item.status, 'Status should match');
     }
 
-    @isTest
+    @IsTest
     static void testBulkExecutionResultWrapper() {
         RemediationExecutor.BulkExecutionResult result = new RemediationExecutor.BulkExecutionResult();
         result.totalProcessed = 5;
@@ -304,7 +304,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(2, result.failureCount, 'Failure count should match');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_FLSType() {
         // Create FLS-type approved suggestion
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
@@ -333,7 +333,7 @@ private class RemediationExecutorTest {
         Assert.isTrue(result.message.contains('Field-level security'), 'Message should mention FLS');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_ProfileType() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 
@@ -361,7 +361,7 @@ private class RemediationExecutorTest {
         Assert.isTrue(result.message.contains('Profile update'), 'Message should mention profile');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteRemediation_InvalidPayload() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 
@@ -384,7 +384,7 @@ private class RemediationExecutorTest {
         Assert.isTrue(result.errorMessage.contains('Execution failed'), 'Error should mention execution failure');
     }
 
-    @isTest
+    @IsTest
     static void testBulkExecute_LargeVolume() {
         // Create 55 gaps and suggestions to test bulk operations
         Integer recordCount = 55;
@@ -472,7 +472,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(recordCount, updatedGaps.size(), 'All gaps should be REMEDIATED');
     }
 
-    @isTest
+    @IsTest
     static void testBulkExecute_EmptyList() {
         Test.startTest();
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(new List<String>());
@@ -483,7 +483,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(0, result.failureCount, 'No failures');
     }
 
-    @isTest
+    @IsTest
     static void testBulkExecute_NullList() {
         Test.startTest();
         RemediationExecutor.BulkExecutionResult result = RemediationExecutor.bulkExecute(null);
@@ -492,7 +492,7 @@ private class RemediationExecutorTest {
         Assert.areEqual(0, result.totalProcessed, 'Should process zero records');
     }
 
-    @isTest
+    @IsTest
     static void testBulkExecute_MixedResults() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
 

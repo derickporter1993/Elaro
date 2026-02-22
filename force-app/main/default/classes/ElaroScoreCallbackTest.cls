@@ -1,7 +1,7 @@
 @IsTest(testFor=ElaroScoreCallback.class)
 private class ElaroScoreCallbackTest {
     
-    @isTest
+    @IsTest
     static void testHandleScoreCallbackSuccess() {
         // Create test score data
         Map<String, Object> scoreData = new Map<String, Object>{
@@ -47,7 +47,7 @@ private class ElaroScoreCallbackTest {
         Assert.areEqual(7.5, scores[0].Risk_Score__c, 'Risk score should match');
     }
     
-    @isTest
+    @IsTest
     static void testHandleScoreCallbackError() {
         // Create invalid request (missing required fields)
         Map<String, Object> invalidData = new Map<String, Object>{
@@ -73,7 +73,7 @@ private class ElaroScoreCallbackTest {
         Assert.areNotEqual(null, responseBody.get('error'), 'Should return error message');
     }
     
-    @isTest
+    @IsTest
     static void testHandleScoreCallbackMalformedJSON() {
         RestRequest req = new RestRequest();
         RestResponse res = new RestResponse();

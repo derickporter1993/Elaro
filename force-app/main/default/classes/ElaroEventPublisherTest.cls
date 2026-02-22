@@ -1,7 +1,7 @@
 @IsTest(testFor=ElaroEventPublisher.class)
 private class ElaroEventPublisherTest {
     
-    @isTest
+    @IsTest
     static void testPublishConfigChange() {
         String orgId = UserInfo.getOrganizationId();
         String entityType = 'PermissionSet';
@@ -28,7 +28,7 @@ private class ElaroEventPublisherTest {
         Assert.areEqual(null, caughtException, 'publishConfigChange should not throw exception');
     }
     
-    @isTest
+    @IsTest
     static void testPublishAuditTrailChange() {
         String orgId = UserInfo.getOrganizationId();
         Map<String, Object> auditData = new Map<String, Object>{
@@ -52,7 +52,7 @@ private class ElaroEventPublisherTest {
         Assert.areEqual(null, caughtException, 'publishAuditTrailChange should not throw exception');
     }
     
-    @isTest
+    @IsTest
     static void testPublishPermissionChange() {
         String orgId = UserInfo.getOrganizationId();
         String userId = UserInfo.getUserId();
@@ -75,7 +75,7 @@ private class ElaroEventPublisherTest {
         Assert.areEqual(null, caughtException, 'publishPermissionChange should not throw exception');
     }
     
-    @isTest
+    @IsTest
     static void testPublishBatch() {
         String orgId = UserInfo.getOrganizationId();
         List<Elaro_Raw_Event__e> events = new List<Elaro_Raw_Event__e>();
@@ -105,7 +105,7 @@ private class ElaroEventPublisherTest {
         Assert.areEqual(null, caughtException, 'publishBatch should not throw exception');
     }
     
-    @isTest
+    @IsTest
     static void testPublishBatchEmpty() {
         Test.startTest();
         Exception caughtException = null;

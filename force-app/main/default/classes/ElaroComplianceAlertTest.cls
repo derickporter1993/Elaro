@@ -4,7 +4,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@isTest
+@IsTest(testFor=ElaroComplianceAlert.class)
 private class ElaroComplianceAlertTest {
     
     @testSetup
@@ -54,7 +54,7 @@ private class ElaroComplianceAlertTest {
     // configureAlert Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testConfigureAlert_Success() {
         ElaroComplianceAlert.AlertConfig config = new ElaroComplianceAlert.AlertConfig();
         config.name = 'Test Alert Config';
@@ -82,7 +82,7 @@ private class ElaroComplianceAlertTest {
         Assert.isTrue(alertConfig.Channels__c.contains('EMAIL'), 'Should include EMAIL channel');
     }
     
-    @isTest
+    @IsTest
     static void testConfigureAlert_MissingName() {
         ElaroComplianceAlert.AlertConfig config = new ElaroComplianceAlert.AlertConfig();
         config.alertType = 'Risk Threshold';
@@ -99,7 +99,7 @@ private class ElaroComplianceAlertTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testConfigureAlert_InvalidThreshold() {
         ElaroComplianceAlert.AlertConfig config = new ElaroComplianceAlert.AlertConfig();
         config.name = 'Test Alert';
@@ -116,7 +116,7 @@ private class ElaroComplianceAlertTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testConfigureAlert_EmptyChannels() {
         ElaroComplianceAlert.AlertConfig config = new ElaroComplianceAlert.AlertConfig();
         config.name = 'Test Alert';
@@ -137,7 +137,7 @@ private class ElaroComplianceAlertTest {
     // processAlert Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testProcessAlert_Success() {
         Map<String, Object> eventData = new Map<String, Object>{
             'alertId' => 'ALERT-123',
@@ -160,7 +160,7 @@ private class ElaroComplianceAlertTest {
         Assert.areNotEqual(null, result.timestamp, 'Should have timestamp');
     }
     
-    @isTest
+    @IsTest
     static void testProcessAlert_HighRisk_TriggersAlert() {
         Map<String, Object> eventData = new Map<String, Object>{
             'alertId' => 'ALERT-456',
@@ -180,7 +180,7 @@ private class ElaroComplianceAlertTest {
         Assert.areNotEqual(null, result.alertId, 'Should have alert ID');
     }
     
-    @isTest
+    @IsTest
     static void testProcessAlert_LowRisk_NoAlert() {
         Map<String, Object> eventData = new Map<String, Object>{
             'alertId' => 'ALERT-789',
@@ -199,7 +199,7 @@ private class ElaroComplianceAlertTest {
         Assert.areEqual(false, result.alertTriggered, 'Alert should not be triggered');
     }
     
-    @isTest
+    @IsTest
     static void testProcessAlert_CriticalRisk() {
         Map<String, Object> eventData = new Map<String, Object>{
             'alertId' => 'ALERT-CRITICAL',
@@ -223,7 +223,7 @@ private class ElaroComplianceAlertTest {
     // sendAlertNotification Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testSendAlertNotification_Email() {
         Map<String, Object> alertData = new Map<String, Object>{
             'alertId' => 'ALERT-EMAIL',
@@ -242,7 +242,7 @@ private class ElaroComplianceAlertTest {
         Assert.isNotNull(alertData, 'Alert data should not be null');
     }
     
-    @isTest
+    @IsTest
     static void testSendAlertNotification_Slack() {
         Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(200, '{"ok":true}'));
         
@@ -263,7 +263,7 @@ private class ElaroComplianceAlertTest {
         Assert.isNotNull(alertData, 'Alert data should not be null');
     }
     
-    @isTest
+    @IsTest
     static void testSendAlertNotification_PagerDuty() {
         Test.setMock(HttpCalloutMock.class, new PagerDutyCalloutMock(202, '{"status":"success"}'));
         
@@ -284,7 +284,7 @@ private class ElaroComplianceAlertTest {
         Assert.isNotNull(alertData, 'Alert data should not be null');
     }
     
-    @isTest
+    @IsTest
     static void testSendAlertNotification_InvalidChannel() {
         Map<String, Object> alertData = new Map<String, Object>{
             'alertId' => 'ALERT-INVALID',
@@ -314,7 +314,7 @@ private class ElaroComplianceAlertTest {
     // getActiveAlerts Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetActiveAlerts() {
         Test.startTest();
         List<ElaroComplianceAlert.AlertSummary> alerts = 
@@ -333,7 +333,7 @@ private class ElaroComplianceAlertTest {
         }
     }
     
-    @isTest
+    @IsTest
     static void testGetActiveAlerts_WithData() {
         // Verify alerts are returned from evidence items
         Test.startTest();
@@ -349,7 +349,7 @@ private class ElaroComplianceAlertTest {
     // queueAlert Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testQueueAlert() {
         Elaro_Alert_Config__c config = [
             SELECT Id, Channels__c, Severity__c
@@ -375,7 +375,7 @@ private class ElaroComplianceAlertTest {
         Assert.isTrue(true, 'Alert should be queued via single AlertDispatchQueueable');
     }
 
-    @isTest
+    @IsTest
     static void testBuildQueueItems() {
         Elaro_Alert_Config__c config = [
             SELECT Id, Channels__c, Severity__c
@@ -405,7 +405,7 @@ private class ElaroComplianceAlertTest {
         Assert.areEqual('ALERT-BUILD', items[0].alertId, 'Alert ID should match');
     }
 
-    @isTest
+    @IsTest
     static void testAlertDispatchQueueable() {
         List<ElaroComplianceAlert.AlertQueueItem> items = new List<ElaroComplianceAlert.AlertQueueItem>();
 
@@ -454,7 +454,7 @@ private class ElaroComplianceAlertTest {
     // Bulk Operations Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBulkAlertSending() {
         Test.setMock(HttpCalloutMock.class, new SlackCalloutMock(200, '{"ok":true}'));
         
@@ -481,7 +481,7 @@ private class ElaroComplianceAlertTest {
         Assert.areEqual(200, alertDataList.size(), 'Should have 200 alert data items');
     }
     
-    @isTest
+    @IsTest
     static void testBulkAlertProcessing() {
         List<Map<String, Object>> eventDataList = new List<Map<String, Object>>();
         
@@ -522,7 +522,7 @@ private class ElaroComplianceAlertTest {
     // Severity Determination Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testSeverityMapping() {
         Map<Integer, String> expectedSeverities = new Map<Integer, String>{
             98 => 'CRITICAL',

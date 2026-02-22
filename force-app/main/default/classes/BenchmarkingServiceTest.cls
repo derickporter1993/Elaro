@@ -18,7 +18,7 @@ private class BenchmarkingServiceTest {
     // getIndustryBenchmarks Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetIndustryBenchmarks_Healthcare() {
         Test.startTest();
         BenchmarkingService.IndustryBenchmarks benchmarks = 
@@ -33,7 +33,7 @@ private class BenchmarkingServiceTest {
         Assert.areNotEqual(null, benchmarks.lastUpdated, 'Should have last updated date');
     }
     
-    @isTest
+    @IsTest
     static void testGetIndustryBenchmarks_FinancialServices() {
         Test.startTest();
         BenchmarkingService.IndustryBenchmarks benchmarks = 
@@ -45,7 +45,7 @@ private class BenchmarkingServiceTest {
         Assert.isTrue(benchmarks.avgComplianceScore > 0, 'Average score should be positive');
     }
     
-    @isTest
+    @IsTest
     static void testGetIndustryBenchmarks_Technology() {
         Test.startTest();
         BenchmarkingService.IndustryBenchmarks benchmarks = 
@@ -56,7 +56,7 @@ private class BenchmarkingServiceTest {
         Assert.areEqual('Technology', benchmarks.industry, 'Industry should match');
     }
     
-    @isTest
+    @IsTest
     static void testGetIndustryBenchmarks_UnknownIndustry() {
         Test.startTest();
         BenchmarkingService.IndustryBenchmarks benchmarks = 
@@ -72,7 +72,7 @@ private class BenchmarkingServiceTest {
     // compareToIndustry Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testCompareToIndustry_Success() {
         Test.startTest();
         BenchmarkingService.ComparisonResult result = 
@@ -90,7 +90,7 @@ private class BenchmarkingServiceTest {
         Assert.areNotEqual(null, result.recommendations, 'Should have recommendations');
     }
     
-    @isTest
+    @IsTest
     static void testCompareToIndustry_AboveAverage() {
         // This test verifies comparison logic
         Test.startTest();
@@ -102,7 +102,7 @@ private class BenchmarkingServiceTest {
         Assert.areNotEqual(null, result.positionClass, 'Should have position class');
     }
     
-    @isTest
+    @IsTest
     static void testCompareToIndustry_FrameworkComparisons() {
         Test.startTest();
         BenchmarkingService.ComparisonResult result = 
@@ -125,7 +125,7 @@ private class BenchmarkingServiceTest {
     // assessMaturity Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testAssessMaturity() {
         Test.startTest();
         BenchmarkingService.MaturityAssessment assessment = 
@@ -141,7 +141,7 @@ private class BenchmarkingServiceTest {
         Assert.areNotEqual(null, assessment.assessedAt, 'Should have assessment timestamp');
     }
     
-    @isTest
+    @IsTest
     static void testAssessMaturity_Dimensions() {
         Test.startTest();
         BenchmarkingService.MaturityAssessment assessment = 
@@ -167,7 +167,7 @@ private class BenchmarkingServiceTest {
         Assert.isTrue(dimensionNames.contains('Governance'), 'Should have Governance dimension');
     }
     
-    @isTest
+    @IsTest
     static void testAssessMaturity_Roadmap() {
         Test.startTest();
         BenchmarkingService.MaturityAssessment assessment = 
@@ -190,7 +190,7 @@ private class BenchmarkingServiceTest {
     // getAvailableIndustries Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetAvailableIndustries() {
         Test.startTest();
         List<String> industries = BenchmarkingService.getAvailableIndustries();
@@ -211,7 +211,7 @@ private class BenchmarkingServiceTest {
     // Maturity Level Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testMaturityLevel_Enum() {
         // Test that maturity levels are defined
         BenchmarkingService.MaturityLevel adHoc = BenchmarkingService.MaturityLevel.AD_HOC;
@@ -231,7 +231,7 @@ private class BenchmarkingServiceTest {
     // Bulk Operations Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBulkBenchmarking() {
         List<String> industries = BenchmarkingService.getAvailableIndustries();
         
@@ -257,7 +257,7 @@ private class BenchmarkingServiceTest {
     // Edge Cases Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testCompareToIndustry_NullIndustry() {
         Test.startTest();
         // Should default to Technology
@@ -268,7 +268,7 @@ private class BenchmarkingServiceTest {
         Assert.areNotEqual(null, result, 'Should return result with default industry');
     }
     
-    @isTest
+    @IsTest
     static void testGetIndustryBenchmarks_EmptyString() {
         Test.startTest();
         BenchmarkingService.IndustryBenchmarks benchmarks = 
@@ -282,7 +282,7 @@ private class BenchmarkingServiceTest {
     // Recommendations Tests
     // ═══════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testCompareToIndustry_Recommendations() {
         Test.startTest();
         BenchmarkingService.ComparisonResult result = 

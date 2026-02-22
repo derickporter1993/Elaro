@@ -28,7 +28,7 @@ private class RemediationOrchestratorTest {
         insert evidence;
     }
 
-    @isTest
+    @IsTest
     static void testCreateRemediationCase() {
         Elaro_Evidence_Item__c evidence = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
 
@@ -42,7 +42,7 @@ private class RemediationOrchestratorTest {
         Assert.areEqual('New', remedCase.Status, 'Status should be New');
     }
 
-    @isTest
+    @IsTest
     static void testCreateRemediationCaseDefaultPriority() {
         Elaro_Evidence_Item__c evidence = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
 
@@ -54,7 +54,7 @@ private class RemediationOrchestratorTest {
         Assert.areEqual('High', remedCase.Priority, 'Default priority should be High');
     }
 
-    @isTest
+    @IsTest
     static void testCreateRemediationCaseBlankEventId() {
         Test.startTest();
         try {
@@ -66,7 +66,7 @@ private class RemediationOrchestratorTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetAvailableActionsLoginAs() {
         Test.startTest();
         List<RemediationOrchestrator.ActionOption> actions = RemediationOrchestrator.getAvailableActions('LoginAs');
@@ -83,7 +83,7 @@ private class RemediationOrchestratorTest {
         Assert.isTrue(hasLock, 'LoginAs should have LOCK_USER action');
     }
 
-    @isTest
+    @IsTest
     static void testGetAvailableActionsAPI() {
         Test.startTest();
         List<RemediationOrchestrator.ActionOption> actions = RemediationOrchestrator.getAvailableActions('API');
@@ -96,7 +96,7 @@ private class RemediationOrchestratorTest {
         Assert.isTrue(hasDisableAPI, 'API event should have DISABLE_API_ACCESS action');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteCreateCaseAction() {
         Map<String, Object> context = new Map<String, Object>{
             'eventDescription' => 'Test compliance event',
@@ -113,7 +113,7 @@ private class RemediationOrchestratorTest {
         Assert.areNotEqual(null, result.resultId, 'Case ID should be returned');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteNotifyManagerAction() {
         Test.startTest();
         RemediationOrchestrator.RemediationResult result = RemediationOrchestrator.executeRemediationAction(
@@ -124,7 +124,7 @@ private class RemediationOrchestratorTest {
         Assert.areNotEqual(null, result.message, 'Message should be set');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteInvalidAction() {
         Test.startTest();
         try {
@@ -136,7 +136,7 @@ private class RemediationOrchestratorTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteQuarantineDataAction() {
         Test.startTest();
         RemediationOrchestrator.RemediationResult result = RemediationOrchestrator.executeRemediationAction(
@@ -147,7 +147,7 @@ private class RemediationOrchestratorTest {
         Assert.areEqual(true, result.success, 'Quarantine action should succeed');
     }
 
-    @isTest
+    @IsTest
     static void testGetRemediationHistory() {
         Elaro_Evidence_Item__c evidence = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
 

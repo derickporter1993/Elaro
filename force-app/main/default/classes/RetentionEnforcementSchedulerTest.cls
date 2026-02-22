@@ -21,7 +21,7 @@ private class RetentionEnforcementSchedulerTest {
         insert activities;
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerExecution() {
         // Arrange
         String cronExpression = '0 0 2 ? * SUN';
@@ -37,7 +37,7 @@ private class RetentionEnforcementSchedulerTest {
         Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
-    @isTest
+    @IsTest
     static void testScheduleStaticMethod() {
         // Act
         Test.startTest();
@@ -50,7 +50,7 @@ private class RetentionEnforcementSchedulerTest {
         Assert.areEqual(1, jobs.size(), 'Scheduled job should exist');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMethod() {
         // Arrange
         RetentionEnforcementScheduler scheduler = new RetentionEnforcementScheduler();
@@ -70,7 +70,7 @@ private class RetentionEnforcementSchedulerTest {
         Assert.isTrue(jobs.size() > 0, 'Batch job should have been queued');
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerWithNoActivities() {
         // Arrange - delete all activities
         delete [SELECT Id FROM Data_Processing_Activity__c];

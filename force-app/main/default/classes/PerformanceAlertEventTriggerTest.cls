@@ -3,10 +3,10 @@
  * Note: Performance_Alert__e platform event not available due to org limits.
  * Tests use Performance_Alert_History__c instead.
  */
-@isTest
+@IsTest(testFor=PerformanceAlertEventTriggerHandler.class)
 private class PerformanceAlertEventTriggerTest {
     
-    @isTest
+    @IsTest
     static void testPerformanceAlertHistoryCreation() {
         Performance_Alert_History__c alert = new Performance_Alert_History__c(
             Metric__c = 'CPU',
@@ -31,7 +31,7 @@ private class PerformanceAlertEventTriggerTest {
         Assert.areEqual(10000, savedAlert.Threshold__c, 'Threshold should match');
     }
     
-    @isTest
+    @IsTest
     static void testPerformanceAlertHistoryBulk() {
         List<Performance_Alert_History__c> alerts = new List<Performance_Alert_History__c>();
         for (Integer i = 0; i < 200; i++) {
@@ -50,7 +50,7 @@ private class PerformanceAlertEventTriggerTest {
         Assert.areEqual(200, count, 'Should have created 200 alerts');
     }
     
-    @isTest
+    @IsTest
     static void testPerformanceAlertPublisherIntegration() {
         Test.startTest();
         PerformanceAlertPublisher.publish('SOQL', 95, 100, 'integrationTest', null);

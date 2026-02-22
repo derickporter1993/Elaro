@@ -9,7 +9,7 @@
  * @author Elaro
  * @version 1.0
  */
-@IsTest
+@IsTest(testFor=ElaroComplianceScorer.class)
 private class ElaroIntegrationTest {
     
     @TestSetup

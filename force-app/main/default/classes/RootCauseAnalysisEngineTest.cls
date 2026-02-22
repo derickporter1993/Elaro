@@ -15,7 +15,7 @@ private class RootCauseAnalysisEngineTest {
     // analyzeRootCause Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testAnalyzeRootCause_ReturnsResult() {
         Elaro_Evidence_Item__c item = [
             SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1
@@ -34,7 +34,7 @@ private class RootCauseAnalysisEngineTest {
         Assert.isTrue(result.confidence &gt;= 0 &amp;&amp; result.confidence &lt;= 100, 'Confidence should be 0-100');
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeRootCause_NullId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new RootCauseAPIMock());
         
@@ -48,7 +48,7 @@ private class RootCauseAnalysisEngineTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeRootCause_BlankId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new RootCauseAPIMock());
         
@@ -62,7 +62,7 @@ private class RootCauseAnalysisEngineTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testAnalyzeRootCause_InvalidId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new RootCauseAPIMock());
         
@@ -80,7 +80,7 @@ private class RootCauseAnalysisEngineTest {
     // batchAnalyze Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBatchAnalyze_ReturnsMultipleResults() {
         List&lt;Elaro_Evidence_Item__c&gt; items = [
             SELECT Id FROM Elaro_Evidence_Item__c LIMIT 3
@@ -101,7 +101,7 @@ private class RootCauseAnalysisEngineTest {
         Assert.areEqual(eventIds.size(), results.size(), 'Should return result for each event');
     }
     
-    @isTest
+    @IsTest
     static void testBatchAnalyze_EmptyList() {
         Test.setMock(HttpCalloutMock.class, new RootCauseAPIMock());
         
@@ -113,7 +113,7 @@ private class RootCauseAnalysisEngineTest {
         Assert.areEqual(0, results.size(), 'Should return empty list for empty input');
     }
     
-    @isTest
+    @IsTest
     static void testBatchAnalyze_NullList() {
         Test.setMock(HttpCalloutMock.class, new RootCauseAPIMock());
         
@@ -129,7 +129,7 @@ private class RootCauseAnalysisEngineTest {
     // getAnalysisSummary Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetAnalysisSummary_ReturnsSummary() {
         List&lt;Elaro_Evidence_Item__c&gt; items = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 5];
         
@@ -147,7 +147,7 @@ private class RootCauseAnalysisEngineTest {
         Assert.areEqual(eventIds.size(), summary.totalEvents, 'Should have correct total');
     }
     
-    @isTest
+    @IsTest
     static void testGetAnalysisSummary_EmptyList() {
         Test.startTest();
         RootCauseAnalysisEngine.AnalysisSummary summary = 
@@ -157,7 +157,7 @@ private class RootCauseAnalysisEngineTest {
         Assert.areEqual(0, summary.totalEvents, 'Should have 0 total events');
     }
     
-    @isTest
+    @IsTest
     static void testGetAnalysisSummary_NullList() {
         Test.startTest();
         RootCauseAnalysisEngine.AnalysisSummary summary = 

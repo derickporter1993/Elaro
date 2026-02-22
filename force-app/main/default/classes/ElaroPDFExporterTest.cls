@@ -16,7 +16,7 @@ private class ElaroPDFExporterTest {
     // generateAuditPackagePDF Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateAuditPackagePDF_CreatesContentVersion() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -31,7 +31,7 @@ private class ElaroPDFExporterTest {
         Assert.areEqual('pdf', cv.FileExtension, 'Should be PDF file');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateAuditPackagePDF_UpdatesPackageTimestamp() {
         Elaro_Audit_Package__c pkg = [SELECT Id, Last_Generated__c FROM Elaro_Audit_Package__c LIMIT 1];
         Datetime beforeGeneration = pkg.Last_Generated__c;
@@ -44,7 +44,7 @@ private class ElaroPDFExporterTest {
         Assert.areNotEqual(beforeGeneration, pkg.Last_Generated__c, 'Timestamp should be updated');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateAuditPackagePDF_NullId_ThrowsException() {
         Test.startTest();
         try {
@@ -56,7 +56,7 @@ private class ElaroPDFExporterTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testGenerateAuditPackagePDF_InvalidId_ThrowsException() {
         Test.startTest();
         try {
@@ -72,7 +72,7 @@ private class ElaroPDFExporterTest {
     // generateExecutiveSummary Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateExecutiveSummary_CreatesContentVersion() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -90,7 +90,7 @@ private class ElaroPDFExporterTest {
     // generateEvidenceReport Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateEvidenceReport_WithControlFilter() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         List&lt;String&gt; controlIds = new List&lt;String&gt;{'164.312(b)', '164.312(c)'};
@@ -105,7 +105,7 @@ private class ElaroPDFExporterTest {
         Assert.isTrue(cv.Title.contains('Evidence Report'), 'Title should contain Evidence Report');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateEvidenceReport_NoFilter() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -120,7 +120,7 @@ private class ElaroPDFExporterTest {
     // generateCSVExport Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateCSVExport_ReturnsValidCSV() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -133,7 +133,7 @@ private class ElaroPDFExporterTest {
         Assert.isTrue(csvContent.contains(','), 'Should be comma-separated');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateCSVExport_ContainsAllEvidence() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         Integer evidenceCount = [SELECT COUNT() FROM Elaro_Evidence_Item__c WHERE Audit_Package__c = :pkg.Id];
@@ -147,7 +147,7 @@ private class ElaroPDFExporterTest {
         Assert.areEqual(evidenceCount + 1, lines.size(), 'Should have header + all evidence rows');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateCSVExport_EmptyPackage() {
         // Create package without evidence
         Elaro_Audit_Package__c emptyPkg = ElaroTestDataFactory.createAuditPackage('SOC2');
@@ -165,7 +165,7 @@ private class ElaroPDFExporterTest {
     // generateJSONExport Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGenerateJSONExport_ReturnsValidJSON() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -182,7 +182,7 @@ private class ElaroPDFExporterTest {
         Assert.isTrue(parsed.containsKey('exportDate'), 'Should contain export date');
     }
     
-    @isTest
+    @IsTest
     static void testGenerateJSONExport_ContainsMetadata() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -201,7 +201,7 @@ private class ElaroPDFExporterTest {
     // saveCSVExport Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testSaveCSVExport_CreatesContentVersion() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -219,7 +219,7 @@ private class ElaroPDFExporterTest {
     // saveJSONExport Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testSaveJSONExport_CreatesContentVersion() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         
@@ -237,7 +237,7 @@ private class ElaroPDFExporterTest {
     // batchGeneratePDFs Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testBatchGeneratePDFs_MultiplePackages() {
         // Create additional packages
         Elaro_Audit_Package__c pkg2 = ElaroTestDataFactory.createAuditPackage('SOC2');

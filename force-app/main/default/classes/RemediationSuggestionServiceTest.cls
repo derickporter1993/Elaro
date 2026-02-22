@@ -73,7 +73,7 @@ private class RemediationSuggestionServiceTest {
         insert gaps;
     }
 
-    @isTest
+    @IsTest
     static void testGenerateSuggestions_SOX() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
 
@@ -98,7 +98,7 @@ private class RemediationSuggestionServiceTest {
         Assert.isTrue(hasAuditSuggestion, 'Should include audit trail suggestion for SOX');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateSuggestions_HIPAA() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'HIPAA' LIMIT 1];
 
@@ -119,7 +119,7 @@ private class RemediationSuggestionServiceTest {
         Assert.isTrue(hasEncryptionSuggestion, 'Should include encryption suggestion for HIPAA');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateSuggestions_SOC2() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOC2' LIMIT 1];
 
@@ -134,7 +134,7 @@ private class RemediationSuggestionServiceTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testGenerateSuggestions_GDPR() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'GDPR' LIMIT 1];
 
@@ -154,7 +154,7 @@ private class RemediationSuggestionServiceTest {
         Assert.isTrue(hasFLSSuggestion, 'Should include FLS suggestion for GDPR');
     }
 
-    @isTest
+    @IsTest
     static void testGenerateSuggestions_InvalidGap() {
         Test.startTest();
         try {
@@ -166,7 +166,7 @@ private class RemediationSuggestionServiceTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetSuggestions() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
 
@@ -180,7 +180,7 @@ private class RemediationSuggestionServiceTest {
         Assert.isTrue(suggestions.size() > 0, 'Should return generated suggestions');
     }
 
-    @isTest
+    @IsTest
     static void testGetPendingSuggestions() {
         // Generate suggestions for multiple gaps
         List<Compliance_Gap__c> gaps = [SELECT Id FROM Compliance_Gap__c LIMIT 3];
@@ -201,7 +201,7 @@ private class RemediationSuggestionServiceTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testApproveSuggestion() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
         List<Remediation_Suggestion__c> suggestions = RemediationSuggestionService.generateSuggestions(gap.Id);
@@ -218,7 +218,7 @@ private class RemediationSuggestionServiceTest {
         Assert.areNotEqual(null, updated.Reviewed_At__c, 'Reviewed at should be set');
     }
 
-    @isTest
+    @IsTest
     static void testRejectSuggestion() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
         List<Remediation_Suggestion__c> suggestions = RemediationSuggestionService.generateSuggestions(gap.Id);
@@ -234,7 +234,7 @@ private class RemediationSuggestionServiceTest {
         Assert.areEqual('Not applicable to our environment', updated.Rejection_Reason__c, 'Rejection reason should be set');
     }
 
-    @isTest
+    @IsTest
     static void testBulkGenerateSuggestions() {
         List<Compliance_Gap__c> gaps = [SELECT Id FROM Compliance_Gap__c LIMIT 3];
         List<String> gapIds = new List<String>();
@@ -252,7 +252,7 @@ private class RemediationSuggestionServiceTest {
         Assert.areEqual(generated, allSuggestions.size(), 'Total suggestions should match');
     }
 
-    @isTest
+    @IsTest
     static void testRecalculatePriorities() {
         // Generate suggestions
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
@@ -268,7 +268,7 @@ private class RemediationSuggestionServiceTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testAutoRemediationPayloadGeneration() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
 
@@ -291,7 +291,7 @@ private class RemediationSuggestionServiceTest {
         Assert.isTrue(foundAutoRemediation, 'Should have at least one auto-remediable suggestion');
     }
 
-    @isTest
+    @IsTest
     static void testConfidenceScoreCalculation() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Framework__c = 'SOX' LIMIT 1];
 
@@ -305,7 +305,7 @@ private class RemediationSuggestionServiceTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testSuggestionWithUnknownEntityType() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Entity_Type__c = 'UNKNOWN_TYPE' LIMIT 1];
 
@@ -324,7 +324,7 @@ private class RemediationSuggestionServiceTest {
         Assert.isTrue(hasManualReview, 'Should include manual review for unknown entity type');
     }
 
-    @isTest
+    @IsTest
     static void testSuggestionWithGapWrapper() {
         RemediationSuggestionService.SuggestionWithGap wrapper = new RemediationSuggestionService.SuggestionWithGap();
         wrapper.suggestion = new Remediation_Suggestion__c();

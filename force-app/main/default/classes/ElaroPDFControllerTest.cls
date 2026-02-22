@@ -51,7 +51,7 @@ private class ElaroPDFControllerTest {
         insert items;
     }
 
-    @isTest
+    @IsTest
     static void testControllerInitialization() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ApexPages.StandardController stdController = new ApexPages.StandardController(pkg);
@@ -66,7 +66,7 @@ private class ElaroPDFControllerTest {
         Assert.areNotEqual(null, controller.documentHash, 'Document hash should be generated');
     }
 
-    @isTest
+    @IsTest
     static void testStatisticsCalculation() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ApexPages.StandardController stdController = new ApexPages.StandardController(pkg);
@@ -81,7 +81,7 @@ private class ElaroPDFControllerTest {
         Assert.areEqual(1, controller.lowCount, 'Should have 1 low event (Logout)');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ApexPages.StandardController stdController = new ApexPages.StandardController(pkg);
@@ -94,7 +94,7 @@ private class ElaroPDFControllerTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testGetDateRange() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ApexPages.StandardController stdController = new ApexPages.StandardController(pkg);
@@ -107,7 +107,7 @@ private class ElaroPDFControllerTest {
         Assert.isTrue(dateRange.contains(' - '), 'Date range should contain separator');
     }
 
-    @isTest
+    @IsTest
     static void testGetRiskColorClass() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ApexPages.StandardController stdController = new ApexPages.StandardController(pkg);
@@ -122,7 +122,7 @@ private class ElaroPDFControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testControlSummary() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         ApexPages.StandardController stdController = new ApexPages.StandardController(pkg);
@@ -134,7 +134,7 @@ private class ElaroPDFControllerTest {
         Assert.isTrue(controller.controlSummary.size() > 0, 'Control summary should be populated');
     }
 
-    @isTest
+    @IsTest
     static void testControllerWithPageParameter() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
 
@@ -153,7 +153,7 @@ private class ElaroPDFControllerTest {
         Assert.areNotEqual(null, controller.selectedControls, 'Selected controls should be set');
     }
 
-    @isTest
+    @IsTest
     static void testControllerWithNullPackage() {
         ApexPages.StandardController stdController = new ApexPages.StandardController(new Elaro_Audit_Package__c());
 
@@ -166,7 +166,7 @@ private class ElaroPDFControllerTest {
         Assert.areNotEqual(null, controller.generatedAt, 'Generated timestamp should still be set');
     }
 
-    @isTest
+    @IsTest
     static void testComplianceScoreNoEvidence() {
         Elaro_Audit_Package__c pkg = new Elaro_Audit_Package__c(
             Package_Name__c = 'Empty Package',

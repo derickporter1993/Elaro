@@ -35,7 +35,7 @@ private class OnCallScheduleControllerTest {
         insert schedule;
     }
 
-    @isTest
+    @IsTest
     static void testGetSchedules() {
         Test.startTest();
         List<Elaro_On_Call_Schedule__c> schedules = OnCallScheduleController.getSchedules();
@@ -45,7 +45,7 @@ private class OnCallScheduleControllerTest {
         Assert.areEqual('Primary On-Call', schedules[0].Name, 'Name should match');
     }
 
-    @isTest
+    @IsTest
     static void testCreateSchedule() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'Schedule' LIMIT 1];
 
@@ -71,7 +71,7 @@ private class OnCallScheduleControllerTest {
         Assert.areEqual('Secondary On-Call', schedules[0].Name, 'Name should match');
     }
 
-    @isTest
+    @IsTest
     static void testUpdateSchedule() {
         Elaro_On_Call_Schedule__c schedule = [SELECT Id, Name FROM Elaro_On_Call_Schedule__c LIMIT 1];
         schedule.Name = 'Updated Schedule Name';
@@ -84,7 +84,7 @@ private class OnCallScheduleControllerTest {
         Assert.areEqual('Updated Schedule Name', updated.Name, 'Name should be updated');
     }
 
-    @isTest
+    @IsTest
     static void testDeleteSchedule() {
         Elaro_On_Call_Schedule__c schedule = [SELECT Id FROM Elaro_On_Call_Schedule__c LIMIT 1];
 
@@ -96,7 +96,7 @@ private class OnCallScheduleControllerTest {
         Assert.areEqual(0, schedules.size(), 'Schedule should be deleted');
     }
 
-    @isTest
+    @IsTest
     static void testCreateSchedule_MissingStartTime() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'Schedule' LIMIT 1];
 
@@ -118,7 +118,7 @@ private class OnCallScheduleControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateSchedule_MissingEndTime() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'Schedule' LIMIT 1];
 
@@ -140,7 +140,7 @@ private class OnCallScheduleControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateSchedule_InvalidTimeRange() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'Schedule' LIMIT 1];
 
@@ -162,7 +162,7 @@ private class OnCallScheduleControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateSchedule_MissingUser() {
         Elaro_On_Call_Schedule__c schedule = new Elaro_On_Call_Schedule__c(
             Name = 'Invalid Schedule',

@@ -17,7 +17,7 @@ private class ElaroDynamicReportControllerTest {
         insert accounts;
     }
 
-    @isTest
+    @IsTest
     static void testGetAvailableObjects() {
         Test.startTest();
         List<ElaroDynamicReportController.ObjectOption> objects =
@@ -27,7 +27,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(0, objects.size(), 'Should return available objects');
     }
 
-    @isTest
+    @IsTest
     static void testGetFieldMetadata() {
         Test.startTest();
         List<ElaroDynamicReportController.FieldMetadata> fields =
@@ -37,7 +37,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(0, fields.size(), 'Should return field metadata');
     }
 
-    @isTest
+    @IsTest
     static void testGetFieldMetadataInvalidObject() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -50,7 +50,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testGetFieldMetadataCacheScenario() {
         Test.startTest();
         List<ElaroDynamicReportController.FieldMetadata> fields =
@@ -63,7 +63,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(0, fields2.size(), 'Should return field metadata on second call');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReport() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -84,7 +84,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result.queryExecuted, 'Query should be executed');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportWithFilters() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -107,7 +107,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportInvalidObject() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Invalid__c',
@@ -127,7 +127,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportEmptyConfig() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -140,7 +140,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for empty config');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportNullConfig() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -153,7 +153,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null config');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportInvalidJson() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -166,7 +166,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid JSON');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportEmptyFields() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -186,7 +186,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for empty fields');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportNullFields() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -206,7 +206,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null fields');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportInvalidField() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -226,7 +226,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid field');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportInvalidOperator() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -252,7 +252,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid operator');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportMaxRowsExceeded() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -272,7 +272,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for max rows exceeded');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportMaxRowsNull() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -289,7 +289,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportMaxRowsZero() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -306,7 +306,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportHasMoreTrue() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -324,7 +324,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areEqual(true, result.hasMore, 'Should indicate more records available');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportHasMoreFalse() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -348,7 +348,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areEqual(false, result.hasMore, 'Should indicate no more records');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportEqualsOperator() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -371,7 +371,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportNotEqualsOperator() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -394,7 +394,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportInOperator() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -417,7 +417,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportNotInOperator() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -440,7 +440,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportNumericFilter() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -463,7 +463,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportBooleanFilter() {
         // Use Account with IsDeleted field which is accessible
         String configJson = JSON.serialize(new Map<String, Object>{
@@ -491,7 +491,7 @@ private class ElaroDynamicReportControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportNullFilter() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -514,7 +514,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportWithOrderByDesc() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectApiName' => 'Account',
@@ -533,7 +533,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteReportRelationshipField() {
         // Create Account with related Contact
         Account acc = new Account(Name = 'Parent Account');
@@ -556,7 +556,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testReportResultClassStructure() {
         ElaroDynamicReportController.ReportResult result =
             new ElaroDynamicReportController.ReportResult();
@@ -572,7 +572,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areNotEqual(null, result.queryExecuted, 'Query executed should be set');
     }
 
-    @isTest
+    @IsTest
     static void testObjectOptionClassStructure() {
         ElaroDynamicReportController.ObjectOption opt =
             new ElaroDynamicReportController.ObjectOption();
@@ -584,7 +584,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areEqual('Test__c', opt.value, 'Value should be set');
     }
 
-    @isTest
+    @IsTest
     static void testFieldMetadataClassStructure() {
         ElaroDynamicReportController.FieldMetadata fm =
             new ElaroDynamicReportController.FieldMetadata();
@@ -601,7 +601,7 @@ private class ElaroDynamicReportControllerTest {
         Assert.areEqual('TEXT', fm.fieldType, 'Field type should be set');
     }
 
-    @isTest
+    @IsTest
     static void testFieldMetadataCompareTo() {
         ElaroDynamicReportController.FieldMetadata fm1 =
             new ElaroDynamicReportController.FieldMetadata();

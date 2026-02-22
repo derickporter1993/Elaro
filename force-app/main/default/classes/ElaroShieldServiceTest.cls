@@ -16,7 +16,7 @@ private class ElaroShieldServiceTest {
     // getAvailableEventTypes Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetAvailableEventTypes_ReturnsListOrEmpty() {
         Test.startTest();
         List&lt;String&gt; eventTypes = ElaroShieldService.getAvailableEventTypes();
@@ -30,7 +30,7 @@ private class ElaroShieldServiceTest {
     // getShieldStatus Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetShieldStatus_ReturnsStatusMap() {
         Test.startTest();
         Map&lt;String, Object&gt; status = ElaroShieldService.getShieldStatus();
@@ -46,7 +46,7 @@ private class ElaroShieldServiceTest {
     // getRiskLevel Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_LoginAs_ReturnsCritical() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('LoginAs');
@@ -55,7 +55,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('CRITICAL', riskLevel, 'LoginAs should be CRITICAL');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_ReportExport_ReturnsCritical() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('ReportExport');
@@ -64,7 +64,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('CRITICAL', riskLevel, 'ReportExport should be CRITICAL');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_ContentDistribution_ReturnsCritical() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('ContentDistribution');
@@ -73,7 +73,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('CRITICAL', riskLevel, 'ContentDistribution should be CRITICAL');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_API_ReturnsHigh() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('API');
@@ -82,7 +82,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('HIGH', riskLevel, 'API should be HIGH');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_Login_ReturnsMedium() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('Login');
@@ -91,7 +91,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('MEDIUM', riskLevel, 'Login should be MEDIUM');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_Logout_ReturnsLow() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('Logout');
@@ -100,7 +100,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('LOW', riskLevel, 'Logout should be LOW');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_UnknownType_ReturnsLow() {
         Test.startTest();
         String riskLevel = ElaroShieldService.getRiskLevel('UnknownEventType');
@@ -109,7 +109,7 @@ private class ElaroShieldServiceTest {
         Assert.areEqual('LOW', riskLevel, 'Unknown event type should default to LOW');
     }
     
-    @isTest
+    @IsTest
     static void testGetRiskLevel_AllSupportedTypes() {
         Map&lt;String, String&gt; expectedLevels = new Map&lt;String, String&gt;{
             'LoginAs' =&gt; 'CRITICAL',
@@ -139,7 +139,7 @@ private class ElaroShieldServiceTest {
     // getEventRiskLevels Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetEventRiskLevels_ReturnsMap() {
         Test.startTest();
         Map&lt;String, String&gt; riskLevels = ElaroShieldService.getEventRiskLevels();
@@ -155,7 +155,7 @@ private class ElaroShieldServiceTest {
     // getEventLogFiles Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testGetEventLogFiles_InvalidEventType_ThrowsException() {
         Test.startTest();
         try {
@@ -172,7 +172,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testGetEventLogFiles_NullDates_ThrowsException() {
         Test.startTest();
         try {
@@ -185,7 +185,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testGetEventLogFiles_InvalidDateRange_ThrowsException() {
         Test.startTest();
         try {
@@ -202,7 +202,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testGetEventLogFiles_ValidEventType_ReturnsResults() {
         // Note: In orgs without Shield, this returns empty list
         Test.startTest();
@@ -220,7 +220,7 @@ private class ElaroShieldServiceTest {
     // parseEventLogContent Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testParseEventLogContent_NullId_ThrowsException() {
         Test.startTest();
         try {
@@ -233,7 +233,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testParseEventLogContent_BlankId_ThrowsException() {
         Test.startTest();
         try {
@@ -246,7 +246,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testParseEventLogContent_InvalidId_ThrowsException() {
         Test.startTest();
         try {
@@ -262,7 +262,7 @@ private class ElaroShieldServiceTest {
     // processHistoricalEvents Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testProcessHistoricalEvents_InvalidType_ThrowsException() {
         Test.startTest();
         try {
@@ -279,7 +279,7 @@ private class ElaroShieldServiceTest {
         Test.stopTest();
     }
     
-    @isTest
+    @IsTest
     static void testProcessHistoricalEvents_ValidType_ReturnsBatchId() {
         Test.startTest();
         Id batchId = ElaroShieldService.processHistoricalEvents(

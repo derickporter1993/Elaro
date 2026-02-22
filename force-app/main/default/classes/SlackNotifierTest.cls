@@ -4,7 +4,7 @@
 @IsTest(testFor=SlackNotifier.class)
 private class SlackNotifierTest {
     
-    @isTest
+    @IsTest
     static void testNotifyAsyncQueueable() {
         String testMessage = 'Test notification';
         Assert.areNotEqual(null, testMessage, 'Test message should not be null');
@@ -21,7 +21,7 @@ private class SlackNotifierTest {
         Assert.areEqual(null, caughtException, 'notifyAsyncQueueable should not throw exception');
     }
 
-    @isTest
+    @IsTest
     static void testNotifyAsyncQueueableEmpty() {
         Test.startTest();
         Exception caughtException = null;
@@ -36,7 +36,7 @@ private class SlackNotifierTest {
         Assert.areEqual(null, caughtException, 'Empty notification should not throw exception');
     }
 
-    @isTest
+    @IsTest
     static void testNotifyRichAsyncQueueable() {
         Map<String, Object> payload = new Map<String, Object>{
             'text' => 'Test rich notification'
@@ -56,7 +56,7 @@ private class SlackNotifierTest {
         Assert.areEqual(null, caughtException, 'notifyRichAsyncQueueable should not throw exception');
     }
 
-    @isTest
+    @IsTest
     static void testNotifyPerformanceAlert() {
         String metric = 'CPU';
         Decimal value = 9500;
@@ -75,7 +75,7 @@ private class SlackNotifierTest {
         Assert.areEqual(null, caughtException, 'notifyPerformanceAlert should not throw exception');
     }
 
-    @isTest
+    @IsTest
     static void testNotifyFlowPerformance() {
         String flowName = 'Test_Flow';
         Integer cpuTime = 5000;
@@ -93,7 +93,7 @@ private class SlackNotifierTest {
         Assert.areEqual(null, caughtException, 'notifyFlowPerformance should not throw exception');
     }
 
-    @isTest
+    @IsTest
     static void testNotifyFlowPerformanceEmptyName() {
         Test.startTest();
         Exception caughtException = null;

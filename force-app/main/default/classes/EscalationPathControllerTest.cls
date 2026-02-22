@@ -33,7 +33,7 @@ private class EscalationPathControllerTest {
         insert path;
     }
 
-    @isTest
+    @IsTest
     static void testGetPaths() {
         Test.startTest();
         List<Elaro_Escalation_Path__c> paths = EscalationPathController.getPaths();
@@ -43,7 +43,7 @@ private class EscalationPathControllerTest {
         Assert.areEqual(1, paths[0].Level__c, 'Level should match');
     }
 
-    @isTest
+    @IsTest
     static void testCreatePath() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'EscPath' LIMIT 1];
 
@@ -67,7 +67,7 @@ private class EscalationPathControllerTest {
         Assert.areEqual(2, paths[0].Level__c, 'Level should match');
     }
 
-    @isTest
+    @IsTest
     static void testUpdatePath() {
         Elaro_Escalation_Path__c path = [SELECT Id, Role__c FROM Elaro_Escalation_Path__c LIMIT 1];
         path.Role__c = 'Senior Team Lead';
@@ -80,7 +80,7 @@ private class EscalationPathControllerTest {
         Assert.areEqual('Senior Team Lead', updated.Role__c, 'Role should be updated');
     }
 
-    @isTest
+    @IsTest
     static void testDeletePath() {
         Elaro_Escalation_Path__c path = [SELECT Id FROM Elaro_Escalation_Path__c LIMIT 1];
 
@@ -92,7 +92,7 @@ private class EscalationPathControllerTest {
         Assert.areEqual(0, paths.size(), 'Path should be deleted');
     }
 
-    @isTest
+    @IsTest
     static void testCreatePath_MissingUser() {
         Elaro_Escalation_Path__c path = new Elaro_Escalation_Path__c(
             User__c = null,
@@ -112,7 +112,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreatePath_InvalidLevel_Zero() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'EscPath' LIMIT 1];
 
@@ -134,7 +134,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreatePath_InvalidLevel_TooHigh() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'EscPath' LIMIT 1];
 
@@ -156,7 +156,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreatePath_InvalidDelay() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'EscPath' LIMIT 1];
 
@@ -178,7 +178,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreatePath_NullDelay() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'EscPath' LIMIT 1];
 
@@ -200,7 +200,7 @@ private class EscalationPathControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testCreateMultipleLevels() {
         User testUser = [SELECT Id FROM User WHERE LastName = 'EscPath' LIMIT 1];
 

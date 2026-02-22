@@ -7,7 +7,7 @@
 @IsTest(testFor=ElaroDormantAccountAlertScheduler.class)
 private class ElaroDormantAccountAlertSchedulerTest {
 
-    @isTest
+    @IsTest
     static void testSchedulerExecution() {
         // Arrange
         String cronExpression = '0 0 5 * * ?';
@@ -23,7 +23,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Assert.areEqual('WAITING', ct.State, 'Job should be in WAITING state');
     }
 
-    @isTest
+    @IsTest
     static void testScheduleDailyMethod() {
         // Act
         Test.startTest();
@@ -36,7 +36,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Assert.areEqual(1, jobs.size(), 'Scheduled job should exist');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMethod() {
         // Arrange
         ElaroDormantAccountAlertScheduler scheduler = new ElaroDormantAccountAlertScheduler();
@@ -55,7 +55,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Assert.isNull(caughtEx, 'Execute method should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteWithNoUsers() {
         // Arrange - test with no standard users that are dormant
         ElaroDormantAccountAlertScheduler scheduler = new ElaroDormantAccountAlertScheduler();
@@ -74,7 +74,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Assert.isNull(caughtEx, 'Scheduler should handle case with no dormant users without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testAccessReviewCreation() {
         // Arrange
         ElaroDormantAccountAlertScheduler scheduler = new ElaroDormantAccountAlertScheduler();
@@ -90,7 +90,7 @@ private class ElaroDormantAccountAlertSchedulerTest {
         Assert.isNotNull(scheduler, 'Scheduler should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerErrorHandling() {
         // Arrange
         ElaroDormantAccountAlertScheduler scheduler = new ElaroDormantAccountAlertScheduler();

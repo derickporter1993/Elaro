@@ -93,7 +93,7 @@ private class MobileAlertPublisherTest {
         insert gaps;
     }
 
-    @isTest
+    @IsTest
     static void testPublishCriticalAlert() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -113,7 +113,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Critical alert should be published without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testPublishHighAlert() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'HIGH' LIMIT 1];
 
@@ -133,7 +133,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'High alert should be published without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testPublishAlertForGap_Critical() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -149,7 +149,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Alert for critical gap should be published without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testPublishAlertForGap_High() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'HIGH' LIMIT 1];
 
@@ -165,7 +165,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Alert for high gap should be published without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testPublishAlertForGap_Medium() {
         // Medium severity gaps should not trigger alerts
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'MEDIUM' LIMIT 1];
@@ -182,7 +182,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Medium severity gap should be handled without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testPublishAlertForGap_NotFound() {
         Test.startTest();
         try {
@@ -194,7 +194,7 @@ private class MobileAlertPublisherTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testAcknowledgeAlert() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -214,7 +214,7 @@ private class MobileAlertPublisherTest {
         Assert.areNotEqual(null, updatedGap.Alert_Acknowledged_At__c, 'Acknowledged at should be set');
     }
 
-    @isTest
+    @IsTest
     static void testSnoozeAlert() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -233,7 +233,7 @@ private class MobileAlertPublisherTest {
         Assert.isTrue(updatedGap.Alert_Snoozed_Until__c > Datetime.now(), 'Snoozed until should be in the future');
     }
 
-    @isTest
+    @IsTest
     static void testSnoozeAlert_InvalidDuration_Zero() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -247,7 +247,7 @@ private class MobileAlertPublisherTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testSnoozeAlert_InvalidDuration_TooLong() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -261,7 +261,7 @@ private class MobileAlertPublisherTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testSnoozeAlert_InvalidDuration_Negative() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -275,7 +275,7 @@ private class MobileAlertPublisherTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testGetCurrentOnCallUsers() {
         Test.startTest();
         List<MobileAlertPublisher.OnCallUser> onCallUsers = MobileAlertPublisher.getCurrentOnCallUsers();
@@ -289,7 +289,7 @@ private class MobileAlertPublisherTest {
         Assert.areEqual('Primary', user.rotationName, 'Rotation name should match');
     }
 
-    @isTest
+    @IsTest
     static void testGetEscalationPath() {
         Test.startTest();
         List<MobileAlertPublisher.EscalationPathEntry> paths = MobileAlertPublisher.getEscalationPath();
@@ -308,7 +308,7 @@ private class MobileAlertPublisherTest {
         Assert.areEqual('CISO', paths[2].role, 'Level 3 should be CISO');
     }
 
-    @isTest
+    @IsTest
     static void testGetEscalationPath_NoActivePaths() {
         // Deactivate all paths
         List<Elaro_Escalation_Path__c> paths = [SELECT Id FROM Elaro_Escalation_Path__c];
@@ -324,7 +324,7 @@ private class MobileAlertPublisherTest {
         Assert.areEqual(0, result.size(), 'Should have no escalation paths');
     }
 
-    @isTest
+    @IsTest
     static void testGetCurrentOnCallUsers_NoActiveSchedules() {
         // Deactivate all schedules
         List<Elaro_On_Call_Schedule__c> schedules = [SELECT Id FROM Elaro_On_Call_Schedule__c];
@@ -340,7 +340,7 @@ private class MobileAlertPublisherTest {
         Assert.areEqual(0, result.size(), 'Should have no on-call users');
     }
 
-    @isTest
+    @IsTest
     static void testPublishAlertWithNoOnCallUsers() {
         // Deactivate all schedules to test fallback to admin users
         List<Elaro_On_Call_Schedule__c> schedules = [SELECT Id FROM Elaro_On_Call_Schedule__c];
@@ -368,7 +368,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Alert should be handled gracefully with no on-call users');
     }
 
-    @isTest
+    @IsTest
     static void testOnCallUserWrapper() {
         Test.startTest();
         MobileAlertPublisher.OnCallUser wrapper = new MobileAlertPublisher.OnCallUser();
@@ -385,7 +385,7 @@ private class MobileAlertPublisherTest {
         Assert.areEqual('Primary', wrapper.rotationName, 'Rotation name should match');
     }
 
-    @isTest
+    @IsTest
     static void testEscalationPathEntryWrapper() {
         Test.startTest();
         MobileAlertPublisher.EscalationPathEntry wrapper = new MobileAlertPublisher.EscalationPathEntry();
@@ -404,7 +404,7 @@ private class MobileAlertPublisherTest {
         Assert.areEqual(30, wrapper.delayMinutes, 'Delay should match');
     }
 
-    @isTest
+    @IsTest
     static void testMobileAlertResender() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -421,7 +421,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Resender should execute without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testMobileAlertResender_StillSnoozed() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
@@ -442,7 +442,7 @@ private class MobileAlertPublisherTest {
         Assert.isNull(caughtEx, 'Resender should handle snoozed alert without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testMobileAlertResender_InvalidId() {
         Exception caughtEx;
         Test.startTest();

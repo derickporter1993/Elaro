@@ -4,7 +4,7 @@
 @IsTest(testFor=PerformanceRuleEngine.class)
 private class PerformanceRuleEngineTest {
     
-    @isTest
+    @IsTest
     static void testEvaluateAndPublishNoAlerts() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 1000;
@@ -21,7 +21,7 @@ private class PerformanceRuleEngineTest {
         Assert.areEqual(0, result.eventsPublished, 'No events should be published');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluateAndPublishWarning() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 8500; // Above default warn (8000) but below crit (9000)
@@ -38,7 +38,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.eventsPublished > 0, 'Should have published events');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluateAndPublishCritical() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 9500; // Above default crit (9000)
@@ -54,7 +54,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.eventsPublished > 0, 'Should have published events');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluateAndPublishNullStats() {
         Test.startTest();
         PerformanceRuleEngine.EvalResult result = PerformanceRuleEngine.evaluateAndPublish(null, null);
@@ -63,7 +63,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.message.contains('Error'), 'Should return error message');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluateAndPublishMultipleThresholds() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 9500; // Critical
@@ -80,7 +80,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.eventsPublished >= 4, 'Should have published multiple events');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluateWithCustomCCXSettings() {
         // Create custom CCX settings
         CCX_Settings__c customSettings = new CCX_Settings__c(
@@ -111,7 +111,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.eventsPublished > 0, 'Should have published events');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluate_IndividualHeapThreshold() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 1000;
@@ -128,7 +128,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.eventsPublished > 0, 'Should have published events');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluate_IndividualSOQLThreshold() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 1000;
@@ -145,7 +145,7 @@ private class PerformanceRuleEngineTest {
         Assert.isTrue(result.eventsPublished > 0, 'Should have published events');
     }
     
-    @isTest
+    @IsTest
     static void testEvaluate_IndividualDMLThreshold() {
         LimitMetrics.GovernorStats stats = new LimitMetrics.GovernorStats();
         stats.cpuMs = 1000;

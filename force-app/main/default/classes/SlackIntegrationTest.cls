@@ -46,7 +46,7 @@ private class SlackIntegrationTest {
         insert pkg;
     }
 
-    @isTest
+    @IsTest
     static void testSendAlert() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -70,7 +70,7 @@ private class SlackIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for webhook callout');
     }
 
-    @isTest
+    @IsTest
     static void testSendAlertCriticalSeverity() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -93,7 +93,7 @@ private class SlackIntegrationTest {
         Assert.areEqual('CRITICAL', (String)alertData.get('severity'), 'Alert should be critical severity');
     }
 
-    @isTest
+    @IsTest
     static void testSendAuditPackageNotification() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -108,7 +108,7 @@ private class SlackIntegrationTest {
         Assert.areNotEqual(null, pkg.Id, 'Package ID should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testSendDailyDigest() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -133,7 +133,7 @@ private class SlackIntegrationTest {
         Assert.areNotEqual(null, digestData.get('statistics'), 'Statistics should be included');
     }
 
-    @isTest
+    @IsTest
     static void testSendMessage() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -147,7 +147,7 @@ private class SlackIntegrationTest {
         Assert.areEqual(0, Limits.getDmlStatements(), 'Should not perform DML for message callout');
     }
 
-    @isTest
+    @IsTest
     static void testSendAlertWithError() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackErrorMock());
@@ -171,7 +171,7 @@ private class SlackIntegrationTest {
         Assert.areEqual('LOW', (String)alertData.get('severity'), 'Alert should be low severity');
     }
 
-    @isTest
+    @IsTest
     static void testAllSeverityColors() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -201,7 +201,7 @@ private class SlackIntegrationTest {
     // Queueable Execution Tests
     // ═══════════════════════════════════════════════════════════════
 
-    @isTest
+    @IsTest
     static void testSlackNotificationQueueable_AlertSuccess() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -224,7 +224,7 @@ private class SlackIntegrationTest {
         Assert.isNotNull(queueable, 'Queueable should be instantiated');
     }
 
-    @isTest
+    @IsTest
     static void testSlackNotificationQueueable_ErrorResponse() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackErrorMock());
@@ -247,7 +247,7 @@ private class SlackIntegrationTest {
         Assert.isNotNull(queueable, 'Queueable should handle errors gracefully');
     }
 
-    @isTest
+    @IsTest
     static void testSlackNotificationQueueable_CustomMessage() {
         // Arrange
         Test.setMock(HttpCalloutMock.class, new SlackMock());
@@ -271,7 +271,7 @@ private class SlackIntegrationTest {
         Assert.isNotNull(queueable, 'Custom message Queueable should execute');
     }
 
-    @isTest
+    @IsTest
     static void testNotificationTypeEnum() {
         // Verify all enum values exist
         Assert.areEqual('ALERT', SlackIntegration.NotificationType.ALERT.name(), 'ALERT enum should exist');

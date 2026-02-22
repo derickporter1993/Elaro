@@ -18,7 +18,7 @@ private class DataResidencyServiceTest {
         insert item;
     }
 
-    @isTest
+    @IsTest
     static void testGetResidencyConfig() {
         Test.startTest();
         DataResidencyService.ResidencyConfig config = DataResidencyService.getResidencyConfig();
@@ -30,7 +30,7 @@ private class DataResidencyServiceTest {
         Assert.isTrue(config.allowedRegions.size() > 0, 'Allowed regions should be populated');
     }
 
-    @isTest
+    @IsTest
     static void testValidateDataLocationAllowed() {
         Test.startTest();
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'US');
@@ -40,7 +40,7 @@ private class DataResidencyServiceTest {
         Assert.areNotEqual(null, result.targetRegion, 'Target region should be set');
     }
 
-    @isTest
+    @IsTest
     static void testValidateDataLocationEU() {
         Test.startTest();
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'EU');
@@ -50,7 +50,7 @@ private class DataResidencyServiceTest {
         Assert.areEqual('EU', result.targetRegion, 'Target region should be EU');
     }
 
-    @isTest
+    @IsTest
     static void testValidateDataLocationAPAC() {
         Test.startTest();
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'APAC');
@@ -59,7 +59,7 @@ private class DataResidencyServiceTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetLocationSummary() {
         Test.startTest();
         DataResidencyService.LocationSummary summary = DataResidencyService.getLocationSummary();
@@ -70,7 +70,7 @@ private class DataResidencyServiceTest {
         Assert.areNotEqual(null, summary.primaryRegion, 'Primary region should be set');
     }
 
-    @isTest
+    @IsTest
     static void testCheckGDPRCompliance() {
         Test.startTest();
         DataResidencyService.GDPRComplianceStatus status = DataResidencyService.checkGDPRCompliance();
@@ -81,7 +81,7 @@ private class DataResidencyServiceTest {
         Assert.isTrue(status.euDataSubjectsCount >= 0, 'EU data subjects count should be non-negative');
     }
 
-    @isTest
+    @IsTest
     static void testValidateInvalidRegion() {
         Test.startTest();
         DataResidencyService.ValidationResult result = DataResidencyService.validateDataLocation('001000000000001AAA', 'INVALID');

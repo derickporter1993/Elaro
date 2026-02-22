@@ -9,7 +9,7 @@
 @IsTest(testFor=ElaroLogger.class)
 private class ElaroLoggerTest {
 
-    @isTest
+    @IsTest
     static void testDebugLogging_WithMessage_LogsSuccessfully() {
         Test.startTest();
         Exception caughtEx;
@@ -24,7 +24,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Debug logging should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testInfoLogging_WithMessage_LogsSuccessfully() {
         Test.startTest();
         Exception caughtEx;
@@ -39,7 +39,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Info logging should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testWarnLogging_WithMessage_LogsSuccessfully() {
         Test.startTest();
         Exception caughtEx;
@@ -54,7 +54,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Warn logging should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testErrorLogging_WithMessage_LogsSuccessfully() {
         Test.startTest();
         Exception caughtEx;
@@ -69,7 +69,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Error logging should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testErrorLogging_WithException_LogsStackTrace() {
         Test.startTest();
         Exception caughtEx;
@@ -87,7 +87,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Exception logging should complete without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testLogLevel_WithDebug_RespectsConfiguration() {
         Test.startTest();
         Exception caughtEx;
@@ -104,7 +104,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'All log levels should be processed without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testLogging_WithNullContext_HandlesGracefully() {
         Test.startTest();
         Exception caughtEx;
@@ -118,7 +118,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Null context should be handled without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testLogging_WithComplexContext_SerializesCorrectly() {
         Map<String, Object> complexContext = new Map<String, Object>{
             'accountId' => '001000000000001',
@@ -142,7 +142,7 @@ private class ElaroLoggerTest {
         Assert.isNull(caughtEx, 'Complex context should be serialized without throwing');
     }
 
-    @isTest
+    @IsTest
     static void testLogging_InTestContext_SuppressesOutput() {
         // Verify shouldLog returns false in test context
         Test.startTest();

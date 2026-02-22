@@ -78,7 +78,7 @@ public class HIPAABreachNotificationServiceTest {
         insert breaches;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -89,7 +89,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areEqual('HIPAA', frameworkName, 'Framework name should be HIPAA');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -101,7 +101,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.isTrue(violations.size() > 0, 'Should have violations for overdue breaches');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -112,7 +112,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testAssessBreach() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -137,7 +137,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areNotEqual(null, assessment.riskLevel, 'Risk level should be set');
     }
 
-    @isTest
+    @IsTest
     static void testAssessBreachLowRisk() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -158,7 +158,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.isTrue(assessment.overallRiskScore < 5, 'Low risk scenario should have low score');
     }
 
-    @isTest
+    @IsTest
     static void testGetNotificationStatus() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -179,7 +179,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areNotEqual(null, status.notificationDeadline, 'Notification deadline should be set');
     }
 
-    @isTest
+    @IsTest
     static void testGetBreachSummary() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -192,7 +192,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.isTrue(summary.openBreaches > 0, 'Should have open breaches');
     }
 
-    @isTest
+    @IsTest
     static void testGetBreachMetrics() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
@@ -206,7 +206,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areNotEqual(null, metrics.breachesByRiskLevel, 'Breaches by risk level should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testCreateBreachRecord() {
         Map<String, Object> breachData = new Map<String, Object>{
             'description' => 'New test breach',
@@ -230,7 +230,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areEqual('Open', breach.Status__c, 'Status should be Open');
     }
 
-    @isTest
+    @IsTest
     static void testGetPendingBreaches() {
         Test.startTest();
         List<HIPAA_Breach__c> pending = HIPAABreachNotificationService.getPendingBreaches();
@@ -240,7 +240,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.isTrue(pending.size() > 0, 'Should have pending breaches');
     }
 
-    @isTest
+    @IsTest
     static void testGetBreachesRequiringNotification() {
         Test.startTest();
         List<HIPAA_Breach__c> breaches =
@@ -250,7 +250,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areNotEqual(null, breaches, 'Breaches list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testRecordIndividualNotification() {
         HIPAA_Breach__c breach = [
             SELECT Id FROM HIPAA_Breach__c
@@ -272,7 +272,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areEqual(100, breach.Individuals_Notified_Count__c, 'Count should be 100');
     }
 
-    @isTest
+    @IsTest
     static void testRecordHHSNotification() {
         HIPAA_Breach__c breach = [
             SELECT Id FROM HIPAA_Breach__c
@@ -294,7 +294,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.areEqual('HHS-CONFIRM-123', breach.HHS_Confirmation_Number__c, 'Confirmation should match');
     }
 
-    @isTest
+    @IsTest
     static void testGetNotificationTimeline() {
         HIPAA_Breach__c breach = [SELECT Id FROM HIPAA_Breach__c LIMIT 1];
 
@@ -307,7 +307,7 @@ public class HIPAABreachNotificationServiceTest {
         Assert.isTrue(timeline.size() >= 3, 'Should have at least 3 events');
     }
 
-    @isTest
+    @IsTest
     static void testBulkBreachProcessing() {
         // Create bulk breaches
         List<HIPAA_Breach__c> bulkBreaches = new List<HIPAA_Breach__c>();

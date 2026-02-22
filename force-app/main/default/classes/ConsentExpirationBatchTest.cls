@@ -34,7 +34,7 @@ private class ConsentExpirationBatchTest {
         insert consents;
     }
 
-    @isTest
+    @IsTest
     static void testBatchExecutionWithDefaultWarningDays() {
         // Arrange
         Integer consentCount = [SELECT COUNT() FROM Consent__c WHERE Consent_Given__c = true];
@@ -51,7 +51,7 @@ private class ConsentExpirationBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete successfully');
     }
 
-    @isTest
+    @IsTest
     static void testBatchExecutionWithCustomWarningDays() {
         // Arrange
         Integer customWarningDays = 60;
@@ -67,7 +67,7 @@ private class ConsentExpirationBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete successfully with custom warning days');
     }
 
-    @isTest
+    @IsTest
     static void testBatchWithNoActiveConsents() {
         // Arrange - withdraw all consents
         List<Consent__c> consents = [SELECT Id FROM Consent__c];
@@ -87,7 +87,7 @@ private class ConsentExpirationBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete even with no active consents');
     }
 
-    @isTest
+    @IsTest
     static void testBatchWithNullContacts() {
         // Arrange - create consent without contact
         Consent__c consentNoContact = new Consent__c(
@@ -109,7 +109,7 @@ private class ConsentExpirationBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should handle null contacts gracefully');
     }
 
-    @isTest
+    @IsTest
     static void testBatchBulkProcessing() {
         // Arrange - create 200+ consents for bulk testing
         List<Contact> bulkContacts = new List<Contact>();

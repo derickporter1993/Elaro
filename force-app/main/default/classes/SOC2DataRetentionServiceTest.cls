@@ -25,7 +25,7 @@ public class SOC2DataRetentionServiceTest {
         insert evidenceRecords;
     }
 
-    @isTest
+    @IsTest
     static void testGetFrameworkName() {
         SOC2DataRetentionService service = new SOC2DataRetentionService();
 
@@ -36,7 +36,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.areEqual('SOC2', frameworkName, 'Framework name should be SOC2');
     }
 
-    @isTest
+    @IsTest
     static void testEvaluateRetentionPolicies() {
         Test.startTest();
         SOC2DataRetentionService.RetentionEvaluationResult result =
@@ -49,7 +49,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.isTrue(result.totalObjects > 0, 'Should evaluate at least one object');
     }
 
-    @isTest
+    @IsTest
     static void testGetObjectsWithoutRetention() {
         Test.startTest();
         List<String> objectsWithoutRetention = SOC2DataRetentionService.getObjectsWithoutRetention();
@@ -59,7 +59,7 @@ public class SOC2DataRetentionServiceTest {
         // The result depends on org configuration
     }
 
-    @isTest
+    @IsTest
     static void testGetRetentionViolations() {
         Test.startTest();
         List<SOC2DataRetentionService.RetentionViolation> violations =
@@ -69,7 +69,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.areNotEqual(null, violations, 'Violations list should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetViolations() {
         SOC2DataRetentionService service = new SOC2DataRetentionService();
 
@@ -80,7 +80,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceScore() {
         SOC2DataRetentionService service = new SOC2DataRetentionService();
 
@@ -91,7 +91,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.isTrue(score >= 0 && score <= 100, 'Score should be between 0 and 100');
     }
 
-    @isTest
+    @IsTest
     static void testCalculateRiskScore() {
         SOC2DataRetentionService service = new SOC2DataRetentionService();
 
@@ -108,7 +108,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.isTrue(riskScore <= 10, 'Risk score should not exceed 10');
     }
 
-    @isTest
+    @IsTest
     static void testScheduleRetentionCheck() {
         Test.startTest();
         Id jobId = SOC2DataRetentionService.scheduleRetentionCheck(null);
@@ -118,7 +118,7 @@ public class SOC2DataRetentionServiceTest {
         Assert.areEqual(null, jobId, 'Job ID should be null (placeholder implementation)');
     }
 
-    @isTest
+    @IsTest
     static void testBulkRetentionEvaluation() {
         // Create bulk test data
         List<Compliance_Evidence__c> bulkEvidence = new List<Compliance_Evidence__c>();

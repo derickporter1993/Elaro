@@ -49,7 +49,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
     // execute Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testExecute_BusinessDay() {
         ElaroGLBAAnnualNoticeScheduler scheduler = new ElaroGLBAAnnualNoticeScheduler();
         
@@ -71,7 +71,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
         Assert.isTrue(!jobs.isEmpty() || Test.isRunningTest(), 'Batch job should be queued or executed');
     }
     
-    @isTest
+    @IsTest
     static void testExecute_Weekend() {
         // Note: This test verifies the business day logic
         // The actual day check happens at runtime, so we test the logic
@@ -90,7 +90,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
         Assert.isNull(caughtEx, 'Scheduler should execute without throwing (business day check is internal)');
     }
     
-    @isTest
+    @IsTest
     static void testExecute_BatchQueued() {
         ElaroGLBAAnnualNoticeScheduler scheduler = new ElaroGLBAAnnualNoticeScheduler();
         
@@ -116,7 +116,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
     // scheduleDaily Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testScheduleDaily() {
         Test.startTest();
         String jobId = ElaroGLBAAnnualNoticeScheduler.scheduleDaily();
@@ -136,7 +136,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
         Assert.areNotEqual(null, ct.CronExpression, 'Cron expression should be set');
     }
     
-    @isTest
+    @IsTest
     static void testScheduleDaily_WithCustomCron() {
         // Test that SchedulerErrorHandler.getCronExpression is used
         Test.startTest();
@@ -160,7 +160,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
     // isBusinessDay Tests (indirect)
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testIsBusinessDay_Logic() {
         // Test the business day logic indirectly through execution
         ElaroGLBAAnnualNoticeScheduler scheduler = new ElaroGLBAAnnualNoticeScheduler();
@@ -183,7 +183,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
     // Integration Tests
     // ═══════════════════════════════════════════════════════════════
     
-    @isTest
+    @IsTest
     static void testSchedulerWithBatchIntegration() {
         // Create additional test data
         List<Contact> contacts = [SELECT Id FROM Contact LIMIT 5];
@@ -215,7 +215,7 @@ private class ElaroGLBAAnnualNoticeSchedulerTest {
         Assert.areNotEqual(null, processedNotices, 'Scheduler-batch integration should produce a queryable result');
     }
     
-    @isTest
+    @IsTest
     static void testMultipleScheduledJobs() {
         // Test that multiple jobs can be scheduled
         Test.startTest();

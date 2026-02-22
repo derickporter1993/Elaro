@@ -101,14 +101,20 @@ public with sharing class ServiceNowIntegration {
                     WITH USER_MODE
                     LIMIT 1
                 ];
-                
+
+                // Sanitize data before sending externally
+                SObjectAccessDecision decision = Security.stripInaccessible(
+                    AccessType.READABLE, new List<Elaro_Evidence_Item__c>{ evidence }
+                );
+                Elaro_Evidence_Item__c sanitizedEvidence = (Elaro_Evidence_Item__c) decision.getRecords()[0];
+
                 Map<String, Object> snowEvidence = new Map<String, Object>{
-                    'u_external_id' => evidence.Id,
-                    'u_evidence_type' => evidence.Evidence_Type__c,
-                    'short_description' => evidence.Name,
-                    'description' => evidence.Description__c,
-                    'u_evidence_date' => evidence.Evidence_Date__c,
-                    'u_status' => evidence.Status__c,
+                    'u_external_id' => sanitizedEvidence.Id,
+                    'u_evidence_type' => sanitizedEvidence.Evidence_Type__c,
+                    'short_description' => sanitizedEvidence.Name,
+                    'description' => sanitizedEvidence.Description__c,
+                    'u_evidence_date' => sanitizedEvidence.Evidence_Date__c,
+                    'u_status' => sanitizedEvidence.Status__c,
                     'u_source' => 'Elaro'
                 };
                 
@@ -290,10 +296,6 @@ public with sharing class ServiceNowIntegration {
         }
         
         return new Map<String, Object>();
-    }
-    
-    /**
-        }
     }
     
     private static List<Map<String, Object>> getControlsForFramework(String framework) {

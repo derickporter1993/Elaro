@@ -11,7 +11,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test scheduling the weekly scorecard job
      */
-    @isTest
+    @IsTest
     static void testScheduleWeekly() {
         Test.startTest();
         String result = WeeklyScorecardScheduler.scheduleWeekly('Both');
@@ -34,7 +34,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test sending scorecard to Slack channel
      */
-    @isTest
+    @IsTest
     static void testSendWeeklyScorecardSlack() {
         // Set up mock for HTTP callout
         Test.setMock(HttpCalloutMock.class, new ScorecardCalloutMock());
@@ -51,7 +51,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test sending scorecard to Teams channel
      */
-    @isTest
+    @IsTest
     static void testSendWeeklyScorecardTeams() {
         Test.setMock(HttpCalloutMock.class, new ScorecardCalloutMock());
         
@@ -66,7 +66,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test sending scorecard to both channels
      */
-    @isTest
+    @IsTest
     static void testSendWeeklyScorecardBoth() {
         Test.setMock(HttpCalloutMock.class, new ScorecardCalloutMock());
         
@@ -81,7 +81,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test the Schedulable execute method
      */
-    @isTest
+    @IsTest
     static void testSchedulableExecute() {
         Test.setMock(HttpCalloutMock.class, new ScorecardCalloutMock());
         
@@ -110,7 +110,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test the test scorecard method
      */
-    @isTest
+    @IsTest
     static void testSendTestScorecard() {
         Test.setMock(HttpCalloutMock.class, new ScorecardCalloutMock());
         
@@ -125,7 +125,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test channel constants are defined correctly
      */
-    @isTest
+    @IsTest
     static void testChannelConstants() {
         Assert.areEqual('Slack', WeeklyScorecardScheduler.SLACK, 'SLACK constant should be "Slack"');
         Assert.areEqual('Teams', WeeklyScorecardScheduler.TEAMS, 'TEAMS constant should be "Teams"');
@@ -135,7 +135,7 @@ private class WeeklyScorecardSchedulerTest {
     /**
      * Test error handling when score calculation fails
      */
-    @isTest
+    @IsTest
     static void testErrorHandling() {
         // Use mock that simulates error scenario
         Test.setMock(HttpCalloutMock.class, new ScorecardCalloutMock());

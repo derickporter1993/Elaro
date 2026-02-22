@@ -5,7 +5,7 @@
 @IsTest(testFor=ElaroHistoricalEventBatch.class)
 private class ElaroHistoricalEventBatchTest {
     
-    @isTest
+    @IsTest
     static void testBatch_ExecutesSuccessfully() {
         Test.startTest();
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
@@ -27,7 +27,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_HandlesEmptyResults() {
         Test.startTest();
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
@@ -46,7 +46,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete even with no data');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_DifferentEventTypes() {
         List&lt;String&gt; eventTypes = new List&lt;String&gt;{
             'Login', 'LoginAs', 'API', 'ReportExport'
@@ -74,7 +74,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.isTrue(jobs.size() &gt; 0, 'Batches should complete');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_LargeDateRange() {
         Test.startTest();
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
@@ -94,7 +94,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areEqual(0, job.NumberOfErrors, 'Batch should have no errors');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_GetStatistics() {
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
             'Login',
@@ -112,7 +112,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areEqual(0, stats.get('errors'), 'Should have 0 errors initially');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_StartMethod() {
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
             'Login',
@@ -127,7 +127,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areNotEqual(null, locator, 'Should return query locator');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_ExecuteWithEmptyScope() {
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
             'Login',
@@ -145,7 +145,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areEqual(0, stats.get('filesProcessed'), 'Should handle empty scope');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_FinishMethod() {
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
             'Login',
@@ -165,7 +165,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.isNull(caughtEx, 'Finish method should complete without throwing');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_ScheduledExecution() {
         Test.startTest();
         ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
@@ -187,7 +187,7 @@ private class ElaroHistoricalEventBatchTest {
         Assert.areEqual('Completed', job.Status, 'Batch should complete');
     }
     
-    @isTest
+    @IsTest
     static void testBatch_MultipleBatchesSequential() {
         Test.startTest();
         
@@ -221,7 +221,7 @@ private class ElaroHistoricalEventBatchTest {
         }
     }
     
-    @isTest
+    @IsTest
     static void testBatch_WithRealEventTypes() {
         // Test with all supported event types
         List&lt;String&gt; eventTypes = new List&lt;String&gt;{

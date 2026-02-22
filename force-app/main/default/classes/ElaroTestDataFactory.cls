@@ -4,7 +4,7 @@
  * @group Utilities
  * @author Elaro Team
  */
-@isTest
+@IsTest
 public class ElaroTestDataFactory {
     
     // ═══════════════════════════════════════════════════════════════

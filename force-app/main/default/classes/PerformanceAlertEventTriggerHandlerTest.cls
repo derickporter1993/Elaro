@@ -3,7 +3,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@IsTest(SeeAllData=false)
+@IsTest(testFor=PerformanceAlertEventTriggerHandler.class, SeeAllData=false)
 private class PerformanceAlertEventTriggerHandlerTest {
     
     /**

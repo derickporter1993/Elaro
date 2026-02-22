@@ -20,7 +20,7 @@ private class ElaroMatrixControllerTest {
         insert accounts;
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQuery() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -42,7 +42,7 @@ private class ElaroMatrixControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryWithFilters() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -64,7 +64,7 @@ private class ElaroMatrixControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryEmptyConfig() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -77,7 +77,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for empty config');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryNullConfig() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -90,7 +90,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null config');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryInvalidJson() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -103,7 +103,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid JSON');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryInvalidObject() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Invalid__c',
@@ -124,7 +124,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryMissingRowField() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -145,7 +145,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for missing row field');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryMissingColumnField() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -166,7 +166,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for missing column field');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryMissingAggregate() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -187,7 +187,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for missing aggregate');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryInvalidAggregate() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -208,7 +208,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid aggregate');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryInvalidField() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -229,7 +229,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid field');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryNonGroupableField() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -250,7 +250,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for non-groupable field');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQuerySumAggregate() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -272,7 +272,7 @@ private class ElaroMatrixControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryAvgAggregate() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -294,7 +294,7 @@ private class ElaroMatrixControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryMinAggregate() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -316,7 +316,7 @@ private class ElaroMatrixControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryMaxAggregate() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -338,7 +338,7 @@ private class ElaroMatrixControllerTest {
         Test.stopTest();
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMatrixQueryDangerousFilter() {
         String configJson = JSON.serialize(new Map<String, Object>{
             'objectName' => 'Account',
@@ -359,7 +359,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for dangerous filter');
     }
 
-    @isTest
+    @IsTest
     static void testGetDimensionFields() {
         Test.startTest();
         List<ElaroMatrixController.DimensionField> dimensions =
@@ -369,7 +369,7 @@ private class ElaroMatrixControllerTest {
         Assert.areNotEqual(0, dimensions.size(), 'Should return dimension fields');
     }
 
-    @isTest
+    @IsTest
     static void testGetDimensionFieldsInvalidObject() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -382,7 +382,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for invalid object');
     }
 
-    @isTest
+    @IsTest
     static void testGetDimensionFieldsNull() {
         Boolean exceptionThrown = false;
         Test.startTest();
@@ -395,7 +395,7 @@ private class ElaroMatrixControllerTest {
         Assert.isTrue(exceptionThrown, 'Should have thrown exception for null object');
     }
 
-    @isTest
+    @IsTest
     static void testMatrixResultClassStructure() {
         ElaroMatrixController.MatrixResult result =
             new ElaroMatrixController.MatrixResult();
@@ -416,7 +416,7 @@ private class ElaroMatrixControllerTest {
         Assert.areEqual(100, result.grandTotal, 'Grand total should be set');
     }
 
-    @isTest
+    @IsTest
     static void testDimensionFieldClassStructure() {
         ElaroMatrixController.DimensionField field =
             new ElaroMatrixController.DimensionField();
@@ -430,7 +430,7 @@ private class ElaroMatrixControllerTest {
         Assert.areEqual('PICKLIST', field.fieldType, 'Field type should be set');
     }
 
-    @isTest
+    @IsTest
     static void testMatrixConfigurationClassStructure() {
         ElaroMatrixController.MatrixConfiguration cfg =
             new ElaroMatrixController.MatrixConfiguration();

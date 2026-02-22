@@ -44,7 +44,7 @@ private class JiraWebhookHandlerTest {
     // Issue Updated Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_IssueUpdated_StatusChange() {
         String payload = buildIssueUpdatedPayload(MOCK_JIRA_KEY, 'In Progress');
 
@@ -71,7 +71,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual('IN_PROGRESS', updatedGap.Status__c, 'Salesforce status should be mapped');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_IssueUpdated_StatusDone() {
         String payload = buildIssueUpdatedPayload(MOCK_JIRA_KEY, 'Done');
 
@@ -96,7 +96,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual('REMEDIATED', updatedGap.Status__c, 'Should map Done to REMEDIATED');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_IssueUpdated_NoLinkedGap() {
         String payload = buildIssueUpdatedPayload('NONEXISTENT-999', 'Done');
 
@@ -118,7 +118,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(200, res.statusCode, 'Should return 200 even if no linked gap');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_IssueUpdated_SameStatus() {
         // First update gap to have "In Progress" status
         Compliance_Gap__c gap = [SELECT Id, Jira_Status__c FROM Compliance_Gap__c WHERE Jira_Issue_Key__c = :MOCK_JIRA_KEY];
@@ -150,7 +150,7 @@ private class JiraWebhookHandlerTest {
     // Issue Deleted Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_IssueDeleted() {
         String payload = buildIssueDeletedPayload(MOCK_JIRA_KEY);
 
@@ -178,7 +178,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(null, updatedGap.Jira_Status__c, 'Jira status should be cleared');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_IssueDeleted_NoLinkedGap() {
         String payload = buildIssueDeletedPayload('NONEXISTENT-999');
 
@@ -204,7 +204,7 @@ private class JiraWebhookHandlerTest {
     // Comment Created Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_CommentCreated() {
         String payload = buildCommentCreatedPayload(MOCK_JIRA_KEY, 'John Doe', 'This is a test comment');
 
@@ -231,7 +231,7 @@ private class JiraWebhookHandlerTest {
         Assert.isTrue(updatedGap.Notes__c.contains('John Doe'), 'Notes should contain author');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_CommentCreated_AdfFormat() {
         String payload = buildCommentCreatedPayloadAdf(MOCK_JIRA_KEY, 'Jane Smith', 'ADF formatted comment');
 
@@ -257,7 +257,7 @@ private class JiraWebhookHandlerTest {
     // Security Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_InvalidSecret() {
         String payload = buildIssueUpdatedPayload(MOCK_JIRA_KEY, 'Done');
 
@@ -279,7 +279,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(401, res.statusCode, 'Should return 401 for invalid secret');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_NoSecretConfigured() {
         // Remove webhook secret from settings
         Elaro_Jira_Settings__c settings = Elaro_Jira_Settings__c.getOrgDefaults();
@@ -306,7 +306,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(200, res.statusCode, 'Should allow if no secret configured');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_LowercaseSecretHeader() {
         String payload = buildIssueUpdatedPayload(MOCK_JIRA_KEY, 'Done');
 
@@ -332,7 +332,7 @@ private class JiraWebhookHandlerTest {
     // Error Handling Tests
     // ============================================
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_MissingWebhookEvent() {
         String payload = '{"issue": {"key": "TEST-123"}}';
 
@@ -354,7 +354,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(400, res.statusCode, 'Should return 400 for missing event');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_UnsupportedEvent() {
         String payload = '{"webhookEvent": "unsupported:event", "issue": {"key": "TEST-123"}}';
 
@@ -376,7 +376,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(200, res.statusCode, 'Should return 200 for unsupported events');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_MissingIssueData() {
         String payload = '{"webhookEvent": "jira:issue_updated"}';
 
@@ -398,7 +398,7 @@ private class JiraWebhookHandlerTest {
         Assert.areEqual(500, res.statusCode, 'Should return 500 for missing issue data');
     }
 
-    @isTest
+    @IsTest
     static void testHandleWebhook_InvalidJson() {
         RestRequest req = new RestRequest();
         req.requestUri = '/services/apexrest/jira/webhook';

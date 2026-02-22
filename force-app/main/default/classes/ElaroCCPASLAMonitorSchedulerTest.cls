@@ -51,7 +51,7 @@ private class ElaroCCPASLAMonitorSchedulerTest {
         insert requests;
     }
 
-    @isTest
+    @IsTest
     static void testSchedulerExecution() {
         String cronExpression = '0 0 8 * * ?';
 
@@ -63,7 +63,7 @@ private class ElaroCCPASLAMonitorSchedulerTest {
         Assert.areEqual(cronExpression, ct.CronExpression, 'Cron expression should match');
     }
 
-    @isTest
+    @IsTest
     static void testScheduleDailyMethod() {
         Test.startTest();
         String jobId = ElaroCCPASLAMonitorScheduler.scheduleDaily();
@@ -72,7 +72,7 @@ private class ElaroCCPASLAMonitorSchedulerTest {
         Assert.areNotEqual(null, jobId, 'Job ID should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testScheduleHourlyMethod() {
         Test.startTest();
         String jobId = ElaroCCPASLAMonitorScheduler.scheduleHourly();
@@ -81,7 +81,7 @@ private class ElaroCCPASLAMonitorSchedulerTest {
         Assert.areNotEqual(null, jobId, 'Hourly job ID should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteMethod() {
         ElaroCCPASLAMonitorScheduler scheduler = new ElaroCCPASLAMonitorScheduler();
 
@@ -97,7 +97,7 @@ private class ElaroCCPASLAMonitorSchedulerTest {
         Assert.isTrue(overdueRequests.size() > 0, 'Overdue requests should be marked');
     }
 
-    @isTest
+    @IsTest
     static void testExecuteWithNoRequests() {
         delete [SELECT Id FROM CCPA_Request__c];
 

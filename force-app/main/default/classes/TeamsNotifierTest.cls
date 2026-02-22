@@ -33,7 +33,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Simple text notification
      */
-    @isTest
+    @IsTest
     static void testNotifyAsync() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 
@@ -52,7 +52,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Rich Adaptive Card notification
      */
-    @isTest
+    @IsTest
     static void testNotifyRichAsync() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 
@@ -78,7 +78,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Compliance alert notification
      */
-    @isTest
+    @IsTest
     static void testNotifyComplianceAlert() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 
@@ -104,7 +104,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Compliance alert with different severities
      */
-    @isTest
+    @IsTest
     static void testNotifyComplianceAlertSeverities() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
         
@@ -141,7 +141,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Compliance alert with different frameworks
      */
-    @isTest
+    @IsTest
     static void testNotifyComplianceAlertFrameworks() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
         
@@ -179,7 +179,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Weekly scorecard notification
      */
-    @isTest
+    @IsTest
     static void testSendWeeklyScorecard() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 
@@ -198,7 +198,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Error handling for failed callout
      */
-    @isTest
+    @IsTest
     static void testErrorHandling() {
         // Mock a failed callout
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(500, 'Internal Server Error'));
@@ -219,7 +219,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Null/empty message handling
      */
-    @isTest
+    @IsTest
     static void testNullMessageHandling() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 
@@ -239,7 +239,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Remediation notification
      */
-    @isTest
+    @IsTest
     static void testNotifyRemediation() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
         
@@ -269,7 +269,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Multiple notifications in sequence
      */
-    @isTest
+    @IsTest
     static void testMultipleNotifications() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 
@@ -290,7 +290,7 @@ private class TeamsNotifierTest {
     /**
      * Test: Large payload handling
      */
-    @isTest
+    @IsTest
     static void testLargePayload() {
         Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
 

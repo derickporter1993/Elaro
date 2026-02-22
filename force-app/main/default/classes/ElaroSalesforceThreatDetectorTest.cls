@@ -1,7 +1,7 @@
 @IsTest(testFor=ElaroSalesforceThreatDetector.class)
 private class ElaroSalesforceThreatDetectorTest {
     
-    @isTest
+    @IsTest
     static void testDetectPermissionSetClones() {
         // Create a suspicious permission set
         PermissionSet ps = new PermissionSet(
@@ -19,7 +19,7 @@ private class ElaroSalesforceThreatDetectorTest {
         // Note: Actual detection depends on PermissionsModifyAllData which can't be set in test
     }
     
-    @isTest
+    @IsTest
     static void testDetectInactiveUsersWithAccess() {
         // Create inactive user
         Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
@@ -49,7 +49,7 @@ private class ElaroSalesforceThreatDetectorTest {
         Assert.areNotEqual(null, threats, 'Should return threat list');
     }
     
-    @isTest
+    @IsTest
     static void testDetectExcessiveAdminPermissions() {
         Test.startTest();
         List<ElaroSalesforceThreatDetector.Threat> threats = 
@@ -59,7 +59,7 @@ private class ElaroSalesforceThreatDetectorTest {
         Assert.areNotEqual(null, threats, 'Should return threat list');
     }
     
-    @isTest
+    @IsTest
     static void testDetectAllThreats() {
         Test.startTest();
         List<ElaroSalesforceThreatDetector.Threat> threats = 

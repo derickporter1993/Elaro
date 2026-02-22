@@ -74,7 +74,7 @@ private class ComplianceGraphServiceTest {
         insert gaps;
     }
 
-    @isTest
+    @IsTest
     static void testGetComplianceGraph() {
         Test.startTest();
         ComplianceGraphService.GraphData graph = ComplianceGraphService.getComplianceGraph();
@@ -97,7 +97,7 @@ private class ComplianceGraphServiceTest {
         Assert.isTrue(nodeTypes.contains('gap'), 'Should have gap nodes');
     }
 
-    @isTest
+    @IsTest
     static void testGetGraphByFramework() {
         Test.startTest();
         ComplianceGraphService.GraphData graph = ComplianceGraphService.getGraphByFramework('SOX');
@@ -114,7 +114,7 @@ private class ComplianceGraphServiceTest {
         }
     }
 
-    @isTest
+    @IsTest
     static void testAnalyzeImpact() {
         Test.startTest();
         ComplianceGraphService.ImpactAnalysis analysis = ComplianceGraphService.analyzeImpact('PERMISSION_SET', '0PS000000000001');
@@ -128,7 +128,7 @@ private class ComplianceGraphServiceTest {
         Assert.isTrue(analysis.riskScore > 0, 'Risk score should be positive');
     }
 
-    @isTest
+    @IsTest
     static void testAnalyzeImpact_NoGaps() {
         Test.startTest();
         ComplianceGraphService.ImpactAnalysis analysis = ComplianceGraphService.analyzeImpact('UNKNOWN_TYPE', 'UNKNOWN_ID');
@@ -139,7 +139,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual(0, analysis.riskScore, 'Risk score should be 0');
     }
 
-    @isTest
+    @IsTest
     static void testGetGraphStats() {
         Test.startTest();
         ComplianceGraphService.GraphStats stats = ComplianceGraphService.getGraphStats();
@@ -160,7 +160,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual(2, stats.severityCounts.get('CRITICAL'), 'Should have 2 critical gaps');
     }
 
-    @isTest
+    @IsTest
     static void testGetNodeDetails_Framework() {
         Test.startTest();
         ComplianceGraphService.NodeDetails details = ComplianceGraphService.getNodeDetails('framework-SOX', 'framework');
@@ -172,7 +172,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual('SOX', details.name, 'Name should be SOX');
     }
 
-    @isTest
+    @IsTest
     static void testGetNodeDetails_Gap() {
         Compliance_Gap__c gap = [SELECT Id FROM Compliance_Gap__c LIMIT 1];
         String nodeId = 'gap-' + gap.Id;
@@ -187,7 +187,7 @@ private class ComplianceGraphServiceTest {
         Assert.areNotEqual(null, details.metadata.get('severity'), 'Severity should be in metadata');
     }
 
-    @isTest
+    @IsTest
     static void testGraphNodeWrapper() {
         ComplianceGraphService.GraphNode node = new ComplianceGraphService.GraphNode();
         node.id = 'test-node';
@@ -202,7 +202,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual(30, node.size, 'Size should match');
     }
 
-    @isTest
+    @IsTest
     static void testGraphEdgeWrapper() {
         ComplianceGraphService.GraphEdge edge = new ComplianceGraphService.GraphEdge('source', 'target', 'CONTAINS', 2);
 
@@ -212,7 +212,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual(2, edge.weight, 'Weight should match');
     }
 
-    @isTest
+    @IsTest
     static void testImpactAnalysisWrapper() {
         ComplianceGraphService.ImpactAnalysis analysis = new ComplianceGraphService.ImpactAnalysis();
         analysis.entityType = 'PERMISSION_SET';
@@ -231,7 +231,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual(3, analysis.totalGaps, 'Total gaps should match');
     }
 
-    @isTest
+    @IsTest
     static void testAffectedGapWrapper() {
         ComplianceGraphService.AffectedGap gap = new ComplianceGraphService.AffectedGap();
         gap.gapId = null;
@@ -246,7 +246,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual('CRITICAL', gap.severity, 'Severity should match');
     }
 
-    @isTest
+    @IsTest
     static void testGraphStatsWrapper() {
         ComplianceGraphService.GraphStats stats = new ComplianceGraphService.GraphStats();
         stats.totalGaps = 10;
@@ -260,7 +260,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual(4, stats.totalFrameworks, 'Total frameworks should match');
     }
 
-    @isTest
+    @IsTest
     static void testNodeDetailsWrapper() {
         ComplianceGraphService.NodeDetails details = new ComplianceGraphService.NodeDetails();
         details.nodeId = 'test-id';
@@ -273,7 +273,7 @@ private class ComplianceGraphServiceTest {
         Assert.areEqual('gap', details.nodeType, 'Node type should match');
     }
 
-    @isTest
+    @IsTest
     static void testGraphDataWrapper() {
         ComplianceGraphService.GraphData data = new ComplianceGraphService.GraphData();
         data.nodes = new List<ComplianceGraphService.GraphNode>();
@@ -283,7 +283,7 @@ private class ComplianceGraphServiceTest {
         Assert.areNotEqual(null, data.edges, 'Edges should not be null');
     }
 
-    @isTest
+    @IsTest
     static void testEntityNodeCreation() {
         // Verify entity nodes are created for gaps with entity info
         Test.startTest();
@@ -300,7 +300,7 @@ private class ComplianceGraphServiceTest {
         Assert.isTrue(hasEntityNode, 'Should have entity nodes for gaps with entity info');
     }
 
-    @isTest
+    @IsTest
     static void testEdgeConnections() {
         Test.startTest();
         ComplianceGraphService.GraphData graph = ComplianceGraphService.getComplianceGraph();
