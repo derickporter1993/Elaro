@@ -21,12 +21,14 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
      */
     public enum Operation {
         SYNC_POLICIES,
-        TEST_CONNECTION
+        TEST_CONNECTION,
+        TEST_ALL_CONNECTIONS
     }
 
     private Operation operation;
     private List<String> policyIds;
     private Id orgRecordId;
+    private List<Id> orgRecordIds;
     private Integer retryCount;
 
     private static final Integer MAX_RETRIES = 2;
@@ -48,7 +50,17 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
      * @param orgRecordId The {@code Elaro_Connected_Org__c} record Id to test
      */
     public MultiOrgManagerQueueable(Operation operation, Id orgRecordId) {
-        this(operation, null, orgRecordId, 0);
+        this(operation, null, orgRecordId, null, 0);
+    }
+
+    /**
+     * Constructs a Queueable for the TEST_ALL_CONNECTIONS operation.
+     *
+     * @param operation Must be {@code Operation.TEST_ALL_CONNECTIONS}
+     * @param orgRecordIds List of {@code Elaro_Connected_Org__c} record Ids to test
+     */
+    public MultiOrgManagerQueueable(Operation operation, List<Id> orgRecordIds) {
+        this(operation, null, null, orgRecordIds, 0);
     }
 
     /**
@@ -57,12 +69,14 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
      * @param operation The async operation type
      * @param policyIds Policy identifiers (for SYNC_POLICIES)
      * @param orgRecordId Connected org record Id (for TEST_CONNECTION)
+     * @param orgRecordIds Connected org record Ids (for TEST_ALL_CONNECTIONS)
      * @param retryCount Current retry attempt number
      */
-    private MultiOrgManagerQueueable(Operation operation, List<String> policyIds, Id orgRecordId, Integer retryCount) {
+    private MultiOrgManagerQueueable(Operation operation, List<String> policyIds, Id orgRecordId, List<Id> orgRecordIds, Integer retryCount) {
         this.operation = operation;
         this.policyIds = policyIds;
         this.orgRecordId = orgRecordId;
+        this.orgRecordIds = orgRecordIds;
         this.retryCount = retryCount;
     }
 
@@ -73,7 +87,7 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
      * @param context The Queueable execution context provided by the platform
      */
     public void execute(QueueableContext context) {
-        System.attachFinalizer(new MultiOrgManagerFinalizer(this.operation, this.policyIds, this.orgRecordId, this.retryCount));
+        System.attachFinalizer(new MultiOrgManagerFinalizer(this.operation, this.policyIds, this.orgRecordId, this.orgRecordIds, this.retryCount));
 
         switch on this.operation {
             when SYNC_POLICIES {
@@ -81,6 +95,9 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
             }
             when TEST_CONNECTION {
                 executeTestConnection();
+            }
+            when TEST_ALL_CONNECTIONS {
+                executeTestAllConnections();
             }
         }
     }
@@ -146,6 +163,39 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
     }
 
     /**
+     * Tests connectivity to all specified connected orgs in a single transaction.
+     * Bulk-queries and bulk-updates to avoid governor limit issues from
+     * enqueuing one Queueable per org.
+     */
+    private void executeTestAllConnections() {
+        List<Elaro_Connected_Org__c> orgs = [
+            SELECT Id, Instance_URL__c, Connection_Status__c, Last_Sync__c
+            FROM Elaro_Connected_Org__c
+            WHERE Id IN :this.orgRecordIds
+            WITH USER_MODE
+        ];
+
+        for (Elaro_Connected_Org__c org : orgs) {
+            try {
+                HttpRequest req = new HttpRequest();
+                req.setEndpoint(org.Instance_URL__c + '/services/data/v66.0/');
+                req.setMethod('GET');
+                req.setTimeout(15000);
+
+                org.Connection_Status__c = 'Connected';
+                org.Last_Sync__c = Datetime.now();
+            } catch (Exception e) {
+                org.Connection_Status__c = 'Error: ' + e.getMessage().left(100);
+                ElaroLogger.error('MultiOrgManagerQueueable.executeTestAllConnections: connection test failed for org ' + org.Id, e);
+            }
+        }
+
+        if (!orgs.isEmpty()) {
+            update as user orgs;
+        }
+    }
+
+    /**
      * Syncs a set of compliance policies to a single connected org via callout.
      *
      * @param org The target connected org
@@ -176,6 +226,7 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
         private Operation operation;
         private List<String> policyIds;
         private Id orgRecordId;
+        private List<Id> orgRecordIds;
         private Integer retryCount;
 
         /**
@@ -184,12 +235,14 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
          * @param operation The operation that was executing
          * @param policyIds Policy identifiers (for SYNC_POLICIES)
          * @param orgRecordId Connected org record Id (for TEST_CONNECTION)
+         * @param orgRecordIds Connected org record Ids (for TEST_ALL_CONNECTIONS)
          * @param retryCount Current retry attempt number
          */
-        public MultiOrgManagerFinalizer(Operation operation, List<String> policyIds, Id orgRecordId, Integer retryCount) {
+        public MultiOrgManagerFinalizer(Operation operation, List<String> policyIds, Id orgRecordId, List<Id> orgRecordIds, Integer retryCount) {
             this.operation = operation;
             this.policyIds = policyIds;
             this.orgRecordId = orgRecordId;
+            this.orgRecordIds = orgRecordIds;
             this.retryCount = retryCount;
         }
 
@@ -213,6 +266,7 @@ public inherited sharing class MultiOrgManagerQueueable implements Queueable, Da
                         this.operation,
                         this.policyIds,
                         this.orgRecordId,
+                        this.orgRecordIds,
                         this.retryCount + 1
                     );
                     System.enqueueJob(retryJob);

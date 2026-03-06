@@ -169,8 +169,23 @@ public with sharing class PCIDataProtectionService extends ComplianceServiceBase
     // Private helper methods
     
     private Blob getEncryptionKey() {
-        // In production, would retrieve from secure key management service
-        // This is a simplified implementation - DO NOT use in production
-        return Crypto.generateAesKey(256);
+        // Retrieve encryption key from Protected Custom Metadata Type
+        // In production, use Shield Platform Encryption or an external KMS
+        List<Elaro_API_Config__mdt> configs = [
+            SELECT API_Key__c
+            FROM Elaro_API_Config__mdt
+            WHERE DeveloperName = 'PCI_Encryption_Key'
+            AND Is_Active__c = true
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (configs.isEmpty() || String.isBlank(configs[0].API_Key__c)) {
+            throw new AuraHandledException(
+                'PCI encryption key not configured. Create Elaro_API_Config__mdt record with DeveloperName=PCI_Encryption_Key.'
+            );
+        }
+
+        return EncodingUtil.base64Decode(configs[0].API_Key__c);
     }
 }

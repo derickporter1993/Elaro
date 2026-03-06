@@ -127,10 +127,15 @@ public with sharing class MultiOrgManager {
             WHERE Is_Active__c = true
             WITH USER_MODE
         ];
-        
-        for (Elaro_Connected_Org__c org : orgs) {
+
+        if (!orgs.isEmpty()) {
+            List<Id> orgIds = new List<Id>();
+            for (Elaro_Connected_Org__c org : orgs) {
+                orgIds.add(org.Id);
+            }
+            // Single Queueable processes all orgs instead of one per org
             System.enqueueJob(new MultiOrgManagerQueueable(
-                MultiOrgManagerQueueable.Operation.TEST_CONNECTION, org.Id
+                MultiOrgManagerQueueable.Operation.TEST_ALL_CONNECTIONS, orgIds
             ));
         }
     }

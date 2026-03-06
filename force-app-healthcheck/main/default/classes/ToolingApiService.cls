@@ -20,6 +20,10 @@ public inherited sharing class ToolingApiService {
      * Executes a SOQL query against the Salesforce Tooling API and returns
      * the parsed JSON response as a map.
      *
+     * Uses Named Credential 'Salesforce_Tooling_API' for authentication instead of
+     * UserInfo.getSessionId(), which returns null in Lightning Experience and was
+     * removed from outbound messages in Spring '26.
+     *
      * @param query The SOQL query string (e.g., 'SELECT Score FROM SecurityHealthCheck')
      * @return Parsed JSON response as Map containing 'records' key
      * @throws AuraHandledException if the HTTP request fails with a non-200 status code
@@ -32,12 +36,11 @@ public inherited sharing class ToolingApiService {
     public static Map<String, Object> queryTooling(String query) {
         HttpRequest req = new HttpRequest();
         req.setEndpoint(
-            URL.getOrgDomainUrl().toExternalForm()
+            'callout:Salesforce_Tooling_API'
             + TOOLING_ENDPOINT
             + EncodingUtil.urlEncode(query, 'UTF-8')
         );
         req.setMethod('GET');
-        req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
         req.setHeader('Content-Type', 'application/json');
 
         Http http = new Http();

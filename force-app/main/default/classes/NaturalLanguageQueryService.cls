@@ -186,7 +186,7 @@ public with sharing class NaturalLanguageQueryService {
      */
     private static String generateSOQL(String naturalLanguageQuery) {
         // Check cache
-        String cacheKey = 'soql_' + naturalLanguageQuery.hashCode();
+        String cacheKey = 'soql_' + UserInfo.getUserId() + '_' + naturalLanguageQuery.hashCode();
         String cached = getCachedString(cacheKey);
         if (cached != null) {
             return cached;

@@ -53,7 +53,7 @@ public with sharing class ElaroDynamicReportController {
         }
 
         // Check cache first
-        String cacheKey = 'fieldMeta_' + objectApiName.replaceAll('[^a-zA-Z0-9_]+', '');
+        String cacheKey = 'fieldMeta_' + UserInfo.getUserId() + '_' + objectApiName.replaceAll('[^a-zA-Z0-9_]+', '');
         Cache.OrgPartition orgCache = null;
         try {
             orgCache = Cache.Org.getPartition('local.ElaroReportCache');

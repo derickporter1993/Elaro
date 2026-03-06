@@ -390,7 +390,7 @@ public with sharing class ElaroComplianceAlert {
         };
         
         HttpRequest req = new HttpRequest();
-        req.setEndpoint('https://events.pagerduty.com/v2/enqueue');
+        req.setEndpoint('callout:PagerDuty_Events_API/v2/enqueue');
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(pdEvent));

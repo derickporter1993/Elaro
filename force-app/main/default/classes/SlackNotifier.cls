@@ -100,12 +100,19 @@ public with sharing class SlackNotifier {
             this.serializedPayloads = serializedPayloads;
         }
         
+        private static final Integer MAX_CALLOUTS_PER_TXN = 95; // Guard below 100 limit
+
         public void execute(QueueableContext context) {
             String correlationId = 'BULK-' + System.now().getTime();
             try {
                 List<Object> payloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
                 Integer index = 0;
+                List<Object> remainingPayloads = new List<Object>();
                 for (Object payloadObj : payloads) {
+                    if (index >= MAX_CALLOUTS_PER_TXN) {
+                        remainingPayloads.add(payloadObj);
+                        continue;
+                    }
                     String jsonPayload = (String) payloadObj;
                     HttpRequest req = new HttpRequest();
                     req.setEndpoint('callout:Slack_Webhook');
@@ -121,6 +128,11 @@ public with sharing class SlackNotifier {
                     index++;
                 }
                 ElaroLogger.info('[SlackNotifier.SlackBulkNotificationQueueable] Successfully sent ' + index + ' bulk notifications');
+
+                // Chain remaining payloads into a new Queueable to stay within callout limit
+                if (!remainingPayloads.isEmpty()) {
+                    System.enqueueJob(new SlackBulkNotificationQueueable(JSON.serialize(remainingPayloads)));
+                }
             } catch (Exception e) {
                 logBulkAsyncError('EXCEPTION', 'Slack bulk notify exception: ' + e.getMessage(), correlationId, e.getStackTraceString());
                 ElaroLogger.error('[SlackNotifier.SlackBulkNotificationQueueable] Slack bulk notify exception: ' + e.getMessage() + ', StackTrace: ' + e.getStackTraceString());

@@ -7,7 +7,8 @@
  */
 public with sharing class PagerDutyIntegration {
     
-    private static final String EVENTS_API = 'https://events.pagerduty.com/v2/enqueue';
+    @SuppressWarnings('PMD.ApexSuggestUsingNamedCred') // Using Named Credential via callout: prefix
+    private static final String EVENTS_API = 'callout:PagerDuty_Events_API/v2/enqueue';
     
     /**
      * Trigger a PagerDuty incident using Queueable

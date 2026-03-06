@@ -155,17 +155,22 @@ public class ElaroTestUserFactory {
     public static Map<Integer, List<User>> createUserHierarchy(Integer levels) {
         Map<Integer, List<User>> hierarchy = new Map<Integer, List<User>>();
         User previousManager = null;
+        List<User> managersToUpdate = new List<User>();
 
         for (Integer level = 0; level < levels; level++) {
             User manager = createBaseUser('Manager_L' + level);
 
             if (previousManager != null) {
                 manager.ManagerId = previousManager.Id;
-                update as user manager;
+                managersToUpdate.add(manager);
             }
 
             hierarchy.put(level, new List<User>{manager});
             previousManager = manager;
+        }
+
+        if (!managersToUpdate.isEmpty()) {
+            update as user managersToUpdate;
         }
 
         return hierarchy;

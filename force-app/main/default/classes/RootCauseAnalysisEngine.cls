@@ -31,7 +31,7 @@ public with sharing class RootCauseAnalysisEngine {
         }
         
         // Check cache
-        String cacheKey = 'rca_' + eventId;
+        String cacheKey = 'rca_' + UserInfo.getUserId() + '_' + eventId;
         RootCauseResult cached = getCachedResult(cacheKey);
         if (cached != null) {
             return cached;
@@ -121,7 +121,7 @@ public with sharing class RootCauseAnalysisEngine {
         Map&lt;String, Integer&gt; remediationCounts = new Map&lt;String, Integer&gt;();
         
         for (String eventId : eventIds) {
-            String cacheKey = 'rca_' + eventId;
+            String cacheKey = 'rca_' + UserInfo.getUserId() + '_' + eventId;
             RootCauseResult result = getCachedResult(cacheKey);
             
             if (result != null &amp;&amp; result.status == 'SUCCESS') {

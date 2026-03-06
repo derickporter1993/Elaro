@@ -43,7 +43,7 @@ public with sharing class ElaroComplianceCopilotService {
         }
         
         // Check cache first
-        String cacheKey = 'analysis_' + String.join(eventIds, '_').hashCode();
+        String cacheKey = 'analysis_' + UserInfo.getUserId() + '_' + String.join(eventIds, '_').hashCode();
         ComplianceRecommendation cached = getCachedRecommendation(cacheKey);
         if (cached != null) {
             return cached;
@@ -98,7 +98,7 @@ public with sharing class ElaroComplianceCopilotService {
         }
         
         // Check cache
-        String cacheKey = 'summary_' + packageId;
+        String cacheKey = 'summary_' + UserInfo.getUserId() + '_' + packageId;
         String cached = getCachedString(cacheKey);
         if (cached != null) {
             return cached;
@@ -163,7 +163,7 @@ public with sharing class ElaroComplianceCopilotService {
         }
         
         // Check cache
-        String cacheKey = 'risks_' + framework;
+        String cacheKey = 'risks_' + UserInfo.getUserId() + '_' + framework;
         List&lt;RiskPrediction&gt; cached = getCachedRiskPredictions(cacheKey);
         if (cached != null) {
             return cached;

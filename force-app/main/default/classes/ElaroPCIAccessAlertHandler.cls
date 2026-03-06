@@ -17,6 +17,10 @@ public with sharing class ElaroPCIAccessAlertHandler {
     private static final Integer FAILED_ACCESS_THRESHOLD = 3;
     private static final Integer BULK_ACCESS_THRESHOLD = 50;
 
+    // Cache parsed event data to avoid repeated JSON deserialization per event
+    private static final Map<Elaro_Raw_Event__e, Map<String, Object>> parsedEventCache =
+        new Map<Elaro_Raw_Event__e, Map<String, Object>>();
+
     /**
      * Handle failed access attempts
      * @param events - List of failed access events
@@ -255,16 +259,36 @@ public with sharing class ElaroPCIAccessAlertHandler {
      */
     private static String parseEventField(Elaro_Raw_Event__e event, String fieldName) {
         try {
-            if (String.isBlank(event.Event_Data__c)) {
+            Map<String, Object> data = getEventData(event);
+            if (data == null) {
                 return '';
             }
-
-            Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(event.Event_Data__c);
             Object value = data.get(fieldName);
             return value != null ? String.valueOf(value) : '';
         } catch (Exception e) {
             ElaroLogger.warn('Failed to parse event field ' + fieldName + ': ' + e.getMessage());
             return '';
         }
+    }
+
+    /**
+     * Parse and cache event JSON data to avoid repeated deserialization.
+     * Each event's JSON is deserialized once and cached for subsequent field lookups.
+     * @param event The raw platform event
+     * @return Parsed event data map, or null if empty/invalid
+     */
+    private static Map<String, Object> getEventData(Elaro_Raw_Event__e event) {
+        if (parsedEventCache.containsKey(event)) {
+            return parsedEventCache.get(event);
+        }
+
+        if (String.isBlank(event.Event_Data__c)) {
+            parsedEventCache.put(event, null);
+            return null;
+        }
+
+        Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(event.Event_Data__c);
+        parsedEventCache.put(event, data);
+        return data;
     }
 }
