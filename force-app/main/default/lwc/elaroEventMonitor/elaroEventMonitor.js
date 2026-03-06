@@ -1,8 +1,16 @@
 import { LightningElement } from "lwc";
 import { subscribe, unsubscribe, onError } from "lightning/empApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import CardTitle from "@salesforce/label/c.MONITOR_CardTitle";
+import ColEventType from "@salesforce/label/c.MONITOR_ColEventType";
+import ColEntityType from "@salesforce/label/c.MONITOR_ColEntityType";
+import ColEntityId from "@salesforce/label/c.MONITOR_ColEntityId";
+import ColFramework from "@salesforce/label/c.MONITOR_ColFramework";
+import ColTimestamp from "@salesforce/label/c.MONITOR_ColTimestamp";
+import NoEvents from "@salesforce/label/c.MONITOR_NoEvents";
 
 export default class ElaroEventMonitor extends LightningElement {
+  label = { CardTitle, ColEventType, ColEntityType, ColEntityId, ColFramework, ColTimestamp, NoEvents };
   events = [];
   isLoading = false;
   subscription = {};

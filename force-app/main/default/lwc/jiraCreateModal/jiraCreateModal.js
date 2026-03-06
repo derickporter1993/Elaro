@@ -2,6 +2,21 @@ import { LightningElement, api } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import createIssue from "@salesforce/apex/JiraIntegrationService.createIssue";
 import isConfigured from "@salesforce/apex/JiraIntegrationService.isConfigured";
+import JIRA_CreateModalHeading from "@salesforce/label/c.JIRA_CreateModalHeading";
+import JIRA_CreatingIssue from "@salesforce/label/c.JIRA_CreatingIssue";
+import JIRA_NotConfiguredWarning from "@salesforce/label/c.JIRA_NotConfiguredWarning";
+import JIRA_CreateDescription from "@salesforce/label/c.JIRA_CreateDescription";
+import JIRA_IncludeGapDescription from "@salesforce/label/c.JIRA_IncludeGapDescription";
+import JIRA_IncludeFrameworkInfo from "@salesforce/label/c.JIRA_IncludeFrameworkInfo";
+import JIRA_IncludeRemediationPlan from "@salesforce/label/c.JIRA_IncludeRemediationPlan";
+import JIRA_IncludeSalesforceLink from "@salesforce/label/c.JIRA_IncludeSalesforceLink";
+import JIRA_PriorityLabel from "@salesforce/label/c.JIRA_PriorityLabel";
+import JIRA_PriorityPlaceholder from "@salesforce/label/c.JIRA_PriorityPlaceholder";
+import JIRA_PriorityHint from "@salesforce/label/c.JIRA_PriorityHint";
+import JIRA_CancelButton from "@salesforce/label/c.JIRA_CancelButton";
+import JIRA_CreateIssueButton from "@salesforce/label/c.JIRA_CreateIssueButton";
+import JIRA_NoRecordId from "@salesforce/label/c.JIRA_NoRecordId";
+import JIRA_UnexpectedError from "@salesforce/label/c.JIRA_UnexpectedError";
 
 export default class JiraCreateModal extends LightningElement {
   @api recordId; // Compliance_Gap__c Id
@@ -11,6 +26,24 @@ export default class JiraCreateModal extends LightningElement {
   isJiraConfigured = false;
   selectedPriority = "";
   error = null;
+
+  label = {
+    JIRA_CreateModalHeading,
+    JIRA_CreatingIssue,
+    JIRA_NotConfiguredWarning,
+    JIRA_CreateDescription,
+    JIRA_IncludeGapDescription,
+    JIRA_IncludeFrameworkInfo,
+    JIRA_IncludeRemediationPlan,
+    JIRA_IncludeSalesforceLink,
+    JIRA_PriorityLabel,
+    JIRA_PriorityPlaceholder,
+    JIRA_PriorityHint,
+    JIRA_CancelButton,
+    JIRA_CreateIssueButton,
+    JIRA_NoRecordId,
+    JIRA_UnexpectedError,
+  };
 
   get priorityOptions() {
     return [
@@ -72,7 +105,7 @@ export default class JiraCreateModal extends LightningElement {
 
   async handleCreate() {
     if (!this.recordId) {
-      this.showToast("Error", "No record ID provided", "error");
+      this.showToast("Error", this.label.JIRA_NoRecordId, "error");
       return;
     }
 
@@ -109,7 +142,7 @@ export default class JiraCreateModal extends LightningElement {
   getErrorMessage(error) {
     if (error?.body?.message) return error.body.message;
     if (error?.message) return error.message;
-    return "An unexpected error occurred";
+    return this.label.JIRA_UnexpectedError;
   }
 
   showToast(title, message, variant) {

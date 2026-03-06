@@ -22,9 +22,27 @@ import MaxRows from "@salesforce/label/c.REPORT_MaxRows";
 import RunReport from "@salesforce/label/c.REPORT_RunReport";
 import ClearBtn from "@salesforce/label/c.REPORT_Clear";
 import Results from "@salesforce/label/c.REPORT_Results";
+import ErrorLoadingObjects from "@salesforce/label/c.REPORT_ErrorLoadingObjects";
+import ErrorLoadingFields from "@salesforce/label/c.REPORT_ErrorLoadingFields";
+import ReportSuccess from "@salesforce/label/c.REPORT_ReportSuccess";
+import ErrorExecutingReport from "@salesforce/label/c.REPORT_ErrorExecutingReport";
+import UnknownError from "@salesforce/label/c.REPORT_UnknownError";
+import ToastError from "@salesforce/label/c.REPORT_ToastError";
+import ToastSuccess from "@salesforce/label/c.REPORT_ToastSuccess";
+import OpEquals from "@salesforce/label/c.REPORT_OpEquals";
+import OpNotEquals from "@salesforce/label/c.REPORT_OpNotEquals";
+import OpGreaterThan from "@salesforce/label/c.REPORT_OpGreaterThan";
+import OpLessThan from "@salesforce/label/c.REPORT_OpLessThan";
+import OpGreaterOrEqual from "@salesforce/label/c.REPORT_OpGreaterOrEqual";
+import OpLessOrEqual from "@salesforce/label/c.REPORT_OpLessOrEqual";
+import OpContains from "@salesforce/label/c.REPORT_OpContains";
+import OpIn from "@salesforce/label/c.REPORT_OpIn";
+import OpNotIn from "@salesforce/label/c.REPORT_OpNotIn";
+import SortAscending from "@salesforce/label/c.REPORT_SortAscending";
+import SortDescending from "@salesforce/label/c.REPORT_SortDescending";
 
 export default class ElaroDynamicReportBuilder extends LightningElement {
-  label = { CardTitle, SpinnerAlt, SelectObject, ChooseObject, SelectFields, AvailableFields, SelectedFields, FiltersHeading, FieldLabel, OperatorLabel, ValueLabel, RemoveFilter, AddFilter, SortBy, SortDirection, MaxRows, RunReport, ClearBtn, Results };
+  label = { CardTitle, SpinnerAlt, SelectObject, ChooseObject, SelectFields, AvailableFields, SelectedFields, FiltersHeading, FieldLabel, OperatorLabel, ValueLabel, RemoveFilter, AddFilter, SortBy, SortDirection, MaxRows, RunReport, ClearBtn, Results, ErrorLoadingObjects, ErrorLoadingFields, ReportSuccess, ErrorExecutingReport, UnknownError, ToastError, ToastSuccess, OpEquals, OpNotEquals, OpGreaterThan, OpLessThan, OpGreaterOrEqual, OpLessOrEqual, OpContains, OpIn, OpNotIn, SortAscending, SortDescending };
   selectedObject = "";
   objectOptions = [];
   availableFields = [];
@@ -43,22 +61,26 @@ export default class ElaroDynamicReportBuilder extends LightningElement {
   hasError = false;
   errorMessage = "";
 
-  operatorOptions = [
-    { label: "Equals", value: "=" },
-    { label: "Not Equals", value: "!=" },
-    { label: "Greater Than", value: ">" },
-    { label: "Less Than", value: "<" },
-    { label: "Greater or Equal", value: ">=" },
-    { label: "Less or Equal", value: "<=" },
-    { label: "Contains", value: "LIKE" },
-    { label: "In", value: "IN" },
-    { label: "Not In", value: "NOT IN" },
-  ];
+  get operatorOptions() {
+    return [
+      { label: OpEquals, value: "=" },
+      { label: OpNotEquals, value: "!=" },
+      { label: OpGreaterThan, value: ">" },
+      { label: OpLessThan, value: "<" },
+      { label: OpGreaterOrEqual, value: ">=" },
+      { label: OpLessOrEqual, value: "<=" },
+      { label: OpContains, value: "LIKE" },
+      { label: OpIn, value: "IN" },
+      { label: OpNotIn, value: "NOT IN" },
+    ];
+  }
 
-  sortDirectionOptions = [
-    { label: "Ascending", value: "ASC" },
-    { label: "Descending", value: "DESC" },
-  ];
+  get sortDirectionOptions() {
+    return [
+      { label: SortAscending, value: "ASC" },
+      { label: SortDescending, value: "DESC" },
+    ];
+  }
 
   @wire(getAvailableObjects)
   wiredObjects({ error, data }) {
@@ -68,8 +90,8 @@ export default class ElaroDynamicReportBuilder extends LightningElement {
         value: obj.value,
       }));
     } else if (error) {
-      const errorMsg = error?.body?.message || error?.message || "Unknown error";
-      this.showError("Error loading objects: " + errorMsg);
+      const errorMsg = error?.body?.message || error?.message || UnknownError;
+      this.showError(ErrorLoadingObjects + errorMsg);
     }
   }
 
@@ -119,8 +141,8 @@ export default class ElaroDynamicReportBuilder extends LightningElement {
         this.isLoading = false;
       })
       .catch((error) => {
-        const errorMsg = error?.body?.message || error?.message || "Unknown error";
-        this.showError("Error loading fields: " + errorMsg);
+        const errorMsg = error?.body?.message || error?.message || UnknownError;
+        this.showError(ErrorLoadingFields + errorMsg);
         this.isLoading = false;
       });
   }
@@ -220,12 +242,12 @@ export default class ElaroDynamicReportBuilder extends LightningElement {
         });
 
         this.isLoading = false;
-        this.showSuccess("Report executed successfully");
+        this.showSuccess(ReportSuccess);
       })
       .catch((error) => {
         this.showError(
-          "Error executing report: " +
-            (error?.body?.message || error?.message || "An unknown error occurred")
+          ErrorExecutingReport +
+            (error?.body?.message || error?.message || UnknownError)
         );
         this.isLoading = false;
       });

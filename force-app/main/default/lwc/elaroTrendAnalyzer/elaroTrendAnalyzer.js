@@ -3,6 +3,19 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getTimeSeries from "@salesforce/apex/ElaroTrendController.getTimeSeries";
 import getDateFields from "@salesforce/apex/ElaroTrendController.getDateFields";
 import getMetricFields from "@salesforce/apex/ElaroTrendController.getMetricFields";
+import TREND_Title from "@salesforce/label/c.TREND_Title";
+import TREND_LoadingSpinner from "@salesforce/label/c.TREND_LoadingSpinner";
+import TREND_ObjectLabel from "@salesforce/label/c.TREND_ObjectLabel";
+import TREND_DateFieldLabel from "@salesforce/label/c.TREND_DateFieldLabel";
+import TREND_MetricFieldLabel from "@salesforce/label/c.TREND_MetricFieldLabel";
+import TREND_GranularityLabel from "@salesforce/label/c.TREND_GranularityLabel";
+import TREND_MonthsBackLabel from "@salesforce/label/c.TREND_MonthsBackLabel";
+import TREND_AnalyzeButton from "@salesforce/label/c.TREND_AnalyzeButton";
+import TREND_AnalysisHeading from "@salesforce/label/c.TREND_AnalysisHeading";
+import TREND_PeriodHeader from "@salesforce/label/c.TREND_PeriodHeader";
+import TREND_ValueHeader from "@salesforce/label/c.TREND_ValueHeader";
+import TREND_ChangeHeader from "@salesforce/label/c.TREND_ChangeHeader";
+import TREND_PercentChangeHeader from "@salesforce/label/c.TREND_PercentChangeHeader";
 
 export default class ElaroTrendAnalyzer extends LightningElement {
   selectedObject = "";
@@ -21,6 +34,22 @@ export default class ElaroTrendAnalyzer extends LightningElement {
   isLoading = false;
   hasError = false;
   errorMessage = "";
+
+  label = {
+    TREND_Title,
+    TREND_LoadingSpinner,
+    TREND_ObjectLabel,
+    TREND_DateFieldLabel,
+    TREND_MetricFieldLabel,
+    TREND_GranularityLabel,
+    TREND_MonthsBackLabel,
+    TREND_AnalyzeButton,
+    TREND_AnalysisHeading,
+    TREND_PeriodHeader,
+    TREND_ValueHeader,
+    TREND_ChangeHeader,
+    TREND_PercentChangeHeader,
+  };
 
   granularityOptions = [
     { label: "Day", value: "day" },

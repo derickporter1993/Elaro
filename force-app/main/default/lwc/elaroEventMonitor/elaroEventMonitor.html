@@ -1,19 +1,19 @@
 <template>
-  <lightning-card title="Elaro Event Monitor" icon-name="standard:event">
+  <lightning-card title={label.CardTitle} icon-name="standard:event">
     <div class="slds-var-p-around_medium">
       <template lwc:if={hasEvents}>
         <table
           class="slds-table slds-table_cell-buffer slds-table_bordered"
           role="table"
-          aria-label="Elaro event monitor table"
+          aria-label={label.CardTitle}
         >
           <thead>
             <tr>
-              <th scope="col">Event Type</th>
-              <th scope="col">Entity Type</th>
-              <th scope="col">Entity ID</th>
-              <th scope="col">Framework</th>
-              <th scope="col">Timestamp</th>
+              <th scope="col">{label.ColEventType}</th>
+              <th scope="col">{label.ColEntityType}</th>
+              <th scope="col">{label.ColEntityId}</th>
+              <th scope="col">{label.ColFramework}</th>
+              <th scope="col">{label.ColTimestamp}</th>
             </tr>
           </thead>
           <tbody>
@@ -31,7 +31,7 @@
       </template>
       <template lwc:if={noEvents}>
         <p class="slds-text-align_center slds-var-p-around_medium">
-          No events received yet. Waiting for events...
+          {label.NoEvents}
         </p>
       </template>
     </div>

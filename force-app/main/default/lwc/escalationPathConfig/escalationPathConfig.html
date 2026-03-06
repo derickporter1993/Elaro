@@ -63,21 +63,21 @@
                             </div>
                             <div class="slds-col slds-shrink">
                                 <template lwc:if={path.active}>
-                                    <lightning-badge label="Active" variant="success" class="slds-m-right_small"></lightning-badge>
+                                    <lightning-badge label={label.ESCPATH_Active} variant="success" class="slds-m-right_small"></lightning-badge>
                                 </template>
                                 <template lwc:else>
-                                    <lightning-badge label="Inactive" class="slds-m-right_small"></lightning-badge>
+                                    <lightning-badge label={label.ESCPATH_Inactive} class="slds-m-right_small"></lightning-badge>
                                 </template>
                                 <lightning-button-icon
                                     icon-name="utility:edit"
-                                    alternative-text="Edit"
+                                    alternative-text={label.ESCPATH_Edit}
                                     data-id={path.id}
                                     onclick={handleEdit}
                                     class="slds-m-right_xx-small">
                                 </lightning-button-icon>
                                 <lightning-button-icon
                                     icon-name="utility:delete"
-                                    alternative-text="Delete"
+                                    alternative-text={label.ESCPATH_Delete}
                                     variant="destructive"
                                     data-id={path.id}
                                     onclick={handleDeleteConfirm}>
@@ -86,7 +86,7 @@
                         </div>
                     </template>
                     <template lwc:if={hasNoLevel1Paths}>
-                        <p class="slds-text-color_weak">No Level 1 escalation paths configured</p>
+                        <p class="slds-text-color_weak">{label.ESCPATH_NoLevel1Paths}</p>
                     </template>
                 </div>
 
@@ -106,21 +106,21 @@
                             </div>
                             <div class="slds-col slds-shrink">
                                 <template lwc:if={path.active}>
-                                    <lightning-badge label="Active" variant="success" class="slds-m-right_small"></lightning-badge>
+                                    <lightning-badge label={label.ESCPATH_Active} variant="success" class="slds-m-right_small"></lightning-badge>
                                 </template>
                                 <template lwc:else>
-                                    <lightning-badge label="Inactive" class="slds-m-right_small"></lightning-badge>
+                                    <lightning-badge label={label.ESCPATH_Inactive} class="slds-m-right_small"></lightning-badge>
                                 </template>
                                 <lightning-button-icon
                                     icon-name="utility:edit"
-                                    alternative-text="Edit"
+                                    alternative-text={label.ESCPATH_Edit}
                                     data-id={path.id}
                                     onclick={handleEdit}
                                     class="slds-m-right_xx-small">
                                 </lightning-button-icon>
                                 <lightning-button-icon
                                     icon-name="utility:delete"
-                                    alternative-text="Delete"
+                                    alternative-text={label.ESCPATH_Delete}
                                     variant="destructive"
                                     data-id={path.id}
                                     onclick={handleDeleteConfirm}>
@@ -149,21 +149,21 @@
                             </div>
                             <div class="slds-col slds-shrink">
                                 <template lwc:if={path.active}>
-                                    <lightning-badge label="Active" variant="success" class="slds-m-right_small"></lightning-badge>
+                                    <lightning-badge label={label.ESCPATH_Active} variant="success" class="slds-m-right_small"></lightning-badge>
                                 </template>
                                 <template lwc:else>
-                                    <lightning-badge label="Inactive" class="slds-m-right_small"></lightning-badge>
+                                    <lightning-badge label={label.ESCPATH_Inactive} class="slds-m-right_small"></lightning-badge>
                                 </template>
                                 <lightning-button-icon
                                     icon-name="utility:edit"
-                                    alternative-text="Edit"
+                                    alternative-text={label.ESCPATH_Edit}
                                     data-id={path.id}
                                     onclick={handleEdit}
                                     class="slds-m-right_xx-small">
                                 </lightning-button-icon>
                                 <lightning-button-icon
                                     icon-name="utility:delete"
-                                    alternative-text="Delete"
+                                    alternative-text={label.ESCPATH_Delete}
                                     variant="destructive"
                                     data-id={path.id}
                                     onclick={handleDeleteConfirm}>

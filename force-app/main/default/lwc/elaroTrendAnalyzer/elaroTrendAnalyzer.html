@@ -1,9 +1,9 @@
 <template>
-  <lightning-card title="Elaro Trend Analyzer" icon-name="custom:custom63">
+  <lightning-card title={label.TREND_Title} icon-name="custom:custom63">
     <div class="slds-p-around_medium">
       <template lwc:if={isLoading}>
         <div class="slds-is-relative slds-p-around_medium">
-          <lightning-spinner alternative-text="Analyzing trends" size="medium"></lightning-spinner>
+          <lightning-spinner alternative-text={label.TREND_LoadingSpinner} size="medium"></lightning-spinner>
         </div>
       </template>
 
@@ -19,7 +19,7 @@
         <div class="slds-grid slds-gutters slds-m-bottom_medium">
           <div class="slds-col slds-size_1-of-4">
             <lightning-combobox
-              label="Object"
+              label={label.TREND_ObjectLabel}
               value={selectedObject}
               options={objectOptions}
               onchange={handleObjectChange}
@@ -27,7 +27,7 @@
           </div>
           <div class="slds-col slds-size_1-of-4">
             <lightning-combobox
-              label="Date Field"
+              label={label.TREND_DateFieldLabel}
               value={dateField}
               options={dateFields}
               onchange={handleDateFieldChange}
@@ -35,7 +35,7 @@
           </div>
           <div class="slds-col slds-size_1-of-4">
             <lightning-combobox
-              label="Metric Field"
+              label={label.TREND_MetricFieldLabel}
               value={metricField}
               options={metricFields}
               onchange={handleMetricFieldChange}
@@ -43,7 +43,7 @@
           </div>
           <div class="slds-col slds-size_1-of-4">
             <lightning-combobox
-              label="Granularity"
+              label={label.TREND_GranularityLabel}
               value={granularity}
               options={granularityOptions}
               onchange={handleGranularityChange}
@@ -54,7 +54,7 @@
         <div class="slds-m-bottom_medium">
           <lightning-input
             type="number"
-            label="Months Back"
+            label={label.TREND_MonthsBackLabel}
             value={monthsBack}
             min="1"
             max="36"
@@ -63,7 +63,7 @@
         </div>
 
         <lightning-button
-          label="Analyze Trend"
+          label={label.TREND_AnalyzeButton}
           onclick={handleAnalyze}
           disabled={isButtonDisabled}
           variant="brand"
@@ -71,21 +71,21 @@
 
         <!-- Trend Chart Data -->
         <template lwc:if={hasResults}>
-          <div class="slds-m-top_large" role="region" aria-label="Trend analysis results">
-            <h3 class="slds-text-heading_small">Trend Analysis</h3>
+          <div class="slds-m-top_large" role="region" aria-label={label.TREND_AnalysisHeading}>
+            <h3 class="slds-text-heading_small">{label.TREND_AnalysisHeading}</h3>
             <div class="slds-text-body_regular slds-m-bottom_medium">
               <p>Total: {trendTotal}</p>
               <p>Average: {trendAverage}</p>
               <p>Trend Direction: {trendDirection}</p>
             </div>
             <div class="slds-m-top_medium">
-              <table class="slds-table slds-table_bordered" role="table" aria-label="Trend data by period">
+              <table class="slds-table slds-table_bordered" role="table" aria-label={label.TREND_AnalysisHeading}>
                 <thead>
                   <tr>
-                    <th scope="col">Period</th>
-                    <th scope="col">Value</th>
-                    <th scope="col">Change</th>
-                    <th scope="col">% Change</th>
+                    <th scope="col">{label.TREND_PeriodHeader}</th>
+                    <th scope="col">{label.TREND_ValueHeader}</th>
+                    <th scope="col">{label.TREND_ChangeHeader}</th>
+                    <th scope="col">{label.TREND_PercentChangeHeader}</th>
                   </tr>
                 </thead>
                 <tbody>

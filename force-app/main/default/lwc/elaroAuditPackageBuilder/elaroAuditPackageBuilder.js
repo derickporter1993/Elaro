@@ -3,7 +3,29 @@ import generateAuditPackage from "@salesforce/apex/ElaroAuditPackageGenerator.ge
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
 
+// Custom Labels
+import CARD_TITLE from "@salesforce/label/c.AUDITPKG_CardTitle";
+import PACKAGE_NAME from "@salesforce/label/c.AUDITPKG_PackageName";
+import FRAMEWORK from "@salesforce/label/c.AUDITPKG_Framework";
+import AUDIT_PERIOD_START from "@salesforce/label/c.AUDITPKG_PeriodStart";
+import AUDIT_PERIOD_END from "@salesforce/label/c.AUDITPKG_PeriodEnd";
+import GENERATE_PACKAGE from "@salesforce/label/c.AUDITPKG_Generate";
+import ERROR_TITLE from "@salesforce/label/c.AUDITPKG_ErrorTitle";
+import SUCCESS_TITLE from "@salesforce/label/c.AUDITPKG_SuccessTitle";
+import FILL_REQUIRED_FIELDS from "@salesforce/label/c.AUDITPKG_FillRequiredFields";
+import PACKAGE_GENERATED from "@salesforce/label/c.AUDITPKG_PackageGenerated";
+import GENERATE_FAILED from "@salesforce/label/c.AUDITPKG_GenerateFailed";
+
 export default class ElaroAuditPackageBuilder extends NavigationMixin(LightningElement) {
+  label = {
+    cardTitle: CARD_TITLE,
+    packageName: PACKAGE_NAME,
+    framework: FRAMEWORK,
+    auditPeriodStart: AUDIT_PERIOD_START,
+    auditPeriodEnd: AUDIT_PERIOD_END,
+    generatePackage: GENERATE_PACKAGE,
+  };
+
   framework = "SOC2";
   packageName = "";
   startDate;
@@ -40,7 +62,7 @@ export default class ElaroAuditPackageBuilder extends NavigationMixin(LightningE
 
   async handleGenerate() {
     if (!this.packageName || !this.startDate || !this.endDate) {
-      this.showToast("Error", "Please fill in all required fields", "error");
+      this.showToast(ERROR_TITLE, FILL_REQUIRED_FIELDS, "error");
       return;
     }
 
@@ -52,7 +74,7 @@ export default class ElaroAuditPackageBuilder extends NavigationMixin(LightningE
         startDate: this.startDate,
         endDate: this.endDate,
       });
-      this.showToast("Success", "Audit package generated successfully", "success");
+      this.showToast(SUCCESS_TITLE, PACKAGE_GENERATED, "success");
       // Navigate to package record
       this[NavigationMixin.Navigate]({
         type: "standard__recordPage",

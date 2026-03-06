@@ -17,7 +17,7 @@
               size="small"
               class="slds-m-right_x-small"
             ></lightning-icon>
-            Create Jira Issue
+            {label.JIRA_CreateModalHeading}
           </h2>
         </header>
 
@@ -26,7 +26,7 @@
           <!-- Loading -->
           <template lwc:if={isLoading}>
             <div class="slds-is-relative" style="min-height: 100px">
-              <lightning-spinner alternative-text="Creating issue..." size="medium"></lightning-spinner>
+              <lightning-spinner alternative-text={label.JIRA_CreatingIssue} size="medium"></lightning-spinner>
             </div>
           </template>
 
@@ -42,7 +42,7 @@
                   class="slds-m-right_x-small"
                 ></lightning-icon>
                 <span>
-                  Jira integration is not configured. Please configure Jira settings in Setup before creating issues.
+                  {label.JIRA_NotConfiguredWarning}
                 </span>
               </div>
             </template>
@@ -59,27 +59,27 @@
             <!-- Form -->
             <div class="slds-form">
               <p class="slds-text-body_regular slds-m-bottom_medium">
-                This will create a new Jira issue linked to this compliance gap. The issue will include:
+                {label.JIRA_CreateDescription}
               </p>
 
               <ul class="slds-list_dotted slds-m-bottom_medium">
-                <li>Gap description and details</li>
-                <li>Framework and severity information</li>
-                <li>Remediation plan (if available)</li>
-                <li>Link back to this Salesforce record</li>
+                <li>{label.JIRA_IncludeGapDescription}</li>
+                <li>{label.JIRA_IncludeFrameworkInfo}</li>
+                <li>{label.JIRA_IncludeRemediationPlan}</li>
+                <li>{label.JIRA_IncludeSalesforceLink}</li>
               </ul>
 
               <lightning-combobox
                 name="priority"
-                label="Priority (Optional)"
-                placeholder="Use default priority from settings"
+                label={label.JIRA_PriorityLabel}
+                placeholder={label.JIRA_PriorityPlaceholder}
                 options={priorityOptions}
                 value={selectedPriority}
                 onchange={handlePriorityChange}
               ></lightning-combobox>
 
               <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
-                Leave blank to use the default priority from Jira settings, or select to override.
+                {label.JIRA_PriorityHint}
               </p>
             </div>
           </template>
@@ -87,9 +87,9 @@
 
         <!-- Footer -->
         <footer class="slds-modal__footer">
-          <lightning-button label="Cancel" onclick={handleClose}></lightning-button>
+          <lightning-button label={label.JIRA_CancelButton} onclick={handleClose}></lightning-button>
           <lightning-button
-            label="Create Issue"
+            label={label.JIRA_CreateIssueButton}
             variant="brand"
             onclick={handleCreate}
             disabled={isCreateDisabled}

@@ -3,6 +3,19 @@ import calculateReadinessScore from "@salesforce/apex/ElaroComplianceScorer.calc
 import generateEvidencePack from "@salesforce/apex/ElaroLegalDocumentGenerator.generateLegalAttestation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
+import RS_Title from "@salesforce/label/c.RS_Title";
+import RS_LoadingSpinner from "@salesforce/label/c.RS_LoadingSpinner";
+import RS_AccessGovernance from "@salesforce/label/c.RS_AccessGovernance";
+import RS_ConfigHealth from "@salesforce/label/c.RS_ConfigHealth";
+import RS_AutomationSafety from "@salesforce/label/c.RS_AutomationSafety";
+import RS_Evidence from "@salesforce/label/c.RS_Evidence";
+import RS_GenerateSOC2 from "@salesforce/label/c.RS_GenerateSOC2";
+import RS_GenerateHIPAA from "@salesforce/label/c.RS_GenerateHIPAA";
+import RS_AuditReady from "@salesforce/label/c.RS_AuditReady";
+import RS_ActionRequired from "@salesforce/label/c.RS_ActionRequired";
+import RS_CriticalRisks from "@salesforce/label/c.RS_CriticalRisks";
+import RS_Calculating from "@salesforce/label/c.RS_Calculating";
+import RS_ErrorStatus from "@salesforce/label/c.RS_ErrorStatus";
 
 export default class ElaroReadinessScore extends NavigationMixin(LightningElement) {
   score = 0;
@@ -10,11 +23,27 @@ export default class ElaroReadinessScore extends NavigationMixin(LightningElemen
   configScore = 0;
   automationScore = 0;
   evidenceScore = 0;
-  scoreStatus = "Calculating...";
+  scoreStatus = RS_Calculating;
   currentStep = "access";
   isLoading = true;
   hasError = false;
   errorMessage = "";
+
+  label = {
+    RS_Title,
+    RS_LoadingSpinner,
+    RS_AccessGovernance,
+    RS_ConfigHealth,
+    RS_AutomationSafety,
+    RS_Evidence,
+    RS_GenerateSOC2,
+    RS_GenerateHIPAA,
+    RS_AuditReady,
+    RS_ActionRequired,
+    RS_CriticalRisks,
+    RS_Calculating,
+    RS_ErrorStatus,
+  };
 
   get notLoading() {
     return !this.isLoading;
@@ -39,7 +68,7 @@ export default class ElaroReadinessScore extends NavigationMixin(LightningElemen
       this.hasError = true;
       this.errorMessage =
         error?.body?.message || error?.message || "Failed to load readiness score";
-      this.scoreStatus = "Error";
+      this.scoreStatus = RS_ErrorStatus;
       this.showToast("Error", this.errorMessage, "error");
     } else {
       this.isLoading = true;
@@ -55,13 +84,13 @@ export default class ElaroReadinessScore extends NavigationMixin(LightningElemen
 
   updateScoreStatus() {
     if (this.score >= 80) {
-      this.scoreStatus = "Audit Ready";
+      this.scoreStatus = RS_AuditReady;
       this.currentStep = "evidence";
     } else if (this.score >= 60) {
-      this.scoreStatus = "Action Required";
+      this.scoreStatus = RS_ActionRequired;
       this.currentStep = "automation";
     } else {
-      this.scoreStatus = "Critical Risks";
+      this.scoreStatus = RS_CriticalRisks;
       this.currentStep = "access";
     }
   }
