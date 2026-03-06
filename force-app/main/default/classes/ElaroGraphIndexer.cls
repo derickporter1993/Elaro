@@ -201,11 +201,10 @@ public with sharing class ElaroGraphIndexer {
     }
 
     private static Decimal callEinsteinPrediction(Map<String, Object> metadata, String framework) {
-        // Einstein Platform integration - fallback to rule-based scoring if not available
-        // In production, if Einstein is required, ensure it's installed before deployment
+        // Einstein Platform integration requires the Einstein Platform Services package.
+        // When available, replace the fallback call below with the Einstein prediction API callout.
+        // Tracked in: docs/GITHUB_ISSUE_TODO_EINSTEIN_PLATFORM.md
         try {
-            // TODO: Implement Einstein Platform callout (see docs/GITHUB_ISSUE_TODO_EINSTEIN_PLATFORM.md)
-            // For now, fallback to rule-based scoring
             return calculateFallbackRiskScore(metadata, framework);
         } catch (Exception e) {
             // Log Einstein prediction failure

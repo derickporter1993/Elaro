@@ -11,9 +11,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 HIPAA, SOC2, PCI-DSS, GDPR, CCPA, GLBA, ISO 27001, FINRA, FedRAMP, CMMC 2.0, SEC Cybersecurity,
 NIS2, DORA, and AI Governance (EU AI Act / NIST AI RMF).
 
-Current codebase: 299 Apex classes, 41 LWC components, 54 custom objects, 8 Platform Events,
-5 Permission Sets, 5 Apex Triggers. All code has been audit-remediated to modern standards.
-Audit score: 84/100.
+Current codebase: 431 Apex classes (220 production, 211 test), 65 LWC components, 81 custom objects,
+13 Platform Events, 14 Permission Sets, 5 Apex Triggers. All code has been audit-remediated to
+modern standards. Zero @future methods, zero WITH SECURITY_ENFORCED, zero System.assertEquals.
+Audit score: 85.3/100 (Solentra Codebase Audit, March 2026).
 
 ## Technology Stack
 
