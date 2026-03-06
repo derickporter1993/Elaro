@@ -1,14 +1,14 @@
 <template>
-  <div class="roi-calculator" role="region" aria-label="Elaro ROI Calculator">
+  <div class="roi-calculator" role="region" aria-label={label.ROI_Heading}>
     <div class="calculator-header">
-      <h2>Elaro ROI Calculator</h2>
-      <p class="subtitle">Calculate your annual compliance cost savings</p>
+      <h2>{label.ROI_Heading}</h2>
+      <p class="subtitle">{label.ROI_Subtitle}</p>
     </div>
 
-    <div class="calculator-inputs" role="group" aria-label="ROI calculation inputs">
+    <div class="calculator-inputs" role="group" aria-label={label.ROI_Heading}>
       <div class="input-group">
         <lightning-combobox
-          label="Industry"
+          label={label.ROI_IndustryLabel}
           value={industry}
           options={industryOptions}
           onchange={handleIndustryChange}
@@ -19,7 +19,7 @@
       <div class="input-group">
         <lightning-input
           type="number"
-          label="Organization Size (Users)"
+          label={label.ROI_OrgSizeLabel}
           value={orgSize}
           onchange={handleOrgSizeChange}
         >
@@ -29,7 +29,7 @@
       <div class="input-group">
         <lightning-input
           type="number"
-          label="Current Annual Audit Spend ($)"
+          label={label.ROI_AuditSpendLabel}
           value={currentAuditSpend}
           formatter="currency"
           onchange={handleAuditSpendChange}
@@ -40,7 +40,7 @@
       <div class="input-group">
         <lightning-input
           type="number"
-          label="Current Audit Prep Hours/Year"
+          label={label.ROI_AuditPrepHoursLabel}
           value={currentAuditPrepHours}
           onchange={handleHoursChange}
         >
@@ -50,7 +50,7 @@
       <div class="input-group">
         <lightning-input
           type="number"
-          label="Compliance Analyst Hourly Rate ($)"
+          label={label.ROI_HourlyRateLabel}
           value={hourlyRate}
           formatter="currency"
           onchange={handleRateChange}
@@ -60,58 +60,58 @@
     </div>
 
     <template lwc:if={showResults}>
-      <div class="roi-results" role="region" aria-label="ROI analysis results">
+      <div class="roi-results" role="region" aria-label={label.ROI_AnalysisHeading}>
         <div class="results-header">
-          <h3>Your ROI Analysis</h3>
+          <h3>{label.ROI_AnalysisHeading}</h3>
         </div>
 
-        <div class="results-grid" role="group" aria-label="ROI calculation results">
-          <div class="result-card savings" role="article" aria-label="Annual time savings">
-            <div class="result-label">Annual Time Savings</div>
+        <div class="results-grid" role="group" aria-label={label.ROI_AnalysisHeading}>
+          <div class="result-card savings" role="article" aria-label={label.ROI_TimeSavings}>
+            <div class="result-label">{label.ROI_TimeSavings}</div>
             <div class="result-value" aria-live="polite">{roiResults.timeSavings} hours</div>
             <div class="result-detail">${formattedTimeSavingsDollars} in labor costs</div>
           </div>
 
-          <div class="result-card savings" role="article" aria-label="Audit cost reduction">
-            <div class="result-label">Audit Cost Reduction</div>
+          <div class="result-card savings" role="article" aria-label={label.ROI_AuditCostReduction}>
+            <div class="result-label">{label.ROI_AuditCostReduction}</div>
             <div class="result-value" aria-live="polite">${formattedAuditCostReduction}</div>
-            <div class="result-detail">30% reduction in external audit costs</div>
+            <div class="result-detail">{label.ROI_AuditCostDetail}</div>
           </div>
 
-          <div class="result-card total" role="article" aria-label="Total annual savings">
-            <div class="result-label">Total Annual Savings</div>
+          <div class="result-card total" role="article" aria-label={label.ROI_TotalSavings}>
+            <div class="result-label">{label.ROI_TotalSavings}</div>
             <div class="result-value" aria-live="polite">${formattedTotalSavings}</div>
             <div class="result-detail">${formattedMonthlySavings}/month</div>
           </div>
 
-          <div class="result-card cost" role="article" aria-label="Elaro annual cost">
-            <div class="result-label">Elaro Annual Cost</div>
+          <div class="result-card cost" role="article" aria-label={label.ROI_ElaroCost}>
+            <div class="result-label">{label.ROI_ElaroCost}</div>
             <div class="result-value" aria-live="polite">${formattedElaroCost}</div>
           </div>
 
-          <div class="result-card net" role="article" aria-label="Net annual benefit">
-            <div class="result-label">Net Annual Benefit</div>
+          <div class="result-card net" role="article" aria-label={label.ROI_NetBenefit}>
+            <div class="result-label">{label.ROI_NetBenefit}</div>
             <div class="result-value {roiClass}" aria-live="polite">${formattedNetBenefit}</div>
           </div>
 
-          <div class="result-card roi" role="article" aria-label="Return on investment">
-            <div class="result-label">ROI</div>
+          <div class="result-card roi" role="article" aria-label={label.ROI_ROILabel}>
+            <div class="result-label">{label.ROI_ROILabel}</div>
             <div class="result-value {roiClass}" aria-live="polite">{roiResults.roi}%</div>
-            <div class="result-detail">Payback in {roiResults.paybackWeeks} weeks</div>
+            <div class="result-detail">{paybackMessage}</div>
           </div>
         </div>
 
         <div class="roi-summary">
           <template lwc:if={hasPositiveROI}>
             <div class="summary-positive">
-              <strong>Elaro pays for itself in {roiResults.paybackWeeks} weeks</strong>
-              <p>You'll save ${formattedNetBenefit} in the first year alone.</p>
+              <strong>{paybackSummary}</strong>
+              <p>{savingsSummary}</p>
             </div>
           </template>
           <template lwc:if={hasNegativeROI}>
             <div class="summary-negative">
-              <strong>Adjust your inputs to see potential savings</strong>
-              <p>Most organizations see 80-85% reduction in audit prep time.</p>
+              <strong>{label.ROI_AdjustInputs}</strong>
+              <p>{label.ROI_TypicalReduction}</p>
             </div>
           </template>
         </div>

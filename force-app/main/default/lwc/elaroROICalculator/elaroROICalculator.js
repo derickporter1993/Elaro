@@ -1,4 +1,21 @@
 import { LightningElement, api } from "lwc";
+import ROI_Heading from "@salesforce/label/c.ROI_Heading";
+import ROI_Subtitle from "@salesforce/label/c.ROI_Subtitle";
+import ROI_IndustryLabel from "@salesforce/label/c.ROI_IndustryLabel";
+import ROI_OrgSizeLabel from "@salesforce/label/c.ROI_OrgSizeLabel";
+import ROI_AuditSpendLabel from "@salesforce/label/c.ROI_AuditSpendLabel";
+import ROI_AuditPrepHoursLabel from "@salesforce/label/c.ROI_AuditPrepHoursLabel";
+import ROI_HourlyRateLabel from "@salesforce/label/c.ROI_HourlyRateLabel";
+import ROI_AnalysisHeading from "@salesforce/label/c.ROI_AnalysisHeading";
+import ROI_TimeSavings from "@salesforce/label/c.ROI_TimeSavings";
+import ROI_AuditCostReduction from "@salesforce/label/c.ROI_AuditCostReduction";
+import ROI_AuditCostDetail from "@salesforce/label/c.ROI_AuditCostDetail";
+import ROI_TotalSavings from "@salesforce/label/c.ROI_TotalSavings";
+import ROI_ElaroCost from "@salesforce/label/c.ROI_ElaroCost";
+import ROI_NetBenefit from "@salesforce/label/c.ROI_NetBenefit";
+import ROI_ROILabel from "@salesforce/label/c.ROI_ROILabel";
+import ROI_AdjustInputs from "@salesforce/label/c.ROI_AdjustInputs";
+import ROI_TypicalReduction from "@salesforce/label/c.ROI_TypicalReduction";
 
 export default class ElaroROICalculator extends LightningElement {
   @api title = "ROI Calculator";
@@ -13,6 +30,26 @@ export default class ElaroROICalculator extends LightningElement {
   isLoading = false;
   hasError = false;
   errorMessage = "";
+
+  label = {
+    ROI_Heading,
+    ROI_Subtitle,
+    ROI_IndustryLabel,
+    ROI_OrgSizeLabel,
+    ROI_AuditSpendLabel,
+    ROI_AuditPrepHoursLabel,
+    ROI_HourlyRateLabel,
+    ROI_AnalysisHeading,
+    ROI_TimeSavings,
+    ROI_AuditCostReduction,
+    ROI_AuditCostDetail,
+    ROI_TotalSavings,
+    ROI_ElaroCost,
+    ROI_NetBenefit,
+    ROI_ROILabel,
+    ROI_AdjustInputs,
+    ROI_TypicalReduction,
+  };
 
   get isEmpty() {
     return !this.isLoading && !this.hasError && !this.showResults;
@@ -135,6 +172,24 @@ export default class ElaroROICalculator extends LightningElement {
 
   get roiClass() {
     return this.hasPositiveROI ? "roi-positive" : "roi-negative";
+  }
+
+  get paybackMessage() {
+    return this.roiResults
+      ? `Payback in ${this.roiResults.paybackWeeks} weeks`
+      : "";
+  }
+
+  get paybackSummary() {
+    return this.roiResults
+      ? `Elaro pays for itself in ${this.roiResults.paybackWeeks} weeks`
+      : "";
+  }
+
+  get savingsSummary() {
+    return this.roiResults
+      ? `You'll save $${this.formattedNetBenefit} in the first year alone.`
+      : "";
   }
 
   // Formatted getters for template expressions (LWC doesn't allow method calls in templates)

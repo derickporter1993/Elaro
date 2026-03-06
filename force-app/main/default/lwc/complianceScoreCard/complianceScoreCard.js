@@ -2,7 +2,35 @@ import { LightningElement, api, wire } from "lwc";
 import getFrameworkDetails from "@salesforce/apex/ComplianceScoreCardController.getFrameworkDetails";
 import { NavigationMixin } from "lightning/navigation";
 
+// Custom Labels
+import LOADING_DETAILS from "@salesforce/label/c.SCORECARD_LoadingDetails";
+import COMPLIANCE_SCORE from "@salesforce/label/c.SCORECARD_ComplianceScore";
+import POLICIES_COMPLIANT from "@salesforce/label/c.SCORECARD_PoliciesCompliant";
+import GAPS from "@salesforce/label/c.SCORECARD_Gaps";
+import FRAMEWORK_MAPPINGS from "@salesforce/label/c.SCORECARD_FrameworkMappings";
+import EVIDENCE_ITEMS from "@salesforce/label/c.SCORECARD_EvidenceItems";
+import REQUIREMENTS from "@salesforce/label/c.SCORECARD_Requirements";
+import LATEST_AUDIT_PACKAGE from "@salesforce/label/c.SCORECARD_LatestAuditPackage";
+import STATUS from "@salesforce/label/c.SCORECARD_Status";
+import PERIOD from "@salesforce/label/c.SCORECARD_Period";
+import VIEW_PACKAGE from "@salesforce/label/c.SCORECARD_ViewPackage";
+import FAILED_LOAD_DETAILS from "@salesforce/label/c.SCORECARD_FailedLoadDetails";
+
 export default class ComplianceScoreCard extends NavigationMixin(LightningElement) {
+  label = {
+    loadingDetails: LOADING_DETAILS,
+    complianceScore: COMPLIANCE_SCORE,
+    policiesCompliant: POLICIES_COMPLIANT,
+    gaps: GAPS,
+    frameworkMappings: FRAMEWORK_MAPPINGS,
+    evidenceItems: EVIDENCE_ITEMS,
+    requirements: REQUIREMENTS,
+    latestAuditPackage: LATEST_AUDIT_PACKAGE,
+    status: STATUS,
+    period: PERIOD,
+    viewPackage: VIEW_PACKAGE,
+  };
+
   @api framework;
   frameworkDetails = null;
   isLoadingDetails = false;
@@ -25,7 +53,7 @@ export default class ComplianceScoreCard extends NavigationMixin(LightningElemen
       this.isLoadingDetails = false;
       this.hasError = true;
       this.errorMessage =
-        error?.body?.message || error?.message || "Failed to load framework details";
+        error?.body?.message || error?.message || FAILED_LOAD_DETAILS;
     } else {
       this.isLoadingDetails = true;
       this.hasError = false;

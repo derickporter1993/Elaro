@@ -1,9 +1,9 @@
 <template>
-  <lightning-card title="Compliance Readiness Score" icon-name="custom:custom61">
+  <lightning-card title={label.RS_Title} icon-name="custom:custom61">
     <div class="slds-p-around_medium">
       <template lwc:if={isLoading}>
         <div class="slds-is-relative slds-p-around_medium">
-          <lightning-spinner alternative-text="Loading readiness score" size="medium"></lightning-spinner>
+          <lightning-spinner alternative-text={label.RS_LoadingSpinner} size="medium"></lightning-spinner>
         </div>
       </template>
 
@@ -40,21 +40,21 @@
       <div class="slds-grid slds-gutters slds-m-top_large">
         <div class="slds-col">
           <dl class="slds-list_horizontal slds-dl_inline">
-            <dt class="slds-item_label slds-text-color_weak">Access Governance:</dt>
+            <dt class="slds-item_label slds-text-color_weak">{label.RS_AccessGovernance}</dt>
             <dd class={accessClass}>{accessScore}%</dd>
           </dl>
           <dl class="slds-list_horizontal slds-dl_inline slds-m-top_small">
-            <dt class="slds-item_label slds-text-color_weak">Config Health:</dt>
+            <dt class="slds-item_label slds-text-color_weak">{label.RS_ConfigHealth}</dt>
             <dd class={configClass}>{configScore}%</dd>
           </dl>
         </div>
         <div class="slds-col">
           <dl class="slds-list_horizontal slds-dl_inline">
-            <dt class="slds-item_label slds-text-color_weak">Automation Safety:</dt>
+            <dt class="slds-item_label slds-text-color_weak">{label.RS_AutomationSafety}</dt>
             <dd class={automationClass}>{automationScore}%</dd>
           </dl>
           <dl class="slds-list_horizontal slds-dl_inline slds-m-top_small">
-            <dt class="slds-item_label slds-text-color_weak">Evidence:</dt>
+            <dt class="slds-item_label slds-text-color_weak">{label.RS_Evidence}</dt>
             <dd class={evidenceClass}>{evidenceScore}%</dd>
           </dl>
         </div>
@@ -63,13 +63,13 @@
           <div class="slds-m-top_large slds-text-align_center">
             <lightning-button-group>
               <lightning-button
-                label="Generate SOC2 Pack"
+                label={label.RS_GenerateSOC2}
                 variant="brand"
                 onclick={handleGenerateSoc2}
                 class="slds-m-right_small"
               ></lightning-button>
               <lightning-button
-                label="Generate HIPAA Pack"
+                label={label.RS_GenerateHIPAA}
                 variant="neutral"
                 onclick={handleGenerateHipaa}
               ></lightning-button>

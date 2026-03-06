@@ -153,7 +153,7 @@ export default class ElaroDrillDownViewer extends NavigationMixin(LightningEleme
     try {
       return JSON.parse(this.contextJson);
     } catch {
-      this.showError("Invalid context data. Please refresh the page.");
+      this.showError(InvalidContext);
       return {};
     }
   }
@@ -161,7 +161,7 @@ export default class ElaroDrillDownViewer extends NavigationMixin(LightningEleme
   showError(message) {
     this.dispatchEvent(
       new ShowToastEvent({
-        title: "Error",
+        title: ToastError,
         message: message,
         variant: "error",
       })
@@ -171,7 +171,7 @@ export default class ElaroDrillDownViewer extends NavigationMixin(LightningEleme
   showSuccess(message) {
     this.dispatchEvent(
       new ShowToastEvent({
-        title: "Success",
+        title: ToastSuccess,
         message: message,
         variant: "success",
       })

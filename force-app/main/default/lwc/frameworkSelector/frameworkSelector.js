@@ -1,4 +1,7 @@
 import { LightningElement, api } from "lwc";
+import FW_SelectFrameworkTitle from "@salesforce/label/c.FW_SelectFrameworkTitle";
+import FW_LoadingFrameworks from "@salesforce/label/c.FW_LoadingFrameworks";
+import FW_NoFrameworksAvailable from "@salesforce/label/c.FW_NoFrameworksAvailable";
 
 export default class FrameworkSelector extends LightningElement {
   @api frameworks = [];
@@ -6,6 +9,12 @@ export default class FrameworkSelector extends LightningElement {
   isLoading = false;
   hasError = false;
   errorMessage = "";
+
+  label = {
+    FW_SelectFrameworkTitle,
+    FW_LoadingFrameworks,
+    FW_NoFrameworksAvailable,
+  };
 
   get hasFrameworks() {
     return this.frameworks && this.frameworks.length > 0;

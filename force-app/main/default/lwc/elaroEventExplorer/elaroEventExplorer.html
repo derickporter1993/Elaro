@@ -1,17 +1,17 @@
 <template>
-  <lightning-card title="Event Explorer" icon-name="standard:event">
+  <lightning-card title={label.CardTitle} icon-name="standard:event">
     <!-- Filters Section -->
     <div slot="actions">
       <lightning-button-icon
         icon-name="utility:refresh"
-        alternative-text="Refresh"
-        title="Refresh"
+        alternative-text={label.RefreshAlt}
+        title={label.RefreshAlt}
         onclick={handleRefresh}
         class="slds-var-m-right_x-small"
       >
       </lightning-button-icon>
       <lightning-button
-        label="Export CSV"
+        label={label.ExportCSV}
         icon-name="utility:download"
         onclick={handleExportCSV}
         variant="neutral"
@@ -25,9 +25,9 @@
         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
           <lightning-combobox
             name="eventType"
-            label="Event Type"
+            label={label.EventTypeLabel}
             value={selectedEventType}
-            placeholder="All Event Types"
+            placeholder={label.EventTypeLabel}
             options={eventTypeOptions}
             onchange={handleEventTypeChange}
           >
@@ -36,9 +36,9 @@
         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
           <lightning-combobox
             name="riskLevel"
-            label="Risk Level"
+            label={label.RiskLevelLabel}
             value={selectedRiskLevel}
-            placeholder="All Risk Levels"
+            placeholder={label.RiskLevelLabel}
             options={riskLevelOptions}
             onchange={handleRiskLevelChange}
           >
@@ -48,7 +48,7 @@
           <lightning-input
             type="date"
             name="startDate"
-            label="Start Date"
+            label={label.StartDateLabel}
             value={startDate}
             onchange={handleStartDateChange}
           >
@@ -58,7 +58,7 @@
           <lightning-input
             type="date"
             name="endDate"
-            label="End Date"
+            label={label.EndDateLabel}
             value={endDate}
             onchange={handleEndDateChange}
           >
@@ -70,8 +70,8 @@
       <div class="slds-var-m-bottom_medium">
         <lightning-input
           type="search"
-          label="Search Events"
-          placeholder="Search by user, description, or event ID..."
+          label={label.SearchEvents}
+          placeholder={label.SearchPlaceholder}
           value={searchTerm}
           onchange={handleSearchChange}
         >
@@ -89,25 +89,25 @@
         <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
           <div class="stat-card total" role="status" aria-label={totalEventsAriaLabel}>
             <div class="stat-value" aria-hidden="true">{totalEvents}</div>
-            <div class="stat-label">Total Events</div>
+            <div class="stat-label">{label.TotalEventsLabel}</div>
           </div>
         </div>
         <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
           <div class="stat-card critical" role="status" aria-label={criticalAriaLabel}>
             <div class="stat-value" aria-hidden="true">{criticalCount}</div>
-            <div class="stat-label">Critical</div>
+            <div class="stat-label">{label.CriticalLabel}</div>
           </div>
         </div>
         <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
           <div class="stat-card high" role="status" aria-label={highRiskAriaLabel}>
             <div class="stat-value" aria-hidden="true">{highRiskCount}</div>
-            <div class="stat-label">High Risk</div>
+            <div class="stat-label">{label.HighRiskLabel}</div>
           </div>
         </div>
         <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4">
           <div class="stat-card medium" role="status" aria-label={mediumRiskAriaLabel}>
             <div class="stat-value" aria-hidden="true">{mediumRiskCount}</div>
-            <div class="stat-label">Medium Risk</div>
+            <div class="stat-label">{label.MediumRiskLabel}</div>
           </div>
         </div>
       </div>
@@ -137,7 +137,7 @@
           <div class="slds-illustration slds-illustration_small" role="status" aria-live="polite">
             <div class="slds-text-align_center">
               <p class="slds-text-body_regular slds-text-color_weak">
-                No events found matching your criteria.
+                {label.NoEventsMsg}
               </p>
             </div>
           </div>
@@ -162,28 +162,28 @@
           <button
             class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
             onclick={closeModal}
-            aria-label="Close event details modal"
-            title="Close"
+            aria-label={label.CloseBtn}
+            title={label.CloseBtn}
             type="button"
           >
             <lightning-icon
               icon-name="utility:close"
               size="small"
-              alternative-text="Close"
+              alternative-text={label.CloseBtn}
             ></lightning-icon>
           </button>
-          <h2 id="modal-heading" class="slds-modal__title">Event Details</h2>
+          <h2 id="modal-heading" class="slds-modal__title">{label.EventDetailsTitle}</h2>
         </header>
         <div id="modal-content" class="slds-modal__content slds-var-p-around_medium">
           <template lwc:if={selectedEvent}>
-            <dl class="slds-dl_horizontal" role="list" aria-label="Event details">
+            <dl class="slds-dl_horizontal" role="list" aria-label={label.EventDetailsTitle}>
               <dt class="slds-dl_horizontal__label">Event ID:</dt>
               <dd class="slds-dl_horizontal__detail">{selectedEvent.id}</dd>
 
-              <dt class="slds-dl_horizontal__label">Event Type:</dt>
+              <dt class="slds-dl_horizontal__label">{label.EventTypeLabel}:</dt>
               <dd class="slds-dl_horizontal__detail">{selectedEvent.eventType}</dd>
 
-              <dt class="slds-dl_horizontal__label">Risk Level:</dt>
+              <dt class="slds-dl_horizontal__label">{label.RiskLevelLabel}:</dt>
               <dd class="slds-dl_horizontal__detail">
                 <lightning-badge
                   label={selectedEvent.riskLevel}
@@ -210,12 +210,12 @@
         </div>
         <footer class="slds-modal__footer">
           <lightning-button
-            label="Close"
+            label={label.CloseBtn}
             onclick={closeModal}
           ></lightning-button>
           <lightning-button
             variant="brand"
-            label="Analyze Root Cause"
+            label={label.AnalyzeRootCause}
             onclick={handleAnalyze}
           ></lightning-button>
         </footer>

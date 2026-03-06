@@ -1,14 +1,14 @@
 <template>
-    <lightning-card title="Escalation Path Configuration" icon-name="standard:flow">
+    <lightning-card title={label.ESCPATH_Title} icon-name="standard:flow">
         <div slot="actions">
             <lightning-button-group>
                 <lightning-button
-                    label="Refresh"
+                    label={label.ESCPATH_Refresh}
                     icon-name="utility:refresh"
                     onclick={handleRefresh}>
                 </lightning-button>
                 <lightning-button
-                    label="New Escalation Level"
+                    label={label.ESCPATH_NewEscalationLevel}
                     variant="brand"
                     icon-name="utility:add"
                     onclick={handleNewPath}>
@@ -21,37 +21,37 @@
             <div class="slds-box slds-box_small slds-m-bottom_medium">
                 <div class="slds-text-heading_small slds-m-bottom_small">
                     <lightning-icon icon-name="utility:steps" size="x-small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
-                    Escalation Flow
+                    {label.ESCPATH_EscalationFlow}
                 </div>
                 <div class="escalation-flow slds-grid slds-grid_align-center">
                     <div class="slds-text-align_center">
-                        <lightning-badge label="Alert Triggered" class="slds-badge_inverse"></lightning-badge>
+                        <lightning-badge label={label.ESCPATH_AlertTriggered} class="slds-badge_inverse"></lightning-badge>
                     </div>
                     <lightning-icon icon-name="utility:forward" size="x-small" class="slds-m-horizontal_small" aria-hidden="true"></lightning-icon>
                     <div class="slds-text-align_center">
-                        <lightning-badge label="L1: Team Lead" variant="success"></lightning-badge>
+                        <lightning-badge label={label.ESCPATH_L1TeamLead} variant="success"></lightning-badge>
                     </div>
                     <lightning-icon icon-name="utility:forward" size="x-small" class="slds-m-horizontal_small" aria-hidden="true"></lightning-icon>
                     <div class="slds-text-align_center">
-                        <lightning-badge label="L2: Manager" variant="warning"></lightning-badge>
+                        <lightning-badge label={label.ESCPATH_L2Manager} variant="warning"></lightning-badge>
                     </div>
                     <lightning-icon icon-name="utility:forward" size="x-small" class="slds-m-horizontal_small" aria-hidden="true"></lightning-icon>
                     <div class="slds-text-align_center">
-                        <lightning-badge label="L3: CISO" variant="error"></lightning-badge>
+                        <lightning-badge label={label.ESCPATH_L3CISO} variant="error"></lightning-badge>
                     </div>
                 </div>
             </div>
 
             <template lwc:if={isLoading}>
-                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                <lightning-spinner alternative-text={label.ESCPATH_Loading} size="medium"></lightning-spinner>
             </template>
 
             <template lwc:elseif={hasPaths}>
                 <!-- Level 1 -->
                 <div class="slds-box slds-m-bottom_small">
                     <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_small">
-                        <lightning-badge label="Level 1" variant="success" class="slds-m-right_small"></lightning-badge>
-                        <span class="slds-text-heading_small">Team Lead Escalation</span>
+                        <lightning-badge label={label.ESCPATH_Level1} variant="success" class="slds-m-right_small"></lightning-badge>
+                        <span class="slds-text-heading_small">{label.ESCPATH_TeamLeadEscalation}</span>
                     </div>
                     <template for:each={level1Paths} for:item="path">
                         <div key={path.id} class="slds-box slds-box_x-small slds-m-bottom_x-small slds-grid slds-grid_vertical-align-center">
