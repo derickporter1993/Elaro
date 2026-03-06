@@ -253,10 +253,10 @@ export default class EscalationPathConfig extends LightningElement {
       if (this.isEditMode) {
         pathData.Id = this.formData.id;
         await updatePath({ path: pathData });
-        this.showToast("Success", "Escalation path updated successfully", "success");
+        this.showToast(this.label.ESCPATH_Success, this.label.ESCPATH_PathUpdated, "success");
       } else {
         await createPath({ path: pathData });
-        this.showToast("Success", "Escalation path created successfully", "success");
+        this.showToast(this.label.ESCPATH_Success, this.label.ESCPATH_PathCreated, "success");
       }
 
       this.closeModal();
@@ -272,7 +272,7 @@ export default class EscalationPathConfig extends LightningElement {
     this.isLoading = true;
     try {
       await deletePath({ pathId: this.selectedPath.id });
-      this.showToast("Success", "Escalation path deleted successfully", "success");
+      this.showToast(this.label.ESCPATH_Success, this.label.ESCPATH_PathDeleted, "success");
       this.isDeleteModalOpen = false;
       await refreshApex(this.wiredPathsResult);
     } catch (error) {
@@ -313,7 +313,7 @@ export default class EscalationPathConfig extends LightningElement {
     }, true);
 
     if (!this.formData.userId) {
-      this.showToast("Error", "Please select a user", "error");
+      this.showToast(this.label.ESCPATH_Error, this.label.ESCPATH_SelectUserError, "error");
       return false;
     }
 
@@ -337,8 +337,8 @@ export default class EscalationPathConfig extends LightningElement {
   }
 
   handleError(error) {
-    const message = error.body?.message || error.message || "An error occurred";
-    this.showToast("Error", message, "error");
+    const message = error.body?.message || error.message || this.label.ESCPATH_ErrorOccurred;
+    this.showToast(this.label.ESCPATH_Error, message, "error");
   }
 
   handleRefresh() {

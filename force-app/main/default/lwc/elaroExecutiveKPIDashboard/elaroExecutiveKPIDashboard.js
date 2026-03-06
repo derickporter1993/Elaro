@@ -1,12 +1,18 @@
 import { LightningElement, wire } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getKPIMetrics from "@salesforce/apex/ElaroExecutiveKPIController.getKPIMetrics";
+import EXEC_DashboardTitle from "@salesforce/label/c.EXEC_DashboardTitle";
+import EXEC_LoadingKPIs from "@salesforce/label/c.EXEC_LoadingKPIs";
+import EXEC_TargetPrefix from "@salesforce/label/c.EXEC_TargetPrefix";
+import EXEC_ErrorLoadingKPIs from "@salesforce/label/c.EXEC_ErrorLoadingKPIs";
 
 export default class ElaroExecutiveKPIDashboard extends LightningElement {
   kpiMetrics = [];
   isLoading = false;
   hasError = false;
   errorMessage = "";
+
+  label = { EXEC_DashboardTitle, EXEC_LoadingKPIs, EXEC_TargetPrefix, EXEC_ErrorLoadingKPIs };
 
   @wire(getKPIMetrics, { metadataRecordIds: "" })
   wiredKPIs({ error, data }) {
@@ -24,7 +30,8 @@ export default class ElaroExecutiveKPIDashboard extends LightningElement {
     } else if (error) {
       this.hasError = true;
       this.errorMessage =
-        "Error loading KPIs: " +
+        EXEC_ErrorLoadingKPIs +
+        " " +
         (error?.body?.message || error?.message || "An unknown error occurred");
       this.isLoading = false;
       this.showError(this.errorMessage);

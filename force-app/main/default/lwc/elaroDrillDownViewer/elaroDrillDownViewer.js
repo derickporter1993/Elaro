@@ -7,9 +7,16 @@ import CardTitle from "@salesforce/label/c.DRILL_CardTitle";
 import LoadingAlt from "@salesforce/label/c.DRILL_LoadingAlt";
 import NoRecords from "@salesforce/label/c.DRILL_NoRecords";
 import ExportCSV from "@salesforce/label/c.DRILL_ExportCSV";
+import ErrorLoadingRecords from "@salesforce/label/c.DRILL_ErrorLoadingRecords";
+import UnknownError from "@salesforce/label/c.DRILL_UnknownError";
+import ExportSuccess from "@salesforce/label/c.DRILL_ExportSuccess";
+import ErrorExporting from "@salesforce/label/c.DRILL_ErrorExporting";
+import InvalidContext from "@salesforce/label/c.DRILL_InvalidContext";
+import ToastError from "@salesforce/label/c.DRILL_ToastError";
+import ToastSuccess from "@salesforce/label/c.DRILL_ToastSuccess";
 
 export default class ElaroDrillDownViewer extends NavigationMixin(LightningElement) {
-  label = { CardTitle, LoadingAlt, NoRecords, ExportCSV };
+  label = { CardTitle, LoadingAlt, NoRecords, ExportCSV, ErrorLoadingRecords, UnknownError, ExportSuccess, ErrorExporting, InvalidContext, ToastError, ToastSuccess };
   @api contextJson;
   records = [];
   columns = [];
@@ -57,8 +64,8 @@ export default class ElaroDrillDownViewer extends NavigationMixin(LightningEleme
       .catch((error) => {
         this.hasError = true;
         this.errorMessage =
-          "Error loading records: " +
-          (error?.body?.message || error?.message || "An unknown error occurred");
+          ErrorLoadingRecords +
+          (error?.body?.message || error?.message || UnknownError);
         this.isLoading = false;
         this.showError(this.errorMessage);
       });
@@ -108,13 +115,13 @@ export default class ElaroDrillDownViewer extends NavigationMixin(LightningEleme
         window.URL.revokeObjectURL(url);
 
         this.isLoading = false;
-        this.showSuccess("Export completed successfully");
+        this.showSuccess(ExportSuccess);
       })
       .catch((error) => {
         this.isLoading = false;
         this.showError(
-          "Error exporting: " +
-            (error?.body?.message || error?.message || "An unknown error occurred")
+          ErrorExporting +
+            (error?.body?.message || error?.message || UnknownError)
         );
       });
   }

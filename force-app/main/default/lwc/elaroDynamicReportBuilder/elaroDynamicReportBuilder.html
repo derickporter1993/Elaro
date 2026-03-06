@@ -1,9 +1,9 @@
 <template>
-  <lightning-card title="Elaro Dynamic Report Builder" icon-name="custom:custom63">
+  <lightning-card title={label.CardTitle} icon-name="custom:custom63">
     <div class="slds-p-around_medium">
       <template lwc:if={isLoading}>
         <div class="slds-is-relative slds-p-around_medium">
-          <lightning-spinner alternative-text="Running report" size="medium"></lightning-spinner>
+          <lightning-spinner alternative-text={label.SpinnerAlt} size="medium"></lightning-spinner>
         </div>
       </template>
 
@@ -17,20 +17,20 @@
       <template lwc:if={notLoading}>
         <!-- Object Selection -->
         <lightning-combobox
-          label="Select Object"
+          label={label.SelectObject}
           value={selectedObject}
           options={objectOptions}
           onchange={handleObjectChange}
-          placeholder="Choose an object"
+          placeholder={label.ChooseObject}
         ></lightning-combobox>
 
         <!-- Field Selection -->
         <template lwc:if={fieldsLoaded}>
           <div class="slds-m-top_medium">
             <lightning-dual-listbox
-              label="Select Fields"
-              source-label="Available Fields"
-              selected-label="Selected Fields"
+              label={label.SelectFields}
+              source-label={label.AvailableFields}
+              selected-label={label.SelectedFields}
               options={availableFields}
               value={selectedFields}
               onchange={handleFieldChange}
@@ -43,12 +43,12 @@
         <!-- Filters Section -->
         <template lwc:if={showFilters}>
           <div class="slds-m-top_medium">
-            <h3 class="slds-text-heading_small">Filters</h3>
+            <h3 class="slds-text-heading_small">{label.FiltersHeading}</h3>
             <template for:each={filters} for:item="filter">
               <div key={filter.id} class="slds-grid slds-gutters slds-m-top_small">
                 <div class="slds-col slds-size_1-of-4">
                   <lightning-combobox
-                    label="Field"
+                    label={label.FieldLabel}
                     value={filter.field}
                     options={filterableFields}
                     onchange={handleFilterFieldChange}
@@ -57,7 +57,7 @@
                 </div>
                 <div class="slds-col slds-size_1-of-4">
                   <lightning-combobox
-                    label="Operator"
+                    label={label.OperatorLabel}
                     value={filter.operator}
                     options={operatorOptions}
                     onchange={handleFilterOperatorChange}
@@ -66,7 +66,7 @@
                 </div>
                 <div class="slds-col slds-size_1-of-3">
                   <lightning-input
-                    label="Value"
+                    label={label.ValueLabel}
                     value={filter.value}
                     onchange={handleFilterValueChange}
                     data-filter-id={filter.id}
@@ -75,7 +75,7 @@
                 <div class="slds-col slds-size_1-of-12">
                   <lightning-button-icon
                     icon-name="utility:delete"
-                    alternative-text="Remove filter"
+                    alternative-text={label.RemoveFilter}
                     onclick={handleRemoveFilter}
                     data-filter-id={filter.id}
                     class="slds-m-top_large"
@@ -84,7 +84,7 @@
               </div>
             </template>
             <lightning-button
-              label="Add Filter"
+              label={label.AddFilter}
               onclick={handleAddFilter}
               class="slds-m-top_small"
             ></lightning-button>
@@ -97,7 +97,7 @@
             <div class="slds-grid slds-gutters">
               <div class="slds-col slds-size_1-of-2">
                 <lightning-combobox
-                  label="Sort By"
+                  label={label.SortBy}
                   value={sortBy}
                   options={sortableFields}
                   onchange={handleSortByChange}
@@ -105,7 +105,7 @@
               </div>
               <div class="slds-col slds-size_1-of-2">
                 <lightning-combobox
-                  label="Sort Direction"
+                  label={label.SortDirection}
                   value={sortDirection}
                   options={sortDirectionOptions}
                   onchange={handleSortDirectionChange}
@@ -119,7 +119,7 @@
         <div class="slds-m-top_medium">
           <lightning-input
             type="number"
-            label="Maximum Rows"
+            label={label.MaxRows}
             value={maxRows}
             min="1"
             max="10000"
@@ -131,14 +131,14 @@
         <div class="slds-m-top_large">
           <lightning-button
             variant="brand"
-            label="Run Report"
+            label={label.RunReport}
             onclick={handleRunReport}
             disabled={isRunDisabled}
             class="slds-m-right_small"
           ></lightning-button>
           <lightning-button
             variant="neutral"
-            label="Clear"
+            label={label.ClearBtn}
             onclick={handleClear}
             disabled={isLoading}
           ></lightning-button>
@@ -146,8 +146,8 @@
 
         <!-- Results Section -->
         <template lwc:if={hasResults}>
-          <div class="slds-m-top_large" role="region" aria-label="Report results">
-            <h3 class="slds-text-heading_small">Results ({recordCount} records)</h3>
+          <div class="slds-m-top_large" role="region" aria-label={label.Results}>
+            <h3 class="slds-text-heading_small">{label.Results} ({recordCount} records)</h3>
             <lightning-datatable
               key-field="Id"
               data={reportData}

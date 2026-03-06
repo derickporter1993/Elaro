@@ -3,7 +3,7 @@
     <div class="slds-p-around_medium">
       <template lwc:if={isLoadingDetails}>
         <div class="slds-is-relative slds-p-around_medium">
-          <lightning-spinner alternative-text="Loading framework details" size="medium"></lightning-spinner>
+          <lightning-spinner alternative-text={label.loadingDetails} size="medium"></lightning-spinner>
         </div>
       </template>
 
@@ -17,7 +17,7 @@
       <div class="slds-grid slds-gutters">
         <div class="slds-col slds-size_1-of-2">
           <div class="slds-text-heading_large">{framework.score}%</div>
-          <div class="slds-text-body_small">Compliance Score</div>
+          <div class="slds-text-body_small">{label.complianceScore}</div>
         </div>
         <div class="slds-col slds-size_1-of-2">
           <lightning-icon icon-name={statusIcon} size="large" aria-hidden="true"></lightning-icon>
@@ -26,36 +26,36 @@
       </div>
       <div class="slds-m-top_small">
         <div class="slds-text-body_small">
-          {framework.compliantPolicies} / {framework.totalPolicies} Policies Compliant
+          {framework.compliantPolicies} / {framework.totalPolicies} {label.policiesCompliant}
         </div>
-        <div class="slds-text-body_small">{framework.gapCount} Gaps</div>
+        <div class="slds-text-body_small">{framework.gapCount} {label.gaps}</div>
       </div>
 
       <!-- Phase 1 Framework Details -->
       <template lwc:if={hasFrameworkDetails}>
         <div class="slds-m-top_medium slds-border_top">
           <div class="slds-text-body_small slds-m-top_small">
-            <strong>Framework Mappings:</strong> {mappingCount}
+            <strong>{label.frameworkMappings}</strong> {mappingCount}
           </div>
-          <div class="slds-text-body_small"><strong>Evidence Items:</strong> {evidenceCount}</div>
-          <div class="slds-text-body_small"><strong>Requirements:</strong> {requirementCount}</div>
+          <div class="slds-text-body_small"><strong>{label.evidenceItems}</strong> {evidenceCount}</div>
+          <div class="slds-text-body_small"><strong>{label.requirements}</strong> {requirementCount}</div>
 
           <template lwc:if={hasLatestPackage}>
             <div class="slds-m-top_small slds-border_top">
               <div class="slds-text-body_small slds-text-title">
-                <strong>Latest Audit Package:</strong>
+                <strong>{label.latestAuditPackage}</strong>
               </div>
               <div class="slds-text-body_small">{latestAuditPackage.name}</div>
               <div class="slds-text-body_small">
-                Status:
+                {label.status}
                 <span class={formattedLatestPackage.statusClass}>{latestAuditPackage.status}</span>
               </div>
               <div class="slds-text-body_small">
-                Period: {formattedLatestPackage.formattedPeriodStart} -
+                {label.period} {formattedLatestPackage.formattedPeriodStart} -
                 {formattedLatestPackage.formattedPeriodEnd}
               </div>
               <lightning-button
-                label="View Package"
+                label={label.viewPackage}
                 variant="base"
                 size="x-small"
                 class="slds-m-top_x-small"

@@ -2049,4 +2049,438 @@
         <shortDescription>No flow execution data message</shortDescription>
         <value>No flow execution data available</value>
     </labels>
+    <!-- Framework Selector Labels -->
+    <labels>
+        <fullName>FW_SelectFrameworkTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework selector card title</shortDescription>
+        <value>Select Framework</value>
+    </labels>
+    <labels>
+        <fullName>FW_LoadingFrameworks</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework selector spinner alt text</shortDescription>
+        <value>Loading frameworks</value>
+    </labels>
+    <labels>
+        <fullName>FW_NoFrameworksAvailable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework selector empty state</shortDescription>
+        <value>No frameworks available</value>
+    </labels>
+    <!-- Jira Create Modal Labels -->
+    <labels>
+        <fullName>JIRA_CreateModalHeading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira create modal heading</shortDescription>
+        <value>Create Jira Issue</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CreatingIssue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira creating issue spinner alt text</shortDescription>
+        <value>Creating issue...</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_NotConfiguredWarning</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira not configured warning message</shortDescription>
+        <value>Jira integration is not configured. Please configure Jira settings in Setup before creating issues.</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CreateDescription</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira create issue description text</shortDescription>
+        <value>This will create a new Jira issue linked to this compliance gap. The issue will include:</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IncludeGapDescription</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira issue includes gap description</shortDescription>
+        <value>Gap description and details</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IncludeFrameworkInfo</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira issue includes framework info</shortDescription>
+        <value>Framework and severity information</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IncludeRemediationPlan</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira issue includes remediation plan</shortDescription>
+        <value>Remediation plan (if available)</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IncludeSalesforceLink</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira issue includes Salesforce link</shortDescription>
+        <value>Link back to this Salesforce record</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_PriorityLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira priority combobox label</shortDescription>
+        <value>Priority (Optional)</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_PriorityPlaceholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira priority combobox placeholder</shortDescription>
+        <value>Use default priority from settings</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_PriorityHint</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira priority hint text</shortDescription>
+        <value>Leave blank to use the default priority from Jira settings, or select to override.</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CancelButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Cancel button label</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CreateIssueButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Create issue button label</shortDescription>
+        <value>Create Issue</value>
+    </labels>
+    <!-- Jira Issue Card Labels -->
+    <labels>
+        <fullName>JIRA_IssueCardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira issue card title</shortDescription>
+        <value>Jira Issue</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Jira loading spinner alt text</shortDescription>
+        <value>Loading</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_NoIssueLinked</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No Jira issue linked message</shortDescription>
+        <value>No Jira issue linked to this gap.</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CreateIssueHint</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Create Jira issue hint</shortDescription>
+        <value>Click "Create Jira Issue" to create one.</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IssueKeyLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Issue key label</shortDescription>
+        <value>Issue Key</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_SummaryLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Summary field label</shortDescription>
+        <value>Summary</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_PriorityFieldLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Priority field label</shortDescription>
+        <value>Priority</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_AssigneeLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Assignee field label</shortDescription>
+        <value>Assignee</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_Unassigned</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unassigned text</shortDescription>
+        <value>Unassigned</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CreatedLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Created date label</shortDescription>
+        <value>Created</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_UpdatedLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Updated date label</shortDescription>
+        <value>Updated</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_RefreshButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Refresh button label</shortDescription>
+        <value>Refresh</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_SyncButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sync button label</shortDescription>
+        <value>Sync</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_AddCommentButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Add comment button label</shortDescription>
+        <value>Add Comment</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_TransitionButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Transition button label</shortDescription>
+        <value>Transition</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_OpenInJiraButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Open in Jira button label</shortDescription>
+        <value>Open in Jira</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CommentLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comment textarea label</shortDescription>
+        <value>Comment</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CommentPlaceholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comment placeholder text</shortDescription>
+        <value>Enter your comment...</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_TransitionToLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Transition to combobox label</shortDescription>
+        <value>Transition To</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_TransitionPlaceholder</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Transition placeholder text</shortDescription>
+        <value>Select a transition</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CurrentStatus</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Current status prefix</shortDescription>
+        <value>Current Status:</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IssueRefreshed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Issue refreshed toast message</shortDescription>
+        <value>Issue status refreshed</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_IssueSynced</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Issue synced toast message</shortDescription>
+        <value>Issue synced with Salesforce</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_NoRecordId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No record ID error message</shortDescription>
+        <value>No record ID provided</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_EnterComment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Enter comment validation message</shortDescription>
+        <value>Please enter a comment</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_CommentAdded</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comment added toast message</shortDescription>
+        <value>Comment added to Jira</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_SelectTransition</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Select transition validation message</shortDescription>
+        <value>Please select a transition</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_TransitionSuccess</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Transition success toast message</shortDescription>
+        <value>Issue transitioned successfully</value>
+    </labels>
+    <labels>
+        <fullName>JIRA_UnexpectedError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unexpected error message</shortDescription>
+        <value>An unexpected error occurred</value>
+    </labels>
+    <!-- Performance Alert Panel Labels -->
+    <labels>
+        <fullName>PERF_AlertsTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Performance alerts card title</shortDescription>
+        <value>Performance Alerts</value>
+    </labels>
+    <labels>
+        <fullName>PERF_AlertsHint</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Performance alerts hint text</shortDescription>
+        <value>Live + recent alerts from Performance_Alert__e</value>
+    </labels>
+    <labels>
+        <fullName>PERF_LoadingAlerts</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Performance alerts spinner alt text</shortDescription>
+        <value>Loading performance alerts</value>
+    </labels>
+    <labels>
+        <fullName>PERF_NoAlertsAvailable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Performance alerts empty state</shortDescription>
+        <value>No performance alerts available</value>
+    </labels>
+    <!-- Risk Heatmap Labels -->
+    <labels>
+        <fullName>RISK_NoDataAvailable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Risk heatmap empty state</shortDescription>
+        <value>No risk data available</value>
+    </labels>
+    <!-- SEC Disclosure Form Labels -->
+    <labels>
+        <fullName>SEC_NewAssessmentTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC new assessment card title</shortDescription>
+        <value>New Materiality Assessment</value>
+    </labels>
+    <labels>
+        <fullName>SEC_IncidentDescriptionLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC incident description input label</shortDescription>
+        <value>Incident Description</value>
+    </labels>
+    <labels>
+        <fullName>SEC_DiscoveryDateLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC discovery date input label</shortDescription>
+        <value>Discovery Date</value>
+    </labels>
+    <labels>
+        <fullName>SEC_CreateAssessmentButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC create assessment button label</shortDescription>
+        <value>Create Assessment</value>
+    </labels>
+    <labels>
+        <fullName>SEC_AssessmentCreated</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC assessment created toast message</shortDescription>
+        <value>Materiality Assessment created</value>
+    </labels>
+    <labels>
+        <fullName>SEC_AssessmentError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>SEC assessment error toast message</shortDescription>
+        <value>Error creating assessment</value>
+    </labels>
+    <!-- System Monitor Dashboard Labels -->
+    <labels>
+        <fullName>SYSMON_GovernorLimitsTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>System monitor governor limits title</shortDescription>
+        <value>Governor Limits</value>
+    </labels>
+    <labels>
+        <fullName>SYSMON_CpuLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>System monitor CPU label</shortDescription>
+        <value>CPU (ms)</value>
+    </labels>
+    <labels>
+        <fullName>SYSMON_HeapLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>System monitor Heap label</shortDescription>
+        <value>Heap (KB)</value>
+    </labels>
+    <labels>
+        <fullName>SYSMON_LoadingStats</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>System monitor loading spinner alt text</shortDescription>
+        <value>Loading governor stats</value>
+    </labels>
+    <labels>
+        <fullName>SYSMON_RefreshButton</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>System monitor refresh button label</shortDescription>
+        <value>Refresh</value>
+    </labels>
 </CustomLabels>

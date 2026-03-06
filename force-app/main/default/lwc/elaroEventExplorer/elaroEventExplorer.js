@@ -3,6 +3,23 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRealtimeStats from "@salesforce/apex/ElaroRealtimeMonitor.getRealtimeStats";
 import getEventRiskLevels from "@salesforce/apex/ElaroShieldService.getEventRiskLevels";
 import analyzeRootCause from "@salesforce/apex/RootCauseAnalysisEngine.analyzeRootCause";
+import CardTitle from "@salesforce/label/c.EXPLORER_CardTitle";
+import RefreshAlt from "@salesforce/label/c.EXPLORER_RefreshAlt";
+import ExportCSV from "@salesforce/label/c.EXPLORER_ExportCSV";
+import EventTypeLabel from "@salesforce/label/c.EXPLORER_EventType";
+import RiskLevelLabel from "@salesforce/label/c.EXPLORER_RiskLevel";
+import StartDateLabel from "@salesforce/label/c.EXPLORER_StartDate";
+import EndDateLabel from "@salesforce/label/c.EXPLORER_EndDate";
+import SearchEvents from "@salesforce/label/c.EXPLORER_SearchEvents";
+import SearchPlaceholder from "@salesforce/label/c.EXPLORER_SearchPlaceholder";
+import TotalEventsLabel from "@salesforce/label/c.EXPLORER_TotalEvents";
+import CriticalLabel from "@salesforce/label/c.EXPLORER_Critical";
+import HighRiskLabel from "@salesforce/label/c.EXPLORER_HighRisk";
+import MediumRiskLabel from "@salesforce/label/c.EXPLORER_MediumRisk";
+import NoEventsMsg from "@salesforce/label/c.EXPLORER_NoEvents";
+import EventDetailsTitle from "@salesforce/label/c.EXPLORER_EventDetails";
+import CloseBtn from "@salesforce/label/c.EXPLORER_Close";
+import AnalyzeRootCause from "@salesforce/label/c.EXPLORER_AnalyzeRootCause";
 
 const COLUMNS = [
   {
@@ -58,6 +75,7 @@ const COLUMNS = [
 ];
 
 export default class ElaroEventExplorer extends LightningElement {
+  label = { CardTitle, RefreshAlt, ExportCSV, EventTypeLabel, RiskLevelLabel, StartDateLabel, EndDateLabel, SearchEvents, SearchPlaceholder, TotalEventsLabel, CriticalLabel, HighRiskLabel, MediumRiskLabel, NoEventsMsg, EventDetailsTitle, CloseBtn, AnalyzeRootCause };
   events = [];
   filteredEvents = [];
   isLoading = true;
