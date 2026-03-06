@@ -1,7 +1,12 @@
 import { LightningElement, api } from "lwc";
+import RISK_NoDataAvailable from "@salesforce/label/c.RISK_NoDataAvailable";
 
 export default class RiskHeatmap extends LightningElement {
   @api risks = [];
+
+  label = {
+    RISK_NoDataAvailable,
+  };
 
   get riskMatrix() {
     // Organize risks by severity and framework

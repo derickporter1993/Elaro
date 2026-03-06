@@ -1,6 +1,10 @@
 import { LightningElement } from "lwc";
 import { subscribe, onError } from "lightning/empApi";
 import getRecentAlerts from "@salesforce/apex/AlertHistoryService.getRecentAlerts";
+import PERF_AlertsTitle from "@salesforce/label/c.PERF_AlertsTitle";
+import PERF_AlertsHint from "@salesforce/label/c.PERF_AlertsHint";
+import PERF_LoadingAlerts from "@salesforce/label/c.PERF_LoadingAlerts";
+import PERF_NoAlertsAvailable from "@salesforce/label/c.PERF_NoAlertsAvailable";
 
 export default class PerformanceAlertPanel extends LightningElement {
   channelName = "/event/Performance_Alert__e";
@@ -12,6 +16,13 @@ export default class PerformanceAlertPanel extends LightningElement {
   pendingEvents = []; // Buffer for batching incoming events
   debounceTimer = null; // Timer for debouncing event processing
   maxRows = 50; // Cap array size to prevent memory issues
+
+  label = {
+    PERF_AlertsTitle,
+    PERF_AlertsHint,
+    PERF_LoadingAlerts,
+    PERF_NoAlertsAvailable,
+  };
 
   columns = [
     { label: "Metric", fieldName: "metric" },

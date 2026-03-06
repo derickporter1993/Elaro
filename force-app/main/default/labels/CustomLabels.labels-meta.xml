@@ -2483,4 +2483,276 @@
         <shortDescription>System monitor refresh button label</shortDescription>
         <value>Refresh</value>
     </labels>
+    <!-- Compliance Copilot Labels (Batch A) -->
+    <labels>
+        <fullName>COPILOT_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Copilot card title</shortDescription>
+        <value>Compliance Copilot</value>
+    </labels>
+    <labels>
+        <fullName>COPILOT_Processing</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Copilot spinner alternative text</shortDescription>
+        <value>Processing</value>
+    </labels>
+    <labels>
+        <fullName>COPILOT_UnexpectedError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Copilot unexpected error fallback message</shortDescription>
+        <value>An unexpected error occurred. Please try again.</value>
+    </labels>
+    <!-- Compliance Dashboard Labels (Batch A) -->
+    <labels>
+        <fullName>DASHBOARD_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Dashboard card title</shortDescription>
+        <value>Compliance Dashboard</value>
+    </labels>
+    <labels>
+        <fullName>DASHBOARD_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Dashboard spinner alternative text</shortDescription>
+        <value>Loading</value>
+    </labels>
+    <labels>
+        <fullName>DASHBOARD_ErrorLoading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Dashboard error loading prefix</shortDescription>
+        <value>Error loading dashboard:</value>
+    </labels>
+    <labels>
+        <fullName>DASHBOARD_RecentEvidence</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Recent evidence card title</shortDescription>
+        <value>Recent Evidence</value>
+    </labels>
+    <labels>
+        <fullName>DASHBOARD_UnknownError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Dashboard unknown error fallback</shortDescription>
+        <value>An unknown error occurred</value>
+    </labels>
+    <!-- Compliance Timeline Labels (Batch A) -->
+    <labels>
+        <fullName>TIMELINE_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Timeline card title</shortDescription>
+        <value>Compliance Timeline</value>
+    </labels>
+    <labels>
+        <fullName>TIMELINE_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Timeline spinner alternative text</shortDescription>
+        <value>Loading timeline events</value>
+    </labels>
+    <labels>
+        <fullName>TIMELINE_NoEvents</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Timeline empty state message</shortDescription>
+        <value>No timeline events available</value>
+    </labels>
+    <!-- Compliance Trend Chart Labels (Batch A) -->
+    <labels>
+        <fullName>TREND_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Trend chart card title</shortDescription>
+        <value>Compliance Trend</value>
+    </labels>
+    <labels>
+        <fullName>TREND_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Trend chart spinner alternative text</shortDescription>
+        <value>Loading trend data</value>
+    </labels>
+    <labels>
+        <fullName>TREND_NoData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Trend chart empty state message</shortDescription>
+        <value>No trend data available</value>
+    </labels>
+    <labels>
+        <fullName>TREND_ComplianceScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Trend chart dataset label</shortDescription>
+        <value>Compliance Score</value>
+    </labels>
+    <!-- Compliance Score Card Labels (Batch A) -->
+    <labels>
+        <fullName>SCORECARD_LoadingDetails</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Score card spinner alternative text</shortDescription>
+        <value>Loading framework details</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_ComplianceScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Score card compliance score label</shortDescription>
+        <value>Compliance Score</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_PoliciesCompliant</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Policies compliant label</shortDescription>
+        <value>Policies Compliant</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_Gaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gaps count label</shortDescription>
+        <value>Gaps</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_FrameworkMappings</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework mappings label</shortDescription>
+        <value>Framework Mappings:</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_EvidenceItems</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Evidence items label</shortDescription>
+        <value>Evidence Items:</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_Requirements</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Requirements label</shortDescription>
+        <value>Requirements:</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_LatestAuditPackage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Latest audit package label</shortDescription>
+        <value>Latest Audit Package:</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_Status</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Status label</shortDescription>
+        <value>Status:</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_Period</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Period label</shortDescription>
+        <value>Period:</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_ViewPackage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>View package button label</shortDescription>
+        <value>View Package</value>
+    </labels>
+    <labels>
+        <fullName>SCORECARD_FailedLoadDetails</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Failed to load framework details fallback</shortDescription>
+        <value>Failed to load framework details</value>
+    </labels>
+    <!-- Audit Package Builder Labels (Batch A) -->
+    <labels>
+        <fullName>AUDITPKG_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Audit package builder card title</shortDescription>
+        <value>Audit Package Builder</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_PackageName</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Package name input label</shortDescription>
+        <value>Package Name</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_Framework</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework combobox label</shortDescription>
+        <value>Framework</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_PeriodStart</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Audit period start input label</shortDescription>
+        <value>Audit Period Start</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_PeriodEnd</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Audit period end input label</shortDescription>
+        <value>Audit Period End</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_Generate</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generate audit package button label</shortDescription>
+        <value>Generate Audit Package</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_ErrorTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error toast title</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_SuccessTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Success toast title</shortDescription>
+        <value>Success</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_FillRequiredFields</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Fill required fields validation message</shortDescription>
+        <value>Please fill in all required fields</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_PackageGenerated</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Package generated success message</shortDescription>
+        <value>Audit package generated successfully</value>
+    </labels>
+    <labels>
+        <fullName>AUDITPKG_GenerateFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generate package failed fallback message</shortDescription>
+        <value>Failed to generate audit package</value>
+    </labels>
 </CustomLabels>

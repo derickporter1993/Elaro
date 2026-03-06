@@ -1,15 +1,15 @@
 <template>
-    <lightning-card title="New Materiality Assessment" icon-name="standard:form">
+    <lightning-card title={label.SEC_NewAssessmentTitle} icon-name="standard:form">
         <div class="slds-card__body slds-card__body_inner slds-p-around_medium">
             <lightning-input
-                label="Incident Description"
+                label={label.SEC_IncidentDescriptionLabel}
                 data-field="description"
                 onchange={handleInputChange}
                 required>
             </lightning-input>
             <lightning-input
                 type="datetime"
-                label="Discovery Date"
+                label={label.SEC_DiscoveryDateLabel}
                 data-field="discoveryDate"
                 onchange={handleInputChange}
                 required>
@@ -17,7 +17,7 @@
             <div class="slds-m-top_medium">
                 <lightning-button
                     variant="brand"
-                    label="Create Assessment"
+                    label={label.SEC_CreateAssessmentButton}
                     onclick={handleSave}>
                 </lightning-button>
             </div>

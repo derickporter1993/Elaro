@@ -283,19 +283,19 @@
                         <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
                         <span class="slds-assistive-text">{label.ESCPATH_Close}</span>
                     </button>
-                    <h2 id="delete-escalation-modal-heading" class="slds-modal__title">Delete Escalation Path</h2>
+                    <h2 id="delete-escalation-modal-heading" class="slds-modal__title">{label.ESCPATH_DeleteEscalationPath}</h2>
                 </header>
 
                 <div class="slds-modal__content slds-p-around_medium">
-                    <p>Are you sure you want to delete the escalation path for "{selectedPath.userName}"?</p>
-                    <p class="slds-m-top_small slds-text-color_weak">This action cannot be undone.</p>
+                    <p>{label.ESCPATH_DeleteConfirm} "{selectedPath.userName}"?</p>
+                    <p class="slds-m-top_small slds-text-color_weak">{label.ESCPATH_CannotBeUndone}</p>
                 </div>
 
                 <footer class="slds-modal__footer">
-                    <lightning-button label="Cancel" onclick={closeDeleteModal}></lightning-button>
+                    <lightning-button label={label.ESCPATH_Cancel} onclick={closeDeleteModal}></lightning-button>
                     <lightning-button
                         variant="destructive"
-                        label="Delete"
+                        label={label.ESCPATH_Delete}
                         onclick={handleDelete}
                         disabled={isLoading}>
                     </lightning-button>
