@@ -1,5 +1,5 @@
 <template>
-  <lightning-card title="Governor Limits">
+  <lightning-card title={label.SYSMON_GovernorLimitsTitle}>
     <div class="slds-p-around_medium">
       <template lwc:if={stats}>
         <div class="slds-grid slds-wrap slds-gutters">
@@ -7,7 +7,7 @@
             <lightning-progress-ring
               value={cpuPct}
               variant="active"
-              label="CPU (ms)"
+              label={label.SYSMON_CpuLabel}
             ></lightning-progress-ring>
             <p class="slds-m-top_small">CPU: {stats.cpuMs} ms</p>
           </div>
@@ -15,7 +15,7 @@
             <lightning-progress-ring
               value={heapPct}
               variant="warning"
-              label="Heap (KB)"
+              label={label.SYSMON_HeapLabel}
             ></lightning-progress-ring>
             <p class="slds-m-top_small">Heap: {stats.heapKb} KB</p>
           </div>
@@ -24,11 +24,11 @@
       </template>
       <template lwc:if={isLoading}>
         <div class="slds-align_absolute-center slds-p-around_medium">
-          <lightning-spinner alternative-text="Loading governor stats" size="medium"></lightning-spinner>
+          <lightning-spinner alternative-text={label.SYSMON_LoadingStats} size="medium"></lightning-spinner>
         </div>
       </template>
       <div class="slds-m-top_medium">
-        <lightning-button label="Refresh" onclick={refresh}></lightning-button>
+        <lightning-button label={label.SYSMON_RefreshButton} onclick={refresh}></lightning-button>
       </div>
     </div>
   </lightning-card>

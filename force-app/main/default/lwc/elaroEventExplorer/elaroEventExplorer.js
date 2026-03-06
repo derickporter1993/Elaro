@@ -20,62 +20,30 @@ import NoEventsMsg from "@salesforce/label/c.EXPLORER_NoEvents";
 import EventDetailsTitle from "@salesforce/label/c.EXPLORER_EventDetails";
 import CloseBtn from "@salesforce/label/c.EXPLORER_Close";
 import AnalyzeRootCause from "@salesforce/label/c.EXPLORER_AnalyzeRootCause";
-
-const COLUMNS = [
-  {
-    label: "Event Type",
-    fieldName: "eventType",
-    type: "text",
-    sortable: true,
-    cellAttributes: { class: { fieldName: "typeClass" } },
-  },
-  {
-    label: "Risk Level",
-    fieldName: "riskLevel",
-    type: "text",
-    sortable: true,
-    cellAttributes: {
-      class: { fieldName: "riskClass" },
-      iconName: { fieldName: "riskIcon" },
-    },
-  },
-  {
-    label: "Risk Score",
-    fieldName: "riskScore",
-    type: "number",
-    sortable: true,
-    cellAttributes: { alignment: "center" },
-  },
-  {
-    label: "User",
-    fieldName: "userName",
-    type: "text",
-    sortable: true,
-  },
-  {
-    label: "Timestamp",
-    fieldName: "formattedTimestamp",
-    type: "text",
-    sortable: true,
-  },
-  {
-    label: "Source IP",
-    fieldName: "sourceIp",
-    type: "text",
-  },
-  {
-    type: "action",
-    typeAttributes: {
-      rowActions: [
-        { label: "View Details", name: "view" },
-        { label: "Analyze", name: "analyze" },
-      ],
-    },
-  },
-];
+import LoadingAlt from "@salesforce/label/c.EXPLORER_LoadingAlt";
+import EventIdLabel from "@salesforce/label/c.EXPLORER_EventId";
+import RiskScoreLabel from "@salesforce/label/c.EXPLORER_RiskScore";
+import UserLabel from "@salesforce/label/c.EXPLORER_User";
+import TimestampLabel from "@salesforce/label/c.EXPLORER_Timestamp";
+import SourceIpLabel from "@salesforce/label/c.EXPLORER_SourceIp";
+import DescriptionLabel from "@salesforce/label/c.EXPLORER_Description";
+import AllEventTypes from "@salesforce/label/c.EXPLORER_AllEventTypes";
+import AllRiskLevels from "@salesforce/label/c.EXPLORER_AllRiskLevels";
+import LowLabel from "@salesforce/label/c.EXPLORER_Low";
+import ViewDetails from "@salesforce/label/c.EXPLORER_ViewDetails";
+import AnalyzeLabel from "@salesforce/label/c.EXPLORER_Analyze";
+import AnalysisComplete from "@salesforce/label/c.EXPLORER_AnalysisComplete";
+import AnalysisError from "@salesforce/label/c.EXPLORER_AnalysisError";
+import FailedToLoadEvents from "@salesforce/label/c.EXPLORER_FailedToLoadEvents";
+import AnalysisFailed from "@salesforce/label/c.EXPLORER_AnalysisFailed";
+import WarningTitle from "@salesforce/label/c.EXPLORER_Warning";
+import NoEventsToExport from "@salesforce/label/c.EXPLORER_NoEventsToExport";
+import ToastError from "@salesforce/label/c.EXPLORER_ToastError";
+import ToastSuccess from "@salesforce/label/c.EXPLORER_ToastSuccess";
+import UnknownError from "@salesforce/label/c.EXPLORER_UnknownError";
 
 export default class ElaroEventExplorer extends LightningElement {
-  label = { CardTitle, RefreshAlt, ExportCSV, EventTypeLabel, RiskLevelLabel, StartDateLabel, EndDateLabel, SearchEvents, SearchPlaceholder, TotalEventsLabel, CriticalLabel, HighRiskLabel, MediumRiskLabel, NoEventsMsg, EventDetailsTitle, CloseBtn, AnalyzeRootCause };
+  label = { CardTitle, RefreshAlt, ExportCSV, EventTypeLabel, RiskLevelLabel, StartDateLabel, EndDateLabel, SearchEvents, SearchPlaceholder, TotalEventsLabel, CriticalLabel, HighRiskLabel, MediumRiskLabel, NoEventsMsg, EventDetailsTitle, CloseBtn, AnalyzeRootCause, LoadingAlt, EventIdLabel, RiskScoreLabel, UserLabel, TimestampLabel, SourceIpLabel, DescriptionLabel };
   events = [];
   filteredEvents = [];
   isLoading = true;
