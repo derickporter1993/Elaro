@@ -24,6 +24,12 @@ public with sharing class DeploymentMetrics {
         }
     }
 
+    /**
+     * Retrieves the most recent deployment job records.
+     *
+     * @param limitSize Maximum number of records to return
+     * @return List of Row wrappers for recent deployment jobs
+     */
     @AuraEnabled(cacheable=true)
     public static List<Row> getRecentDeployments(Integer limitSize) {
         try {
@@ -49,7 +55,10 @@ public with sharing class DeploymentMetrics {
     }
     
     /**
-     * Legacy method - Use getRecentDeployments instead
+     * Legacy method - Use getRecentDeployments instead.
+     *
+     * @param limitSize Maximum number of records to return
+     * @return List of Row wrappers for recent deployment jobs
      */
     @AuraEnabled(cacheable=true)
     public static List<Row> recent(Integer limitSize) {

@@ -17,8 +17,11 @@
 public with sharing class ElaroCCPADataInventoryService {
 
     /**
-     * Generate CCPA data inventory report
-     * Must respond within 45 days per CCPA requirements
+     * Generate CCPA data inventory report.
+     * Must respond within 45 days per CCPA requirements.
+     *
+     * @param contactId The Contact record to generate the inventory for
+     * @return DataInventoryReport containing all personal data categories
      */
     @AuraEnabled
     public static DataInventoryReport generateInventoryReport(Id contactId) {
@@ -103,7 +106,10 @@ public with sharing class ElaroCCPADataInventoryService {
     }
 
     /**
-     * Process Do Not Sell opt-out request
+     * Process Do Not Sell opt-out request per CCPA Section 1798.120.
+     *
+     * @param contactId The Contact record to process the opt-out for
+     * @return true if the opt-out was successfully processed
      */
     @AuraEnabled
     public static Boolean processDoNotSellRequest(Id contactId) {
@@ -152,7 +158,9 @@ public with sharing class ElaroCCPADataInventoryService {
     }
 
     /**
-     * Get pending CCPA requests that need response
+     * Get pending CCPA requests that need response within the 45-day SLA.
+     *
+     * @return List of CCPA_Request__c records with Pending or In Progress status
      */
     @AuraEnabled(cacheable=true)
     public static List<CCPA_Request__c> getPendingRequests() {

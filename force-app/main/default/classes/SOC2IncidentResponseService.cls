@@ -476,7 +476,10 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
     }
 
     /**
-     * Get incident metrics
+     * Get incident metrics for the specified time period.
+     *
+     * @param daysBack Number of days to look back for metrics
+     * @return IncidentMetrics containing totals, open/resolved counts, and MTTR
      */
     @AuraEnabled(cacheable=false)
     public static IncidentMetrics getIncidentMetrics(Integer daysBack) {

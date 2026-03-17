@@ -16,8 +16,9 @@
 public with sharing class ElaroGDPRDataPortabilityService {
 
     /**
-     * Generate complete data export for a Contact
-     * @param contactId - Contact ID to export data for
+     * Generate complete data export for a Contact.
+     *
+     * @param contactId Contact ID to export data for
      * @return JSON string containing all personal data
      */
     @AuraEnabled

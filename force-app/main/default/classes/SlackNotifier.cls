@@ -12,6 +12,8 @@ public with sharing class SlackNotifier {
     /**
      * Send Slack notification using Queueable (recommended approach).
      * Provides retry logic, error handling, and better monitoring.
+     *
+     * @param text The notification message to send to Slack
      */
     public static void notifyAsyncQueueable(String text) {
         if (String.isBlank(text)) {
