@@ -480,18 +480,25 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
      */
     @AuraEnabled(cacheable=false)
     public static IncidentMetrics getIncidentMetrics(Integer daysBack) {
-        SOC2IncidentResponseService service = new SOC2IncidentResponseService();
-        IBreachNotificationService.BreachMetrics breachMetrics = service.getBreachMetrics(daysBack);
+        try {
+            SOC2IncidentResponseService service = new SOC2IncidentResponseService();
+            IBreachNotificationService.BreachMetrics breachMetrics = service.getBreachMetrics(daysBack);
 
-        IncidentMetrics metrics = new IncidentMetrics();
-        metrics.totalIncidents = breachMetrics.totalBreaches;
-        metrics.openIncidents = breachMetrics.openBreaches;
-        metrics.resolvedIncidents = breachMetrics.closedBreaches;
-        metrics.mttrDays = breachMetrics.averageResolutionDays;
-        metrics.bySeverity = breachMetrics.breachesBySeverity;
-        metrics.byType = breachMetrics.breachesByType;
+            IncidentMetrics metrics = new IncidentMetrics();
+            metrics.totalIncidents = breachMetrics.totalBreaches;
+            metrics.openIncidents = breachMetrics.openBreaches;
+            metrics.resolvedIncidents = breachMetrics.closedBreaches;
+            metrics.mttrDays = breachMetrics.averageResolutionDays;
+            metrics.bySeverity = breachMetrics.breachesBySeverity;
+            metrics.byType = breachMetrics.breachesByType;
 
-        return metrics;
+            return metrics;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('SOC2IncidentResponseService.getIncidentMetrics', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
+        }
     }
 
     // ========== Private Helper Methods ==========

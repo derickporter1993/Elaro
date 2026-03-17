@@ -257,70 +257,77 @@ public with sharing class ComplianceGraphService {
      */
     @AuraEnabled(cacheable=true)
     public static GraphStats getGraphStats() {
-        GraphStats stats = new GraphStats();
+        try {
+            GraphStats stats = new GraphStats();
 
-        List<AggregateResult> frameworkCounts = [
-            SELECT Framework__c, COUNT(Id) cnt
-            FROM Compliance_Gap__c
-            WITH USER_MODE
-            GROUP BY Framework__c
-        ];
+            List<AggregateResult> frameworkCounts = [
+                SELECT Framework__c, COUNT(Id) cnt
+                FROM Compliance_Gap__c
+                WITH USER_MODE
+                GROUP BY Framework__c
+            ];
 
-        stats.frameworkCounts = new Map<String, Integer>();
-        stats.totalGaps = 0;
+            stats.frameworkCounts = new Map<String, Integer>();
+            stats.totalGaps = 0;
 
-        for (AggregateResult ar : frameworkCounts) {
-            String framework = (String) ar.get('Framework__c');
-            Integer count = (Integer) ar.get('cnt');
-            stats.frameworkCounts.put(framework, count);
-            stats.totalGaps += count;
+            for (AggregateResult ar : frameworkCounts) {
+                String framework = (String) ar.get('Framework__c');
+                Integer count = (Integer) ar.get('cnt');
+                stats.frameworkCounts.put(framework, count);
+                stats.totalGaps += count;
+            }
+
+            List<AggregateResult> severityCounts = [
+                SELECT Severity__c, COUNT(Id) cnt
+                FROM Compliance_Gap__c
+                WITH USER_MODE
+                GROUP BY Severity__c
+            ];
+
+            stats.severityCounts = new Map<String, Integer>();
+            for (AggregateResult ar : severityCounts) {
+                String severity = (String) ar.get('Severity__c');
+                Integer count = (Integer) ar.get('cnt');
+                stats.severityCounts.put(severity, count);
+            }
+
+            List<AggregateResult> statusCounts = [
+                SELECT Status__c, COUNT(Id) cnt
+                FROM Compliance_Gap__c
+                WITH USER_MODE
+                GROUP BY Status__c
+            ];
+
+            stats.statusCounts = new Map<String, Integer>();
+            for (AggregateResult ar : statusCounts) {
+                String status = (String) ar.get('Status__c');
+                Integer count = (Integer) ar.get('cnt');
+                stats.statusCounts.put(status, count);
+            }
+
+            stats.totalFrameworks = stats.frameworkCounts.size();
+
+            // Count unique entities
+            List<AggregateResult> entityCounts = [
+                SELECT Entity_Type__c, COUNT_DISTINCT(Entity_Id__c) cnt
+                FROM Compliance_Gap__c
+                WHERE Entity_Id__c != null
+                WITH USER_MODE
+                GROUP BY Entity_Type__c
+            ];
+
+            stats.totalEntities = 0;
+            for (AggregateResult ar : entityCounts) {
+                stats.totalEntities += (Integer) ar.get('cnt');
+            }
+
+            return stats;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('ComplianceGraphService.getGraphStats', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-
-        List<AggregateResult> severityCounts = [
-            SELECT Severity__c, COUNT(Id) cnt
-            FROM Compliance_Gap__c
-            WITH USER_MODE
-            GROUP BY Severity__c
-        ];
-
-        stats.severityCounts = new Map<String, Integer>();
-        for (AggregateResult ar : severityCounts) {
-            String severity = (String) ar.get('Severity__c');
-            Integer count = (Integer) ar.get('cnt');
-            stats.severityCounts.put(severity, count);
-        }
-
-        List<AggregateResult> statusCounts = [
-            SELECT Status__c, COUNT(Id) cnt
-            FROM Compliance_Gap__c
-            WITH USER_MODE
-            GROUP BY Status__c
-        ];
-
-        stats.statusCounts = new Map<String, Integer>();
-        for (AggregateResult ar : statusCounts) {
-            String status = (String) ar.get('Status__c');
-            Integer count = (Integer) ar.get('cnt');
-            stats.statusCounts.put(status, count);
-        }
-
-        stats.totalFrameworks = stats.frameworkCounts.size();
-
-        // Count unique entities
-        List<AggregateResult> entityCounts = [
-            SELECT Entity_Type__c, COUNT_DISTINCT(Entity_Id__c) cnt
-            FROM Compliance_Gap__c
-            WHERE Entity_Id__c != null
-            WITH USER_MODE
-            GROUP BY Entity_Type__c
-        ];
-
-        stats.totalEntities = 0;
-        for (AggregateResult ar : entityCounts) {
-            stats.totalEntities += (Integer) ar.get('cnt');
-        }
-
-        return stats;
     }
 
     /**
@@ -331,68 +338,75 @@ public with sharing class ComplianceGraphService {
      */
     @AuraEnabled(cacheable=true)
     public static NodeDetails getNodeDetails(String nodeId, String nodeType) {
-        NodeDetails details = new NodeDetails();
-        details.nodeId = nodeId;
-        details.nodeType = nodeType;
+        try {
+            NodeDetails details = new NodeDetails();
+            details.nodeId = nodeId;
+            details.nodeType = nodeType;
 
-        if (nodeType == 'framework') {
-            String framework = nodeId.replace('framework-', '');
-            details.name = framework;
-            details.label = framework;
+            if (nodeType == 'framework') {
+                String framework = nodeId.replace('framework-', '');
+                details.name = framework;
+                details.label = framework;
 
-            Integer gapCount = [SELECT COUNT() FROM Compliance_Gap__c WHERE Framework__c = :framework WITH USER_MODE];
-            details.metadata = new Map<String, Object>{
-                'gapCount' => gapCount,
-                'color' => FRAMEWORK_COLORS.get(framework)
-            };
-        } else if (nodeType == 'policy') {
-            String policyName = nodeId.replace('policy-', '');
-            List<Compliance_Policy__mdt> policies = [
-                SELECT Label, Description__c, Risk_Category__c, Framework__c
-                FROM Compliance_Policy__mdt
-                WHERE DeveloperName = :policyName
-                WITH USER_MODE
-                LIMIT 1
-            ];
-
-            if (!policies.isEmpty()) {
-                details.name = policies[0].Label;
-                details.label = policies[0].Label;
+                Integer gapCount = [SELECT COUNT() FROM Compliance_Gap__c WHERE Framework__c = :framework WITH USER_MODE];
                 details.metadata = new Map<String, Object>{
-                    'description' => policies[0].Description__c,
-                    'riskCategory' => policies[0].Risk_Category__c,
-                    'framework' => policies[0].Framework__c
+                    'gapCount' => gapCount,
+                    'color' => FRAMEWORK_COLORS.get(framework)
                 };
-            }
-        } else if (nodeType == 'gap') {
-            String gapId = nodeId.replace('gap-', '');
-            List<Compliance_Gap__c> gaps = [
-                SELECT Id, Name, Framework__c, Severity__c, Status__c, Gap_Description__c,
-                       Risk_Score__c, Entity_Type__c, Entity_Id__c, Target_Remediation_Date__c
-                FROM Compliance_Gap__c
-                WHERE Id = :gapId
-                WITH USER_MODE
-                LIMIT 1
-            ];
+            } else if (nodeType == 'policy') {
+                String policyName = nodeId.replace('policy-', '');
+                List<Compliance_Policy__mdt> policies = [
+                    SELECT Label, Description__c, Risk_Category__c, Framework__c
+                    FROM Compliance_Policy__mdt
+                    WHERE DeveloperName = :policyName
+                    WITH USER_MODE
+                    LIMIT 1
+                ];
 
-            if (!gaps.isEmpty()) {
-                Compliance_Gap__c gap = gaps[0];
-                details.name = gap.Name;
-                details.label = gap.Name;
-                details.metadata = new Map<String, Object>{
-                    'framework' => gap.Framework__c,
-                    'severity' => gap.Severity__c,
-                    'status' => gap.Status__c,
-                    'description' => gap.Gap_Description__c,
-                    'riskScore' => gap.Risk_Score__c,
-                    'entityType' => gap.Entity_Type__c,
-                    'entityId' => gap.Entity_Id__c,
-                    'targetDate' => gap.Target_Remediation_Date__c
-                };
+                if (!policies.isEmpty()) {
+                    details.name = policies[0].Label;
+                    details.label = policies[0].Label;
+                    details.metadata = new Map<String, Object>{
+                        'description' => policies[0].Description__c,
+                        'riskCategory' => policies[0].Risk_Category__c,
+                        'framework' => policies[0].Framework__c
+                    };
+                }
+            } else if (nodeType == 'gap') {
+                String gapId = nodeId.replace('gap-', '');
+                List<Compliance_Gap__c> gaps = [
+                    SELECT Id, Name, Framework__c, Severity__c, Status__c, Gap_Description__c,
+                           Risk_Score__c, Entity_Type__c, Entity_Id__c, Target_Remediation_Date__c
+                    FROM Compliance_Gap__c
+                    WHERE Id = :gapId
+                    WITH USER_MODE
+                    LIMIT 1
+                ];
+
+                if (!gaps.isEmpty()) {
+                    Compliance_Gap__c gap = gaps[0];
+                    details.name = gap.Name;
+                    details.label = gap.Name;
+                    details.metadata = new Map<String, Object>{
+                        'framework' => gap.Framework__c,
+                        'severity' => gap.Severity__c,
+                        'status' => gap.Status__c,
+                        'description' => gap.Gap_Description__c,
+                        'riskScore' => gap.Risk_Score__c,
+                        'entityType' => gap.Entity_Type__c,
+                        'entityId' => gap.Entity_Id__c,
+                        'targetDate' => gap.Target_Remediation_Date__c
+                    };
+                }
             }
+
+            return details;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('ComplianceGraphService.getNodeDetails', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-
-        return details;
     }
 
     // ============================================
