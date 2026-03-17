@@ -39,87 +39,94 @@ public with sharing class ComplianceGraphService {
      */
     @AuraEnabled(cacheable=true)
     public static GraphData getComplianceGraph() {
-        GraphData graph = new GraphData();
-        graph.nodes = new List<GraphNode>();
-        graph.edges = new List<GraphEdge>();
+        try {
+            GraphData graph = new GraphData();
+            graph.nodes = new List<GraphNode>();
+            graph.edges = new List<GraphEdge>();
 
-        // Track existing node IDs for O(1) duplicate checks instead of nested loop scans
-        Set<String> existingNodeIds = new Set<String>();
+            // Track existing node IDs for O(1) duplicate checks instead of nested loop scans
+            Set<String> existingNodeIds = new Set<String>();
 
-        // Query gaps once and reuse
-        List<Compliance_Gap__c> gaps = getGapsForGraph();
+            // Query gaps once and reuse
+            List<Compliance_Gap__c> gaps = getGapsForGraph();
 
-        // Add framework nodes
-        Set<String> frameworks = new Set<String>();
-        for (Compliance_Gap__c gap : gaps) {
-            frameworks.add(gap.Framework__c);
-        }
-
-        for (String framework : frameworks) {
-            GraphNode frameworkNode = createFrameworkNode(framework);
-            graph.nodes.add(frameworkNode);
-            existingNodeIds.add(frameworkNode.id);
-        }
-
-        // Add policy nodes and connect to frameworks
-        Map<String, List<Compliance_Policy__mdt>> policiesByFramework = getPoliciesByFramework();
-        for (String framework : policiesByFramework.keySet()) {
-            for (Compliance_Policy__mdt policy : policiesByFramework.get(framework)) {
-                GraphNode policyNode = createPolicyNode(policy);
-                graph.nodes.add(policyNode);
-                existingNodeIds.add(policyNode.id);
-                graph.edges.add(new GraphEdge(
-                    'framework-' + framework,
-                    'policy-' + policy.DeveloperName,
-                    'CONTAINS',
-                    1
-                ));
+            // Add framework nodes
+            Set<String> frameworks = new Set<String>();
+            for (Compliance_Gap__c gap : gaps) {
+                frameworks.add(gap.Framework__c);
             }
-        }
 
-        // Add gap nodes and connect to policies and frameworks.
-        // Entity dedup uses Set lookup (O(1)) instead of scanning all nodes (O(n)).
-        for (Compliance_Gap__c gap : gaps) {
-            GraphNode gapNode = createGapNode(gap);
-            graph.nodes.add(gapNode);
-            existingNodeIds.add(gapNode.id);
+            for (String framework : frameworks) {
+                GraphNode frameworkNode = createFrameworkNode(framework);
+                graph.nodes.add(frameworkNode);
+                existingNodeIds.add(frameworkNode.id);
+            }
 
-            // Connect to policy
-            graph.edges.add(new GraphEdge(
-                'policy-' + gap.Policy_Reference__c,
-                'gap-' + gap.Id,
-                'HAS_GAP',
-                getSeverityWeight(gap.Severity__c)
-            ));
-
-            // Connect to framework directly
-            graph.edges.add(new GraphEdge(
-                'framework-' + gap.Framework__c,
-                'gap-' + gap.Id,
-                'FRAMEWORK_GAP',
-                1
-            ));
-
-            // Add entity connection if present
-            if (String.isNotBlank(gap.Entity_Type__c) && String.isNotBlank(gap.Entity_Id__c)) {
-                String entityNodeId = 'entity-' + gap.Entity_Type__c + '-' + gap.Entity_Id__c;
-
-                // O(1) Set lookup replaces O(n) linear scan of graph.nodes
-                if (!existingNodeIds.contains(entityNodeId)) {
-                    graph.nodes.add(createEntityNode(gap.Entity_Type__c, gap.Entity_Id__c));
-                    existingNodeIds.add(entityNodeId);
+            // Add policy nodes and connect to frameworks
+            Map<String, List<Compliance_Policy__mdt>> policiesByFramework = getPoliciesByFramework();
+            for (String framework : policiesByFramework.keySet()) {
+                for (Compliance_Policy__mdt policy : policiesByFramework.get(framework)) {
+                    GraphNode policyNode = createPolicyNode(policy);
+                    graph.nodes.add(policyNode);
+                    existingNodeIds.add(policyNode.id);
+                    graph.edges.add(new GraphEdge(
+                        'framework-' + framework,
+                        'policy-' + policy.DeveloperName,
+                        'CONTAINS',
+                        1
+                    ));
                 }
+            }
 
+            // Add gap nodes and connect to policies and frameworks.
+            // Entity dedup uses Set lookup (O(1)) instead of scanning all nodes (O(n)).
+            for (Compliance_Gap__c gap : gaps) {
+                GraphNode gapNode = createGapNode(gap);
+                graph.nodes.add(gapNode);
+                existingNodeIds.add(gapNode.id);
+
+                // Connect to policy
                 graph.edges.add(new GraphEdge(
+                    'policy-' + gap.Policy_Reference__c,
                     'gap-' + gap.Id,
-                    entityNodeId,
-                    'AFFECTS',
+                    'HAS_GAP',
                     getSeverityWeight(gap.Severity__c)
                 ));
-            }
-        }
 
-        return graph;
+                // Connect to framework directly
+                graph.edges.add(new GraphEdge(
+                    'framework-' + gap.Framework__c,
+                    'gap-' + gap.Id,
+                    'FRAMEWORK_GAP',
+                    1
+                ));
+
+                // Add entity connection if present
+                if (String.isNotBlank(gap.Entity_Type__c) && String.isNotBlank(gap.Entity_Id__c)) {
+                    String entityNodeId = 'entity-' + gap.Entity_Type__c + '-' + gap.Entity_Id__c;
+
+                    // O(1) Set lookup replaces O(n) linear scan of graph.nodes
+                    if (!existingNodeIds.contains(entityNodeId)) {
+                        graph.nodes.add(createEntityNode(gap.Entity_Type__c, gap.Entity_Id__c));
+                        existingNodeIds.add(entityNodeId);
+                    }
+
+                    graph.edges.add(new GraphEdge(
+                        'gap-' + gap.Id,
+                        entityNodeId,
+                        'AFFECTS',
+                        getSeverityWeight(gap.Severity__c)
+                    ));
+                }
+            }
+
+            return graph;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('ComplianceGraphService.getComplianceGraph', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
+        }
     }
 
     /**
@@ -129,37 +136,44 @@ public with sharing class ComplianceGraphService {
      */
     @AuraEnabled(cacheable=true)
     public static GraphData getGraphByFramework(String framework) {
-        GraphData graph = new GraphData();
-        graph.nodes = new List<GraphNode>();
-        graph.edges = new List<GraphEdge>();
+        try {
+            GraphData graph = new GraphData();
+            graph.nodes = new List<GraphNode>();
+            graph.edges = new List<GraphEdge>();
 
-        // Add framework node
-        graph.nodes.add(createFrameworkNode(framework));
+            // Add framework node
+            graph.nodes.add(createFrameworkNode(framework));
 
-        // Add policies for this framework
-        List<Compliance_Policy__mdt> policies = getPoliciesForFramework(framework);
-        for (Compliance_Policy__mdt policy : policies) {
-            graph.nodes.add(createPolicyNode(policy));
-            graph.edges.add(new GraphEdge(
-                'framework-' + framework,
-                'policy-' + policy.DeveloperName,
-                'CONTAINS',
-                1
-            ));
+            // Add policies for this framework
+            List<Compliance_Policy__mdt> policies = getPoliciesForFramework(framework);
+            for (Compliance_Policy__mdt policy : policies) {
+                graph.nodes.add(createPolicyNode(policy));
+                graph.edges.add(new GraphEdge(
+                    'framework-' + framework,
+                    'policy-' + policy.DeveloperName,
+                    'CONTAINS',
+                    1
+                ));
+            }
+
+            // Add gaps for this framework
+            for (Compliance_Gap__c gap : getGapsForFramework(framework)) {
+                graph.nodes.add(createGapNode(gap));
+                graph.edges.add(new GraphEdge(
+                    'policy-' + gap.Policy_Reference__c,
+                    'gap-' + gap.Id,
+                    'HAS_GAP',
+                    getSeverityWeight(gap.Severity__c)
+                ));
+            }
+
+            return graph;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('ComplianceGraphService.getGraphByFramework', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-
-        // Add gaps for this framework
-        for (Compliance_Gap__c gap : getGapsForFramework(framework)) {
-            graph.nodes.add(createGapNode(gap));
-            graph.edges.add(new GraphEdge(
-                'policy-' + gap.Policy_Reference__c,
-                'gap-' + gap.Id,
-                'HAS_GAP',
-                getSeverityWeight(gap.Severity__c)
-            ));
-        }
-
-        return graph;
     }
 
     /**
@@ -170,64 +184,71 @@ public with sharing class ComplianceGraphService {
      */
     @AuraEnabled(cacheable=true)
     public static ImpactAnalysis analyzeImpact(String entityType, String entityId) {
-        ImpactAnalysis analysis = new ImpactAnalysis();
-        analysis.entityType = entityType;
-        analysis.entityId = entityId;
-        analysis.affectedGaps = new List<AffectedGap>();
-        analysis.affectedFrameworks = new Set<String>();
-        analysis.riskScore = 0;
+        try {
+            ImpactAnalysis analysis = new ImpactAnalysis();
+            analysis.entityType = entityType;
+            analysis.entityId = entityId;
+            analysis.affectedGaps = new List<AffectedGap>();
+            analysis.affectedFrameworks = new Set<String>();
+            analysis.riskScore = 0;
 
-        // Find all gaps affecting this entity
-        List<Compliance_Gap__c> gaps = [
-            SELECT Id, Name, Framework__c, Severity__c, Status__c, Risk_Score__c,
-                   Gap_Description__c, Policy_Reference__c
-            FROM Compliance_Gap__c
-            WHERE Entity_Type__c = :entityType
-            AND Entity_Id__c = :entityId
-            WITH USER_MODE
-        ];
+            // Find all gaps affecting this entity
+            List<Compliance_Gap__c> gaps = [
+                SELECT Id, Name, Framework__c, Severity__c, Status__c, Risk_Score__c,
+                       Gap_Description__c, Policy_Reference__c
+                FROM Compliance_Gap__c
+                WHERE Entity_Type__c = :entityType
+                AND Entity_Id__c = :entityId
+                WITH USER_MODE
+            ];
 
-        for (Compliance_Gap__c gap : gaps) {
-            AffectedGap ag = new AffectedGap();
-            ag.gapId = gap.Id;
-            ag.gapName = gap.Name;
-            ag.framework = gap.Framework__c;
-            ag.severity = gap.Severity__c;
-            ag.status = gap.Status__c;
-            ag.riskScore = gap.Risk_Score__c;
-            analysis.affectedGaps.add(ag);
+            for (Compliance_Gap__c gap : gaps) {
+                AffectedGap ag = new AffectedGap();
+                ag.gapId = gap.Id;
+                ag.gapName = gap.Name;
+                ag.framework = gap.Framework__c;
+                ag.severity = gap.Severity__c;
+                ag.status = gap.Status__c;
+                ag.riskScore = gap.Risk_Score__c;
+                analysis.affectedGaps.add(ag);
 
-            analysis.affectedFrameworks.add(gap.Framework__c);
+                analysis.affectedFrameworks.add(gap.Framework__c);
 
-            if (gap.Risk_Score__c != null) {
-                analysis.riskScore += gap.Risk_Score__c;
-            } else {
-                analysis.riskScore += getSeverityRiskScore(gap.Severity__c);
+                if (gap.Risk_Score__c != null) {
+                    analysis.riskScore += gap.Risk_Score__c;
+                } else {
+                    analysis.riskScore += getSeverityRiskScore(gap.Severity__c);
+                }
             }
+
+            analysis.totalGaps = gaps.size();
+            analysis.criticalCount = 0;
+            analysis.highCount = 0;
+            analysis.mediumCount = 0;
+            analysis.lowCount = 0;
+
+            for (AffectedGap ag : analysis.affectedGaps) {
+                if (ag.severity == 'CRITICAL') {
+                    analysis.criticalCount++;
+                }
+                else if (ag.severity == 'HIGH') {
+                    analysis.highCount++;
+                }
+                else if (ag.severity == 'MEDIUM') {
+                    analysis.mediumCount++;
+                }
+                else if (ag.severity == 'LOW') {
+                    analysis.lowCount++;
+                }
+            }
+
+            return analysis;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('ComplianceGraphService.analyzeImpact', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-
-        analysis.totalGaps = gaps.size();
-        analysis.criticalCount = 0;
-        analysis.highCount = 0;
-        analysis.mediumCount = 0;
-        analysis.lowCount = 0;
-
-        for (AffectedGap ag : analysis.affectedGaps) {
-            if (ag.severity == 'CRITICAL') {
-                analysis.criticalCount++;
-            }
-            else if (ag.severity == 'HIGH') {
-                analysis.highCount++;
-            }
-            else if (ag.severity == 'MEDIUM') {
-                analysis.mediumCount++;
-            }
-            else if (ag.severity == 'LOW') {
-                analysis.lowCount++;
-            }
-        }
-
-        return analysis;
     }
 
     /**

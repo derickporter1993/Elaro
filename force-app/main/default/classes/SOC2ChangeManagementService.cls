@@ -229,45 +229,52 @@ public with sharing class SOC2ChangeManagementService extends ComplianceServiceB
      */
     @AuraEnabled
     public static Id generateChangeReport(Date startDate, Date endDate) {
-        if (startDate == null) {
-            startDate = Date.today().addDays(-30);
+        try {
+            if (startDate == null) {
+                startDate = Date.today().addDays(-30);
+            }
+            if (endDate == null) {
+                endDate = Date.today();
+            }
+
+            // Query changes
+            List<Metadata_Change__c> changes = [
+                SELECT Id, Name, Entity_Type__c, Entity_Name__c, Change_Type__c,
+                       Changed_By__c, Changed_Date__c, Change_Details__c,
+                       Ticket_Reference__c, Risk_Score__c, Approval_Status__c
+                FROM Metadata_Change__c
+                WHERE Changed_Date__c >= :startDate
+                AND Changed_Date__c <= :endDate
+                WITH USER_MODE
+                ORDER BY Changed_Date__c DESC
+            ];
+
+            // Generate report content
+            String reportContent = generateReportContent(changes, startDate, endDate);
+
+            // Create ContentVersion
+            ContentVersion cv = new ContentVersion(
+                Title = 'SOC2_Change_Report_' + startDate.format() + '_to_' + endDate.format(),
+                PathOnClient = 'SOC2_Change_Report.md',
+                VersionData = Blob.valueOf(reportContent),
+                Origin = 'H'
+            );
+            ElaroSecurityUtils.validateCRUDAccess('ContentVersion', DmlOperation.DML_INSERT);
+            insert as user cv;
+
+            // Get ContentDocumentId
+            cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
+
+            SOC2ChangeManagementService service = new SOC2ChangeManagementService();
+            service.logAuditEntry('REPORT_GENERATED', 'Generated SOC2 change report for ' + startDate + ' to ' + endDate, cv.ContentDocumentId);
+
+            return cv.ContentDocumentId;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('SOC2ChangeManagementService.generateChangeReport', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-        if (endDate == null) {
-            endDate = Date.today();
-        }
-
-        // Query changes
-        List<Metadata_Change__c> changes = [
-            SELECT Id, Name, Entity_Type__c, Entity_Name__c, Change_Type__c,
-                   Changed_By__c, Changed_Date__c, Change_Details__c,
-                   Ticket_Reference__c, Risk_Score__c, Approval_Status__c
-            FROM Metadata_Change__c
-            WHERE Changed_Date__c >= :startDate
-            AND Changed_Date__c <= :endDate
-            WITH USER_MODE
-            ORDER BY Changed_Date__c DESC
-        ];
-
-        // Generate report content
-        String reportContent = generateReportContent(changes, startDate, endDate);
-
-        // Create ContentVersion
-        ContentVersion cv = new ContentVersion(
-            Title = 'SOC2_Change_Report_' + startDate.format() + '_to_' + endDate.format(),
-            PathOnClient = 'SOC2_Change_Report.md',
-            VersionData = Blob.valueOf(reportContent),
-            Origin = 'H'
-        );
-        ElaroSecurityUtils.validateCRUDAccess('ContentVersion', DmlOperation.DML_INSERT);
-        insert as user cv;
-
-        // Get ContentDocumentId
-        cv = [SELECT ContentDocumentId FROM ContentVersion WHERE Id = :cv.Id WITH USER_MODE];
-
-        SOC2ChangeManagementService service = new SOC2ChangeManagementService();
-        service.logAuditEntry('REPORT_GENERATED', 'Generated SOC2 change report for ' + startDate + ' to ' + endDate, cv.ContentDocumentId);
-
-        return cv.ContentDocumentId;
     }
 
     // ========== Private Helper Methods ==========
