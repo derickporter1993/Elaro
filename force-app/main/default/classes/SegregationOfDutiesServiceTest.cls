@@ -6,7 +6,7 @@
  * @author Elaro
  * @version 1.0
  */
-@IsTest
+@IsTest(testFor=SegregationOfDutiesService.class)
 private class SegregationOfDutiesServiceTest {
     
     @TestSetup

@@ -167,8 +167,11 @@ private class MultiOrgManagerTest {
         MultiOrgManager.syncPolicies(policyIds);
         Test.stopTest();
         
-        // Verify no exceptions (async method)
-        Assert.isTrue(true, 'Policy sync should be queued');
+        // Verify sync completed without exceptions and orgs are still active
+        List<Elaro_Connected_Org__c> activeOrgs = [
+            SELECT Id FROM Elaro_Connected_Org__c WHERE Is_Active__c = true WITH USER_MODE
+        ];
+        Assert.isTrue(activeOrgs.size() > 0, 'Active connected orgs should exist after policy sync');
     }
     
     @isTest
@@ -192,7 +195,10 @@ private class MultiOrgManagerTest {
         Test.stopTest();
         
         // Should handle gracefully with no active orgs
-        Assert.isTrue(true, 'Should handle no active orgs gracefully');
+        List<Elaro_Connected_Org__c> activeOrgs = [
+            SELECT Id FROM Elaro_Connected_Org__c WHERE Is_Active__c = true WITH USER_MODE
+        ];
+        Assert.areEqual(0, activeOrgs.size(), 'No active orgs should remain after deactivation');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -230,7 +236,10 @@ private class MultiOrgManagerTest {
         Test.stopTest();
         
         // Verify connections were refreshed (async method)
-        Assert.isTrue(true, 'Connections should be refreshed');
+        List<Elaro_Connected_Org__c> orgs = [
+            SELECT Id FROM Elaro_Connected_Org__c WHERE Is_Active__c = true WITH USER_MODE
+        ];
+        Assert.isTrue(orgs.size() > 0, 'Active connected orgs should exist after refresh');
     }
     
     // ═══════════════════════════════════════════════════════════════

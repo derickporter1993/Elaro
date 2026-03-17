@@ -6,7 +6,7 @@
  * @group Rule Engine
  * @see SelfHealingDeployer
  */
-@IsTest
+@IsTest(testFor=SelfHealingDeployer.class)
 private class SelfHealingDeployerTest {
 
     @IsTest

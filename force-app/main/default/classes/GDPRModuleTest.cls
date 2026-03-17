@@ -5,7 +5,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@IsTest
+@IsTest(testFor=GDPRModule.class)
 private class GDPRModuleTest {
 
     @TestSetup

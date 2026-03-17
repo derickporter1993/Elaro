@@ -6,7 +6,7 @@
  * @group Rule Engine
  * @see ConfigScanEvaluator
  */
-@IsTest
+@IsTest(testFor=ConfigScanEvaluator.class)
 private class ConfigScanEvaluatorTest {
 
     private static Compliance_Rule__mdt createConfigRule(String configJson) {

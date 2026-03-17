@@ -4,7 +4,7 @@
  * @group Tests
  * @see ConsentExpirationBatch
  */
-@IsTest
+@IsTest(testFor=ConsentExpirationBatch.class)
 private class ConsentExpirationBatchTest {
 
     @TestSetup

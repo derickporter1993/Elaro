@@ -7,7 +7,7 @@
  * @group SEC Cybersecurity
  * @see DisclosureWorkflowService
  */
-@IsTest
+@IsTest(testFor=DisclosureWorkflowService.class)
 private class DisclosureWorkflowServiceTest {
 
     @TestSetup

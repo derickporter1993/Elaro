@@ -109,7 +109,7 @@ export default class TrustCenterPublicView extends LightningElement {
       }
 
       return null;
-    } catch (e) {
+    } catch (_e) {
       return null;
     }
   }

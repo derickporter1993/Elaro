@@ -2,7 +2,7 @@
  * Unit tests for ElaroPDFExporter
  * @group Tests
  */
-@IsTest
+@IsTest(testFor=ElaroPDFExporter.class)
 private class ElaroPDFExporterTest {
     
     @testSetup

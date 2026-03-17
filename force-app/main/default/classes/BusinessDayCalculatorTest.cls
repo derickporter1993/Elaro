@@ -8,7 +8,7 @@
  * @group SEC Cybersecurity
  * @see BusinessDayCalculator
  */
-@IsTest
+@IsTest(testFor=BusinessDayCalculator.class)
 private class BusinessDayCalculatorTest {
 
     /**

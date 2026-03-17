@@ -5,7 +5,7 @@
  * @group Tests
  * @see ElaroCCPASLAMonitorScheduler
  */
-@IsTest
+@IsTest(testFor=ElaroCCPASLAMonitorScheduler.class)
 private class ElaroCCPASLAMonitorSchedulerTest {
 
     @TestSetup

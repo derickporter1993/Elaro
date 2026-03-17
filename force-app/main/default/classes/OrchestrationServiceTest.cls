@@ -8,7 +8,7 @@
  * @group Command Center
  * @see OrchestrationService
  */
-@IsTest
+@IsTest(testFor=OrchestrationService.class)
 private class OrchestrationServiceTest {
 
     @TestSetup

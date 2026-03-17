@@ -2,7 +2,7 @@
  * Unit tests for ElaroDeliveryService
  * @group Tests
  */
-@IsTest
+@IsTest(testFor=ElaroDeliveryService.class)
 private class ElaroDeliveryServiceTest {
     
     @testSetup

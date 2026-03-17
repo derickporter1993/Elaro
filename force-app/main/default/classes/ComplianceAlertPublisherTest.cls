@@ -7,7 +7,7 @@
  * @group Event Monitoring
  * @see ComplianceAlertPublisher
  */
-@IsTest
+@IsTest(testFor=ComplianceAlertPublisher.class)
 private class ComplianceAlertPublisherTest {
 
     @IsTest

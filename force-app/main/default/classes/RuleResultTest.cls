@@ -6,7 +6,7 @@
  * @group Rule Engine
  * @see RuleResult
  */
-@IsTest
+@IsTest(testFor=RuleResult.class)
 private class RuleResultTest {
 
     private static Compliance_Rule__mdt createMockRule() {

@@ -1,7 +1,7 @@
 /**
  * Test class for SlackNotifier
  */
-@IsTest
+@IsTest(testFor=SlackNotifier.class)
 private class SlackNotifierTest {
     
     @isTest

@@ -7,7 +7,7 @@
  * @group Async Framework
  * @see StepProcessor
  */
-@IsTest
+@IsTest(testFor=StepProcessor.class)
 private class StepProcessorTest {
 
     /**

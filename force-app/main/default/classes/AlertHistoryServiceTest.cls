@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=AlertHistoryService.class)
 private class AlertHistoryServiceTest {
     @IsTest
     static void testRecentHistory() {

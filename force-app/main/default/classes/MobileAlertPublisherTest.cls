@@ -3,7 +3,7 @@
  * @author Elaro Development Team
  * @since 2026-01
  */
-@IsTest
+@IsTest(testFor=MobileAlertPublisher.class)
 private class MobileAlertPublisherTest {
 
     @TestSetup

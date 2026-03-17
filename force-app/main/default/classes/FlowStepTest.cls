@@ -6,7 +6,7 @@
  * @group Async Framework
  * @see FlowStep
  */
-@IsTest
+@IsTest(testFor=FlowStep.class)
 private class FlowStepTest {
 
     @IsTest

@@ -4,7 +4,7 @@
  * @group Tests
  * @see RetentionEnforcementScheduler
  */
-@IsTest
+@IsTest(testFor=RetentionEnforcementScheduler.class)
 private class RetentionEnforcementSchedulerTest {
 
     @TestSetup

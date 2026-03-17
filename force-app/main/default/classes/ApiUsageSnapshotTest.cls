@@ -1,4 +1,4 @@
-@IsTest
+@IsTest(testFor=ApiUsageSnapshot.class)
 private class ApiUsageSnapshotTest {
     @IsTest static void testRun() {
         Test.setMock(HttpCalloutMock.class, new ApiLimitsCalloutMock());

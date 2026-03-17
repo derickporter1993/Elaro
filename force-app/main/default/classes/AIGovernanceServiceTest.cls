@@ -5,7 +5,7 @@
  * @since v1.0.0 (Spring '26)
  * @group AI Governance
  */
-@IsTest
+@IsTest(testFor=AIGovernanceService.class)
 private class AIGovernanceServiceTest {
 
     @TestSetup

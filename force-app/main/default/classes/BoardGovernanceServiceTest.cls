@@ -7,7 +7,7 @@
  * @group SEC Cybersecurity
  * @see BoardGovernanceService
  */
-@IsTest
+@IsTest(testFor=BoardGovernanceService.class)
 private class BoardGovernanceServiceTest {
 
     @TestSetup

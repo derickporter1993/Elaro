@@ -4,7 +4,7 @@
  * @group Tests
  * @see ElaroDormantAccountAlertScheduler
  */
-@IsTest
+@IsTest(testFor=ElaroDormantAccountAlertScheduler.class)
 private class ElaroDormantAccountAlertSchedulerTest {
 
     @isTest
