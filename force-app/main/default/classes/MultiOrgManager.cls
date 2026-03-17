@@ -58,44 +58,51 @@ public with sharing class MultiOrgManager {
      */
     @AuraEnabled(cacheable=true)
     public static MultiOrgStatus getMultiOrgStatus() {
-        MultiOrgStatus status = new MultiOrgStatus();
-        status.currentOrg = getCurrentOrgStatus();
-        status.connectedOrgs = new List<OrgStatus>();
-        status.aggregateScore = 0;
+        try {
+            MultiOrgStatus status = new MultiOrgStatus();
+            status.currentOrg = getCurrentOrgStatus();
+            status.connectedOrgs = new List<OrgStatus>();
+            status.aggregateScore = 0;
 
-        List<Elaro_Connected_Org__c> orgs = [
-            SELECT Id, Name, Org_Id__c, Instance_URL__c, Environment_Type__c,
-                   Region__c, Is_Active__c, Last_Sync__c, Connection_Status__c,
-                   Compliance_Score__c
-            FROM Elaro_Connected_Org__c
-            WHERE Is_Active__c = true
-            WITH USER_MODE
-            ORDER BY Name
-        ];
-        
-        Decimal totalScore = status.currentOrg.complianceScore;
-        Integer orgCount = 1;
-        
-        for (Elaro_Connected_Org__c org : orgs) {
-            OrgStatus os = new OrgStatus();
-            os.orgId = org.Id;
-            os.name = org.Name;
-            os.instanceUrl = org.Instance_URL__c;
-            os.environmentType = org.Environment_Type__c;
-            os.region = org.Region__c;
-            os.connectionStatus = org.Connection_Status__c;
-            os.lastSync = org.Last_Sync__c;
-            os.complianceScore = org.Compliance_Score__c != null ? org.Compliance_Score__c : 0;
-            
-            status.connectedOrgs.add(os);
-            totalScore += os.complianceScore;
-            orgCount++;
+            List<Elaro_Connected_Org__c> orgs = [
+                SELECT Id, Name, Org_Id__c, Instance_URL__c, Environment_Type__c,
+                       Region__c, Is_Active__c, Last_Sync__c, Connection_Status__c,
+                       Compliance_Score__c
+                FROM Elaro_Connected_Org__c
+                WHERE Is_Active__c = true
+                WITH USER_MODE
+                ORDER BY Name
+            ];
+
+            Decimal totalScore = status.currentOrg.complianceScore;
+            Integer orgCount = 1;
+
+            for (Elaro_Connected_Org__c org : orgs) {
+                OrgStatus os = new OrgStatus();
+                os.orgId = org.Id;
+                os.name = org.Name;
+                os.instanceUrl = org.Instance_URL__c;
+                os.environmentType = org.Environment_Type__c;
+                os.region = org.Region__c;
+                os.connectionStatus = org.Connection_Status__c;
+                os.lastSync = org.Last_Sync__c;
+                os.complianceScore = org.Compliance_Score__c != null ? org.Compliance_Score__c : 0;
+
+                status.connectedOrgs.add(os);
+                totalScore += os.complianceScore;
+                orgCount++;
+            }
+
+            status.aggregateScore = totalScore / orgCount;
+            status.totalOrgs = orgCount;
+
+            return status;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('MultiOrgManager.getMultiOrgStatus', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-        
-        status.aggregateScore = totalScore / orgCount;
-        status.totalOrgs = orgCount;
-        
-        return status;
     }
     
     /**
@@ -168,41 +175,48 @@ public with sharing class MultiOrgManager {
      */
     @AuraEnabled(cacheable=true)
     public static AggregateMetrics getAggregateMetrics() {
-        AggregateMetrics metrics = new AggregateMetrics();
-        
-        // Get current org metrics
-        Map<String, Object> currentScore = ElaroComplianceScorer.calculateComplianceScore();
-        metrics.totalEvents = 0;
-        metrics.totalAlerts = 0;
-        metrics.avgComplianceScore = (Decimal)currentScore.get('overallScore');
-        
-        // Count events
-        metrics.totalEvents = [SELECT COUNT() FROM Elaro_Evidence_Item__c WHERE CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE];
-        
-        // Get connected org metrics
-        List<Elaro_Connected_Org__c> orgs = [
-            SELECT Compliance_Score__c, Event_Count__c, Alert_Count__c
-            FROM Elaro_Connected_Org__c
-            WHERE Is_Active__c = true
-            WITH USER_MODE
-        ];
-        
-        Decimal scoreSum = metrics.avgComplianceScore;
-        Integer count = 1;
-        
-        for (Elaro_Connected_Org__c org : orgs) {
-            if (org.Compliance_Score__c != null) {
-                scoreSum += org.Compliance_Score__c;
-                count++;
+        try {
+            AggregateMetrics metrics = new AggregateMetrics();
+
+            // Get current org metrics
+            Map<String, Object> currentScore = ElaroComplianceScorer.calculateComplianceScore();
+            metrics.totalEvents = 0;
+            metrics.totalAlerts = 0;
+            metrics.avgComplianceScore = (Decimal)currentScore.get('overallScore');
+
+            // Count events
+            metrics.totalEvents = [SELECT COUNT() FROM Elaro_Evidence_Item__c WHERE CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE];
+
+            // Get connected org metrics
+            List<Elaro_Connected_Org__c> orgs = [
+                SELECT Compliance_Score__c, Event_Count__c, Alert_Count__c
+                FROM Elaro_Connected_Org__c
+                WHERE Is_Active__c = true
+                WITH USER_MODE
+            ];
+
+            Decimal scoreSum = metrics.avgComplianceScore;
+            Integer count = 1;
+
+            for (Elaro_Connected_Org__c org : orgs) {
+                if (org.Compliance_Score__c != null) {
+                    scoreSum += org.Compliance_Score__c;
+                    count++;
+                }
+                metrics.totalEvents += org.Event_Count__c != null ? (Integer)org.Event_Count__c : 0;
+                metrics.totalAlerts += org.Alert_Count__c != null ? (Integer)org.Alert_Count__c : 0;
             }
-            metrics.totalEvents += org.Event_Count__c != null ? (Integer)org.Event_Count__c : 0;
-            metrics.totalAlerts += org.Alert_Count__c != null ? (Integer)org.Alert_Count__c : 0;
+
+            metrics.avgComplianceScore = scoreSum / count;
+            metrics.orgCount = count;
+
+            return metrics;
+        } catch (AuraHandledException ahe) {
+            throw ahe;
+        } catch (Exception e) {
+            ElaroLogger.error('MultiOrgManager.getAggregateMetrics', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to complete the operation. Please verify you have the required permissions and try again.');
         }
-        
-        metrics.avgComplianceScore = scoreSum / count;
-        metrics.orgCount = count;
-        
-        return metrics;
     }
     
     // ═══════════════════════════════════════════════════════════════
