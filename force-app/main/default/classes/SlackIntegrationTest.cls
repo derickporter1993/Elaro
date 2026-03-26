@@ -4,7 +4,7 @@
  * @group Tests
  * @see SlackIntegration
  */
-@IsTest
+@IsTest(testFor=SlackIntegration.class)
 private class SlackIntegrationTest {
 
     /**

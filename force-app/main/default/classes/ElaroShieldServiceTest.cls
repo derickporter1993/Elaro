@@ -2,7 +2,7 @@
  * Unit tests for ElaroShieldService
  * @group Tests
  */
-@IsTest
+@IsTest(testFor=ElaroShieldService.class)
 private class ElaroShieldServiceTest {
     
     @testSetup

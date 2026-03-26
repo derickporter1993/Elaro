@@ -5,7 +5,7 @@
  * @since v1.0.0 (Spring '26)
  * @group Trust Center
  */
-@IsTest
+@IsTest(testFor=TrustCenterLinkService.class)
 private class TrustCenterLinkServiceTest {
 
     @IsTest

@@ -4,7 +4,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@IsTest
+@IsTest(testFor=ElaroScheduledDelivery.class)
 private class ElaroScheduledDeliveryTest {
     
     @testSetup

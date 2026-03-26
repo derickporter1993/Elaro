@@ -6,7 +6,7 @@
  * @group Async Framework
  * @see DMLStep
  */
-@IsTest
+@IsTest(testFor=DMLStep.class)
 private class DMLStepTest {
 
     private class TestDMLStep extends DMLStep {

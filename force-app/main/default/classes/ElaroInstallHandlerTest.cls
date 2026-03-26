@@ -8,7 +8,7 @@
  *
  * @see ElaroInstallHandler
  */
-@IsTest
+@IsTest(testFor=ElaroInstallHandler.class)
 private class ElaroInstallHandlerTest {
 
     /**

@@ -9,7 +9,7 @@
  * @group Event Processing
  * @see ElaroEventProcessor
  */
-@IsTest
+@IsTest(testFor=ElaroEventProcessor.class)
 private class ElaroEventProcessorTest {
 
     @IsTest

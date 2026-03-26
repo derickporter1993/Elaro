@@ -6,7 +6,7 @@
  * @group Rule Engine
  * @see RuleEngineController
  */
-@IsTest
+@IsTest(testFor=RuleEngineController.class)
 private class RuleEngineControllerTest {
 
     @IsTest

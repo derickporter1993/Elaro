@@ -7,7 +7,7 @@
  * @group Event Monitoring
  * @see BreachPatternMatcher
  */
-@IsTest
+@IsTest(testFor=BreachPatternMatcher.class)
 private class BreachPatternMatcherTest {
 
     @IsTest

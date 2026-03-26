@@ -10,7 +10,7 @@
  * 
  * Target Coverage: 90%+
  */
-@IsTest
+@IsTest(testFor=ElaroGLBAPrivacyNoticeService.class)
 private class ElaroGLBAPrivacyNoticeServiceTest {
     
     @TestSetup

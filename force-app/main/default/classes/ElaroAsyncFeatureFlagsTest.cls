@@ -7,7 +7,7 @@
  * @group Async Framework
  * @see ElaroAsyncFeatureFlags
  */
-@IsTest
+@IsTest(testFor=ElaroAsyncFeatureFlags.class)
 private class ElaroAsyncFeatureFlagsTest {
 
     @IsTest

@@ -1,7 +1,7 @@
 /**
  * Test class for PerformanceRuleEngine
  */
-@IsTest
+@IsTest(testFor=PerformanceRuleEngine.class)
 private class PerformanceRuleEngineTest {
     
     @isTest

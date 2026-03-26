@@ -6,7 +6,7 @@
  * @group Rule Engine
  * @see MetadataCheckEvaluator
  */
-@IsTest
+@IsTest(testFor=MetadataCheckEvaluator.class)
 private class MetadataCheckEvaluatorTest {
 
     private static Compliance_Rule__mdt createMetadataRule(String configJson) {

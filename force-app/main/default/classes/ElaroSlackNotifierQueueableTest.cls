@@ -1,7 +1,7 @@
 /**
  * Test class for ElaroSlackNotifierQueueable
  */
-@IsTest
+@IsTest(testFor=ElaroSlackNotifierQueueable.class)
 private class ElaroSlackNotifierQueueableTest {
     
     // Mock class for Slack HTTP callout

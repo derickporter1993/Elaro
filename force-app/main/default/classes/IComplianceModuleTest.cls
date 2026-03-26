@@ -13,7 +13,7 @@
  * @see SOC2Module
  * @see GDPRModule
  */
-@IsTest
+@IsTest(testFor=IComplianceModule.class)
 private class IComplianceModuleTest {
 
     @IsTest

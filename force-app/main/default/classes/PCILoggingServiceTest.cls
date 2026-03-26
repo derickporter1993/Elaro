@@ -5,7 +5,7 @@
  * @author Elaro
  * @version 3.0
  */
-@IsTest
+@IsTest(testFor=PCILoggingService.class)
 private class PCILoggingServiceTest {
     
     @TestSetup

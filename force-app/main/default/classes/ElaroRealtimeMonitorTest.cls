@@ -2,7 +2,7 @@
  * Unit tests for ElaroRealtimeMonitor
  * @group Tests
  */
-@IsTest
+@IsTest(testFor=ElaroRealtimeMonitor.class)
 private class ElaroRealtimeMonitorTest {
     
     // ═══════════════════════════════════════════════════════════════

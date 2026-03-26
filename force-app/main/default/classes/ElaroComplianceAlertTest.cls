@@ -4,7 +4,7 @@
  * @group Tests
  * @author Elaro Team
  */
-@isTest
+@isTest(testFor=ElaroComplianceAlert.class)
 private class ElaroComplianceAlertTest {
     
     @testSetup
@@ -239,7 +239,8 @@ private class ElaroComplianceAlertTest {
         Test.stopTest();
         
         // Verify email was sent (in test context, email limits are checked)
-        Assert.isTrue(true, 'Email alert should be sent');
+        Integer emailInvocations = Limits.getEmailInvocations();
+        Assert.isTrue(emailInvocations > 0, 'Email invocation count should be greater than zero after sending alert notification');
     }
     
     @isTest
@@ -258,8 +259,9 @@ private class ElaroComplianceAlertTest {
         Test.startTest();
         ElaroComplianceAlert.sendAlertNotification('SLACK', JSON.serialize(alertData));
         Test.stopTest();
-        
-        Assert.isTrue(true, 'Slack alert should be sent');
+
+        // Verify no exception was thrown and the callout was made
+        Assert.areEqual(1, Limits.getCallouts(), 'Slack notification should make exactly one HTTP callout');
     }
     
     @isTest
@@ -278,8 +280,9 @@ private class ElaroComplianceAlertTest {
         Test.startTest();
         ElaroComplianceAlert.sendAlertNotification('PAGERDUTY', JSON.serialize(alertData));
         Test.stopTest();
-        
-        Assert.isTrue(true, 'PagerDuty alert should be sent');
+
+        // Verify no exception was thrown and the callout was made
+        Assert.areEqual(1, Limits.getCallouts(), 'PagerDuty notification should make exactly one HTTP callout');
     }
     
     @isTest
@@ -299,7 +302,7 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.sendAlertNotification('INVALID', JSON.serialize(alertData));
         } catch (Exception e) {
             // May or may not throw exception depending on implementation
-            Assert.isTrue(true, 'Should handle invalid channel');
+            Assert.isNotNull(e.getMessage(), 'Exception for invalid channel should have a message');
         }
         Test.stopTest();
     }
@@ -336,7 +339,7 @@ private class ElaroComplianceAlertTest {
         Test.stopTest();
         
         // Should have at least the pending review items from setup
-        Assert.isTrue(alerts.size() >= 0, 'Should return alerts if available');
+        Assert.isTrue(alerts.size() > 0, 'Should return alerts from pending review evidence items created in test setup');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -365,8 +368,9 @@ private class ElaroComplianceAlertTest {
         ElaroComplianceAlert.queueAlert(config, eventData, result);
         Test.stopTest();
 
-        // Verify queue items were created (async processing skipped in test context)
-        Assert.isTrue(true, 'Alert should be queued via single AlertDispatchQueueable');
+        // Verify the result object was passed through correctly
+        Assert.areEqual(true, result.alertTriggered, 'Alert result should remain triggered after queuing');
+        Assert.areEqual('ALERT-QUEUE', result.alertId, 'Alert ID should be preserved after queuing');
     }
 
     @isTest
@@ -441,7 +445,7 @@ private class ElaroComplianceAlertTest {
         }
         Test.stopTest();
 
-        Assert.isTrue(true, 'AlertDispatchQueueable should process multiple items in single execution');
+        Assert.areEqual(2, items.size(), 'AlertDispatchQueueable should have processed both EMAIL and BELL items');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -470,8 +474,9 @@ private class ElaroComplianceAlertTest {
             ElaroComplianceAlert.sendAlertNotification('EMAIL', JSON.serialize(alertData));
         }
         Test.stopTest();
-        
-        Assert.isTrue(true, 'Bulk alerts should be sent without governor limit errors');
+
+        // Verify all 200 emails were sent without hitting governor limits
+        Assert.isTrue(Limits.getEmailInvocations() > 0, 'Bulk email alert sending should record email invocations without governor limit errors');
     }
     
     @isTest

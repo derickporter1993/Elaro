@@ -9,7 +9,7 @@
  * @see FeatureFlags
  * @see Elaro_Feature_Flags__c
  */
-@IsTest
+@IsTest(testFor=FeatureFlags.class)
 private class FeatureFlagsTest {
 
     /**

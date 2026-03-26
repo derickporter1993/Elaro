@@ -10,7 +10,7 @@
  * @group Event Monitoring
  * @see ConfigDriftDetector
  */
-@IsTest
+@IsTest(testFor=ConfigDriftDetector.class)
 private class ConfigDriftDetectorTest {
 
     @IsTest
@@ -173,7 +173,7 @@ private class ConfigDriftDetectorTest {
         Test.stopTest();
 
         // 150 events published in a single bulk call should not hit DML limits
-        Assert.isTrue(true, 'Bulk drift events should publish without hitting 150 DML limit');
+        Assert.isTrue(Limits.getDmlStatements() > 0, 'Bulk publishing 150 drift events should execute DML without hitting governor limits');
     }
 
     @IsTest

@@ -4,7 +4,7 @@
  * @group Tests
  * @see DataResidencyService
  */
-@IsTest
+@IsTest(testFor=DataResidencyService.class)
 private class DataResidencyServiceTest {
 
     @TestSetup

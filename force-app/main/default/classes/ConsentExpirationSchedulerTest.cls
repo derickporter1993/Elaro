@@ -5,7 +5,7 @@
  * @group Tests
  * @see ConsentExpirationScheduler
  */
-@IsTest
+@IsTest(testFor=ConsentExpirationScheduler.class)
 private class ConsentExpirationSchedulerTest {
 
     @TestSetup

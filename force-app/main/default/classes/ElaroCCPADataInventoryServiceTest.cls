@@ -10,7 +10,7 @@
  * 
  * Target Coverage: 90%+
  */
-@IsTest
+@IsTest(testFor=ElaroCCPADataInventoryService.class)
 private class ElaroCCPADataInventoryServiceTest {
     
     @TestSetup

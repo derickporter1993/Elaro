@@ -1,7 +1,7 @@
 /**
  * Test class for ElaroHIPAAComplianceService
  */
-@IsTest
+@IsTest(testFor=ElaroHIPAAComplianceService.class)
 private class ElaroHIPAAComplianceServiceTest {
     
     @TestSetup
