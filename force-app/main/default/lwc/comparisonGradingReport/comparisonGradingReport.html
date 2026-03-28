@@ -1,0 +1,177 @@
+<template>
+  <!-- Loading State -->
+  <template lwc:if={isLoading}>
+    <lightning-spinner alternative-text={label.CGR_Loading} size="medium"></lightning-spinner>
+  </template>
+
+  <!-- Error State -->
+  <template lwc:elseif={hasError}>
+    <div class="slds-illustration slds-illustration_small">
+      <div class="slds-text-longform">
+        <h3 class="slds-text-heading_medium">{label.CGR_Error}</h3>
+        <p class="slds-text-body_regular">{errorMessage}</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- Empty State -->
+  <template lwc:elseif={isEmpty}>
+    <div class="slds-illustration slds-illustration_small">
+      <div class="slds-text-longform">
+        <p class="slds-text-body_regular">{label.CGR_NoData}</p>
+      </div>
+    </div>
+  </template>
+
+  <!-- Report Content -->
+  <template lwc:elseif={hasData}>
+    <lightning-card title={label.CGR_Title} icon-name="standard:comparison">
+      <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+        <!-- Generated Date -->
+        <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_medium">{formattedDate}</p>
+
+        <!-- Grade Cards -->
+        <div class="slds-grid slds-gutters slds-m-bottom_large">
+          <!-- Platform A Card -->
+          <div class="slds-col slds-size_1-of-2">
+            <div class="slds-box slds-box_small slds-text-align_center">
+              <h2 class="slds-text-heading_small slds-m-bottom_xx-small">{report.platformAName}</h2>
+              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">{report.platformAType}</p>
+              <div class={platformAGradeClass}>{report.platformAGrade}</div>
+              <p class="slds-text-heading_small slds-m-top_small">{report.platformAWeightedTotal}/10</p>
+              <p class="slds-text-body_small slds-text-color_weak">12 categories scored</p>
+            </div>
+          </div>
+          <!-- Platform B Card -->
+          <div class="slds-col slds-size_1-of-2">
+            <div class="slds-box slds-box_small slds-text-align_center">
+              <h2 class="slds-text-heading_small slds-m-bottom_xx-small">{report.platformBName}</h2>
+              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">{report.platformBType}</p>
+              <div class={platformBGradeClass}>{report.platformBGrade}</div>
+              <p class="slds-text-heading_small slds-m-top_small">{report.platformBWeightedTotal}/10</p>
+              <p class="slds-text-body_small slds-text-color_weak">{report.sharedCategoryCount} categories scored</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benchmark Table -->
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-bottom_large" aria-label="Benchmark comparison table">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th class="" scope="col"><div class="slds-truncate" title={label.CGR_Category}>{label.CGR_Category}</div></th>
+              <th class="" scope="col"><div class="slds-truncate" title={label.CGR_Weight}>{label.CGR_Weight}</div></th>
+              <th class="" scope="col"><div class="slds-truncate" title={report.platformAName}>{report.platformAName}</div></th>
+              <th class="" scope="col"><div class="slds-truncate" title={report.platformBName}>{report.platformBName}</div></th>
+              <th class="" scope="col"><div class="slds-truncate" title="Delta">Delta</div></th>
+              <th class="" scope="col"><div class="slds-truncate" title={label.CGR_Winner}>{label.CGR_Winner}</div></th>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={benchmarkRows} for:item="row">
+              <tr key={row.key}>
+                <th scope="row"><div class="slds-truncate" title={row.name}>{row.name}</div></th>
+                <td><div class="slds-truncate">{row.weight}</div></td>
+                <td>
+                  <div class="slds-truncate">
+                    <template lwc:if={row.aIsNA}>
+                      <lightning-badge label={label.CGR_OutsideScope} class="na-badge"></lightning-badge>
+                    </template>
+                    <template lwc:else>{row.aScore}</template>
+                  </div>
+                </td>
+                <td>
+                  <div class="slds-truncate">
+                    <template lwc:if={row.bIsNA}>
+                      <lightning-badge label={label.CGR_OutsideScope} class="na-badge"></lightning-badge>
+                    </template>
+                    <template lwc:else>{row.bScore}</template>
+                  </div>
+                </td>
+                <td><div class="slds-truncate">{row.deltaDisplay}</div></td>
+                <td><div class={row.winnerClass}>{row.winner}</div></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+
+        <!-- Strengths & Weaknesses -->
+        <div class="slds-grid slds-gutters slds-m-bottom_large">
+          <!-- Platform A -->
+          <div class="slds-col slds-size_1-of-2">
+            <h3 class="slds-text-heading_small slds-m-bottom_small">{report.platformAName}</h3>
+
+            <div class="slds-m-bottom_small">
+              <h4 class="slds-text-title_caps slds-m-bottom_xx-small">{label.CGR_Strengths}</h4>
+              <template for:each={platformAStrengths} for:item="entry">
+                <div key={entry.key} class="slds-m-bottom_xx-small">
+                  <p class="slds-text-body_small"><strong>{entry.categoryName} ({entry.score}/10)</strong></p>
+                  <ul class="slds-list_dotted">
+                    <template for:each={entry.items} for:item="item">
+                      <li key={item}>{item}</li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+            </div>
+
+            <div>
+              <h4 class="slds-text-title_caps slds-m-bottom_xx-small">{label.CGR_Weaknesses}</h4>
+              <template for:each={platformAWeaknesses} for:item="entry">
+                <div key={entry.key} class="slds-m-bottom_xx-small">
+                  <p class="slds-text-body_small"><strong>{entry.categoryName} ({entry.score}/10)</strong></p>
+                  <ul class="slds-list_dotted">
+                    <template for:each={entry.items} for:item="item">
+                      <li key={item}>{item}</li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Platform B -->
+          <div class="slds-col slds-size_1-of-2">
+            <h3 class="slds-text-heading_small slds-m-bottom_small">{report.platformBName}</h3>
+
+            <div class="slds-m-bottom_small">
+              <h4 class="slds-text-title_caps slds-m-bottom_xx-small">{label.CGR_Strengths}</h4>
+              <template for:each={platformBStrengths} for:item="entry">
+                <div key={entry.key} class="slds-m-bottom_xx-small">
+                  <p class="slds-text-body_small"><strong>{entry.categoryName} ({entry.score}/10)</strong></p>
+                  <ul class="slds-list_dotted">
+                    <template for:each={entry.items} for:item="item">
+                      <li key={item}>{item}</li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+            </div>
+
+            <div>
+              <h4 class="slds-text-title_caps slds-m-bottom_xx-small">{label.CGR_Weaknesses}</h4>
+              <template for:each={platformBWeaknesses} for:item="entry">
+                <div key={entry.key} class="slds-m-bottom_xx-small">
+                  <p class="slds-text-body_small"><strong>{entry.categoryName} ({entry.score}/10)</strong></p>
+                  <ul class="slds-list_dotted">
+                    <template for:each={entry.items} for:item="item">
+                      <li key={item}>{item}</li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="slds-box slds-box_small slds-theme_shade slds-m-bottom_medium">
+          <h3 class="slds-text-heading_small slds-m-bottom_x-small">Summary</h3>
+          <p class="slds-text-body_regular">{report.summary}</p>
+        </div>
+
+        <!-- Methodology Note -->
+        <p class="slds-text-body_small slds-text-color_weak">{label.CGR_Methodology}</p>
+      </div>
+    </lightning-card>
+  </template>
+</template>

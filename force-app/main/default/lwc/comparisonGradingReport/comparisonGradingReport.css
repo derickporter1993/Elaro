@@ -1,0 +1,44 @@
+.grade-badge {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  min-width: 4rem;
+  text-align: center;
+}
+
+.grade-a {
+  background-color: var(--slds-g-color-palette-green-20, #cdefc4);
+  color: var(--slds-g-color-palette-green-80, #2e6e1e);
+}
+
+.grade-b {
+  background-color: var(--slds-g-color-palette-blue-20, #c2dbf7);
+  color: var(--slds-g-color-palette-blue-80, #1a3e72);
+}
+
+.grade-c {
+  background-color: var(--slds-g-color-palette-yellow-20, #f7e6b5);
+  color: var(--slds-g-color-palette-yellow-80, #6e5b1e);
+}
+
+.grade-d {
+  background-color: var(--slds-g-color-palette-orange-20, #fdd4b9);
+  color: var(--slds-g-color-palette-orange-80, #7e3f0c);
+}
+
+.grade-f {
+  background-color: var(--slds-g-color-palette-red-20, #fdd4d4);
+  color: var(--slds-g-color-palette-red-80, #7e1e1e);
+}
+
+.grade-neutral {
+  background-color: var(--slds-g-color-neutral-base-80, #e0e5ee);
+  color: var(--slds-g-color-neutral-base-30, #444);
+}
+
+.na-badge {
+  --slds-c-badge-color-background: var(--slds-g-color-neutral-base-80, #e0e5ee);
+  --slds-c-badge-text-color: var(--slds-g-color-neutral-base-30, #444);
+}

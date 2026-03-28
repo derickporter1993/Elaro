@@ -1644,4 +1644,96 @@
         <shortDescription>Governor limit warning message</shortDescription>
         <value>Approaching governor limits. Processing paused and will resume.</value>
     </labels>
+    <!-- Comparison Grading Report Labels -->
+    <labels>
+        <fullName>CGR_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comparison grading report title</shortDescription>
+        <value>Platform Comparison Report</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comparison report loading message</shortDescription>
+        <value>Generating comparison report...</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comparison report error message</shortDescription>
+        <value>Unable to generate comparison report. Please try again.</value>
+    </labels>
+    <labels>
+        <fullName>CGR_NoData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Comparison report no data message</shortDescription>
+        <value>No comparison data available.</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Category</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Benchmark category column header</shortDescription>
+        <value>Category</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Weight</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Weight column header</shortDescription>
+        <value>Weight</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Score</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Score column header</shortDescription>
+        <value>Score</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Winner</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Winner column header</shortDescription>
+        <value>Leader</value>
+    </labels>
+    <labels>
+        <fullName>CGR_OutsideScope</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Outside scope badge label</shortDescription>
+        <value>Outside Scope</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Tie</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Tie indicator for equal scores</shortDescription>
+        <value>Tie</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Strengths</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Strengths section header</shortDescription>
+        <value>Top Strengths</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Weaknesses</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Weaknesses section header</shortDescription>
+        <value>Areas for Improvement</value>
+    </labels>
+    <labels>
+        <fullName>CGR_Methodology</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Methodology note for comparison report</shortDescription>
+        <value>Methodology: These platforms are fundamentally different product types. Each is scored on how well it achieves its own stated goals, not on absolute feature count. Categories outside a platform's scope are marked "Outside Scope" and excluded from grade calculation.</value>
+    </labels>
 </CustomLabels>
