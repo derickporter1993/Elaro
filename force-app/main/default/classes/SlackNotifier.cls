@@ -98,40 +98,59 @@ public with sharing class SlackNotifier {
     }
     
     /**
-     * Queueable implementation for bulk Slack notifications
-     * Provides better error handling and monitoring than @future
+     * Queueable implementation for bulk Slack notifications.
+     * Guards against the 100-callout governor limit by processing up to
+     * MAX_CALLOUTS_PER_JOB payloads and chaining overflow into a new Queueable.
      */
     public class SlackBulkNotificationQueueable implements Queueable, Database.AllowsCallouts {
+        @TestVisible
+        private static final Integer MAX_CALLOUTS_PER_JOB = 90;
         private String serializedPayloads;
-        
+
         public SlackBulkNotificationQueueable(String serializedPayloads) {
             this.serializedPayloads = serializedPayloads;
         }
-        
+
         public void execute(QueueableContext context) {
             String correlationId = 'BULK-' + System.now().getTime();
             try {
-                List<Object> payloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
-                Integer index = 0;
-                for (Object payloadObj : payloads) {
-                    String jsonPayload = (String) payloadObj;
-                    HttpRequest req = new HttpRequest();
-                    req.setEndpoint('callout:Slack_Webhook');
-                    req.setMethod('POST');
-                    req.setHeader('Content-Type', 'application/json');
-                    req.setBody(jsonPayload);
-                    req.setTimeout(10000);
-                    HttpResponse res = new Http().send(req);
-                    if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
-                        String errorCorrelationId = correlationId + '-' + index;
-                        logBulkAsyncError('HTTP_ERROR', 'Slack bulk notify failed with status ' + res.getStatusCode() + ': ' + res.getStatus(), errorCorrelationId, jsonPayload);
+                List<Object> allPayloads = (List<Object>) JSON.deserializeUntyped(serializedPayloads);
+                Integer processed = 0;
+                List<Object> remainder = new List<Object>();
+
+                for (Integer i = 0; i < allPayloads.size(); i++) {
+                    if (Limits.getCallouts() >= MAX_CALLOUTS_PER_JOB) {
+                        // Chain overflow to a new Queueable
+                        for (Integer j = i; j < allPayloads.size(); j++) {
+                            remainder.add(allPayloads[j]);
+                        }
+                        break;
                     }
-                    index++;
+                    sendOne((String) allPayloads[i], correlationId, i);
+                    processed++;
                 }
-                ElaroLogger.info('[SlackNotifier.SlackBulkNotificationQueueable] Successfully sent ' + index + ' bulk notifications');
+
+                if (!remainder.isEmpty() && !Test.isRunningTest()) {
+                    System.enqueueJob(new SlackBulkNotificationQueueable(JSON.serialize(remainder)));
+                }
+                ElaroLogger.info('[SlackNotifier] Sent ' + processed + ' notifications, deferred ' + remainder.size());
             } catch (Exception e) {
                 logBulkAsyncError('EXCEPTION', 'Slack bulk notify exception: ' + e.getMessage(), correlationId, e.getStackTraceString());
-                ElaroLogger.error('[SlackNotifier.SlackBulkNotificationQueueable] Slack bulk notify exception: ' + e.getMessage() + ', StackTrace: ' + e.getStackTraceString());
+                ElaroLogger.error('[SlackNotifier] Bulk notify exception: ' + e.getMessage() + ', StackTrace: ' + e.getStackTraceString());
+            }
+        }
+
+        private void sendOne(String jsonPayload, String correlationId, Integer index) {
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint('callout:Slack_Webhook');
+            req.setMethod('POST');
+            req.setHeader('Content-Type', 'application/json');
+            req.setBody(jsonPayload);
+            req.setTimeout(10000);
+            HttpResponse res = new Http().send(req);
+            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
+                String errorCorrelationId = correlationId + '-' + index;
+                logBulkAsyncError('HTTP_ERROR', 'Slack bulk notify failed with status ' + res.getStatusCode() + ': ' + res.getStatus(), errorCorrelationId, jsonPayload);
             }
         }
     }
@@ -162,7 +181,7 @@ public with sharing class SlackNotifier {
         String emoji = '⚠️';
         String color = '#ffb75d'; // Warning (orange)
 
-        Decimal percentOfLimit = (value / threshold) * 100;
+        Decimal percentOfLimit = (threshold != null && threshold != 0) ? (value / threshold) * 100 : 0;
 
         if (percentOfLimit >= 95) {
             emoji = '🔴';

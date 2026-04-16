@@ -13,8 +13,7 @@
  * - Deterministic hashing for audit trail integrity
  * - Correlation IDs for traceability
  * 
- * @author Elaro
- * @version 3.0
+ * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  * @group Compliance Framework
  */
@@ -75,28 +74,33 @@ public without sharing class ElaroReasoningEngine {
         );
     }
 
+    /**
+     * Query a single graph node by its deterministic hash using the composite index
+     * (Graph_Node_Id__c DESC, Timestamp__c DESC) on ElaroGraphIndex.
+     *
+     * @param nodeHash deterministic hash identifying the graph node
+     * @return the most recent graph node matching the hash
+     * @throws ReasoningException if nodeHash is blank or no matching node exists
+     */
     private static Elaro_Compliance_Graph__b queryGraphNode(String nodeHash) {
-        // Big Objects can only query on indexed fields (Compliance_Framework__c, Timestamp__c)
-        // Since we don't have framework context here, query recent records and filter in memory
-        // Note: This is a simplified approach. In production, consider maintaining a separate lookup table
-        Datetime recentThreshold = Datetime.now().addDays(-90); // Look back 90 days
+        if (String.isBlank(nodeHash)) {
+            throw new ReasoningException('nodeHash cannot be blank');
+        }
+        // Uses composite index ElaroGraphIndex (Graph_Node_Id__c DESC, Timestamp__c DESC)
         List<Elaro_Compliance_Graph__b> nodes = [
-            SELECT Id, Entity_Type__c, Entity_Record_Id__c, Risk_Score__c, Node_Metadata__c, Graph_Node_Id__c, Compliance_Framework__c
+            SELECT Id, Entity_Type__c, Entity_Record_Id__c, Risk_Score__c,
+                   Node_Metadata__c, Graph_Node_Id__c, Compliance_Framework__c
             FROM Elaro_Compliance_Graph__b
-            WHERE Timestamp__c >= :recentThreshold
+            WHERE Graph_Node_Id__c = :nodeHash
             WITH USER_MODE
             ORDER BY Timestamp__c DESC
-            LIMIT 10000
+            LIMIT 1
         ];
 
-        // Filter in memory for the matching nodeHash
-        for (Elaro_Compliance_Graph__b node : nodes) {
-            if (node.Graph_Node_Id__c == nodeHash) {
-                return node;
-            }
+        if (nodes.isEmpty()) {
+            throw new ReasoningException('Node not found: ' + nodeHash);
         }
-
-        throw new ReasoningException('Node not found: ' + nodeHash);
+        return nodes[0];
     }
 
     /**
@@ -192,6 +196,11 @@ public without sharing class ElaroReasoningEngine {
         );
     }
 
+    /**
+     * DTO containing the AI reasoning result for a compliance violation analysis.
+     * Callers must route through a with sharing controller; this class uses without sharing
+     * only for Big Object writes required by the audit trail.
+     */
     public class ReasoningResult {
         @AuraEnabled public Boolean isViolation;
         @AuraEnabled public Decimal confidence;

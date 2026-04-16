@@ -21,7 +21,7 @@ private class ElaroGraphIndexerTest {
             WHERE Graph_Node_Id__c = :nodeHash
         ];
         Assert.areEqual(1, nodes.size(), 'Should create one node');
-        Assert.areEqual('PERMISSION_SET', nodes[0].Entity_Type__c);
+        Assert.areEqual('PERMISSION_SET', nodes[0].Entity_Type__c, 'Entity type should be PERMISSION_SET');
     }
 
     @IsTest
@@ -80,9 +80,13 @@ private class ElaroGraphIndexerTest {
         
         Test.startTest();
         Map<String, String> results = ElaroGraphIndexer.indexChangeBulk(inputs);
+        Integer queriesUsed = Limits.getQueries();
         Test.stopTest();
-        
+
         Assert.areEqual(200, results.size(), 'Should process all 200 records');
+        // Two-pass bulk query pattern should use at most a handful of SOQL queries
+        // regardless of input count (2 bulk queries + overhead, not 1 per input)
+        Assert.isTrue(queriesUsed <= 10, 'Bulk indexing should use minimal SOQL queries, used: ' + queriesUsed);
         
         // Verify nodes were created
         List<Elaro_Compliance_Graph__b> nodes = [
