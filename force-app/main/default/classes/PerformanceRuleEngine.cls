@@ -78,7 +78,7 @@ public with sharing class PerformanceRuleEngine {
             return out;
         } catch (Exception e) {
             ElaroLogger.error( 'PerformanceRuleEngine: Error in evaluateAndPublish. Error: ' + e.getMessage() + ', Stack: ' + e.getStackTraceString());
-            out.message = 'Error evaluating performance: ' + e.getMessage();
+            out.message = 'Error evaluating performance. Please retry or contact your administrator.';
             return out;
         }
     }

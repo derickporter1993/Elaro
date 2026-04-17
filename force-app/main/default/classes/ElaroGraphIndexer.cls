@@ -24,7 +24,6 @@
  * - Enforces field-level access through schema describe
  *
  * @author Elaro Team
- * @version 3.0
  * @see Elaro_Compliance_Graph__b
  * @see ElaroConstants
  * @since v3.1.0 (Spring '26)
@@ -346,38 +345,68 @@ public with sharing class ElaroGraphIndexer {
         if (inputs == null || inputs.isEmpty()) {
             throw new ElaroException('Inputs cannot be null or empty');
         }
-        
+
+        // Pass 1: Validate inputs and partition entity IDs by type
+        List<IndexInput> validInputs = new List<IndexInput>();
+        Set<Id> permSetIds = new Set<Id>();
+        Set<String> flowIds = new Set<String>();
+
+        for (IndexInput input : inputs) {
+            if (String.isBlank(input.entityType) || String.isBlank(input.entityId) || String.isBlank(input.framework)) {
+                ElaroLogger.warn('ElaroGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
+                continue;
+            }
+            if (Pattern.matches(INJECTION_PATTERN, input.entityType)) {
+                ElaroLogger.warn('ElaroGraphIndexer: Skipping input with invalid entityType characters - EntityType: ' + input.entityType);
+                continue;
+            }
+            if (Pattern.matches(INJECTION_PATTERN, input.entityId)) {
+                ElaroLogger.warn('ElaroGraphIndexer: Skipping input with invalid entityId characters - EntityId: ' + input.entityId);
+                continue;
+            }
+            if (!ElaroConstants.isValidFramework(input.framework)) {
+                ElaroLogger.warn('ElaroGraphIndexer: Skipping invalid framework - ' + input.framework);
+                continue;
+            }
+            validInputs.add(input);
+            if (input.entityType == 'PERMISSION_SET') {
+                permSetIds.add((Id) input.entityId);
+            } else if (input.entityType == 'FLOW') {
+                flowIds.add(input.entityId);
+            }
+        }
+
+        // Pass 2: Bulk-query all entity metadata in two queries (outside loop)
+        Map<Id, PermissionSet> psMap = permSetIds.isEmpty() ? new Map<Id, PermissionSet>() : new Map<Id, PermissionSet>([
+            SELECT Id, Name,
+                (SELECT SObjectType, PermissionsRead, PermissionsEdit FROM ObjectPerms LIMIT 100),
+                (SELECT SObjectType, Field, PermissionsEdit FROM FieldPerms LIMIT 200)
+            FROM PermissionSet
+            WHERE Id IN :permSetIds
+            WITH USER_MODE
+        ]);
+        Map<String, FlowDefinitionView> flowMap = new Map<String, FlowDefinitionView>();
+        if (!flowIds.isEmpty()) {
+            for (FlowDefinitionView f : [
+                SELECT DurableId, ApiName, Label, TriggerType, ProcessType
+                FROM FlowDefinitionView
+                WHERE DurableId IN :flowIds
+                WITH USER_MODE
+            ]) {
+                flowMap.put(f.DurableId, f);
+            }
+        }
+
+        // Pass 3: Build nodes from pre-fetched metadata (no SOQL in loop)
         Map<String, String> results = new Map<String, String>();
         List<Elaro_Compliance_Graph__b> nodesToInsert = new List<Elaro_Compliance_Graph__b>();
-        
-        for (IndexInput input : inputs) {
-            try {
-                // Validate input
-                if (String.isBlank(input.entityType) || String.isBlank(input.entityId) || String.isBlank(input.framework)) {
-                    ElaroLogger.warn( 'ElaroGraphIndexer: Skipping invalid input - EntityType: ' + input.entityType + ', EntityId: ' + input.entityId);
-                    continue;
-                }
-                
-                // Injection character validation (consistent with indexChange single-record method)
-                if (Pattern.matches(INJECTION_PATTERN, input.entityType)) {
-                    ElaroLogger.warn('ElaroGraphIndexer: Skipping input with invalid entityType characters - EntityType: ' + input.entityType);
-                    continue;
-                }
-                if (Pattern.matches(INJECTION_PATTERN, input.entityId)) {
-                    ElaroLogger.warn('ElaroGraphIndexer: Skipping input with invalid entityId characters - EntityId: ' + input.entityId);
-                    continue;
-                }
 
-                // Validate framework
-                if (!ElaroConstants.isValidFramework(input.framework)) {
-                    ElaroLogger.warn( 'ElaroGraphIndexer: Skipping invalid framework - ' + input.framework);
-                    continue;
-                }
-                
+        for (IndexInput input : validInputs) {
+            try {
+                Map<String, Object> metadata = buildMetadataFromMaps(input.entityType, input.entityId, psMap, flowMap);
                 String nodeHash = generateDeterministicHash(input.entityType, input.entityId, input.framework);
-                Map<String, Object> metadata = queryEntityMetadata(input.entityType, input.entityId);
                 Decimal riskScore = calculateRiskScore(metadata, input.framework);
-                
+
                 Elaro_Compliance_Graph__b node = new Elaro_Compliance_Graph__b(
                     Graph_Node_Id__c = nodeHash,
                     Parent_Node_Id__c = input.parentNodeId,
@@ -391,17 +420,16 @@ public with sharing class ElaroGraphIndexer {
                     AI_Confidence__c = 0.0,
                     Graph_Version__c = GRAPH_VERSION
                 );
-                
+
                 nodesToInsert.add(node);
                 results.put(input.entityId, nodeHash);
             } catch (Exception e) {
                 String correlationId = generateCorrelationId(input.entityType, input.entityId);
-                ElaroLogger.error( 
-                    '[ElaroGraphIndexer] Bulk indexing failed for entity - CorrelationId: ' + correlationId + 
-                    ', EntityType: ' + input.entityType + 
-                    ', EntityId: ' + input.entityId + 
+                ElaroLogger.error(
+                    '[ElaroGraphIndexer] Bulk indexing failed for entity - CorrelationId: ' + correlationId +
+                    ', EntityType: ' + input.entityType +
+                    ', EntityId: ' + input.entityId +
                     ', Error: ' + e.getMessage());
-                // Continue with other records
             }
         }
         
@@ -423,6 +451,42 @@ public with sharing class ElaroGraphIndexer {
         }
         
         return results;
+    }
+
+    /**
+     * Build metadata map from pre-fetched bulk query results.
+     * Returns the same shape as queryEntityMetadata() for compatibility.
+     */
+    private static Map<String, Object> buildMetadataFromMaps(
+        String entityType,
+        String entityId,
+        Map<Id, PermissionSet> psMap,
+        Map<String, FlowDefinitionView> flowMap
+    ) {
+        Map<String, Object> metadata = new Map<String, Object>();
+        switch on entityType {
+            when 'PERMISSION_SET' {
+                PermissionSet ps = psMap.get((Id) entityId);
+                if (ps == null) {
+                    throw new ElaroException('PermissionSet not found: ' + entityId);
+                }
+                metadata.put('name', ps.Name);
+                metadata.put('objectPermissionCount', ps.ObjectPerms != null ? ps.ObjectPerms.size() : 0);
+                metadata.put('fieldPermissionCount', ps.FieldPerms != null ? ps.FieldPerms.size() : 0);
+            }
+            when 'FLOW' {
+                FlowDefinitionView fd = flowMap.get(entityId);
+                if (fd == null) {
+                    throw new ElaroException('FlowDefinitionView not found: ' + entityId);
+                }
+                metadata.put('apiName', fd.ApiName);
+                metadata.put('triggerType', fd.TriggerType);
+            }
+            when else {
+                throw new ElaroException('Unsupported entity type: ' + entityType);
+            }
+        }
+        return metadata;
     }
 
     /**
