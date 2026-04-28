@@ -20,13 +20,13 @@ public with sharing class ApiUsageSnapshot implements Schedulable, Queueable {
 
     public static void run() {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint('callout:SF_Limits/services/data/v65.0/limits');
+        req.setEndpoint('callout:SF_Limits/services/data/v66.0/limits');
         req.setMethod('GET');
         req.setHeader('Accept','application/json');
-        req.setTimeout(10000); // 10 second timeout
+        req.setTimeout(10000);
         HttpResponse res = new Http().send(req);
-        if (res.getStatusCode() {
-            >= 300) throw new CalloutException('Limits callout failed: ' + res.getStatus());
+        if (res.getStatusCode() >= 300) {
+            throw new CalloutException('Limits callout failed: ' + res.getStatus());
         }
         LimitsResponse lr = (LimitsResponse) JSON.deserialize(res.getBody(), LimitsResponse.class);
         Integer max = lr.DailyApiRequests != null ? lr.DailyApiRequests.Max : null;
