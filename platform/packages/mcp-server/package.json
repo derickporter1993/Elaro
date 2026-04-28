@@ -1,0 +1,23 @@
+{
+  "name": "@platform/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server exposing Elaro compliance data to AI assistants",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "elaro-mcp": "dist/index.js" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "eval": "node dist/eval/eval.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "engines": { "node": ">=20.0.0" },
+  "license": "UNLICENSED"
+}

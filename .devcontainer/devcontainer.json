@@ -1,0 +1,25 @@
+{
+  "name": "Elaro Development",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": { "version": "17" }
+  },
+  "postCreateCommand": "npm install && npm run cli:setup || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "salesforce.salesforcedx-vscode",
+        "salesforce.salesforcedx-vscode-apex",
+        "salesforce.salesforcedx-vscode-lwc",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "forwardPorts": [],
+  "remoteUser": "node"
+}

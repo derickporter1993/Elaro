@@ -1,0 +1,152 @@
+[
+  {
+    "query": "What is our SOC2 compliance score?",
+    "expectedTool": "get_compliance_scores",
+    "expectedParams": { "framework": "SOC2" }
+  },
+  {
+    "query": "Show me all compliance scores across frameworks",
+    "expectedTool": "get_compliance_scores",
+    "expectedParams": {}
+  },
+  {
+    "query": "What's our current HIPAA score?",
+    "expectedTool": "get_compliance_scores",
+    "expectedParams": { "framework": "HIPAA" }
+  },
+  {
+    "query": "How has our SOC2 score changed over the last 90 days?",
+    "expectedTool": "get_score_trend",
+    "expectedParams": { "framework": "SOC2", "days": 90 }
+  },
+  {
+    "query": "Show me the GDPR compliance trend for the past 30 days",
+    "expectedTool": "get_score_trend",
+    "expectedParams": { "framework": "GDPR", "days": 30 }
+  },
+  {
+    "query": "Show me all critical findings",
+    "expectedTool": "get_findings",
+    "expectedParams": { "severity": "CRITICAL" }
+  },
+  {
+    "query": "What HIPAA gaps are still open?",
+    "expectedTool": "get_findings",
+    "expectedParams": { "framework": "HIPAA", "status": "OPEN" }
+  },
+  {
+    "query": "List high severity compliance gaps",
+    "expectedTool": "get_findings",
+    "expectedParams": { "severity": "HIGH" }
+  },
+  {
+    "query": "Show me findings that are in progress",
+    "expectedTool": "get_findings",
+    "expectedParams": { "status": "IN_PROGRESS" }
+  },
+  {
+    "query": "Get details for finding a0Bxx0000001234AAA",
+    "expectedTool": "get_finding_details",
+    "expectedParams": {}
+  },
+  {
+    "query": "What compliance frameworks are configured?",
+    "expectedTool": "get_frameworks",
+    "expectedParams": {}
+  },
+  {
+    "query": "Show me all active frameworks",
+    "expectedTool": "get_frameworks",
+    "expectedParams": {}
+  },
+  {
+    "query": "What controls does SOC2 have?",
+    "expectedTool": "get_framework_controls",
+    "expectedParams": { "framework": "SOC2" }
+  },
+  {
+    "query": "List HIPAA compliance controls",
+    "expectedTool": "get_framework_controls",
+    "expectedParams": { "framework": "HIPAA" }
+  },
+  {
+    "query": "Show me critical controls for GDPR",
+    "expectedTool": "get_framework_controls",
+    "expectedParams": { "framework": "GDPR", "severity": "CRITICAL" }
+  },
+  {
+    "query": "Show me all evidence items",
+    "expectedTool": "get_evidence",
+    "expectedParams": {}
+  },
+  {
+    "query": "What evidence has been approved?",
+    "expectedTool": "get_evidence",
+    "expectedParams": { "status": "APPROVED" }
+  },
+  {
+    "query": "List all permission set evidence",
+    "expectedTool": "get_evidence",
+    "expectedParams": {}
+  },
+  {
+    "query": "Show me audit packages for SOC2",
+    "expectedTool": "get_audit_packages",
+    "expectedParams": { "framework": "SOC2" }
+  },
+  {
+    "query": "List completed audit packages",
+    "expectedTool": "get_audit_packages",
+    "expectedParams": { "status": "COMPLETED" }
+  },
+  {
+    "query": "List all vendors",
+    "expectedTool": "get_vendors",
+    "expectedParams": {}
+  },
+  {
+    "query": "Show me vendors that are under review",
+    "expectedTool": "get_vendors",
+    "expectedParams": { "status": "UNDER_REVIEW" }
+  },
+  {
+    "query": "Which vendors are cloud services?",
+    "expectedTool": "get_vendors",
+    "expectedParams": {}
+  },
+  {
+    "query": "Get details for vendor Acme Corp",
+    "expectedTool": "get_vendor_details",
+    "expectedParams": {}
+  },
+  {
+    "query": "Show me high-risk vendors",
+    "expectedTool": "get_vendors",
+    "expectedParams": {}
+  },
+  {
+    "query": "Show me recent compliance scans",
+    "expectedTool": "get_scan_history",
+    "expectedParams": {}
+  },
+  {
+    "query": "What was the last SOC2 scan result?",
+    "expectedTool": "get_scan_history",
+    "expectedParams": { "framework": "SOC2" }
+  },
+  {
+    "query": "List all failed scans in the last 7 days",
+    "expectedTool": "get_scan_history",
+    "expectedParams": { "status": "FAILED", "days": 7 }
+  },
+  {
+    "query": "Get details for scan a0Cxx0000004567AAA",
+    "expectedTool": "get_scan_details",
+    "expectedParams": {}
+  },
+  {
+    "query": "Show me HIPAA scan history for the past 60 days",
+    "expectedTool": "get_scan_history",
+    "expectedParams": { "framework": "HIPAA", "days": 60 }
+  }
+]

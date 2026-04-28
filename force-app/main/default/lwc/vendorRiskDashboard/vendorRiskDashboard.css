@@ -1,0 +1,58 @@
+.stat-card {
+  min-height: 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.risk-critical {
+  color: var(--slds-g-color-palette-red-60, #c23934);
+  font-weight: 700;
+}
+
+.risk-warning {
+  color: var(--slds-g-color-palette-orange-60, #a96404);
+  font-weight: 700;
+}
+
+.risk-low {
+  color: var(--slds-g-color-palette-green-60, #2e844a);
+  font-weight: 700;
+}
+
+.overdue-count {
+  color: var(--slds-g-color-palette-orange-60, #a96404);
+  font-weight: 700;
+}
+
+.high-risk-count {
+  color: var(--slds-g-color-palette-red-60, #c23934);
+  font-weight: 700;
+}
+
+.risk-badge-critical {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--slds-g-color-palette-red-20, #fdd4d4);
+  color: var(--slds-g-color-palette-red-80, #7e1e1e);
+  font-weight: 700;
+}
+
+.risk-badge-warning {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--slds-g-color-palette-orange-20, #fdd4b9);
+  color: var(--slds-g-color-palette-orange-80, #7e3f0c);
+  font-weight: 700;
+}
+
+.risk-badge-low {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--slds-g-color-palette-green-20, #cdefc4);
+  color: var(--slds-g-color-palette-green-80, #2e6e1e);
+  font-weight: 700;
+}

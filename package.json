@@ -20,6 +20,7 @@
     "precommit": "npm run preflight && npm run fmt:check && npm run lint && npm run test:unit",
     "validate": "npm run precommit",
     "build": "echo '✅ Elaro build validation complete'",
+    "setup": "bash scripts/setup.sh",
     "org:create": "sf org create scratch -f config/elaro-scratch-def.json -a elaro-dev -d 30",
     "org:open": "sf org open -o elaro-dev",
     "org:delete": "sf org delete scratch -o elaro-dev -p",

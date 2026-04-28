@@ -1736,4 +1736,96 @@
         <shortDescription>Methodology note for comparison report</shortDescription>
         <value>Methodology: These platforms are fundamentally different product types. Each is scored on how well it achieves its own stated goals, not on absolute feature count. Categories outside a platform's scope are marked "Outside Scope" and excluded from grade calculation.</value>
     </labels>
+    <!-- Vendor Risk Management Labels -->
+    <labels>
+        <fullName>VR_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Vendor Risk Management dashboard title</shortDescription>
+        <value>Vendor Risk Management</value>
+    </labels>
+    <labels>
+        <fullName>VR_Loading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Vendor Risk loading message</shortDescription>
+        <value>Loading vendor data...</value>
+    </labels>
+    <labels>
+        <fullName>VR_Error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Vendor Risk error message</shortDescription>
+        <value>Unable to load vendor data. Please try again or contact your administrator.</value>
+    </labels>
+    <labels>
+        <fullName>VR_NoData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Vendor Risk no data message</shortDescription>
+        <value>No vendors found. Add a vendor to get started with risk management.</value>
+    </labels>
+    <labels>
+        <fullName>VR_TotalVendors</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Total vendors metric label</shortDescription>
+        <value>Total Vendors</value>
+    </labels>
+    <labels>
+        <fullName>VR_ActiveVendors</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Active vendors metric label</shortDescription>
+        <value>Active Vendors</value>
+    </labels>
+    <labels>
+        <fullName>VR_AverageRisk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Average risk score metric label</shortDescription>
+        <value>Average Risk Score</value>
+    </labels>
+    <labels>
+        <fullName>VR_OverdueAssessments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Overdue assessments metric label</shortDescription>
+        <value>Overdue Assessments</value>
+    </labels>
+    <labels>
+        <fullName>VR_HighRisk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>High risk vendors metric label</shortDescription>
+        <value>High Risk</value>
+    </labels>
+    <labels>
+        <fullName>VR_FilterByStatus</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter by status combobox label</shortDescription>
+        <value>Filter by Status</value>
+    </labels>
+    <labels>
+        <fullName>VR_FilterByType</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Filter by type combobox label</shortDescription>
+        <value>Filter by Type</value>
+    </labels>
+    <labels>
+        <fullName>VR_AllStatuses</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>All statuses filter option</shortDescription>
+        <value>All Statuses</value>
+    </labels>
+    <labels>
+        <fullName>VR_AllTypes</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>All types filter option</shortDescription>
+        <value>All Types</value>
+    </labels>
 </CustomLabels>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SLA_Deadline__c</fullName>
+    <label>SLA Deadline</label>
+    <type>DateTime</type>
+    <required>false</required>
+    <description>Deadline by which this gap must be remediated per SLA. Calculated based on severity: Critical=7 days, High=14 days, Medium=30 days, Low=90 days from detection.</description>
+</CustomField>

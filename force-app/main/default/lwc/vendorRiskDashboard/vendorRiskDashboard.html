@@ -1,0 +1,132 @@
+<template>
+    <!-- Loading State -->
+    <template lwc:if={isLoading}>
+        <lightning-spinner alternative-text={label.VR_Loading} size="medium">
+        </lightning-spinner>
+    </template>
+
+    <!-- Error State -->
+    <template lwc:elseif={error}>
+        <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+            <span class="slds-assistive-text">{label.VR_Error}</span>
+            <h2>{error}</h2>
+        </div>
+    </template>
+
+    <!-- Main Content -->
+    <template lwc:else>
+        <!-- Page Header -->
+        <div class="slds-page-header slds-m-bottom_medium">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:partner_fund_allocation" size="large"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <span>{label.VR_Title}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <lightning-button
+                        label="Refresh"
+                        variant="neutral"
+                        icon-name="utility:refresh"
+                        onclick={handleRefresh}
+                    ></lightning-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="slds-grid slds-gutters slds-m-bottom_medium slds-wrap">
+            <div class="slds-col slds-size_1-of-5 slds-p-around_xx-small">
+                <article class="slds-card stat-card">
+                    <div class="slds-card__body slds-card__body_inner slds-text-align_center">
+                        <p class="slds-text-title slds-m-bottom_xx-small">{label.VR_TotalVendors}</p>
+                        <p class="slds-text-heading_large">{summary.totalVendors}</p>
+                    </div>
+                </article>
+            </div>
+            <div class="slds-col slds-size_1-of-5 slds-p-around_xx-small">
+                <article class="slds-card stat-card">
+                    <div class="slds-card__body slds-card__body_inner slds-text-align_center">
+                        <p class="slds-text-title slds-m-bottom_xx-small">{label.VR_ActiveVendors}</p>
+                        <p class="slds-text-heading_large">{summary.activeVendors}</p>
+                    </div>
+                </article>
+            </div>
+            <div class="slds-col slds-size_1-of-5 slds-p-around_xx-small">
+                <article class="slds-card stat-card">
+                    <div class="slds-card__body slds-card__body_inner slds-text-align_center">
+                        <p class="slds-text-title slds-m-bottom_xx-small">{label.VR_AverageRisk}</p>
+                        <p class={riskScoreClass}><span class="slds-text-heading_large">{summary.averageRiskScore}</span></p>
+                    </div>
+                </article>
+            </div>
+            <div class="slds-col slds-size_1-of-5 slds-p-around_xx-small">
+                <article class="slds-card stat-card">
+                    <div class="slds-card__body slds-card__body_inner slds-text-align_center">
+                        <p class="slds-text-title slds-m-bottom_xx-small">{label.VR_OverdueAssessments}</p>
+                        <p class="slds-text-heading_large overdue-count">{summary.overdueCount}</p>
+                    </div>
+                </article>
+            </div>
+            <div class="slds-col slds-size_1-of-5 slds-p-around_xx-small">
+                <article class="slds-card stat-card">
+                    <div class="slds-card__body slds-card__body_inner slds-text-align_center">
+                        <p class="slds-text-title slds-m-bottom_xx-small">{label.VR_HighRisk}</p>
+                        <p class="slds-text-heading_large high-risk-count">{summary.highRiskCount}</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="slds-grid slds-gutters slds-m-bottom_medium">
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-combobox
+                    name="statusFilter"
+                    label={label.VR_FilterByStatus}
+                    value={statusFilter}
+                    options={statusOptions}
+                    onchange={handleStatusChange}
+                ></lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-4">
+                <lightning-combobox
+                    name="typeFilter"
+                    label={label.VR_FilterByType}
+                    value={typeFilter}
+                    options={typeOptions}
+                    onchange={handleTypeChange}
+                ></lightning-combobox>
+            </div>
+        </div>
+
+        <!-- Vendor Table -->
+        <template lwc:if={hasVendors}>
+            <lightning-card>
+                <lightning-datatable
+                    key-field="Id"
+                    data={vendors}
+                    columns={columns}
+                    onrowaction={handleRowAction}
+                    hide-checkbox-column
+                ></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <!-- Empty State -->
+        <template lwc:elseif={isEmpty}>
+            <div class="slds-illustration slds-illustration_small slds-text-align_center slds-p-around_large">
+                <p class="slds-text-body_regular">{label.VR_NoData}</p>
+            </div>
+        </template>
+    </template>
+</template>
