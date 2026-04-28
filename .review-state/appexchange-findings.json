@@ -1,198 +1,191 @@
 {
   "agent": "appexchange_checker",
-  "status": "complete",
-  "reviewed_at": "2026-02-19T12:00:00Z",
-  "files_reviewed_count": 450,
+  "completed_at": "2026-04-28T14:35:00Z",
+  "files_reviewed_count": 1158,
   "findings": [
     {
       "id": "AX-001",
-      "severity": "critical",
-      "category": "Namespace",
       "file": "sfdx-project.json",
       "line": 20,
-      "title": "Missing Namespace for 2GP Managed Package",
-      "description": "The sfdx-project.json has an empty namespace value (\"\"). For a 2GP managed package targeting AppExchange distribution, a namespace is REQUIRED. Without a namespace, the package cannot be uploaded to AppExchange or distributed as a managed package. The namespace must be registered in your DevHub and cannot be changed after the first package version is created.",
-      "recommendation": "Register a namespace in your DevHub (e.g., 'elaro' or 'elaroCompliance') and update sfdx-project.json line 20 to: \"namespace\": \"elaro\". This is a blocking issue for AppExchange submission. Note: The Health Check package (force-app-healthcheck) will need a DIFFERENT namespace (e.g., 'elaroHC') since it's a separate 2GP package.",
-      "code_snippet": "\"namespace\": \"\""
+      "severity": "medium",
+      "category": "Namespace Configuration",
+      "description": "Health Check 2GP package missing namespace configuration. The main package has namespace 'elaro' (line 20) but the Health Check package directory (force-app-healthcheck) has no namespace defined. The _TODO_HC_namespace comment (line 22) indicates 'elaroHC' should be registered but is not yet configured. Additionally, the Health Check package has no entry in packageAliases.",
+      "recommendation": "Register 'elaroHC' namespace in DevHub and add it to the Health Check package directory configuration in sfdx-project.json. Add the Health Check 0Ho package ID to packageAliases."
     },
     {
       "id": "AX-002",
-      "severity": "high",
-      "category": "PermissionSet",
-      "file": "force-app/main/default/permissionsets/Elaro_Admin.permissionset-meta.xml",
-      "line": null,
-      "title": "Many Custom Objects Missing from Permission Sets",
-      "description": "Found 50 custom objects in the codebase, but only ~20 are covered in the Elaro_Admin permission set. Objects like Materiality_Assessment__c, Security_Incident__c, AI_System_Registry__c, AI_RMF_Mapping__c, AI_Human_Oversight_Record__c, Incident_Timeline__c, Board_Governance_Report__c, Disclosure_Workflow__c, Trust_Center_Link__c, Trust_Center_View__c, Compliance_Assessment_Session__c, Data_Processing_Activity__c, Third_Party_Recipient__c, GDPR_Breach__c, HIPAA_Breach__c, SEC_Control_Mapping__c, Remediation_Suggestion__c, Holiday__c, and many others are NOT granted in any permission set. In 2GP managed packages, users will not be able to see these objects after installation unless a permission set grants access.",
-      "recommendation": "Update Elaro_Admin.permissionset-meta.xml to include ALL custom objects with appropriate CRUD permissions. For objects that are module-specific (AI Governance, SEC, Trust Center), consider creating dedicated permission sets like Elaro_AI_Governance_Admin, Elaro_SEC_Admin, Elaro_Trust_Center_Admin. Every object MUST be in at least one permission set or it will be invisible to subscribers.",
-      "code_snippet": "Missing: Materiality_Assessment__c, Security_Incident__c, AI_System_Registry__c, Incident_Timeline__c, Board_Governance_Report__c, Disclosure_Workflow__c, Trust_Center_Link__c, Trust_Center_View__c, and 15+ more"
+      "file": "sfdx-project.json",
+      "line": 26,
+      "severity": "medium",
+      "category": "Package Aliases",
+      "description": "Main package alias uses placeholder ID '0HoXXXXXXXXXXXX'. This must be replaced with the real Package2 ID before creating package versions. Health Check package has no alias at all.",
+      "recommendation": "Create both packages in DevHub using 'sf package create' and update packageAliases with real 0Ho IDs for both 'elaro' and 'Elaro Health Check'."
     },
     {
       "id": "AX-003",
-      "severity": "high",
-      "category": "PermissionSet",
-      "file": "force-app/main/default/permissionsets/",
+      "file": "force-app/main/default/permissionsets/Elaro_Async_Admin.permissionset-meta.xml",
       "line": null,
-      "title": "Tabs Not Explicitly Granted in Permission Sets",
-      "description": "Found 19 custom tabs in force-app/main/default/tabs/ (including Health_Check_Dashboard, SEC_Disclosure_Dashboard, Elaro_Dashboard, etc.) but ONLY Health_Check_Dashboard is explicitly granted in the Health Check permission sets. The main package tabs (SEC_Disclosure_Dashboard, Elaro_Dashboard, Elaro_Compliance_Hub, etc.) are NOT granted visibility in any permission set. Without explicit tab grants, users cannot navigate to these pages after package installation.",
-      "recommendation": "Add <tabSettings> blocks to Elaro_Admin.permissionset-meta.xml and Elaro_User.permissionset-meta.xml for all tabs. Example: <tabSettings><tab>SEC_Disclosure_Dashboard</tab><visibility>Visible</visibility></tabSettings>. Repeat for all 19 tabs. Admin permission set should grant Visible, User permission set should grant Visible for read-only tabs.",
-      "code_snippet": "Missing tabs: SEC_Disclosure_Dashboard, Elaro_Dashboard, Elaro_Compliance_Hub, TechDebt__c, Deployment_Job__c, API_Usage_Snapshot__c, and 13 more"
+      "severity": "high",
+      "category": "Missing Object Permission",
+      "description": "Custom object Elaro_Async_Framework_Flags__c exists in the objects directory but is NOT included in any permission set. Neither Elaro_Async_Admin nor Elaro_Async_User permission sets grant access to this Hierarchy Custom Setting. Users will be unable to view or modify async framework feature flags after package installation. This is the ONLY custom object (out of 53) missing from permission sets.",
+      "recommendation": "Add objectPermissions for Elaro_Async_Framework_Flags__c to Elaro_Async_Admin.permissionset-meta.xml (CRUD + viewAll) and Elaro_Async_User.permissionset-meta.xml (read-only). Also add fieldPermissions for any custom fields on this object."
     },
     {
       "id": "AX-004",
-      "severity": "high",
-      "category": "PermissionSet",
-      "file": "force-app/main/default/permissionsets/Elaro_Admin.permissionset-meta.xml",
+      "file": "force-app/main/default/lwc/ (22 components)",
       "line": null,
-      "title": "Many Apex Classes Not Granted in Permission Sets",
-      "description": "The codebase has 299 Apex classes, but only ~40 are explicitly granted in Elaro_Admin.permissionset-meta.xml. Critical controllers and services missing from permission sets include: AssessmentWizardController, TrustCenterLinkService, AIDetectionEngine, AIRiskClassificationEngine, MaterialityAssessmentService, DisclosureWorkflowService, BoardGovernanceService, IncidentTimelineService, and 200+ others. Without class access grants, @AuraEnabled methods will throw insufficient privileges exceptions.",
-      "recommendation": "Audit all Apex classes and add <classAccesses> entries for every class that has @AuraEnabled methods or is called by LWC components. Priority: SEC module classes (MaterialityAssessmentService, DisclosureWorkflowService, BoardGovernanceService, IncidentTimelineService), AI Governance module (AIDetectionEngine, AIRiskClassificationEngine, AILicenseDetector), Trust Center (TrustCenterLinkService, TrustCenterAggregator), Assessment Wizard (AssessmentWizardController, AssessmentWizardService).",
-      "code_snippet": "Missing critical classes: AssessmentWizardController, TrustCenterLinkService, AIDetectionEngine, MaterialityAssessmentService, DisclosureWorkflowService, BoardGovernanceService"
+      "severity": "high",
+      "category": "Hardcoded Strings",
+      "description": "22 of 57 LWC components in the main package contain hardcoded English strings in HTML templates instead of Custom Labels. Top offenders: complianceGraphViewer (14 strings), elaroROICalculator (9), controlMappingMatrix (8), jiraIssueCard (8), remediationSuggestionCard (8), escalationPathConfig (6), elaroDashboard (5), elaroEventExplorer (5), elaroEventMonitor (5), jiraCreateModal (5). Approximately 101 hardcoded strings total across all 22 components. This violates AppExchange i18n requirements.",
+      "recommendation": "Replace all hardcoded English text with Custom Label imports. Create new labels following the naming convention [MODULE]_[Description] (e.g., GRAPH_Framework, GRAPH_Policy, ROI_Title, etc.). Add labels to force-app/main/default/labels/CustomLabels.labels-meta.xml with <protected>true</protected>. Priority: complianceGraphViewer, elaroROICalculator, controlMappingMatrix, jiraIssueCard, remediationSuggestionCard."
     },
     {
       "id": "AX-005",
-      "severity": "medium",
-      "category": "Labels",
       "file": "force-app/main/default/labels/CustomLabels.labels-meta.xml",
       "line": null,
-      "title": "Custom Labels Coverage Appears Comprehensive",
-      "description": "The main package has 1,146 lines of custom labels covering Copilot, Command Center, Assessment Wizard, SEC, Trust Center, and AI Governance modules. Health Check package has 178 lines. Label usage in LWC components follows best practices (import from @salesforce/label/c.LabelName). No hardcoded English strings found in the sampled LWC files. This is GOOD and meets AppExchange i18n requirements.",
-      "recommendation": "Verify all remaining LWC components use custom labels. Run a final audit before submission: grep -r '\"[A-Z][a-z]' force-app/main/default/lwc/**/*.html to find any missed hardcoded strings. Consider adding labels for error messages that may currently be inline strings.",
-      "code_snippet": "✓ Good: All sampled LWC components use custom labels"
+      "severity": "high",
+      "category": "Unprotected Custom Labels",
+      "description": "4 Custom Labels in the main managed package have <protected>false</protected>: AW_AutoScanError (line 498), AW_AutoScanPassCount (line 504), AW_AutoScanFailCount (line 510), AW_AutoScanNoFindings (line 518). All other 159 labels are correctly set to <protected>true</protected>. Unprotected labels in managed packages can be modified by subscribers, causing merge conflicts on upgrades and unpredictable behavior.",
+      "recommendation": "Change <protected>false</protected> to <protected>true</protected> for all 4 labels: AW_AutoScanError, AW_AutoScanPassCount, AW_AutoScanFailCount, AW_AutoScanNoFindings."
     },
     {
       "id": "AX-006",
-      "severity": "info",
-      "category": "API-Version",
-      "file": "force-app/main/default/classes/*.cls-meta.xml",
-      "line": null,
-      "title": "API Versions Consistent at v66.0",
-      "description": "Sampled 20 Apex class metadata files and all show apiVersion 66.0 (Spring '26). This is correct and aligned with the sfdx-project.json sourceApiVersion setting. No outdated API versions detected in the sample. All LWC components should also be v66.0.",
-      "recommendation": "No action required. API version consistency is good. Before AppExchange submission, verify all LWC js-meta.xml files also use <apiVersion>66.0</apiVersion>.",
-      "code_snippet": "✓ Good: All sampled files use <apiVersion>66.0</apiVersion>"
+      "file": "force-app/main/default/classes/BlockchainVerification.cls",
+      "line": 11,
+      "severity": "high",
+      "category": "Hardcoded Endpoint",
+      "description": "Hardcoded external endpoint 'https://api.originstamp.com/v4/timestamp' found. External integrations must use Named Credentials for AppExchange security review. While 4 Named Credentials exist (Elaro_Claude_API, Jira_API, Slack_Webhook, Teams_Webhook), OriginStamp is not covered.",
+      "recommendation": "Create a Named Credential 'OriginStamp_API' (OriginStamp_API.namedCredential-meta.xml) and replace the hardcoded URL with 'callout:OriginStamp_API/v4/timestamp'."
     },
     {
       "id": "AX-007",
-      "severity": "medium",
-      "category": "Feature-Flags",
-      "file": "force-app/main/default/objects/Elaro_Feature_Flags__c/",
-      "line": null,
-      "title": "Main Package Feature Flags Not Found",
-      "description": "The Health Check package has a Custom Setting Health_Check_Feature_Flags__c with Health_Check_Enabled__c field (kill switch), which is correct. However, the MAIN Elaro package does not appear to have an Elaro_Feature_Flags__c Custom Setting despite CLAUDE.md specifying it as a requirement. Major features like Command Center, Event Monitoring, AI Governance, SEC Module, and Trust Center should have kill switches for subscriber orgs.",
-      "recommendation": "Create a Hierarchy Custom Setting named Elaro_Feature_Flags__c with boolean fields: Command_Center_Enabled__c, Event_Monitoring_Enabled__c, AI_Governance_Enabled__c, SEC_Module_Enabled__c, Trust_Center_Enabled__c, Assessment_Wizard_Enabled__c. Set all defaults to TRUE. Add feature flag checks to each module's entry point controller (e.g., CommandCenterController.getOverview() should check FeatureFlags.isCommandCenterEnabled()). This allows disabling broken features without requiring a patch release.",
-      "code_snippet": "Missing: Elaro_Feature_Flags__c Custom Setting"
+      "file": "force-app/main/default/classes/PagerDutyIntegration.cls",
+      "line": 10,
+      "severity": "high",
+      "category": "Hardcoded Endpoint",
+      "description": "Hardcoded external endpoint 'https://events.pagerduty.com/v2/enqueue' found in PagerDutyIntegration.cls. The same hardcoded URL also appears in ElaroComplianceAlert.cls (line 411). No Named Credential exists for PagerDuty.",
+      "recommendation": "Create a Named Credential 'PagerDuty_Events' (PagerDuty_Events.namedCredential-meta.xml) and replace both hardcoded URLs in PagerDutyIntegration.cls and ElaroComplianceAlert.cls with 'callout:PagerDuty_Events/v2/enqueue'."
     },
     {
       "id": "AX-008",
-      "severity": "low",
-      "category": "Install-Safety",
-      "file": "N/A",
+      "file": "force-app/main/default/lwc/utils/utils.js",
       "line": null,
-      "title": "No Post-Install or Post-Upgrade Script Detected",
-      "description": "No PostInstallScript or UninstallScript classes found in the codebase. This is generally SAFE for AppExchange packages, but some packages use post-install scripts to seed default data (e.g., compliance framework metadata, default Custom Setting values, sample assessment templates). Without a post-install script, subscribers will need to manually configure framework metadata or the package must ship with it pre-populated.",
-      "recommendation": "Consider creating an optional PostInstallClass that implements InstallHandler to seed default framework data (HIPAA controls, SOC2 requirements, PCI-DSS rules, etc.) on first install. This improves out-of-box experience. If you do create a post-install script, ensure it is IDEMPOTENT (safe to run multiple times) and includes try-catch error handling with logging. Document it clearly in the AppExchange listing.",
-      "code_snippet": "No PostInstallClass found"
+      "severity": "low",
+      "category": "Missing Meta XML",
+      "description": "The LWC utils directory contains utils.js without a matching utils.js-meta.xml file. The directory does have focusManager.js with its own focusManager.js-meta.xml. This is the only missing meta.xml across the entire codebase.",
+      "recommendation": "If utils.js is a shared module imported by other components, add a utils.js-meta.xml with apiVersion 66.0 and isExposed=false. If it is only used as an ES module import, confirm it deploys correctly without the meta file."
     },
     {
       "id": "AX-009",
-      "severity": "info",
-      "category": "Metadata",
-      "file": "N/A",
+      "file": "force-app/main/default/permissionsets/",
       "line": null,
-      "title": "Metadata File Pairing Appears Complete",
-      "description": "Checked for orphaned metadata: all sampled .cls files have matching .cls-meta.xml files, all .js files have .js-meta.xml files. No missing metadata files detected in the sample. Directory structure follows Salesforce DX conventions.",
-      "recommendation": "Before packaging, run a final validation: find force-app -name '*.cls' ! -exec test -e '{}-meta.xml' \\; -print to catch any orphaned Apex classes. Repeat for LWC (.js files).",
-      "code_snippet": "✓ Good: Metadata pairing verified for sampled files"
+      "severity": "medium",
+      "category": "Missing Class Permission",
+      "description": "OrchestrationService has @AuraEnabled properties on inner classes but is not in any permission set. RuleEngineEventBridge similarly has @AuraEnabled inner class properties without permission set coverage. While these may be wrapper classes whose properties are serialized by controllers that ARE in permission sets, they should still be explicitly granted for completeness.",
+      "recommendation": "Add OrchestrationService to Elaro_Admin classAccesses. Add RuleEngineEventBridge to Elaro_Rule_Engine_Admin classAccesses."
     },
     {
       "id": "AX-010",
-      "severity": "info",
-      "category": "Callout-Config",
-      "file": "force-app/main/default/namedCredentials/",
+      "file": "eslint.config.js",
       "line": null,
-      "title": "Named Credentials Configured for External Integrations",
-      "description": "Found 4 Named Credentials: Elaro_Claude_API, Teams_Webhook, Slack_Webhook, Jira_API. Named Credentials are the correct approach for AppExchange packages (avoids hardcoded endpoints). No Remote Site Settings found (good - Remote Sites are legacy and Named Credentials are preferred). These will require subscriber configuration post-install (setting up Claude API keys, Slack webhooks, etc.).",
-      "recommendation": "Ensure the AppExchange listing Installation Guide includes clear instructions for configuring each Named Credential. Provide screenshots showing where to add API keys, webhook URLs, etc. Consider creating a Setup Guide custom tab or in-app setup wizard that validates Named Credential configuration and provides actionable error messages if credentials are missing.",
-      "code_snippet": "✓ Good: Named Credentials used (Elaro_Claude_API, Teams_Webhook, Slack_Webhook, Jira_API)"
+      "severity": "low",
+      "category": "Code Analyzer",
+      "description": "ESLint v9 configuration exists for LWC linting. However, no dedicated Salesforce Code Analyzer (sf scanner) configuration file (.code-analyzer.yml or scanner config) was found. The CI pipeline references scanner steps, but local development would benefit from a config file for consistent settings.",
+      "recommendation": "Consider adding a .code-analyzer.yml or scanner configuration for consistent results between local development and CI. Run 'sf scanner run --target force-app --format table --severity-threshold 1' before final packaging."
     },
     {
       "id": "AX-011",
-      "severity": "high",
-      "category": "Package-Structure",
       "file": "sfdx-project.json",
-      "line": 2,
-      "title": "Two Packages Require Two Separate Namespaces",
-      "description": "The sfdx-project.json defines TWO packages: 'elaro' (force-app/) and 'Elaro Health Check' (force-app-healthcheck/). These are separate 2GP managed packages and MUST have DIFFERENT namespaces. Currently both inherit the empty global namespace. The Health Check package should have a separate namespace like 'elaroHC' or 'healthCheck'.",
-      "recommendation": "Register TWO namespaces in your DevHub: (1) 'elaro' for the main package, (2) 'elaroHC' for Health Check. Update sfdx-project.json to specify namespace per package directory. Add a 'namespace' field to each packageDirectory entry. Example: {\"path\": \"force-app\", \"package\": \"elaro\", \"namespace\": \"elaro\"}, {\"path\": \"force-app-healthcheck\", \"package\": \"Elaro Health Check\", \"namespace\": \"elaroHC\"}. Note: Namespace assignment to package directories was added in SFDX CLI v7.150+.",
-      "code_snippet": "Two packages, one namespace (empty) - this will fail on package creation"
+      "line": 20,
+      "severity": "info",
+      "category": "Namespace Configuration",
+      "description": "Main package namespace 'elaro' is properly configured in sfdx-project.json (line 20). This was previously flagged as critical (empty namespace) and has been resolved.",
+      "recommendation": "None - correctly configured. Previous AX-001 critical finding resolved."
     },
     {
       "id": "AX-012",
-      "severity": "medium",
-      "category": "PermissionSet",
-      "file": "force-app/main/default/permissionsets/TechDebt_Manager.permissionset-meta.xml",
+      "file": "force-app/main/default/classes/",
       "line": null,
-      "title": "TechDebt Permission Set Without Object/Class Grants",
-      "description": "Found a TechDebt_Manager.permissionset-meta.xml file, but did not read its contents. The codebase has 3 TechDebt objects (TechDebt__c, TechDebtDependency__c, TechDebtChecklist__c) and a tab. Need to verify this permission set grants access to all TechDebt objects, fields, and the TechDebt__c tab.",
-      "recommendation": "Read TechDebt_Manager.permissionset-meta.xml and verify it includes: (1) objectPermissions for TechDebt__c, TechDebtDependency__c, TechDebtChecklist__c, (2) tabSettings for TechDebt__c tab with Visible, (3) any TechDebt-related Apex classes. If missing, add them.",
-      "code_snippet": "TechDebt_Manager.permissionset-meta.xml exists but not audited"
+      "severity": "info",
+      "category": "API Version",
+      "description": "All Apex class meta.xml files (299 classes) and all LWC js-meta.xml files use API version 66.0 (Spring '26). All Health Check classes and LWC components are also on v66.0. Zero outdated API versions found across the entire codebase.",
+      "recommendation": "None - all metadata is on the correct API version."
     },
     {
       "id": "AX-013",
-      "severity": "low",
-      "category": "Scanner",
-      "file": "N/A",
+      "file": "force-app/main/default/classes/",
       "line": null,
-      "title": "Code Analyzer v5 Pre-Flight Check Required",
-      "description": "No Code Analyzer violations were detected in this review (manual code review), but the CLAUDE.md specifies that 'sf scanner run' with AppExchange selectors must return zero HIGH severity findings before submission. The codebase has 299 Apex classes (80,605 lines) and 41 LWC components - Code Analyzer must be run before final packaging.",
-      "recommendation": "Before creating the package version, run: sf scanner run --target force-app --format table --severity-threshold 1 --engine pmd,eslint-lwc --category 'Security,Performance,Best Practices' --normalize-severity. Fix ALL HIGH severity findings. Salesforce AppExchange security review will run Checkmarx SAST - any HIGH findings will cause automatic rejection.",
-      "code_snippet": "sf scanner run --target force-app --severity-threshold 1"
+      "severity": "info",
+      "category": "Meta XML Pairing",
+      "description": "All Apex classes have matching .cls-meta.xml files. All triggers have matching .trigger-meta.xml files. All Health Check classes have matching meta.xml. The only missing meta.xml is utils.js in LWC (see AX-008).",
+      "recommendation": "None - complete meta.xml pairing for Apex code."
     },
     {
       "id": "AX-014",
-      "severity": "medium",
-      "category": "Metadata",
-      "file": "force-app/main/default/permissionsets/Elaro_Admin_Extended.permissionset-meta.xml",
+      "file": "force-app/main/default/permissionsets/",
       "line": null,
-      "title": "Unclear Purpose of Elaro_Admin_Extended Permission Set",
-      "description": "Found two admin permission sets: Elaro_Admin and Elaro_Admin_Extended. The distinction between these is unclear. AppExchange best practice is to have ONE admin permission set per functional area (not multiple overlapping admin sets). This can confuse subscribers during setup.",
-      "recommendation": "Read Elaro_Admin_Extended.permissionset-meta.xml and determine if it can be merged into Elaro_Admin. If there's a valid reason for separation (e.g., Extended grants dangerous permissions like ModifyAllData or ViewAllData for super-admins), document this clearly in the permission set description field and in the AppExchange Installation Guide. Otherwise, consolidate into a single Elaro_Admin permission set.",
-      "code_snippet": "Two admin permission sets found: Elaro_Admin, Elaro_Admin_Extended"
+      "severity": "info",
+      "category": "Permission Set Structure",
+      "description": "Permission set structure follows best practices with Admin + User pairs for modules: AI Governance (Admin/User), SEC (Admin/User), Rule Engine (Admin/User), Async (Admin/User), Health Check (Admin/User). Core package has Elaro Admin, Elaro Admin Extended (platform permissions), Elaro User, Elaro Auditor. TechDebt_Manager provides TechDebt access. 15 total permission sets across both packages. All 20 custom tabs are covered. 52 of 53 custom objects are covered. Elaro Admin Extended properly separates platform permissions (ApiEnabled, RunReports, ExportReport, application visibility, schedulers). Previous findings AX-002/003/004 (many objects, tabs, and classes missing) have been resolved.",
+      "recommendation": "Fix the one remaining missing object (AX-003: Elaro_Async_Framework_Flags__c)."
     },
     {
       "id": "AX-015",
-      "severity": "info",
-      "category": "Labels",
       "file": "force-app/main/default/labels/CustomLabels.labels-meta.xml",
-      "line": 7,
-      "title": "Some Labels Use protected=false, Others Use protected=true",
-      "description": "In the main CustomLabels.labels-meta.xml file, some labels have <protected>false</protected> (lines 7, 13, 19, etc.) while others have <protected>true</protected> (lines 582, 588, etc. - SEC module labels). The Health Check labels all use <protected>true</protected>. Inconsistent protected flag usage can cause issues during package upgrades if subscribers have customized labels.",
-      "recommendation": "For managed packages, ALL custom labels should be <protected>true</protected> to prevent subscribers from editing them (which would cause merge conflicts on upgrades). Update all labels to <protected>true</protected>. If you intentionally want some labels to be editable by subscribers (e.g., for white-labeling), document which ones and why in the AppExchange listing.",
-      "code_snippet": "Mixed: <protected>false</protected> and <protected>true</protected> in same file"
+      "line": null,
+      "severity": "info",
+      "category": "Custom Labels",
+      "description": "163 Custom Labels defined in the main package across module categories: Copilot (16), UI (12), Scheduler (10), Command Center (22), Assessment Wizard (27), SEC (43), Trust Center (35), AI Governance (25), Rule Engine (18), Async Framework (7). Health Check has 27 additional labels in its own package. Total: 190 labels. All Health Check labels are protected.",
+      "recommendation": "Fix the 4 unprotected labels (AX-005) and add labels for the 22 LWC components with hardcoded strings (AX-004)."
+    },
+    {
+      "id": "AX-016",
+      "file": "force-app/main/default/namedCredentials/",
+      "line": null,
+      "severity": "info",
+      "category": "Named Credentials",
+      "description": "4 Named Credentials configured: Elaro_Claude_API, Jira_API, Slack_Webhook, Teams_Webhook. This covers most external integrations properly.",
+      "recommendation": "Add Named Credentials for PagerDuty and OriginStamp (AX-006/AX-007)."
+    },
+    {
+      "id": "AX-017",
+      "file": "force-app/main/default/objects/Elaro_Feature_Flags__c/",
+      "line": null,
+      "severity": "info",
+      "category": "Feature Flags",
+      "description": "Feature flags are well-implemented. Elaro_Feature_Flags__c has 6 kill switches: AI_Governance_Enabled, Assessment_Wizard_Enabled, Command_Center_Enabled, Event_Monitoring_Enabled, SEC_Module_Enabled, Trust_Center_Enabled. Health Check has its own Health_Check_Feature_Flags__c. Async Framework has its own Elaro_Async_Framework_Flags__c. Previous finding AX-007 (missing feature flags) has been resolved.",
+      "recommendation": "Consider adding kill switches for Jira Integration and Copilot modules."
+    },
+    {
+      "id": "AX-018",
+      "file": "force-app-healthcheck/main/default/",
+      "line": null,
+      "severity": "info",
+      "category": "Health Check Package",
+      "description": "Health Check 2GP is well-structured: Admin and User permission sets with appropriate CRUD differentiation, 27 Custom Labels (all protected), 1 tab with visibility grants, 1 custom object with field permissions, 13 Apex classes in Admin permission set, 6 LWC components with no hardcoded strings detected.",
+      "recommendation": "None - Health Check package is AppExchange-ready pending namespace registration."
     }
   ],
   "appexchange_readiness": {
     "status": "needs_work",
+    "progress_since_last_review": "Significant improvement from Feb 2026 review. Previous critical blocker (missing namespace) resolved. Previous high findings (many objects/tabs/classes missing from permission sets) largely resolved. Feature flags now implemented.",
     "blockers": [
-      "AX-001: Missing namespace - CRITICAL blocker for 2GP managed package creation",
-      "AX-011: Two packages require two separate namespaces - will fail on package version create",
-      "AX-002: Many custom objects missing from permission sets - users will not see objects after install",
-      "AX-003: Tabs not granted in permission sets - users cannot navigate to dashboards",
-      "AX-004: Many Apex classes missing from permission sets - LWC components will fail with insufficient privileges"
+      "AX-004: 22 LWC components with ~101 hardcoded English strings - will fail i18n review",
+      "AX-006/AX-007: Hardcoded external endpoints (OriginStamp, PagerDuty) - will fail security review",
+      "AX-003: Elaro_Async_Framework_Flags__c missing from permission sets - users cannot configure async framework"
     ],
     "warnings": [
-      "AX-007: Main package feature flags not implemented - no kill switches for broken features",
-      "AX-012: TechDebt permission set not audited - may be incomplete",
-      "AX-014: Two admin permission sets (Elaro_Admin and Elaro_Admin_Extended) - unclear distinction",
-      "AX-013: Code Analyzer v5 not run yet - must pass before AppExchange submission",
-      "AX-015: Inconsistent custom label protected flag - may cause upgrade issues"
+      "AX-005: 4 unprotected Custom Labels in managed package - may cause upgrade issues",
+      "AX-001: Health Check namespace not yet registered - blocks HC package creation",
+      "AX-002: Placeholder package alias IDs - must be replaced before packaging",
+      "AX-009: 2 classes with @AuraEnabled properties not in permission sets"
     ]
   },
   "summary": {
-    "critical": 1,
-    "high": 4,
-    "medium": 4,
+    "critical": 0,
+    "high": 5,
+    "medium": 3,
     "low": 2,
-    "info": 4,
-    "total": 15
+    "info": 8
   }
 }

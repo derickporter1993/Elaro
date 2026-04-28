@@ -1,7 +1,7 @@
 {
   "review_id": "rev-2026-0428-001",
   "started_at": "2026-04-28T12:00:00Z",
-  "status": "in_progress",
+  "status": "complete",
   "target": "full",
   "file_counts": {
     "apex_production": 207,
@@ -14,46 +14,88 @@
     "total_in_scope": 501
   },
   "auto_fail_gate": {
-    "status": "pending",
-    "results": {}
+    "status": "complete",
+    "passed": true,
+    "results": {
+      "soql_injection": { "passed": true, "details": "2 Database.query() calls — both use escapeSingleQuotes + AccessLevel.USER_MODE on admin-controlled metadata" },
+      "hardcoded_credentials": { "passed": true, "details": "No credential literals found" },
+      "test_classes_exist": { "passed": true, "details": "211 test classes (95.9% ratio)" },
+      "dml_in_loop": { "passed": true, "details": "No DML inside loops" },
+      "soql_in_loop": { "passed": true, "details": "No SOQL inside loops" },
+      "sharing_declared": { "passed": true, "details": "All production classes have sharing (12 exceptions are interfaces, abstract classes, test mocks)" },
+      "namespace_configured": { "passed": true, "details": "Namespace 'elaro' configured" },
+      "api_version_consistent": { "passed": true, "details": "100% on v66.0 (505 files)" }
+    },
+    "grade_ceiling": null,
+    "notes": "All 8 auto-fail checks passed. No grade ceiling applied."
   },
   "agents": {
     "security_reviewer": {
-      "status": "pending",
-      "progress_pct": 0,
-      "files_reviewed_count": 0,
-      "finding_counts": { "critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0 },
-      "last_updated": null
+      "status": "complete",
+      "progress_pct": 100,
+      "files_reviewed_count": 218,
+      "finding_counts": { "critical": 1, "high": 4, "medium": 4, "low": 3, "info": 11 },
+      "last_updated": "2026-04-28T21:20:00Z"
     },
     "governor_analyst": {
-      "status": "pending",
-      "progress_pct": 0,
-      "files_reviewed_count": 0,
-      "finding_counts": { "critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0 },
-      "last_updated": null
+      "status": "complete",
+      "progress_pct": 100,
+      "files_reviewed_count": 216,
+      "finding_counts": { "critical": 2, "high": 1, "medium": 8, "low": 5, "info": 8 },
+      "last_updated": "2026-04-28T21:15:00Z"
     },
     "test_auditor": {
-      "status": "pending",
-      "progress_pct": 0,
-      "files_reviewed_count": 0,
-      "finding_counts": { "critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0 },
-      "last_updated": null
+      "status": "complete",
+      "progress_pct": 100,
+      "files_reviewed_count": 495,
+      "finding_counts": { "critical": 4, "high": 4, "medium": 5, "low": 4, "info": 7 },
+      "last_updated": "2026-04-28T21:30:00Z"
     },
     "architecture_reviewer": {
-      "status": "pending",
-      "progress_pct": 0,
-      "files_reviewed_count": 0,
-      "finding_counts": { "critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0 },
-      "last_updated": null
+      "status": "complete",
+      "progress_pct": 100,
+      "files_reviewed_count": 284,
+      "finding_counts": { "critical": 0, "high": 18, "medium": 6, "low": 2, "info": 6 },
+      "last_updated": "2026-04-28T21:30:00Z"
     },
     "appexchange_checker": {
-      "status": "pending",
-      "progress_pct": 0,
-      "files_reviewed_count": 0,
-      "finding_counts": { "critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0 },
-      "last_updated": null
+      "status": "complete",
+      "progress_pct": 100,
+      "files_reviewed_count": 1158,
+      "finding_counts": { "critical": 0, "high": 5, "medium": 3, "low": 2, "info": 8 },
+      "last_updated": "2026-04-28T21:02:00Z"
     }
   },
-  "scoring": null,
-  "completed_at": null
+  "scoring": {
+    "categories": {
+      "security": { "weight": 0.25, "score": 4.0, "weighted": 1.000 },
+      "governor_limits": { "weight": 0.20, "score": 3.5, "weighted": 0.700 },
+      "test_quality": { "weight": 0.15, "score": 3.5, "weighted": 0.525 },
+      "maintainability": { "weight": 0.15, "score": 3.0, "weighted": 0.450 },
+      "architecture": { "weight": 0.10, "score": 4.0, "weighted": 0.400 },
+      "api_version": { "weight": 0.05, "score": 5.0, "weighted": 0.250 },
+      "appexchange": { "weight": 0.05, "score": 3.0, "weighted": 0.150 },
+      "modernization": { "weight": 0.05, "score": 4.5, "weighted": 0.225 }
+    },
+    "weighted_total": 3.700,
+    "percentage": 74.0,
+    "grade": "C",
+    "grade_ceiling": null,
+    "total_findings": {
+      "critical": 7,
+      "high": 32,
+      "medium": 26,
+      "low": 16,
+      "info": 40,
+      "total": 121
+    }
+  },
+  "previous_review": {
+    "review_id": "rev-2026-0219-001",
+    "grade": "C",
+    "percentage": 66.5,
+    "total_findings": 131,
+    "critical": 25
+  },
+  "completed_at": "2026-04-28T21:45:00Z"
 }

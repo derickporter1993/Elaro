@@ -1,25 +1,28 @@
 # Solentra Codebase Review v2.0 — Final Report
 
-**Review ID:** `rev-2026-0219-001`
-**Date:** February 19, 2026
+**Review ID:** `rev-2026-0428-001`
+**Date:** April 28, 2026
 **Target:** Full Codebase (force-app/ + force-app-healthcheck/)
-**Scope:** 349 Apex classes, 59 LWC components, 5 triggers, metadata
+**Scope:** 433 Apex classes, 65 LWC components, 5 triggers, metadata
+**Previous Review:** `rev-2026-0219-001` — Grade C (66.5%) — February 19, 2026
 
 ---
 
 ## Executive Summary
 
-| Metric | Value |
-|--------|-------|
-| **Overall Grade** | **C** |
-| **Weighted Score** | **3.325 / 5.00 (66.5%)** |
-| **Auto-Fail Gate** | **Passed** (no hard kills) |
-| **AppExchange Readiness** | **Needs Work** (5 blockers) |
-| **Total Findings** | **131** (25 critical, 30 high, 29 medium, 13 low, 34 info) |
-| **Files Reviewed** | **1,143** across all agents |
-| **Grade Ceiling** | **C max** (CRITICAL findings present) |
+| Metric | Value | Change from Feb |
+|--------|-------|-----------------|
+| **Overall Grade** | **C** | Same letter, +7.5 pts |
+| **Weighted Score** | **3.700 / 5.00 (74.0%)** | +0.375 (+7.5%) |
+| **Auto-Fail Gate** | **All 8 PASSED** | +1 (namespace now passes) |
+| **AppExchange Readiness** | **Needs Work** (1 blocker category) | Improved (was 5 blockers) |
+| **Total Findings** | **121** (7 crit, 32 high, 26 med, 16 low, 40 info) | -10 total, -18 critical |
+| **Files Reviewed** | **2,371** across all agents | +1,228 |
+| **Grade Ceiling** | **None** (no auto-fail) | Improved (was C ceiling) |
 
-The Elaro codebase has a **strong architectural foundation** with modern patterns, excellent LWC compliance, and comprehensive test coverage ratios. However, **concentrated security gaps** in 3 controller classes, **8 legacy @future methods**, **significant ApexDoc gaps**, and **AppExchange packaging blockers** prevent a higher grade. Most issues are fixable with targeted remediation.
+The Elaro codebase shows **significant improvement** since the February review. Critical findings dropped from 25 to 7 (-72%). All major security vulnerabilities identified in February have been remediated: @AuraEnabled try-catch coverage, `as user` DML, `WITH USER_MODE` SOQL, and all 8 `@future` methods replaced with Queueable. The namespace is now configured, permission sets are comprehensive, and @IsTest(testFor) adoption jumped from 15% to 99.5%.
+
+The remaining grade ceiling is driven by **hardcoded English strings in 25 LWC components** (the dominant finding pattern) and **3 callout-in-loop governor violations**. Fixing these would clear the path to a B grade.
 
 ---
 
@@ -27,16 +30,16 @@ The Elaro codebase has a **strong architectural foundation** with modern pattern
 
 | # | Check | Result | Details |
 |---|-------|--------|---------|
-| 1 | SOQL Injection | PASS | 17 Database.query() calls — all use bind vars, sanitization, or whitelisting |
-| 2 | Hardcoded Credentials | PASS | No credential literals found |
-| 3 | Test Classes Exist | PASS | 172 test classes (98% coverage ratio) |
-| 4 | DML in Loop | PASS* | 3 flagged — all false positives (string contains checks, test factory) |
-| 5 | SOQL in Loop | PASS* | 4 flagged — all use bounded IN :collection pattern |
-| 6 | Sharing Declared | PASS | 100% of production classes have explicit sharing keywords |
-| 7 | Namespace Configured | FAIL* | Empty namespace in sfdx-project.json (development phase) |
-| 8 | API Version Consistent | PASS | 3 versions: v66.0 (430), v65.0 (7), v63.0 (1) |
+| 1 | SOQL Injection | **PASS** | 2 Database.query() calls — both use escapeSingleQuotes + AccessLevel.USER_MODE on admin-controlled metadata |
+| 2 | Hardcoded Credentials | **PASS** | No credential literals found |
+| 3 | Test Classes Exist | **PASS** | 211 test classes (95.9% coverage ratio) |
+| 4 | DML in Loop | **PASS** | No DML inside loops |
+| 5 | SOQL in Loop | **PASS** | No SOQL inside loops |
+| 6 | Sharing Declared | **PASS** | All production classes have sharing (12 exceptions: interfaces, abstract, mocks) |
+| 7 | Namespace Configured | **PASS** | Namespace "elaro" configured |
+| 8 | API Version Consistent | **PASS** | 100% on v66.0 (505 files) |
 
-*No hard auto-fail triggered. Namespace is empty but expected during development. SOQL/DML-in-loop flags are false positives upon manual review.
+**All 8 auto-fail checks passed.** No grade ceiling applied. This is an improvement from February where namespace was missing (ceiling C).
 
 ---
 
@@ -44,117 +47,114 @@ The Elaro codebase has a **strong architectural foundation** with modern pattern
 
 | Category | Weight | Score | Weighted | Key Factors |
 |----------|--------|-------|----------|-------------|
-| Security | 25% | 3.5 | 0.875 | 100% sharing compliance, no injection; 3 classes missing try-catch + 'as user' DML |
-| Governor Limits & Performance | 20% | 3.0 | 0.600 | Bulk-safe triggers, no real DML/SOQL-in-loop; 8 legacy @future methods |
-| Test Quality | 15% | 3.5 | 0.525 | 98% test ratio, 92% LWC coverage; 3 stub tests, 15% @IsTest(testFor) |
-| Maintainability & Documentation | 15% | 3.0 | 0.450 | 100% lwc:if, good logging; 142 classes missing @since, 18 missing @author |
-| Architecture & Async Patterns | 10% | 3.5 | 0.350 | Strong factory/base patterns; no Cursor usage, no AsyncOptions |
-| API Version & Platform Compliance | 5% | 4.5 | 0.225 | 98% on v66.0, consistent sourceApiVersion |
-| AppExchange Readiness | 5% | 2.5 | 0.125 | Good labels/metadata; missing namespace, incomplete permission sets |
-| Code Modernization (Spring '26) | 5% | 3.5 | 0.175 | All Assert class, all lwc:if, ?? operators; @future still present |
-| **TOTAL** | **100%** | — | **3.325** | **Grade: C** |
+| Security | 25% | 4.0 | 1.000 | All Feb critical fixes verified; 1 remaining critical (UserInfo.getSessionId); 4 high (error leaks) |
+| Governor Limits & Performance | 20% | 3.5 | 0.700 | Zero @future; all triggers bulkified; 2 critical callout-in-loop; 5 Queueables missing Finalizers |
+| Test Quality | 15% | 3.5 | 0.525 | 99.5% @IsTest(testFor); 100% LWC Jest; 4 untested Queueable classes; 95.9% test ratio |
+| Maintainability & Documentation | 15% | 3.0 | 0.450 | 100% @since/@author/@group; 25 LWC with hardcoded English; ElaroLogger Platform Event gap |
+| Architecture & Async Patterns | 10% | 4.0 | 0.400 | Strong factory/interface/base patterns; proper access modifiers; 48 services use `with sharing` vs `inherited sharing` |
+| API Version & Platform Compliance | 5% | 5.0 | 0.250 | 100% on v66.0; complete meta.xml pairing; zero outdated versions |
+| AppExchange Readiness | 5% | 3.0 | 0.150 | Namespace resolved; good permission sets; hardcoded English blocks i18n; 2 missing Named Credentials |
+| Code Modernization (Spring '26) | 5% | 4.5 | 0.225 | Zero @future, Zero System.assertEquals, Zero if:true, Zero WITH SECURITY_ENFORCED; 99.5% testFor |
+| **TOTAL** | **100%** | — | **3.700** | **Grade: C (74.0%)** |
 
 ### Score Scale Reference
 
 | Score | Level | Meaning |
 |-------|-------|---------|
 | 5 | Exemplary | Exceeds best practices. Reference-quality code. |
-| 4 | Proficient | Meets all standards, minor issues only. |
-| **3** | **Adequate** | **Meets minimum standards with notable gaps.** |
+| **4** | **Proficient** | **Meets all standards, minor issues only.** |
+| 3 | Adequate | Meets minimum standards with notable gaps. |
 | 2 | Developing | Below standards. Significant issues. |
 | 1 | Inadequate | Critical failures. Major rework needed. |
 
 ---
 
-## Critical Findings (25)
+## Improvement Since February Review
 
-### Security — 9 Critical
-
-| ID | File | Issue |
-|----|------|-------|
-| SEC-003 | OnCallScheduleController.cls:38 | @AuraEnabled `createSchedule` missing try-catch + ElaroLogger |
-| SEC-004 | OnCallScheduleController.cls:54 | @AuraEnabled `updateSchedule` missing try-catch + ElaroLogger |
-| SEC-005 | OnCallScheduleController.cls:69 | @AuraEnabled `deleteSchedule` missing try-catch + ElaroLogger |
-| SEC-006 | MultiOrgManager.cls:29 | `insert connectedOrg` without 'as user' |
-| SEC-007 | MultiOrgManager.cls:115 | `delete org` without 'as user' |
-| SEC-011 | MultiOrgManager.cls:14 | @AuraEnabled `registerOrg` missing try-catch |
-| SEC-012 | MultiOrgManager.cls:110 | @AuraEnabled `removeOrg` missing try-catch |
-| SEC-013 | MultiOrgManager.cls:121 | @AuraEnabled `refreshAllConnections` missing try-catch |
-| SEC-020 | HIPAABreachNotificationService.cls:278 | @AuraEnabled `createBreachRecord` missing try-catch |
-
-**Remediation:** Add try-catch blocks with `ElaroLogger.error()` and `throw new AuraHandledException()` to all 9 methods. Change DML to `as user`. Use `AIGovernanceController.cls` as the reference implementation.
-
-### Governor — 10 Critical
-
-| ID | File | Issue |
-|----|------|-------|
-| GOV-005 | ElaroDeliveryService.cls:188 | @future `sendToSlack` — should be Queueable |
-| GOV-006 | JiraIntegrationService.cls:65 | @future `createIssueAsync` — should be Queueable |
-| GOV-007 | MultiOrgManager.cls:86 | @future `syncPolicies` — should be Queueable |
-| GOV-008 | MultiOrgManager.cls:207 | @future `testOrgConnection` — should be Queueable |
-| GOV-009 | SlackIntegration.cls:15 | @future `sendAlert` — should be Queueable |
-| GOV-010 | SlackIntegration.cls:74 | @future `sendAuditPackageNotification` — should be Queueable |
-| GOV-011 | SlackIntegration.cls:123 | @future `sendDailyDigest` — should be Queueable |
-| GOV-012 | SlackIntegration.cls:214 | @future `sendToSlackFuture` — should be Queueable |
-| GOV-001 | HIPAAAuditControlService.cls:444 | SOQL in for-each loop (bounded, low risk) |
-| GOV-002 | ElaroDailyDigest.cls:48 | SOQL in for-each loop (bounded, low risk) |
-
-**Remediation:** Convert all 8 @future methods to Queueable using `ElaroDailyDigest.SlackDigestQueueable` (line 297) as template. Add Transaction Finalizers for error recovery.
-
-### Test — 5 Critical
-
-| ID | File | Issue |
-|----|------|-------|
-| TEST-002 | ElaroEventProcessorTest.cls:24 | Stub test — `Assert.isTrue(true)` placeholder |
-| TEST-003 | ElaroFrameworkEngineTest.cls:24 | Stub test — `Assert.isTrue(true)` placeholder |
-| TEST-004 | ElaroEventMonitoringServiceTest.cls:24 | Stub test — `Assert.isTrue(true)` placeholder |
-| TEST-005 | ElaroAuditPackageGeneratorTest.cls | Minimal test — only 1 assertion |
-| TEST-001 | IComplianceModule.cls | Core interface without integration test |
-
-**Remediation:** Replace 3 stub test classes with real implementations testing actual method behavior. Add integration test for IComplianceModule contract.
-
-### AppExchange — 1 Critical
-
-| ID | File | Issue |
-|----|------|-------|
-| AX-001 | sfdx-project.json:20 | Empty namespace — 2GP managed package requires registered namespace |
-
-**Remediation:** Register namespaces in DevHub: `elaro` (main) and `elaroHC` (Health Check).
+| Area | Feb 2026 | Apr 2026 | Change |
+|------|----------|----------|--------|
+| Overall Grade | C (66.5%) | C (74.0%) | **+7.5 pts** |
+| Critical Findings | 25 | 7 | **-72%** |
+| @future methods | 8 | 0 | **Eliminated** |
+| @AuraEnabled missing try-catch | 9 | 0 | **Eliminated** |
+| DML without `as user` | 5+ | 0 | **Eliminated** |
+| SOQL without `WITH USER_MODE` | 3+ | 0 | **Eliminated** |
+| Stub tests (Assert.isTrue(true)) | 3 | 0 | **Eliminated** |
+| Namespace configured | No | Yes | **Fixed** |
+| @IsTest(testFor) adoption | 15% | 99.5% | **+84.5 pts** |
+| @since tags | 58% missing | 0% missing | **Complete** |
+| @author tags | 18 missing | 0 missing | **Complete** |
+| API version consistency | 3 versions | 1 version | **Unified** |
+| Permission set classes | ~260 missing | Comprehensive | **Fixed** |
+| Permission set objects | ~30 missing | 52/53 covered | **Fixed** |
+| Permission set tabs | 18/19 missing | 20/20 covered | **Fixed** |
+| Auto-fail gate | 7/8 passed | 8/8 passed | **All clear** |
 
 ---
 
-## High Findings (30)
+## Critical Findings (7)
 
-### Security — 12 High
+### Security — 1 Critical
 
-- **SEC-001/002**: OnCallScheduleController DML without `as user` (lines 43, 59)
-- **SEC-008/009/010**: MultiOrgManager SOQL missing `WITH USER_MODE` (lines 88, 112, 123)
-- **SEC-014**: MultiOrgManager DML without `as user` in @future method (line 229)
-- **SEC-021/022/023**: HIPAABreachNotificationService DML without `as user` (lines 289, 348, 373)
-- **SEC-024/025**: HIPAABreachNotificationService @AuraEnabled missing try-catch (lines 333, 358)
+| ID | File | Issue |
+|----|------|-------|
+| SEC-001 | ToolingApiService.cls:40 | `UserInfo.getSessionId()` is banned since Spring '26 enforcement. Used by 4 Health Check scanners. |
 
-### Governor — 3 High
+**Remediation:** Replace with Named Credential OAuth flow. Create a Named Credential for the Tooling API using the org's connected app.
 
-- **GOV-003**: ElaroConsentWithdrawalHandler SOQL pattern (bounded, reorganization suggested)
-- **GOV-013**: CCPAOptOutService loop comment suggests future callout-in-loop risk
+### Governor — 2 Critical
 
-### Test — 8 High
+| ID | File | Issue |
+|----|------|-------|
+| GOV-001 | SlackNotifier.cls:116 | `SlackBulkNotificationQueueable.execute()` makes HTTP callouts inside a for loop. Will hit 100-callout limit. |
+| GOV-002 | ServiceNowIntegration.cls:57 | `ServiceNowSyncControlsQueueable.execute()` calls `syncSingleControl()` in a for loop; each makes an HTTP callout. |
 
-- **TEST-006/007/008/009/010**: 5 Health Check classes without test coverage (HCLogger, HealthCheckFeatureFlags, HealthCheckResult, ScanFinding, ScanRecommendation)
-- **TEST-011/012/013**: Missing `@IsTest(testFor)` on key test classes (only 15% adoption)
+**Remediation:** Batch callouts using composite API or serialize into chained Queueable jobs (max N callouts per execution, chain for remainder).
 
-### Architecture — 3 High
+### Test — 4 Critical
 
-- **ARCH-001**: ApiUsageSnapshot missing all ApexDoc
-- **ARCH-002**: 142 production classes missing `@since` tag
-- **ARCH-003**: 18 production classes missing `@author` tag
+| ID | File | Issue |
+|----|------|-------|
+| TEST-001 | ElaroDeliveryQueueable.cls | 200 lines, zero test coverage. Makes HTTP callouts. |
+| TEST-002 | SlackIntegrationQueueable.cls | 361 lines, zero test coverage. Makes HTTP callouts. |
+| TEST-003 | JiraIntegrationQueueable.cls | 118 lines, zero test coverage. Makes HTTP callouts. |
+| TEST-004 | MultiOrgManagerQueueable.cls | 228 lines, zero test coverage. Makes HTTP callouts. |
 
-### AppExchange — 4 High
+**Remediation:** Create test classes for each Queueable with `HttpCalloutMock` implementations. Use `Test.startTest()/stopTest()` to verify async execution. Template: `ElaroDailyDigestTest.cls` callout mock pattern.
 
-- **AX-002**: ~30 custom objects missing from permission sets
-- **AX-003**: 18 of 19 custom tabs missing from permission sets
-- **AX-004**: ~260 Apex classes missing from permission sets
-- **AX-011**: Two packages require two separate namespaces
+---
+
+## High Findings (32)
+
+### Security — 4 High
+
+- **SEC-002**: NaturalLanguageQueryService.cls:91 — `executeNaturalLanguageQuery` leaks raw `e.getMessage()` to client
+- **SEC-003**: TrustCenterGuestController.cls:79 — Guest-accessible `@AuraEnabled` missing `AuraHandledException` throw
+- **SEC-004**: PerformanceRuleEngine.cls:81 — `@AuraEnabled` method leaks `e.getMessage()` to client
+- **SEC-005**: ElaroRealtimeMonitor.cls:180 — `@AuraEnabled(cacheable=true)` silently returns defaults on error
+
+### Governor — 1 High
+
+- **GOV-003**: ElaroComplianceAlert.cls:224 — `AlertDispatchQueueable.execute()` loops with callouts (sendSlackAlert/sendPagerDutyAlert)
+
+### Test — 4 High
+
+- **TEST-005**: SlackNotifierTest — Lacks HttpCalloutMock despite production class making callouts
+- **TEST-006**: ElaroIntegrationTest — Only test class missing `@IsTest(testFor)`
+- **TEST-007**: 20/21 controller tests lack `System.runAs()` permission verification
+- **TEST-008**: 37/96 classes throwing AuraHandledException have no negative test for error paths
+
+### Architecture — 18 High
+
+- **ARCH-001 through ARCH-018**: 25 LWC components with hardcoded English text (142 text instances + 203 label attribute instances). Worst offenders: `complianceGraphViewer` (23), `escalationPathConfig` (25 labels), `elaroAuditWizard` (21 labels), `elaroSetupWizard` (19 labels), `elaroROICalculator` (9). 24 components have zero Custom Label imports.
+
+### AppExchange — 5 High
+
+- **AX-003**: `Elaro_Async_Framework_Flags__c` is the only custom object (of 53) not in any permission set
+- **AX-004**: 22 of 57 LWC components contain ~101 hardcoded English strings (overlaps ARCH findings)
+- **AX-005**: 4 Custom Labels set to `<protected>false</protected>` (AW_AutoScanError, AW_AutoScanPassCount, AW_AutoScanFailCount, AW_AutoScanNoFindings)
+- **AX-006**: BlockchainVerification.cls has hardcoded OriginStamp API endpoint (no Named Credential)
+- **AX-007**: PagerDutyIntegration.cls + ElaroComplianceAlert.cls have hardcoded PagerDuty Events API endpoint
 
 ---
 
@@ -162,47 +162,44 @@ The Elaro codebase has a **strong architectural foundation** with modern pattern
 
 | Severity | Count | Representative Examples |
 |----------|-------|------------------------|
-| Medium | 29 | Dynamic SOQL using Database.query() vs queryWithBinds (3), 4 LWC components missing tests (SEC module), weak assertion patterns, missing feature flags, unbounded queries on Custom Metadata |
-| Low | 13 | Nested loop CPU concern in ComplianceGraphService, CI pipeline soft-fails on format/lint, callout timeout (30s), naming convention deviation |
-| Info | 34 | Positive findings: exemplary ApexDoc (EventCorrelationEngine), correct Queueable pattern (SlackDigestQueueable), 100% lwc:if compliance, excellent Custom Labels, good HttpCalloutMock patterns |
+| Medium | 26 | 5 Queueables missing Transaction Finalizers (GOV-008–012), ElaroLogger uses System.debug not Platform Events (ARCH-019), 48 services use `with sharing` vs `inherited sharing` (ARCH-020), 111 classes missing @param/@return on methods (ARCH-023), CI pipeline excludes healthcheck from security scan (ARCH-021), assertion messages at 61% (TEST-009) |
+| Low | 16 | ElaroPCIAccessAlertHandler triple JSON parse (GOV-005), ComplianceReportScheduler string concat in loop (GOV-006), inline CSS in 6 LWC components (ARCH-025), Health Check tests lack @TestSetup (TEST-012) |
+| Info | 40 | Positive: 100% lwc:if compliance, 100% LWC Jest coverage, 99.5% @IsTest(testFor), exemplary StepProcessor Queueable+Finalizer, strong ComplianceServiceFactory pattern, all abstract/override methods have access modifiers, 7 comprehensive CI workflows, 190 Custom Labels |
 
 ---
 
 ## Top 5 Recommendations
 
-### 1. Fix 3 Problem Controllers (Impact: HIGH, Effort: LOW)
-Add try-catch + ElaroLogger.error + AuraHandledException to 9 @AuraEnabled methods and convert DML to `as user` in:
-- `OnCallScheduleController.cls`
-- `MultiOrgManager.cls`
-- `HIPAABreachNotificationService.cls`
+### 1. Extract Hardcoded English to Custom Labels (Impact: HIGH, Effort: HIGH)
+25 LWC components contain 345+ hardcoded English strings. This is the **single largest finding pattern** (18 architecture + 5 AppExchange high findings). Create Custom Labels for all user-facing strings and import them in JS files.
 
-Use `AIGovernanceController.cls` as the reference implementation. **This alone would eliminate 21 critical/high findings.**
+**Affected components (top 10):** `complianceGraphViewer`, `escalationPathConfig`, `elaroAuditWizard`, `elaroSetupWizard`, `elaroROICalculator`, `controlMappingMatrix`, `jiraIssueCard`, `remediationSuggestionCard`, `elaroDynamicReportBuilder`, `complianceCommandCenter`
 
-### 2. Convert 8 @future Methods to Queueable (Impact: HIGH, Effort: MEDIUM)
-Replace all @future(callout=true) methods with Queueable + Database.AllowsCallouts:
-- `SlackIntegration.cls` (4 methods → 1 SlackNotificationQueueable)
-- `MultiOrgManager.cls` (2 methods)
-- `JiraIntegrationService.cls` (1 method)
-- `ElaroDeliveryService.cls` (1 method)
+**This alone would eliminate 23 high findings and clear the primary AppExchange i18n blocker.**
 
-Template exists: `ElaroDailyDigest.SlackDigestQueueable` (line 297). Add Transaction Finalizers for retry logic. **Eliminates 10 critical findings.**
+### 2. Fix 3 Callout-in-Loop Patterns (Impact: HIGH, Effort: MEDIUM)
+Convert callout loops in SlackNotifier, ServiceNowIntegration, and ElaroComplianceAlert to batch/chained Queueable pattern. Each Queueable execution handles up to N callouts (e.g., 50), then chains another job for the remainder.
 
-### 3. Complete Permission Sets for AppExchange (Impact: CRITICAL, Effort: MEDIUM)
-- Add ~30 missing custom objects to `Elaro_Admin.permissionset-meta.xml`
-- Add 18 missing tabs with `<tabSettings><visibility>Visible</visibility></tabSettings>`
-- Add all `@AuraEnabled` Apex classes to permission sets
-- Register namespaces (`elaro` + `elaroHC`) in DevHub
+Template: Use `StepProcessor.cls` chaining pattern with `AsyncOptions` duplicate signature prevention.
 
-**This is a hard blocker for AppExchange submission.**
+**Eliminates 3 critical + 1 high governor findings.**
 
-### 4. Add @since Tags to 142 Classes (Impact: MEDIUM, Effort: LOW)
-Batch-add `@since v3.1.0 (Spring '26)` to all production classes missing it. Add `@author Elaro Team` to 18 classes. This is scriptable and directly impacts AppExchange review and Agentforce compatibility.
+### 3. Add Test Classes for 4 Queueable Classes (Impact: HIGH, Effort: MEDIUM)
+Create test classes with `HttpCalloutMock` for: `ElaroDeliveryQueueable`, `SlackIntegrationQueueable`, `JiraIntegrationQueueable`, `MultiOrgManagerQueueable`. Combined 907 lines of untested production code.
 
-### 5. Replace 3 Stub Tests + Add Health Check Coverage (Impact: MEDIUM, Effort: MEDIUM)
-- Replace `ElaroEventProcessorTest`, `ElaroFrameworkEngineTest`, `ElaroEventMonitoringServiceTest` stub tests with real implementations
-- Create test classes for 5 untested Health Check classes
-- Add `@IsTest(testFor)` to 147 test classes (currently 15% adoption)
-- Create LWC tests for 4 SEC module components
+Template: `ElaroDailyDigestTest.cls` callout mock pattern.
+
+**Eliminates 4 critical test findings.**
+
+### 4. Replace UserInfo.getSessionId() with Named Credential (Impact: MEDIUM, Effort: LOW)
+`ToolingApiService.cls` is the sole remaining `UserInfo.getSessionId()` usage. Create a Named Credential with OAuth flow for the Tooling API. This is enforced in Spring '26.
+
+**Eliminates 1 critical security finding.**
+
+### 5. Add Transaction Finalizers to 5 Queueable Classes (Impact: MEDIUM, Effort: LOW)
+Add `System.attachFinalizer()` to: `ElaroSlackNotifierQueueable`, `ElaroTeamsNotifierQueueable`, `ElaroAlertQueueable`, `PagerDutyIntegration`, `ServiceNowIntegration`. Template: `StepProcessor.ScanFinalizer` pattern.
+
+**Eliminates 5 medium governor findings and improves production resilience.**
 
 ---
 
@@ -210,52 +207,38 @@ Batch-add `@since v3.1.0 (Spring '26)` to all production classes missing it. Add
 
 ### Status: NEEDS WORK
 
-**Blockers (must resolve before packaging):**
-1. Empty namespace in sfdx-project.json (AX-001)
-2. Two packages need separate namespaces (AX-011)
-3. ~30 custom objects missing from permission sets (AX-002)
-4. 18/19 tabs missing from permission sets (AX-003)
-5. ~260 Apex classes missing from permission sets (AX-004)
+**Blockers (must resolve before submission):**
+1. 25 LWC components with hardcoded English (345+ instances) — i18n violation
+2. `Elaro_Async_Framework_Flags__c` missing from permission sets
+3. 4 Custom Labels with `<protected>false</protected>` in managed package
+4. 2 external integrations without Named Credentials (OriginStamp, PagerDuty)
 
-**Warnings (should resolve before submission):**
-1. Main package missing feature flag kill switches (AX-007)
-2. Two admin permission sets with unclear distinction (AX-014)
-3. Code Analyzer v5 not yet run (AX-013)
-4. Inconsistent Custom Label `<protected>` values (AX-015)
+**Resolved since February:**
+1. Namespace "elaro" configured
+2. Permission sets comprehensive (188 class accesses, 102 objects, 36 tabs)
+3. Feature flags implemented (6 kill switches)
+4. 100% API version consistency (v66.0)
 
 **Passing:**
-- Custom Labels: Comprehensive coverage (1,146 lines), all LWC use labels
-- Named Credentials: Properly configured (Claude API, Slack, Teams, Jira)
-- Metadata pairing: All files have matching meta.xml
-- API versions: 98% on v66.0
+- Custom Labels: 190 labels across both packages
+- Named Credentials: 4 configured (Jira, Slack, Teams, Claude)
+- Meta.xml pairing: Complete
+- Package structure: Correct dual-2GP setup
+- Permission set pairs: Admin + User per module (13 permission sets)
 
 ---
 
 ## Exemplary Code (Reference Implementations)
 
-These files demonstrate gold-standard patterns and should be used as templates:
-
 | File | What Makes It Exemplary |
 |------|------------------------|
 | `AIGovernanceController.cls` | Perfect @AuraEnabled: with sharing, try-catch, ElaroLogger, `as user` DML, WITH USER_MODE |
-| `EventCorrelationEngine.cls` | Full ApexDoc (@author, @since, @group, @example), structured logging with context maps, @TestVisible, ?? operators |
-| `ElaroDailyDigest.SlackDigestQueueable` | Correct Queueable + Database.AllowsCallouts pattern — template for @future replacements |
-| `ComplianceServiceBase.cls` | Abstract base class with proper interface implementation, audit logging, gap creation |
-| `complianceCommandCenter.test.js` | Comprehensive LWC test: proper mocking with {virtual: true}, loading/error/data states, 13 test cases |
-| `HealthCheckScannerTest.cls` | Strong assertions: validates score, finding count, severity, setting names, categories |
-| `CommandCenterControllerTest.cls` | Negative testing: tests unsupported actions, blank inputs, Assert.fail on expected exceptions |
-
----
-
-## Agent Reports
-
-| Agent | Findings File | Files Reviewed | Findings |
-|-------|--------------|----------------|----------|
-| Security Reviewer | `.review-state/security-findings.json` | 45 | 30 (9C, 12H, 3M, 1L, 5I) |
-| Governor Analyst | `.review-state/governor-findings.json` | 42 | 25 (10C, 3H, 5M, 3L, 4I) |
-| Test Auditor | `.review-state/test-findings.json` | 221 | 31 (5C, 8H, 10M, 2L, 6I) |
-| Architecture Reviewer | `.review-state/architecture-findings.json` | 385 | 30 (0C, 3H, 7M, 5L, 15I) |
-| AppExchange Checker | `.review-state/appexchange-findings.json` | 450 | 15 (1C, 4H, 4M, 2L, 4I) |
+| `StepProcessor.cls` | Gold-standard Queueable: Finalizer, AsyncOptions, duplicate signature, stack depth, metrics, Platform Events |
+| `EventCorrelationEngine.cls` | Full ApexDoc, structured logging with context maps, @TestVisible, ?? operators |
+| `ElaroScoreCallback.cls` | Exemplary security implementation with proper error handling |
+| `ElaroDynamicReportController.cls` | Clean security pattern with proper AuraHandledException wrapping |
+| `complianceCommandCenter.test.js` | Comprehensive LWC test: mocking, loading/error/data states, 13 test cases |
+| `CommandCenterControllerTest.cls` | Negative testing: unsupported actions, blank inputs, Assert.fail on expected exceptions |
 
 ---
 
@@ -263,21 +246,14 @@ These files demonstrate gold-standard patterns and should be used as templates:
 
 | Field | Value |
 |-------|-------|
-| Review ID | `rev-2026-0219-001` |
-| System | Solentra Codebase Review v2.0 |
-| Started | 2026-02-19T12:00:00Z |
-| Completed | 2026-02-19T12:45:00Z |
-| Apex Classes | 349 (177 production + 172 test) |
-| Health Check Classes | 21 (13 production + 8 test) |
-| LWC Components | 59 (53 main + 6 HC) |
-| LWC Tests | 55 (49 main + 6 HC) |
-| Triggers | 5 |
-| Custom Objects | 50 |
-| Permission Sets | 5 |
-| Previous Audit Score | 84/100 |
-| Current Review Score | 66.5% (3.325/5.00) — Grade C |
-
----
-
-*Report generated by Solentra Codebase Review System v2.0*
-*Review data: `.review-state/`*
+| Review ID | `rev-2026-0428-001` |
+| Previous Review | `rev-2026-0219-001` (C, 66.5%) |
+| Started | 2026-04-28T12:00:00Z |
+| Completed | 2026-04-28T21:45:00Z |
+| Files in Scope | 501 |
+| Files Reviewed (agent sum) | 2,371 |
+| Agents | 5 (Security, Governor, Test, Architecture, AppExchange) |
+| Auto-Fail Gate | 8/8 PASSED |
+| Finding Totals | 7 critical, 32 high, 26 medium, 16 low, 40 info = 121 |
+| Grade | **C (74.0%)** |
+| Path to B | Fix hardcoded English (23 high), callout-in-loop (3 crit), untested Queueables (4 crit), UserInfo.getSessionId (1 crit) |
