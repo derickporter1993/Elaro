@@ -3,7 +3,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import { getTools, getTool } from "./registry.js";
+import { getTools } from "./registry.js";
 
 /**
  * Elaro MCP Server
@@ -34,9 +34,8 @@ for (const tool of enabledTools) {
     tool.name,
     tool.description,
     shape,
-    async (params) => {
-      const result = await tool.handler(params as Record<string, unknown>);
-      return result;
+    async (params, _extra) => {
+      return await tool.handler(params as Record<string, unknown>);
     },
   );
 }

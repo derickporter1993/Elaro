@@ -15,10 +15,12 @@ export interface ToolEntry {
 /**
  * The result returned from a tool invocation, following the MCP protocol
  * content structure. Each result contains one or more text content blocks.
+ * The index signature is required for compatibility with the MCP SDK's Result base type.
  */
 export interface CallToolResult {
   content: Array<{ type: "text"; text: string }>;
   isError?: boolean;
+  [key: string]: unknown;
 }
 
 /**
