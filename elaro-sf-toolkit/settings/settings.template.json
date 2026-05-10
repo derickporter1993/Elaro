@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "customInstructions": "You are working on Elaro, an enterprise Salesforce compliance platform. Always prioritize security (use ElaroSecurityUtils), follow Salesforce best practices, and maintain test coverage above 75%. When making changes to Apex classes, ensure all SOQL queries use WITH USER_MODE and all DML uses 'as user' or AccessLevel.USER_MODE. Use SF CLI v2 syntax (sf not sfdx). Before deploying, always run tests and preview changes. Read CLAUDE.md for full project context and elaro-sf-toolkit/ for review checklists and slash commands.",
+
+  "rules": [
+    {
+      "name": "Security-First Development",
+      "description": "All Apex code must use ElaroSecurityUtils for CRUD/FLS checks. SOQL must use WITH USER_MODE. DML must use 'as user' or AccessLevel.USER_MODE. Never use WITH SECURITY_ENFORCED (outdated).",
+      "pattern": "**/*.cls",
+      "enabled": true
+    },
+    {
+      "name": "Test Coverage Requirement",
+      "description": "Maintain minimum 75% test coverage for all Apex classes, target 85%+",
+      "pattern": "force-app/main/default/classes/**",
+      "enabled": true
+    },
+    {
+      "name": "No Direct Production Deploys",
+      "description": "Never deploy directly to production orgs. Use scratch orgs for development and staging for validation",
+      "enabled": true
+    },
+    {
+      "name": "Documentation Standards",
+      "description": "Use ApexDoc (@author, @since, @group, @param, @return, @throws) for all public Apex methods and TSDoc for TypeScript. Update SESSION_CONTEXT.md after significant work",
+      "pattern": "**/*.{cls,ts,js}",
+      "enabled": true
+    }
+  ],
+
+  "permissions": {
+    "allow": [
+      "Bash(sf org create scratch*)",
+      "Bash(sf org delete scratch*)",
+      "Bash(sf org open*)",
+      "Bash(sf org list*)",
+      "Bash(sf org display*)",
+      "Bash(sf project deploy start*)",
+      "Bash(sf project deploy preview*)",
+      "Bash(sf project deploy report*)",
+      "Bash(sf project deploy validate*)",
+      "Bash(sf project retrieve start*)",
+      "Bash(sf apex run test*)",
+      "Bash(sf apex run*)",
+      "Bash(sf apex tail log*)",
+      "Bash(sf apex get log*)",
+      "Bash(sf apex list log*)",
+      "Bash(sf data query*)",
+      "Bash(sf data create record*)",
+      "Bash(sf data update record*)",
+      "Bash(sf data delete record*)",
+      "Bash(sf data import tree*)",
+      "Bash(sf data export tree*)",
+      "Bash(sf data upsert bulk*)",
+      "Bash(sf lightning generate component*)",
+      "Bash(sf lightning generate event*)",
+      "Bash(sf lightning generate interface*)",
+      "Bash(sf lightning generate app*)",
+      "Bash(sf package create*)",
+      "Bash(sf package version create*)",
+      "Bash(sf package version list*)",
+      "Bash(sf package version promote*)",
+      "Bash(sf package install*)",
+      "Bash(sf schema describe*)",
+      "Bash(sf staticresource generate*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run test*)",
+      "Bash(npm run fmt*)",
+      "Bash(npm run build*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push*)",
+      "Bash(git pull*)",
+      "Write(~/Elaro/force-app/**)",
+      "Write(~/Elaro/force-app-healthcheck/**)",
+      "Write(~/Elaro/elaro-sf-toolkit/**)",
+      "Write(~/Elaro/.review-state/**)",
+      "Read(~/Elaro/**)"
+    ],
+    "deny": [
+      "Bash(sf org delete scratch -o elaro-prod*)",
+      "Bash(sf org delete scratch -o prod-org*)",
+      "Bash(sf project deploy start --target-org prod-org*)",
+      "Bash(sf project deploy start --target-org elaro-prod*)",
+      "Bash(rm -rf force-app*)",
+      "Bash(rm -rf node_modules*)",
+      "Bash(rm -rf .git*)",
+      "Bash(git push --force*)",
+      "Bash(git push --force-with-lease*)",
+      "Bash(git reset --hard origin/main*)",
+      "Bash(npm run deploy:prod*)",
+      "Bash(sfdx*)"
+    ]
+  },
+
+  "env": {
+    "SF_ORG_ALIAS": "elaro-dev",
+    "SF_DEFAULT_DEV_HUB": "prod-org",
+    "SF_LOG_LEVEL": "warn",
+    "SFDX_USE_PROGRESS_BAR": "false",
+    "NODE_ENV": "development",
+    "SF_AUTOUPDATE_DISABLE": "false",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.sfdx/**",
+    "**/.sf/**",
+    "**/coverage/**",
+    "**/target/**",
+    "**/.nyc_output/**",
+    "**/*.log",
+    "**/deploy-output.log",
+    "**/.DS_Store",
+    "**/.git/**",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/*.map",
+    "**/.cache/**",
+    "**/tmp/**",
+    "**/temp/**"
+  ],
+
+  "includePatterns": [
+    "force-app/main/default/**/*.cls",
+    "force-app/main/default/**/*.trigger",
+    "force-app/main/default/**/*.js",
+    "force-app/main/default/**/*.html",
+    "force-app/main/default/**/*.css",
+    "force-app/main/default/**/*.xml",
+    "force-app/main/default/objects/**/fields/*.field-meta.xml",
+    "force-app-healthcheck/main/default/**/*.cls",
+    "force-app-healthcheck/main/default/**/*.js",
+    "force-app-healthcheck/main/default/**/*.html",
+    "platform/**/*.ts",
+    "docs/**/*.md",
+    "scripts/**/*.{sh,apex,js}",
+    "config/**/*.json",
+    "elaro-sf-toolkit/**/*.{md,json,sh}",
+    "*.md",
+    "sfdx-project.json",
+    "package.json"
+  ],
+
+  "mcpServers": {},
+
+  "experimental": {
+    "parallelToolCalls": true,
+    "enhancedCodeSearch": true
+  }
+}

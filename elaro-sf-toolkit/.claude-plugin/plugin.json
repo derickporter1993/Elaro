@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "elaro-sf-toolkit",
+  "version": "0.1.0",
+  "description": "Salesforce 2GP development toolkit for the Elaro compliance platform: review agents, slash commands, and standards aligned with Spring '26 (API v66.0).",
+  "author": {
+    "name": "Elaro Team"
+  },
+  "license": "Proprietary",
+  "keywords": [
+    "salesforce",
+    "apex",
+    "lwc",
+    "2gp",
+    "compliance",
+    "code-review",
+    "appexchange"
+  ],
+  "elaro": {
+    "salesforceApiVersion": "66.0",
+    "tracksClaudeMd": "../CLAUDE.md",
+    "phase": "1-bootstrap",
+    "requires": {
+      "claudeCode": ">=1.0"
+    }
+  }
+}
