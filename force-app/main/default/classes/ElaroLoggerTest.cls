@@ -1,156 +1,145 @@
 /**
- * ElaroLoggerTest
- *
- * Test coverage for ElaroLogger structured logging service
+ * Tests for {@link ElaroLogger} durable Platform Event publication.
  *
  * @author Elaro
- * @version 1.0
+ * @since v3.1.0 (Spring '26)
+ * @group Logging
+ * @see ElaroLogger
  */
 @IsTest(testFor=ElaroLogger.class)
 private class ElaroLoggerTest {
 
-    @isTest
-    static void testDebugLogging_WithMessage_LogsSuccessfully() {
+    @IsTest
+    static void shouldPublishLogEventWithCorrectFields() {
+        ElaroLogger.publishedEvents.clear();
+
         Test.startTest();
-        Exception caughtEx;
-        try {
-            ElaroLogger.debug('Debug message');
-            ElaroLogger.debug('Debug with context', new Map<String, Object>{'key' => 'value'});
-        } catch (Exception e) {
-            caughtEx = e;
-        }
+        ElaroLogger.info('hello world');
         Test.stopTest();
 
-        Assert.isNull(caughtEx, 'Debug logging should complete without throwing');
+        Assert.areEqual(1, ElaroLogger.publishedEvents.size(), 'Exactly one event should be published');
+        LogEvent__e e = ElaroLogger.publishedEvents[0];
+        Assert.areEqual('INFO', e.Level__c, 'Level__c should match enum name');
+        Assert.areEqual('hello world', e.Message__c, 'Message__c should match input');
+        Assert.areEqual(UserInfo.getUserId(), e.User_Id__c, 'User_Id__c should be the current user');
+        Assert.isNotNull(e.Timestamp__c, 'Timestamp__c should be populated');
+        Assert.isNull(e.Context__c, 'Context__c should be null when no context provided');
     }
 
-    @isTest
-    static void testInfoLogging_WithMessage_LogsSuccessfully() {
-        Test.startTest();
-        Exception caughtEx;
-        try {
-            ElaroLogger.info('Info message');
-            ElaroLogger.info('Info with context', new Map<String, Object>{'accountId' => 'test123'});
-        } catch (Exception e) {
-            caughtEx = e;
-        }
-        Test.stopTest();
+    @IsTest
+    static void shouldSerializeContextToJson() {
+        ElaroLogger.publishedEvents.clear();
 
-        Assert.isNull(caughtEx, 'Info logging should complete without throwing');
-    }
-
-    @isTest
-    static void testWarnLogging_WithMessage_LogsSuccessfully() {
-        Test.startTest();
-        Exception caughtEx;
-        try {
-            ElaroLogger.warn('Warning message');
-            ElaroLogger.warn('Warning with context', new Map<String, Object>{'threshold' => 80});
-        } catch (Exception e) {
-            caughtEx = e;
-        }
-        Test.stopTest();
-
-        Assert.isNull(caughtEx, 'Warn logging should complete without throwing');
-    }
-
-    @isTest
-    static void testErrorLogging_WithMessage_LogsSuccessfully() {
-        Test.startTest();
-        Exception caughtEx;
-        try {
-            ElaroLogger.error('Error message');
-            ElaroLogger.error('Error with context', new Map<String, Object>{'errorCode' => 500});
-        } catch (Exception e) {
-            caughtEx = e;
-        }
-        Test.stopTest();
-
-        Assert.isNull(caughtEx, 'Error logging should complete without throwing');
-    }
-
-    @isTest
-    static void testErrorLogging_WithException_LogsStackTrace() {
-        Test.startTest();
-        Exception caughtEx;
-        try {
-            try {
-                Integer result = 1 / 0; // Force exception
-            } catch (Exception ex) {
-                ElaroLogger.error('Caught exception', ex);
-            }
-        } catch (Exception e) {
-            caughtEx = e;
-        }
-        Test.stopTest();
-
-        Assert.isNull(caughtEx, 'Exception logging should complete without throwing');
-    }
-
-    @isTest
-    static void testLogLevel_WithDebug_RespectsConfiguration() {
-        Test.startTest();
-        Exception caughtEx;
-        try {
-            ElaroLogger.log(ElaroLogger.Level.DEBUG, 'Test debug', null);
-            ElaroLogger.log(ElaroLogger.Level.INFO, 'Test info', null);
-            ElaroLogger.log(ElaroLogger.Level.WARN, 'Test warn', null);
-            ElaroLogger.log(ElaroLogger.Level.ERROR, 'Test error', null);
-        } catch (Exception e) {
-            caughtEx = e;
-        }
-        Test.stopTest();
-
-        Assert.isNull(caughtEx, 'All log levels should be processed without throwing');
-    }
-
-    @isTest
-    static void testLogging_WithNullContext_HandlesGracefully() {
-        Test.startTest();
-        Exception caughtEx;
-        try {
-            ElaroLogger.log(ElaroLogger.Level.INFO, 'Null context test', null);
-        } catch (Exception e) {
-            caughtEx = e;
-        }
-        Test.stopTest();
-
-        Assert.isNull(caughtEx, 'Null context should be handled without throwing');
-    }
-
-    @isTest
-    static void testLogging_WithComplexContext_SerializesCorrectly() {
-        Map<String, Object> complexContext = new Map<String, Object>{
-            'accountId' => '001000000000001',
-            'recordCount' => 150,
-            'frameworks' => new List<String>{'HIPAA', 'SOC2', 'GDPR'},
-            'metadata' => new Map<String, Object>{
-                'severity' => 'HIGH',
-                'category' => 'Security'
-            }
+        Map<String, Object> ctx = new Map<String, Object>{
+            'frameworks' => new List<String>{ 'HIPAA', 'SOC2' },
+            'severity' => 'HIGH'
         };
 
         Test.startTest();
-        Exception caughtEx;
+        ElaroLogger.warn('threshold exceeded', ctx);
+        Test.stopTest();
+
+        Assert.areEqual(1, ElaroLogger.publishedEvents.size(), 'Exactly one event should be published');
+        LogEvent__e e = ElaroLogger.publishedEvents[0];
+        Assert.areEqual('WARN', e.Level__c, 'Level__c should be WARN');
+        Assert.isNotNull(e.Context__c, 'Context__c should be populated');
+        Assert.isTrue(e.Context__c.contains('HIPAA'), 'Context__c should serialize list members');
+        Assert.isTrue(e.Context__c.contains('HIGH'), 'Context__c should serialize string values');
+    }
+
+    @IsTest
+    static void shouldEmitOneEventPerCallAtEachLevel() {
+        ElaroLogger.publishedEvents.clear();
+
+        Test.startTest();
+        ElaroLogger.debug('a');
+        ElaroLogger.info('b');
+        ElaroLogger.warn('c');
+        ElaroLogger.error('d');
+        Test.stopTest();
+
+        Assert.areEqual(4, ElaroLogger.publishedEvents.size(), 'Four events should be published');
+        Assert.areEqual('DEBUG', ElaroLogger.publishedEvents[0].Level__c, 'First event should be DEBUG');
+        Assert.areEqual('INFO', ElaroLogger.publishedEvents[1].Level__c, 'Second event should be INFO');
+        Assert.areEqual('WARN', ElaroLogger.publishedEvents[2].Level__c, 'Third event should be WARN');
+        Assert.areEqual('ERROR', ElaroLogger.publishedEvents[3].Level__c, 'Fourth event should be ERROR');
+    }
+
+    @IsTest
+    static void shouldCaptureExceptionMetadataInContext() {
+        ElaroLogger.publishedEvents.clear();
+
+        Test.startTest();
         try {
-            ElaroLogger.info('Complex context test', complexContext);
-        } catch (Exception e) {
-            caughtEx = e;
+            Integer crash = 1 / 0;
+        } catch (Exception ex) {
+            ElaroLogger.error('division failed', ex);
         }
         Test.stopTest();
 
-        Assert.isNull(caughtEx, 'Complex context should be serialized without throwing');
+        Assert.areEqual(1, ElaroLogger.publishedEvents.size(), 'Exactly one event should be published');
+        LogEvent__e e = ElaroLogger.publishedEvents[0];
+        Assert.areEqual('ERROR', e.Level__c, 'Level__c should be ERROR');
+        Assert.isNotNull(e.Context__c, 'Context__c should contain exception metadata');
+        Assert.isTrue(e.Context__c.contains('exceptionType'), 'exceptionType key should be present');
+        Assert.isTrue(e.Context__c.contains('stackTrace'), 'stackTrace key should be present');
     }
 
-    @isTest
-    static void testLogging_InTestContext_SuppressesOutput() {
-        // Verify shouldLog returns false in test context
+    @IsTest
+    static void shouldTruncateOversizeMessage() {
+        ElaroLogger.publishedEvents.clear();
+
+        String oversize = 'x'.repeat(131073); // one character over the LongTextArea max
+
         Test.startTest();
-        ElaroLogger.debug('Should be suppressed');
-        ElaroLogger.info('Should be suppressed');
+        ElaroLogger.info(oversize);
         Test.stopTest();
 
-        // No exceptions should be thrown
-        Assert.isTrue(Test.isRunningTest(), 'Running in test context');
+        Assert.areEqual(1, ElaroLogger.publishedEvents.size(), 'Exactly one event should be published');
+        Assert.areEqual(
+            131072,
+            ElaroLogger.publishedEvents[0].Message__c.length(),
+            'Message__c should be clamped to the LongTextArea maximum'
+        );
+    }
+
+    @IsTest
+    static void shouldHandleNullContextGracefully() {
+        ElaroLogger.publishedEvents.clear();
+
+        Test.startTest();
+        ElaroLogger.log(ElaroLogger.Level.INFO, 'null context', null);
+        Test.stopTest();
+
+        Assert.areEqual(1, ElaroLogger.publishedEvents.size(), 'Exactly one event should be published');
+        Assert.isNull(
+            ElaroLogger.publishedEvents[0].Context__c,
+            'Context__c should be null when no context map is provided'
+        );
+    }
+
+    @IsTest
+    static void shouldEncodeSourceInMessageForSourceOverloads() {
+        ElaroLogger.publishedEvents.clear();
+
+        Test.startTest();
+        ElaroLogger.info('MyController.runScan', 'started');
+        ElaroLogger.error('MyController.runScan', 'failed', 'fake stack trace');
+        Test.stopTest();
+
+        Assert.areEqual(2, ElaroLogger.publishedEvents.size(), 'Two events should be published');
+        Assert.areEqual(
+            'MyController.runScan: started',
+            ElaroLogger.publishedEvents[0].Message__c,
+            'INFO source overload should concatenate source and message'
+        );
+        Assert.isNotNull(
+            ElaroLogger.publishedEvents[1].Context__c,
+            'ERROR source overload should place stackTrace into Context__c'
+        );
+        Assert.isTrue(
+            ElaroLogger.publishedEvents[1].Context__c.contains('fake stack trace'),
+            'stackTrace value should be present in Context__c'
+        );
     }
 }

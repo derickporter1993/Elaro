@@ -214,7 +214,24 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
                 accessLogs.add(log);
             }
         } catch (Exception e) {
-            ElaroLogger.error('Error querying history: ' + e.getMessage(), e);
+            ElaroLogger.error('HIPAAPrivacyRuleService.auditPHIAccess', e.getMessage(), e.getStackTraceString());
+
+            // 45 CFR 164.312(b): an audit-control failure must itself be auditable.
+            // Surface the gap via a durable Platform Event so it cannot pass silently.
+            EventBus.publish(
+                new Compliance_Audit_Gap__e(
+                    Framework__c = 'HIPAA',
+                    Regulation_Reference__c = '45 CFR 164.312(b)',
+                    Source_Class__c = 'HIPAAPrivacyRuleService',
+                    Source_Method__c = 'auditPHIAccess',
+                    Record_Id__c = recordId,
+                    Object_Name__c = objectName,
+                    Error_Detail__c = e.getTypeName() + ': ' + e.getMessage(),
+                    Timestamp__c = System.now()
+                )
+            );
+
+            throw new AuraHandledException(System.Label.HIPAA_AuditQueryFailed);
         }
 
         return accessLogs;

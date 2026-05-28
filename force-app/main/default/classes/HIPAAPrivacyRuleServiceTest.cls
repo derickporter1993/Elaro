@@ -169,4 +169,38 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
         Assert.isTrue(score >= 0, 'Score should be non-negative');
     }
+
+    @isTest
+    static void testAuditPHIAccessReturnsLogsForValidObject() {
+        Contact c = [SELECT Id FROM Contact LIMIT 1];
+
+        Test.startTest();
+        List<HIPAAPrivacyRuleService.PHIAccessLog> logs = HIPAAPrivacyRuleService.auditPHIAccess(
+            c.Id,
+            'Contact'
+        );
+        Test.stopTest();
+
+        // History records cannot be inserted in test context, so the list is
+        // expected to be empty — the assertion is that the call succeeds and
+        // does NOT raise the audit-gap path for a valid, queryable PHI object.
+        Assert.isNotNull(logs, 'Audit should return a (possibly empty) list for a valid PHI object');
+    }
+
+    @isTest
+    static void testAuditPHIAccessRejectsNonPhiObject() {
+        Contact c = [SELECT Id FROM Contact LIMIT 1];
+
+        Test.startTest();
+        Exception caught;
+        try {
+            HIPAAPrivacyRuleService.auditPHIAccess(c.Id, 'Opportunity');
+            Assert.fail('Expected AuraHandledException for an object outside the PHI allowlist');
+        } catch (AuraHandledException expected) {
+            caught = expected;
+        }
+        Test.stopTest();
+
+        Assert.isNotNull(caught, 'Objects outside the PHI allowlist should be rejected before any query');
+    }
 }

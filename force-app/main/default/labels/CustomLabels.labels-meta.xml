@@ -1644,4 +1644,11 @@
         <shortDescription>Governor limit warning message</shortDescription>
         <value>Approaching governor limits. Processing paused and will resume.</value>
     </labels>
+    <labels>
+        <fullName>HIPAA_AuditQueryFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>HIPAA audit query failure user-facing message</shortDescription>
+        <value>Unable to retrieve the PHI access audit log. The failure has been recorded for compliance review.</value>
+    </labels>
 </CustomLabels>
