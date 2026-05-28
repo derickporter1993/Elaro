@@ -20,6 +20,7 @@ public with sharing class AssessmentWizardController {
      */
     @AuraEnabled
     public static AssessmentWizardService.WizardConfig loadWizard(String wizardName) {
+        FeatureFlags.requireEnabled(FeatureFlags.MODULE_ASSESSMENT_WIZARD);
         try {
             ElaroLogger.info('AssessmentWizardController.loadWizard',
                 new Map<String, Object>{ 'wizardName' => wizardName });

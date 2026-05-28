@@ -74,4 +74,64 @@ public inherited sharing class FeatureFlags {
         Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
         return flags?.Assessment_Wizard_Enabled__c ?? true;
     }
+
+    /** Module identifier for the Command Center kill switch. */
+    public static final String MODULE_COMMAND_CENTER = 'COMMAND_CENTER';
+    /** Module identifier for the Event Monitoring kill switch. */
+    public static final String MODULE_EVENT_MONITORING = 'EVENT_MONITORING';
+    /** Module identifier for the AI Governance kill switch. */
+    public static final String MODULE_AI_GOVERNANCE = 'AI_GOVERNANCE';
+    /** Module identifier for the SEC Cybersecurity Disclosure kill switch. */
+    public static final String MODULE_SEC = 'SEC_MODULE';
+    /** Module identifier for the Trust Center kill switch. */
+    public static final String MODULE_TRUST_CENTER = 'TRUST_CENTER';
+    /** Module identifier for the Assessment Wizard kill switch. */
+    public static final String MODULE_ASSESSMENT_WIZARD = 'ASSESSMENT_WIZARD';
+
+    /**
+     * Returns whether the named module is enabled for the current user context.
+     *
+     * @param moduleName One of the MODULE_* identifiers
+     * @return {@code true} if enabled or unknown; {@code false} if explicitly disabled
+     */
+    public static Boolean isEnabled(String moduleName) {
+        switch on moduleName {
+            when 'COMMAND_CENTER' {
+                return isCommandCenterEnabled();
+            }
+            when 'EVENT_MONITORING' {
+                return isEventMonitoringEnabled();
+            }
+            when 'AI_GOVERNANCE' {
+                return isAIGovernanceEnabled();
+            }
+            when 'SEC_MODULE' {
+                return isSECModuleEnabled();
+            }
+            when 'TRUST_CENTER' {
+                return isTrustCenterEnabled();
+            }
+            when 'ASSESSMENT_WIZARD' {
+                return isAssessmentWizardEnabled();
+            }
+            when else {
+                // Unknown modules are treated as enabled so a typo never silently
+                // disables a feature; add a MODULE_* constant for every real module.
+                return true;
+            }
+        }
+    }
+
+    /**
+     * Throws an {@link AuraHandledException} when the named module is disabled,
+     * for use as a guard at the top of module controller entry points.
+     *
+     * @param moduleName One of the MODULE_* identifiers
+     * @throws AuraHandledException with a stable Custom Label message when disabled
+     */
+    public static void requireEnabled(String moduleName) {
+        if (!isEnabled(moduleName)) {
+            throw new AuraHandledException(System.Label.Feature_Disabled);
+        }
+    }
 }

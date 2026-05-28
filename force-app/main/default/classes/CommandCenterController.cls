@@ -22,6 +22,7 @@ public with sharing class CommandCenterController {
      */
     @AuraEnabled(cacheable=true)
     public static ComplianceContextEngine.ComplianceContext getComplianceContext() {
+        FeatureFlags.requireEnabled(FeatureFlags.MODULE_COMMAND_CENTER);
         try {
             ElaroLogger.info('CommandCenterController.getComplianceContext', 'Loading compliance context');
             ComplianceContextEngine engine = new ComplianceContextEngine();

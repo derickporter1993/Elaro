@@ -1651,4 +1651,11 @@
         <shortDescription>HIPAA audit query failure user-facing message</shortDescription>
         <value>Unable to retrieve the PHI access audit log. The failure has been recorded for compliance review.</value>
     </labels>
+    <labels>
+        <fullName>Feature_Disabled</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shown when a disabled module is invoked</shortDescription>
+        <value>This feature is currently disabled. Contact your administrator if you need access.</value>
+    </labels>
 </CustomLabels>
