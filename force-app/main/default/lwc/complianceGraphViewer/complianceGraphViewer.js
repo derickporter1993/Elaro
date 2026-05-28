@@ -6,6 +6,40 @@ import getGraphStats from "@salesforce/apex/ComplianceGraphService.getGraphStats
 import getNodeDetails from "@salesforce/apex/ComplianceGraphService.getNodeDetails";
 import analyzeImpact from "@salesforce/apex/ComplianceGraphService.analyzeImpact";
 
+import CardTitle from "@salesforce/label/c.CGV_CardTitle";
+import FilterByFramework from "@salesforce/label/c.CGV_FilterByFramework";
+import Refresh from "@salesforce/label/c.CGV_Refresh";
+import AnalyzeImpact from "@salesforce/label/c.CGV_AnalyzeImpact";
+import LegendFramework from "@salesforce/label/c.CGV_LegendFramework";
+import LegendPolicy from "@salesforce/label/c.CGV_LegendPolicy";
+import LegendCriticalGap from "@salesforce/label/c.CGV_LegendCriticalGap";
+import LegendHighGap from "@salesforce/label/c.CGV_LegendHighGap";
+import LegendMediumGap from "@salesforce/label/c.CGV_LegendMediumGap";
+import LegendEntity from "@salesforce/label/c.CGV_LegendEntity";
+import Close from "@salesforce/label/c.CGV_Close";
+import ImpactAnalysisTitle from "@salesforce/label/c.CGV_ImpactAnalysis";
+import SeverityCritical from "@salesforce/label/c.CGV_SeverityCritical";
+import SeverityHigh from "@salesforce/label/c.CGV_SeverityHigh";
+import SeverityMedium from "@salesforce/label/c.CGV_SeverityMedium";
+import SeverityLow from "@salesforce/label/c.CGV_SeverityLow";
+import SeverityDistribution from "@salesforce/label/c.CGV_SeverityDistribution";
+import NoGraphData from "@salesforce/label/c.CGV_NoGraphData";
+import NoGraphDataDetail from "@salesforce/label/c.CGV_NoGraphDataDetail";
+import GraphHelpText from "@salesforce/label/c.CGV_GraphHelpText";
+import FieldName from "@salesforce/label/c.CGV_FieldName";
+import FieldType from "@salesforce/label/c.CGV_FieldType";
+import FieldFramework from "@salesforce/label/c.CGV_FieldFramework";
+import FieldSeverity from "@salesforce/label/c.CGV_FieldSeverity";
+import FieldStatus from "@salesforce/label/c.CGV_FieldStatus";
+import FieldRiskScore from "@salesforce/label/c.CGV_FieldRiskScore";
+import FieldDescription from "@salesforce/label/c.CGV_FieldDescription";
+import FieldEntityType from "@salesforce/label/c.CGV_FieldEntityType";
+import FieldEntityId from "@salesforce/label/c.CGV_FieldEntityId";
+import TotalRiskScore from "@salesforce/label/c.CGV_TotalRiskScore";
+import TotalGapsAffected from "@salesforce/label/c.CGV_TotalGapsAffected";
+import AffectedGaps from "@salesforce/label/c.CGV_AffectedGaps";
+import LoadingGraph from "@salesforce/label/c.CGV_LoadingGraph";
+
 const FRAMEWORK_OPTIONS = [
   { label: "All Frameworks", value: "ALL" },
   { label: "SOX", value: "SOX" },
@@ -19,6 +53,42 @@ const FRAMEWORK_OPTIONS = [
 ];
 
 export default class ComplianceGraphViewer extends LightningElement {
+  label = {
+    CardTitle,
+    FilterByFramework,
+    Refresh,
+    AnalyzeImpact,
+    LegendFramework,
+    LegendPolicy,
+    LegendCriticalGap,
+    LegendHighGap,
+    LegendMediumGap,
+    LegendEntity,
+    Close,
+    ImpactAnalysisTitle,
+    SeverityCritical,
+    SeverityHigh,
+    SeverityMedium,
+    SeverityLow,
+    SeverityDistribution,
+    NoGraphData,
+    NoGraphDataDetail,
+    GraphHelpText,
+    FieldName,
+    FieldType,
+    FieldFramework,
+    FieldSeverity,
+    FieldStatus,
+    FieldRiskScore,
+    FieldDescription,
+    FieldEntityType,
+    FieldEntityId,
+    TotalRiskScore,
+    TotalGapsAffected,
+    AffectedGaps,
+    LoadingGraph,
+  };
+
   graphData = null;
   stats = null;
   isLoading = true;
