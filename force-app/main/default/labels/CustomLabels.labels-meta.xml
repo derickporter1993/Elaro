@@ -1889,4 +1889,39 @@
         <shortDescription>Spinner assistive text while the graph loads</shortDescription>
         <value>Loading graph</value>
     </labels>
+    <labels>
+        <fullName>RHM_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Risk Heatmap card title</shortDescription>
+        <value>Risk Heatmap</value>
+    </labels>
+    <labels>
+        <fullName>RHM_HeatmapAriaLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Accessible label for the heatmap grid</shortDescription>
+        <value>Risk heatmap</value>
+    </labels>
+    <labels>
+        <fullName>RHM_ScorePrefix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Prefix for a risk score value</shortDescription>
+        <value>Score:</value>
+    </labels>
+    <labels>
+        <fullName>RHM_NoRiskData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Empty-state message when no risk data is available</shortDescription>
+        <value>No risk data available</value>
+    </labels>
+    <labels>
+        <fullName>RHM_RiskCellAriaLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Accessible label for a single risk cell; {0}=framework {1}=severity {2}=score</shortDescription>
+        <value>Risk for {0}: {1}, Score {2}</value>
+    </labels>
 </CustomLabels>
