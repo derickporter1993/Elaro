@@ -165,9 +165,8 @@ public with sharing class PCIAccessControlService extends ComplianceServiceBase 
         validateRequired('resourceName', resourceName);
         
         try {
-            // Log access event to PCI_Access_Event__e platform event
-            // In production, would publish platform event
-            logAuditEvent('PCI_ACCESS_' + action, resourceName, userId, 
+            // Persist the access event to the Elaro_Audit_Log__c audit trail.
+            logAuditEvent('PCI_ACCESS_' + action, resourceName, userId,
                 JSON.serialize(new Map<String, Object>{
                     'action' => action,
                     'resourceName' => resourceName,

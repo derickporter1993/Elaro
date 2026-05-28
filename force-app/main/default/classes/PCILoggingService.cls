@@ -42,12 +42,9 @@ public with sharing class PCILoggingService extends ComplianceServiceBase {
             });
             
             // Log to Elaro_Audit_Log__c
-            logAuditEvent('PCI_' + eventType, resourceName, userId, 
+            logAuditEvent('PCI_' + eventType, resourceName, userId,
                 JSON.serialize(details != null ? details : new Map<String, Object>()));
-            
-            // In production, would also publish to PCI_Access_Event__e platform event
-            // for real-time monitoring
-            
+
             return correlationId;
         } catch (Exception e) {
             String errorCategory = categorizeError(e);
