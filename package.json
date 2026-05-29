@@ -41,7 +41,7 @@
     "@salesforce/eslint-config-lwc": "^4.1.2",
     "@salesforce/sfdx-lwc-jest": "^7.1.2",
     "@testing-library/jest-dom": "^6.9.1",
-    "axe-core": "^4.11.1",
+    "axe-core": "^4.11.3",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^10.1.8",
     "jest": "^30.3.0",
