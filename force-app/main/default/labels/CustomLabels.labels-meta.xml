@@ -1644,4 +1644,284 @@
         <shortDescription>Governor limit warning message</shortDescription>
         <value>Approaching governor limits. Processing paused and will resume.</value>
     </labels>
+    <labels>
+        <fullName>HIPAA_AuditQueryFailed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>HIPAA audit query failure user-facing message</shortDescription>
+        <value>Unable to retrieve the PHI access audit log. The failure has been recorded for compliance review.</value>
+    </labels>
+    <labels>
+        <fullName>Feature_Disabled</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Shown when a disabled module is invoked</shortDescription>
+        <value>This feature is currently disabled. Contact your administrator if you need access.</value>
+    </labels>
+    <labels>
+        <fullName>CGV_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance Graph Viewer card title</shortDescription>
+        <value>Compliance Graph</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FilterByFramework</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework filter combobox label</shortDescription>
+        <value>Filter by Framework</value>
+    </labels>
+    <labels>
+        <fullName>CGV_Refresh</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Refresh button label</shortDescription>
+        <value>Refresh</value>
+    </labels>
+    <labels>
+        <fullName>CGV_AnalyzeImpact</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Analyze Impact button label</shortDescription>
+        <value>Analyze Impact</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LegendFramework</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Graph legend: Framework node</shortDescription>
+        <value>Framework</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LegendPolicy</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Graph legend: Policy node</shortDescription>
+        <value>Policy</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LegendCriticalGap</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Graph legend: Critical Gap node</shortDescription>
+        <value>Critical Gap</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LegendHighGap</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Graph legend: High Gap node</shortDescription>
+        <value>High Gap</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LegendMediumGap</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Graph legend: Medium Gap node</shortDescription>
+        <value>Medium Gap</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LegendEntity</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Graph legend: Entity node</shortDescription>
+        <value>Entity</value>
+    </labels>
+    <labels>
+        <fullName>CGV_Close</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Close button assistive text</shortDescription>
+        <value>Close</value>
+    </labels>
+    <labels>
+        <fullName>CGV_ImpactAnalysis</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact Analysis modal title</shortDescription>
+        <value>Impact Analysis</value>
+    </labels>
+    <labels>
+        <fullName>CGV_SeverityCritical</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact severity: Critical</shortDescription>
+        <value>Critical</value>
+    </labels>
+    <labels>
+        <fullName>CGV_SeverityHigh</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact severity: High</shortDescription>
+        <value>High</value>
+    </labels>
+    <labels>
+        <fullName>CGV_SeverityMedium</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact severity: Medium</shortDescription>
+        <value>Medium</value>
+    </labels>
+    <labels>
+        <fullName>CGV_SeverityLow</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact severity: Low</shortDescription>
+        <value>Low</value>
+    </labels>
+    <labels>
+        <fullName>CGV_SeverityDistribution</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Severity distribution section heading</shortDescription>
+        <value>Severity Distribution</value>
+    </labels>
+    <labels>
+        <fullName>CGV_NoGraphData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Empty-state heading when no graph data</shortDescription>
+        <value>No Graph Data</value>
+    </labels>
+    <labels>
+        <fullName>CGV_NoGraphDataDetail</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Empty-state body when no graph data</shortDescription>
+        <value>No compliance gaps found to visualize.</value>
+    </labels>
+    <labels>
+        <fullName>CGV_GraphHelpText</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Help text under the graph</shortDescription>
+        <value>Click on any node to view details. Select an entity node and choose Analyze Impact to see affected compliance gaps.</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldName</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Name</shortDescription>
+        <value>Name:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldType</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Type</shortDescription>
+        <value>Type:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldFramework</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Framework</shortDescription>
+        <value>Framework:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldSeverity</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Severity</shortDescription>
+        <value>Severity:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldStatus</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Status</shortDescription>
+        <value>Status:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldRiskScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Risk Score</shortDescription>
+        <value>Risk Score:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldDescription</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Description</shortDescription>
+        <value>Description:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldEntityType</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Entity Type</shortDescription>
+        <value>Entity Type:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_FieldEntityId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Node detail field: Entity ID</shortDescription>
+        <value>Entity ID:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_TotalRiskScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact summary: Total Risk Score</shortDescription>
+        <value>Total Risk Score:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_TotalGapsAffected</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Impact summary: Total Gaps Affected</shortDescription>
+        <value>Total Gaps Affected:</value>
+    </labels>
+    <labels>
+        <fullName>CGV_AffectedGaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Affected compliance gaps list heading</shortDescription>
+        <value>Affected Compliance Gaps</value>
+    </labels>
+    <labels>
+        <fullName>CGV_LoadingGraph</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Spinner assistive text while the graph loads</shortDescription>
+        <value>Loading graph</value>
+    </labels>
+    <labels>
+        <fullName>RHM_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Risk Heatmap card title</shortDescription>
+        <value>Risk Heatmap</value>
+    </labels>
+    <labels>
+        <fullName>RHM_HeatmapAriaLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Accessible label for the heatmap grid</shortDescription>
+        <value>Risk heatmap</value>
+    </labels>
+    <labels>
+        <fullName>RHM_ScorePrefix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Prefix for a risk score value</shortDescription>
+        <value>Score:</value>
+    </labels>
+    <labels>
+        <fullName>RHM_NoRiskData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Empty-state message when no risk data is available</shortDescription>
+        <value>No risk data available</value>
+    </labels>
+    <labels>
+        <fullName>RHM_RiskCellAriaLabel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Accessible label for a single risk cell; {0}=framework {1}=severity {2}=score</shortDescription>
+        <value>Risk for {0}: {1}, Score {2}</value>
+    </labels>
 </CustomLabels>

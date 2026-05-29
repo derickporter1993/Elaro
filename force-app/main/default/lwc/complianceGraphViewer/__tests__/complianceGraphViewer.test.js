@@ -5,6 +5,11 @@ import getGraphByFramework from "@salesforce/apex/ComplianceGraphService.getGrap
 import getGraphStats from "@salesforce/apex/ComplianceGraphService.getGraphStats";
 // getNodeDetails and analyzeImpact are used via jest.mock below
 
+// Import the same Custom Labels the component uses so assertions stay
+// resilient to the label values (sfdx-lwc-jest mocks them to "c.<ApiName>").
+import CardTitle from "@salesforce/label/c.CGV_CardTitle";
+import NoGraphData from "@salesforce/label/c.CGV_NoGraphData";
+
 jest.mock(
   "@salesforce/apex/ComplianceGraphService.getComplianceGraph",
   () => ({ default: jest.fn() }),
@@ -89,7 +94,7 @@ describe("c-compliance-graph-viewer", () => {
     const element = await createComponent();
     const card = element.shadowRoot.querySelector("lightning-card");
     expect(card).not.toBeNull();
-    expect(card.title).toBe("Compliance Graph");
+    expect(card.title).toBe(CardTitle);
   });
 
   it("loads graph and stats on connected callback", async () => {
@@ -156,7 +161,7 @@ describe("c-compliance-graph-viewer", () => {
 
     const heading = element.shadowRoot.querySelector("h3");
     expect(heading).not.toBeNull();
-    expect(heading.textContent).toBe("No Graph Data");
+    expect(heading.textContent).toBe(NoGraphData);
   });
 
   it("refreshes graph and stats on refresh button click", async () => {
@@ -165,7 +170,8 @@ describe("c-compliance-graph-viewer", () => {
     getGraphStats.mockResolvedValue(MOCK_STATS);
 
     const allButtons = element.shadowRoot.querySelectorAll("lightning-button");
-    const refreshBtn = Array.from(allButtons).find((btn) => btn.label === "Refresh");
+    // Query by icon-name so the assertion is resilient to label localization.
+    const refreshBtn = Array.from(allButtons).find((btn) => btn.iconName === "utility:refresh");
     expect(refreshBtn).toBeTruthy();
     refreshBtn.click();
     await flushPromises();

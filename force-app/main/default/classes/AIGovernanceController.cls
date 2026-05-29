@@ -19,6 +19,7 @@ public with sharing class AIGovernanceController {
      */
     @AuraEnabled(cacheable=false)
     public static List<AIDetectionEngine.AISystemMetadata> discoverAISystems() {
+        FeatureFlags.requireEnabled(FeatureFlags.MODULE_AI_GOVERNANCE);
         try {
             return AIDetectionEngine.discoverAISystems();
         } catch (Exception e) {

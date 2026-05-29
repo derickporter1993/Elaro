@@ -1,17 +1,14 @@
 <template>
-  <lightning-card title="Risk Heatmap" icon-name="standard:warning">
+  <lightning-card title={label.CardTitle} icon-name="standard:warning">
     <div class="slds-var-p-around_medium">
       <template lwc:if={hasRisks}>
-        <div class="slds-grid slds-gutters" role="list" aria-label="Risk heatmap">
+        <div class="slds-grid slds-gutters" role="list" aria-label={label.HeatmapAriaLabel}>
           <template for:each={risksWithClasses} for:item="risk">
             <div key={risk.id} class="slds-col slds-size_1-of-4" role="listitem">
-              <div
-                class={risk.combinedClass}
-                aria-label="Risk for {risk.framework}: {risk.severity}, Score {risk.score}"
-              >
+              <div class={risk.combinedClass} aria-label={risk.ariaLabel}>
                 <div class="slds-text-heading_small">{risk.framework}</div>
                 <div class="slds-text-body_small">{risk.severity}</div>
-                <div class="slds-text-body_small">Score: {risk.score}</div>
+                <div class="slds-text-body_small">{risk.scoreText}</div>
               </div>
             </div>
           </template>
@@ -23,7 +20,7 @@
           role="status"
           aria-live="polite"
         >
-          <p>No risk data available</p>
+          <p>{label.NoRiskData}</p>
         </div>
       </template>
     </div>

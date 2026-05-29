@@ -146,9 +146,13 @@ public abstract inherited sharing class CursorStep implements Step {
 
         if (this.cursorWrapper == null) {
             Map<String, Object> binds = getCursorBinds();
-            Database.Cursor realCursor = (binds != null && !binds.isEmpty())
-                ? Database.getCursorWithBinds(getCursorQuery(), binds, AccessLevel.USER_MODE)
-                : Database.getCursor(getCursorQuery());
+            // Always route through getCursorWithBinds so AccessLevel.USER_MODE
+            // (FLS/CRUD enforcement) applies even when the subclass supplies no binds.
+            Database.Cursor realCursor = Database.getCursorWithBinds(
+                getCursorQuery(),
+                (binds != null) ? binds : new Map<String, Object>(),
+                AccessLevel.USER_MODE
+            );
             this.cursorWrapper = new CursorWrapper(realCursor);
         }
 

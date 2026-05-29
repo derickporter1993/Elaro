@@ -199,4 +199,63 @@ private class FeatureFlagsTest {
         Assert.isFalse(trustCenter, 'Trust Center should be disabled');
         Assert.isFalse(assessmentWizard, 'Assessment Wizard should be disabled');
     }
+
+    /**
+     * Verifies requireEnabled does not throw when the module is enabled (default state).
+     */
+    @IsTest
+    static void requireEnabledShouldNotThrowWhenEnabled() {
+        Test.startTest();
+        Exception caught;
+        try {
+            FeatureFlags.requireEnabled(FeatureFlags.MODULE_AI_GOVERNANCE);
+            FeatureFlags.requireEnabled(FeatureFlags.MODULE_SEC);
+            FeatureFlags.requireEnabled(FeatureFlags.MODULE_COMMAND_CENTER);
+        } catch (Exception e) {
+            caught = e;
+        }
+        Test.stopTest();
+
+        Assert.isNull(caught, 'requireEnabled should not throw when the module is enabled');
+    }
+
+    /**
+     * Verifies requireEnabled throws AuraHandledException when the module is disabled.
+     */
+    @IsTest
+    static void requireEnabledShouldThrowWhenDisabled() {
+        Elaro_Feature_Flags__c flags = new Elaro_Feature_Flags__c(
+            Command_Center_Enabled__c = true,
+            Event_Monitoring_Enabled__c = true,
+            AI_Governance_Enabled__c = false,
+            SEC_Module_Enabled__c = true,
+            Trust_Center_Enabled__c = true,
+            Assessment_Wizard_Enabled__c = true
+        );
+        insert as user flags;
+
+        Test.startTest();
+        Exception caught;
+        try {
+            FeatureFlags.requireEnabled(FeatureFlags.MODULE_AI_GOVERNANCE);
+            Assert.fail('requireEnabled should throw when the module is disabled');
+        } catch (AuraHandledException expected) {
+            caught = expected;
+        }
+        Test.stopTest();
+
+        Assert.isNotNull(caught, 'A disabled module should raise AuraHandledException');
+    }
+
+    /**
+     * Verifies isEnabled treats unknown module names as enabled, never silently disabled.
+     */
+    @IsTest
+    static void isEnabledShouldTreatUnknownModuleAsEnabled() {
+        Test.startTest();
+        Boolean unknown = FeatureFlags.isEnabled('NOT_A_REAL_MODULE');
+        Test.stopTest();
+
+        Assert.isTrue(unknown, 'Unknown module names should default to enabled');
+    }
 }

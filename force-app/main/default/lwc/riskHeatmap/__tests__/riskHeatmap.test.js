@@ -9,6 +9,7 @@
 
 import { createElement } from "lwc";
 import RiskHeatmap from "c/riskHeatmap";
+import NoRiskData from "@salesforce/label/c.RHM_NoRiskData";
 
 describe("c-risk-heatmap", () => {
   afterEach(() => {
@@ -150,10 +151,10 @@ describe("c-risk-heatmap", () => {
       const element = await createComponent({ risks: [] });
       await Promise.resolve();
 
-      // "No risk data available" message should be shown
+      // Empty-state message should be shown
       const noRisksMessage = element.shadowRoot.querySelector('[role="status"]');
       expect(noRisksMessage).not.toBeNull();
-      expect(noRisksMessage.textContent).toContain("No risk data available");
+      expect(noRisksMessage.textContent).toContain(NoRiskData);
     });
 
     it("hides no risks message when risks exist", async () => {

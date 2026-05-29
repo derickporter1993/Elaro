@@ -26,6 +26,7 @@ public with sharing class SECDisclosureController {
      */
     @AuraEnabled
     public static Id createAssessment(String incidentDescription, String discoveryDate) {
+        FeatureFlags.requireEnabled(FeatureFlags.MODULE_SEC);
         try {
             DateTime parsedDate = DateTime.valueOf(discoveryDate);
             Materiality_Assessment__c assessment = MaterialityAssessmentService.createAssessment(

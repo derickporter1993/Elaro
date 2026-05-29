@@ -22,6 +22,7 @@ public with sharing class TrustCenterController {
      */
     @AuraEnabled(cacheable=true)
     public static List<Trust_Center_View__c> getPublicViews() {
+        FeatureFlags.requireEnabled(FeatureFlags.MODULE_TRUST_CENTER);
         try {
             return [
                 SELECT Id, Name, Framework__c, Compliance_Percentage__c,
