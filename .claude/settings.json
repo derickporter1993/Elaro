@@ -1,7 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "customInstructions": "You are working on Elaro, an enterprise Salesforce compliance platform. Always prioritize security (use ElaroSecurityUtils), follow Salesforce best practices, and maintain test coverage above 75%. When making changes to Apex classes, ensure all SOQL queries use WITH USER_MODE and all DML uses 'as user' or AccessLevel.USER_MODE. Use SF CLI v2 syntax (sf not sfdx). Before deploying, always run tests and preview changes. Read CLAUDE.md for full project context and agent_docs/ for review checklists.",
-
   "rules": [
     {
       "name": "Security-First Development",
@@ -27,7 +26,6 @@
       "enabled": true
     }
   ],
-
   "permissions": {
     "allow": [
       "Bash(sf org create scratch*)",
@@ -77,7 +75,13 @@
       "Bash(git push*)",
       "Bash(git pull*)",
       "Write(~/Elaro/**)",
-      "Read(~/Elaro/**)"
+      "Read(~/Elaro/**)",
+      "Bash(npm audit)",
+      "Bash(npm audit --audit-level *)",
+      "Bash(comm *)",
+      "Bash(xmllint --noout *)",
+      "mcp__github__pull_request_read",
+      "mcp__github__list_pull_requests"
     ],
     "deny": [
       "Bash(sf org delete scratch -o elaro-prod*)",
@@ -92,7 +96,6 @@
       "Bash(npm run deploy:prod*)"
     ]
   },
-
   "env": {
     "SF_ORG_ALIAS": "elaro-dev",
     "SF_DEFAULT_DEV_HUB": "prod-org",
@@ -102,7 +105,6 @@
     "SF_AUTOUPDATE_DISABLE": "false",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
-
   "ignorePatterns": [
     "**/node_modules/**",
     "**/.sfdx/**",
@@ -123,7 +125,6 @@
     "**/tmp/**",
     "**/temp/**"
   ],
-
   "includePatterns": [
     "force-app/main/default/**/*.cls",
     "force-app/main/default/**/*.trigger",
@@ -140,9 +141,7 @@
     "sfdx-project.json",
     "package.json"
   ],
-
   "mcpServers": {},
-
   "experimental": {
     "parallelToolCalls": true,
     "enhancedCodeSearch": true
