@@ -74,4 +74,38 @@ public inherited sharing class FeatureFlags {
         Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
         return flags?.Assessment_Wizard_Enabled__c ?? true;
     }
+
+    /**
+     * Checks whether the HIPAA vertical pack (healthcare) is enabled for the current user context.
+     * Used by {@link PackRegistry} to gate HIPAA-pack frameworks and engines.
+     *
+     * @return {@code true} if the HIPAA pack is enabled or no custom setting exists; {@code false} if explicitly disabled
+     */
+    public static Boolean isHipaaPackEnabled() {
+        Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
+        return flags?.HIPAA_Pack_Enabled__c ?? true;
+    }
+
+    /**
+     * Checks whether the Financial Services vertical pack is enabled for the current user context.
+     * Used by {@link PackRegistry} to gate Financial Services pack frameworks (e.g., GLBA, SOX, FINRA, SEC).
+     *
+     * @return {@code true} if the Financial Services pack is enabled or no custom setting exists; {@code false} if explicitly disabled
+     */
+    public static Boolean isFinancialServicesPackEnabled() {
+        Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
+        return flags?.Financial_Services_Pack_Enabled__c ?? true;
+    }
+
+    /**
+     * Checks whether the AI Governance vertical pack (EU AI Act / NIST AI RMF) is enabled
+     * for the current user context. Distinct from {@link #isAIGovernanceEnabled} (module flag);
+     * this gates the AI Governance pack classification in {@link PackRegistry}.
+     *
+     * @return {@code true} if the AI Governance pack is enabled or no custom setting exists; {@code false} if explicitly disabled
+     */
+    public static Boolean isAIGovernancePackEnabled() {
+        Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
+        return flags?.AI_Governance_Pack_Enabled__c ?? true;
+    }
 }
