@@ -5,36 +5,36 @@ description: Estimate development cost of a codebase based on lines of code and 
 
 # Cost Estimate Command
 
-You are a senior software engineering consultant tasked with estimating the development cost of the current codebase.
+You are a senior software engineering consultant tasked with estimating the development cost of the current codebase. This command is **stack-agnostic** — first detect what the project is actually built with, then apply the methodology below. Do not assume any particular language, framework, or platform.
 
-## Step 1: Analyze the Codebase
+## Step 1: Detect the Stack and Analyze the Codebase
 
-Read the entire codebase to understand:
-- Total lines of code (Swift, C++, Metal shaders)
-- Architectural complexity (frameworks, integrations, APIs)
-- Advanced features (Metal rendering, CoreMediaIO, AVFoundation)
-- Testing coverage
-- Documentation quality
+Begin by discovering the project's composition — never assume it. Use Glob and Read to:
 
-Use the Glob and Read tools to systematically review:
-- All Swift source files in Sources/
-- All C++ files in DALPlugin/
-- All Metal shader files
-- All test files in Tests/
-- Build scripts and configuration files
+1. **Identify languages present.** Enumerate source files and group by extension/language (e.g., `.ts/.js`, `.py`, `.go`, `.rs`, `.java`, `.cls` (Apex), `.swift`, `.cpp`, `.rb`, `.php`, SQL, shaders, etc.). If a tool like `cloc`, `tokei`, or `scc` is available, use it; otherwise count with `git ls-files` + line counts.
+2. **Map the structure.** Locate the main source directories, test directories, infrastructure/config, and docs by inspecting the repo layout and any manifest files (`package.json`, `pom.xml`, `go.mod`, `Cargo.toml`, `sfdx-project.json`, `requirements.txt`, `*.csproj`, etc.).
+3. **Read representative files** from each major area to gauge complexity, not just line count.
+
+Build a picture of:
+- **Total lines of code, broken down by language** (production vs. test vs. generated/vendored — exclude vendored/`node_modules`/build output).
+- **Architectural complexity**: frameworks, services, APIs, integrations, data stores.
+- **Advanced/specialized work**: anything that is inherently slower to build (concurrency, low-level/native interop, GPU/graphics, cryptography, distributed systems, ML, real-time media, compliance-driven logic, platform extensions, etc.).
+- **Testing coverage**: ratio of test code to production code, presence of unit/integration/e2e tests.
+- **Documentation quality**: READMEs, API docs, inline docs, architecture docs.
 
 ## Step 2: Calculate Development Hours
 
-Based on industry standards for a **senior full-stack developer** (5+ years experience):
+Based on industry standards for a **senior developer** (5+ years experience) in the relevant stack. Classify each portion of the codebase into a complexity tier and apply the matching rate.
 
-**Hourly Productivity Estimates**:
-- Simple CRUD/UI code: 30-50 lines/hour
-- Complex business logic: 20-30 lines/hour
-- GPU/Metal programming: 10-20 lines/hour
-- Native C++ interop: 10-20 lines/hour
-- Video/audio processing: 10-15 lines/hour
-- System extensions/plugins: 8-12 lines/hour
+**Hourly Productivity Estimates** (tier by what the code *does*, regardless of language):
+- Simple CRUD / UI / boilerplate: 30-50 lines/hour
+- Standard application logic: 25-40 lines/hour
+- Complex business logic / domain rules: 20-30 lines/hour
+- Performance-critical or low-level code (concurrency, GPU, kernel, native interop): 10-20 lines/hour
+- Specialized domains (video/audio, cryptography, ML, distributed systems): 10-15 lines/hour
+- Plugins / extensions / system or platform integration: 8-12 lines/hour
 - Comprehensive tests: 25-40 lines/hour
+- Infrastructure-as-code / config / schema / metadata: 30-50 lines/hour
 
 **Additional Time Factors**:
 - Architecture & design: +15-20% of coding time
@@ -42,27 +42,28 @@ Based on industry standards for a **senior full-stack developer** (5+ years expe
 - Code review & refactoring: +10-15% of coding time
 - Documentation: +10-15% of coding time
 - Integration & testing: +20-25% of coding time
-- Learning curve (new frameworks): +10-20% for specialized tech
+- Learning curve (new/specialized frameworks): +10-20% for specialized tech
 
 **Calculate total hours** considering:
-1. Base coding hours (lines of code / productivity rate)
+1. Base coding hours (lines of code per tier ÷ that tier's productivity rate)
 2. Multipliers for complexity and overhead
-3. Phases completed vs. remaining
-4. Specialized knowledge required (CoreMediaIO, Metal, etc.)
+3. Phases/modules completed vs. remaining
+4. Specialized knowledge required (name the specific specialized areas you detected in Step 1)
 
 ## Step 3: Research Market Rates
 
-Use WebSearch to find current 2025 hourly rates for:
-- Senior full-stack developers (5-10 years experience)
-- Specialized iOS/macOS developers
-- Contractors vs. employees
-- Geographic variations (US markets: SF Bay Area, NYC, Austin, Remote)
+Use WebSearch to find current hourly rates for the **stack you actually detected**. Template the queries with the primary language/platform and the current year:
 
-Search queries to use:
-- "senior full stack developer hourly rate 2025"
-- "macOS Swift developer contractor rate 2025"
-- "senior software engineer hourly rate United States 2025"
-- "iOS developer freelance rate 2025"
+- "senior {primary language/platform} developer hourly rate {year}"
+- "{specialized skill detected} developer contractor rate {year}" (e.g., the niche framework, cloud, or domain that dominates the codebase)
+- "senior software engineer hourly rate United States {year}"
+- "{primary stack} freelance developer rate {year}"
+
+Capture:
+- Senior developers (5-10 years experience) in this stack
+- Specialized/niche skill premiums relevant to this codebase
+- Contractors vs. employees
+- Geographic variation (US markets: SF Bay Area, NYC, Austin, Remote, plus offshore if relevant)
 
 ## Step 4: Calculate Organizational Overhead
 
@@ -136,37 +137,38 @@ Example: $500K engineering cost at Growth Company = $500K × 2.2 = **$1.1M total
 
 ## Step 6: Generate Cost Estimate
 
-Provide a comprehensive estimate in this format:
+Provide a comprehensive estimate in this format. Replace every bracketed placeholder with detected values, and label sections using the **actual project name and the languages you found** (do not carry over names or languages from any other project).
 
 ---
 
-## KeyMe MVP - Development Cost Estimate
+## [Project Name] - Development Cost Estimate
 
 **Analysis Date**: [Current Date]
-**Codebase Version**: [From CLAUDE.md phase status]
+**Codebase Version**: [from repo metadata / changelog / tags if available]
 
 ### Codebase Metrics
 
 - **Total Lines of Code**: [number]
-  - Swift: [number] lines
-  - C++: [number] lines
-  - Metal Shaders: [number] lines
+  - [Language 1]: [number] lines
+  - [Language 2]: [number] lines
+  - [Additional languages as detected]: [number] lines
   - Tests: [number] lines
+  - Config / IaC / schema / metadata: [number] lines
   - Documentation: [number] lines
 
 - **Complexity Factors**:
-  - Advanced frameworks: [list key ones]
-  - System-level programming: [Camera Extensions, DAL Plugins, etc.]
-  - GPU programming: [Metal shaders, rendering]
-  - Third-party integrations: [OpenAI, etc.]
+  - Key frameworks / platforms: [list what you detected]
+  - Specialized/system-level work: [list — or "none detected"]
+  - Performance-critical or domain-specialized areas: [list — or "none detected"]
+  - Third-party integrations: [list]
 
 ### Development Time Estimate
 
 **Base Development Hours**: [number] hours
-- Phase 1 (Foundation): [hours] hours
-- Phase 2 (Virtual Camera): [hours] hours
-- Phase 3 (Audio/Transcription): [hours] hours
-- Remaining phases: [hours] hours
+- [Module/area 1]: [hours] hours
+- [Module/area 2]: [hours] hours
+- [Module/area 3]: [hours] hours
+- Remaining areas: [hours] hours
 
 **Overhead Multipliers**:
 - Architecture & Design: +[X]% ([hours] hours)
@@ -194,14 +196,14 @@ Provide a comprehensive estimate in this format:
 
 ### Market Rate Research
 
-**Senior Full-Stack Developer Rates (2025)**:
+**Senior [Detected Stack] Developer Rates ([Year])**:
 - Low end: $[X]/hour (remote, mid-level market)
 - Average: $[X]/hour (standard US market)
-- High end: $[X]/hour (SF Bay Area, NYC, specialized)
+- High end: $[X]/hour (top metros, specialized skills)
 
 **Recommended Rate for This Project**: $[X]/hour
 
-*Rationale*: This project requires specialized macOS development skills (CoreMediaIO, Metal, system extensions) which command premium rates.
+*Rationale*: [Explain based on the specialized skills actually required by this codebase — e.g., niche framework, regulated domain, low-level systems work — which command premium rates.]
 
 ### Total Cost Estimate
 
@@ -246,9 +248,9 @@ Provide a comprehensive estimate in this format:
 
 ### Assumptions
 
-1. Rates based on US market averages (2025)
+1. Rates based on US market averages ([Year])
 2. Full-time equivalent allocation for all roles
-3. Includes complete implementation of MVP features
+3. Includes complete implementation of current feature set
 4. Does not include:
    - Marketing & sales
    - Legal & compliance
@@ -284,7 +286,7 @@ Run `git log --format="%ai" | sort` to get all commit timestamps. Then:
 
 **Method 2: File Modification Timestamps (no git)**
 
-Use `find . -name "*.ts" -o -name "*.swift" -o -name "*.py" | xargs stat -f "%Sm" | sort` to get file mod times. Apply same session clustering logic.
+Use a portable listing of source-file modification times and apply the same session-clustering logic. Prefer git where available; otherwise use whatever file-stat tool the platform provides (e.g., `find <src> -type f -printf '%T+\n' | sort` on Linux, or `stat` on macOS). Restrict to source directories and exclude vendored/build output.
 
 **Method 3: Fallback Estimate**
 
@@ -367,4 +369,4 @@ Add this section to the final report:
 
 ## Notes
 
-Present the estimate in a clear, professional format suitable for sharing with stakeholders. Include confidence intervals and key assumptions. Highlight areas of highest complexity that drive cost.
+Present the estimate in a clear, professional format suitable for sharing with stakeholders. Include confidence intervals and key assumptions. Highlight areas of highest complexity that drive cost. Always ground the report in the **actual detected stack** — if a metric (e.g., a language or framework) does not apply to this repo, omit it rather than carrying over an irrelevant placeholder.
