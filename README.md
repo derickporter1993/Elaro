@@ -2,7 +2,7 @@
 
 **Enterprise Compliance Automation for Salesforce — Multi-framework drift detection, AI-powered risk analysis, automated evidence collection, and real-time remediation for regulated organizations.**
 
-_Current: v3.0.0 — Spring '26 | API v66.0 | 2GP Managed Package_
+_Current: v3.1.0 — Spring '26 | API v66.0 | 2GP Managed Package_
 
 <div align="center">
 
@@ -11,7 +11,7 @@ _Current: v3.0.0 — Spring '26 | API v66.0 | 2GP Managed Package_
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-success.svg)](.github/workflows)
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-Passing-brightgreen.svg)](.github/workflows/elaro-ci.yml)
 [![Security Scan](https://img.shields.io/badge/Security-Scanned-blue.svg)](.github/workflows/elaro-ci.yml)
-[![Test Coverage](https://img.shields.io/badge/Coverage-85%25+-success.svg)](force-app/main/default/classes)
+[![Test Coverage](https://img.shields.io/badge/Coverage-Target%2085%25+-success.svg)](force-app/main/default/classes)
 
 [Quick Start](#quick-start) · [Features](#features) · [Compliance Frameworks](#supported-compliance-frameworks) · [Architecture](#architecture) · [Documentation](#documentation)
 
@@ -671,22 +671,31 @@ Health Check is a separate 2GP managed package (`elaroHC` namespace) that can be
 
 ### Installation & Setup
 
-- [Installation Guide](docs/INSTALLATION_GUIDE.md) — Complete installation with step-by-step configuration
-- [External Services Guide](docs/EXTERNAL_SERVICES.md) — Claude AI, Slack, PagerDuty, ServiceNow, Teams integration setup
+- [Installation Guide](docs/user/INSTALLATION_GUIDE.md) — Complete installation with step-by-step configuration
+- [Setup Guide](docs/user/SETUP_GUIDE.md) — Post-install configuration
+- [Admin Guide](docs/user/ADMIN_GUIDE.md) — Operations and administration
+- [User Guide](docs/user/USER_GUIDE.md) — End-user workflows
+- [External Services Guide](docs/developer/EXTERNAL_SERVICES.md) — Claude AI, Slack, PagerDuty, ServiceNow, Teams integration setup
 
-### Security & Testing
+### Security & Audit
 
-- [PagerDuty Security Review](docs/PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md) — Security findings and remediation
-- [Scanner Report Bundle](docs/SCANNER_REPORT_BUNDLE.md) — AppExchange Code Analyzer guide
-- [Compliance Frameworks Reference](docs/COMPLIANCE_FRAMEWORKS_CODE_REFERENCE.md) — Framework code patterns
+- [Architecture Audit](docs/audit/architecture-audit.md) — Module boundaries and pattern compliance
+- [Security Audit](docs/audit/security-audit.md) — CRUD/FLS, sharing, injection findings
+- [Code Quality Audit](docs/audit/code-quality-audit.md) — Standards conformance
+- [PagerDuty Security Review](docs/security/PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md) — Integration security findings and remediation
+- [Codex Fix Plan](docs/codex-fix-plan.md) — Active remediation playbook (35 tasks, 6 tiers)
+- [Codex Prompts (Sprints 1-4)](docs/codex-prompts-remaining.md) — Self-contained per-task prompts
 
 ### Development
 
 - [Contributing Guide](CONTRIBUTING.md) — Development workflow, coding standards, testing requirements
-- [Changelog](CHANGELOG.md) — Release notes and version history
-- [Technical Deep Dive](TECHNICAL_DEEP_DIVE.md) — Architecture and implementation details
-- [API Reference](API_REFERENCE.md) — API documentation and code examples
-- [Claude.md](CLAUDE.md) — AI assistant guide and coding standards
+- [Changelog](docs/CHANGELOG.md) — Release notes and version history
+- [Technical Deep Dive](docs/developer/TECHNICAL_DEEP_DIVE.md) — Architecture and implementation details
+- [API Reference](docs/developer/API_REFERENCE.md) — API documentation and code examples
+- [Implementation Design](docs/developer/IMPLEMENTATION_DESIGN.md) — Design decisions and rationale
+- [Data Flows](docs/developer/DATA_FLOWS.md) — Cross-module data flow diagrams
+- [Verification Guide](docs/developer/VERIFICATION_GUIDE.md) — How to verify changes
+- [CLAUDE.md](CLAUDE.md) — AI assistant guide and coding standards
 
 ### Support
 
