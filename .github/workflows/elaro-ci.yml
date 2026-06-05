@@ -33,14 +33,20 @@ jobs:
       - name: Lint Code
         run: npm run lint
 
-      - name: Block e.getMessage leakage in AuraHandledException
+      - name: Block e.getMessage leakage in AuraHandledException (all package roots)
         run: |
           if grep -rn "throw new AuraHandledException(e\.getMessage\|throw new AuraHandledException(ex\.getMessage" \
-              force-app/main/default/classes/ --include="*.cls"; then
+              force-app/ force-app-healthcheck/ --include="*.cls"; then
             echo "::error::AuraHandledException must not leak e.getMessage() to clients. Log the detail via ElaroLogger and throw a stable Custom Label message instead."
             exit 1
           fi
           echo "✅ No raw exception-message leakage to AuraHandledException"
+
+      # Standards gates from the 2026-06-05 audit. Report-only during the remediation
+      # backlog (getSessionId, raw-string filters, fabricated results, placeholder logic
+      # are known-open). Flip `--report` -> blocking once gates 1/4/5 are clean.
+      - name: Standards gates (CLAUDE.md, all package roots — report-only)
+        run: bash scripts/standards-gates.sh --report
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -81,7 +87,7 @@ jobs:
         run: |
           echo "🔍 Running Salesforce Code Analyzer with AppExchange engine..."
           sf scanner run \
-            --target "force-app/" \
+            --target "force-app/" --target "force-app-healthcheck/" \
             --engine pmd-appexchange \
             --format "html" \
             --outfile "scanner-reports/code-analyzer-appexchange.html" \
@@ -91,7 +97,7 @@ jobs:
         run: |
           echo "📊 Generating JSON report for CI analysis..."
           sf scanner run \
-            --target "force-app/" \
+            --target "force-app/" --target "force-app-healthcheck/" \
             --engine pmd-appexchange \
             --format "json" \
             --outfile "scanner-reports/code-analyzer-appexchange.json" \
@@ -101,7 +107,7 @@ jobs:
         run: |
           echo "📋 Displaying scan results in console..."
           sf scanner run \
-            --target "force-app/" \
+            --target "force-app/" --target "force-app-healthcheck/" \
             --engine pmd-appexchange \
             --format "table" \
             --severity-threshold 2
@@ -109,7 +115,7 @@ jobs:
       - name: Generate SARIF Report
         if: always()
         run: |
-          sf scanner run --target "force-app" \
+          sf scanner run --target "force-app" --target "force-app-healthcheck" \
             --engine pmd \
             --format sarif \
             --outfile scanner-results.sarif || true

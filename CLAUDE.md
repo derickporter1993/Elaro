@@ -588,6 +588,114 @@ All NEW code: API v66.0 (Spring '26) in .cls-meta.xml and .js-meta.xml:
 
 ---
 
+## STANDARDS ADDED FROM THE 2026-06-05 AUDIT (each prevents a found defect)
+
+> These are NON-NEGOTIABLE. Each maps to a real escape the audit found. The grep gates
+> in `scripts/standards-gates.sh` enforce the mechanizable ones on every PR.
+
+### 0. Multi-package scope (the rule that makes the others real)
+
+Every standard, sweep, lint, scan, and audit applies to **all** `packageDirectories` in
+`sfdx-project.json` — `force-app/` **and** `force-app-healthcheck/`. Never scope a search,
+a CI step, or an audit to a single root. (The worst finding — `UserInfo.getSessionId()` in
+a Tooling API callout — shipped because every tool ignored `force-app-healthcheck/`.)
+
+### 1. No fabricated compliance results (TOP PRIORITY — Elaro is court-defensible)
+
+A control evaluation or score component MUST compute from real signals or report
+"Not Evaluated". Never ship a hardcoded `passed = true`, a fixed score (`// Placeholder`,
+`// Simplified check`), fabricated benchmark data, or a no-op detector returning `[]` in a
+live compliance/scoring/audit path. A fabricated PASS in a compliance product is a Blocker.
+
+```apex
+// FORBIDDEN in a live compliance path:
+result.passed = true; // Simplified check
+Decimal transparencyScore = 10; // Placeholder
+// REQUIRED: compute from org/describe/config, or:
+result.status = 'NOT_EVALUATED'; // honest when the check isn't implemented
+```
+
+### 2. No unwired scaffolding ships
+
+A class with no production reference (only tests / `@see` comments) does not ship. Before
+packaging, run the reference-graph dead-code sweep. Either wire a class into a real caller
+or delete it. Queueables must be `System.enqueueJob`'d by production; Schedulables must be
+scheduled by the install handler or a documented runbook.
+
+### 3. Secure-by-default / fail-closed
+
+Any auth/secret/permission gate fails **closed**. A missing or blank secret denies the
+request (HTTP 401) — never allows it. Guest/Site-exposed `@RestResource` classes require
+the secret as an install precondition.
+
+```apex
+// FORBIDDEN:
+if (String.isBlank(settings.Webhook_Secret__c)) { return true; } // fail-open
+// REQUIRED: return false / 401 when no secret is configured.
+```
+
+### 4. REST/webhook error handling
+
+`@RestResource`/`@HttpPost` handlers return a generic error body and log detail via
+`ElaroLogger`/`HCLogger`. Never put `e.getMessage()` in a response to an external caller.
+(Extends the existing `@AuraEnabled` try/catch rule to the REST surface.)
+
+### 5. External callouts: authenticate via Named/External Credential only
+
+Never `UserInfo.getSessionId()` for callouts (AppExchange auto-fail). Never a key in code
+or in Public CMDT. A callout class is **incomplete** until its auth header is wired and
+covered by an `HttpCalloutMock` whose shape matches the real API contract.
+
+### 6. Protected CMDT for executable content
+
+Any CMDT type whose records carry a SOQL string, an Apex class name (for `Type.forName`),
+or any expression the package executes MUST be `<visibility>Protected</visibility>` (see
+`Elaro_API_Config__mdt`). Public CMDT is subscriber-editable.
+
+### 7. Dynamic SOQL filters: structured only, via `SafeSoqlBuilder`
+
+Never concatenate a raw client-supplied filter string into a WHERE clause. Use the shared
+`SafeSoqlBuilder`: field validated against `Schema.getGlobalDescribe()` + `isAccessible`,
+operator against an allowlist, value passed as a bind via `Database.queryWithBinds(...,
+USER_MODE)`. Denylists and `escapeSingleQuotes`-on-identifiers are forbidden as the primary
+control. (`ElaroDrillDownController` is the reference pattern; `ElaroMatrixController` is the
+one to migrate.)
+
+### 8. AI-generated SOQL is parsed, not substring-matched
+
+Model-authored SOQL: assert exactly one `FROM` target ∈ allowlist, reject multiple
+`SELECT`/subqueries, require leading `SELECT`, execute `USER_MODE` + `stripInaccessible`,
+and gate the entry behind a `FeatureFlags` kill switch.
+
+### 9. Loop discipline (extended)
+
+No SOQL, DML, **HTTP callout**, or `System.enqueueJob` inside a loop. Chunk callouts
+≤90/txn and self-chain Queueables; pass collections into a single async job.
+
+### 10. No placeholder crypto/logic in compliance/security paths
+
+No stub tokenization/crypto or `// in production, would…` comments in PCI/HIPAA/audit code.
+Use `Crypto.generateAesKey`/documented schemes; gate unfinished features behind a flag that
+defaults OFF.
+
+### 11. Never silently drop a compliance event
+
+A `catch` in an audit/compliance path (`*_Event__e` triggers, PCI/HIPAA handlers) logs via
+`ElaroLogger` and emits `Compliance_Audit_Gap__e` — never `System.debug` + `continue`.
+
+### 12. LWC i18n + link safety (CI-enforced)
+
+All user-facing strings, **including toast titles/messages**, come from `@salesforce/label`.
+Every `target="_blank"` carries `rel="noopener noreferrer"`. Validate URL scheme (`https:`
+allowlist) before binding to `href`/`window.open`.
+
+### 13. Permission-set least privilege
+
+User-tier permission sets must not grant `viewAllRecords`/`modifyAllRecords` unless org-wide
+visibility is the documented intent; prefer sharing rules. Admin and User sets must differ.
+
+---
+
 ## SF CLI Commands (sfdx is DEAD — removed Nov 2024)
 
 ```bash
