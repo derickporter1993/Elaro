@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "postinstall": "test -d platform/node_modules || (cd platform && npm install --ignore-scripts)",
+    "prepare": "git config core.hooksPath .githooks || true",
     "preflight": "bash scripts/preflight.sh",
     "fmt": "prettier --write \"force-app/**/*.{js,ts,md,json,yml,yaml,xml}\" \"force-app-healthcheck/**/*.{js,ts,md,json,yml,yaml,xml}\" \"force-app/**/lwc/**/*.js\" \"force-app-healthcheck/**/lwc/**/*.js\" \"./*.{js,json,yml,yaml,md}\"",
     "fmt:check": "prettier --check \"force-app/**/*.{js,ts,md,json,yml,yaml,xml}\" \"force-app-healthcheck/**/*.{js,ts,md,json,yml,yaml,xml}\" \"force-app/**/lwc/**/*.js\" \"force-app-healthcheck/**/lwc/**/*.js\" \"./*.{js,json,yml,yaml,md}\"",

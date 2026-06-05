@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# Git post-commit hook -- after each commit, ask how to sync branches.
+#
+# Version-controlled in .githooks/ and activated via:
+#     git config core.hooksPath .githooks
+# (the repo's "prepare" npm script does this automatically on `npm install`).
+#
+# Behaviour:
+#   * Runs only in an interactive terminal. In non-interactive contexts
+#     (Claude Code, CI, GUI clients, rebases) it exits silently so a commit
+#     never hangs or is blocked.
+#   * Prompts for how to synchronize the current branch, local main, and the
+#     remote. It NEVER pushes to main -- promoting changes into main goes
+#     through a pull request, per the project's branch-protection rule.
+#
+set -u
+
+# --- Interactivity gate ----------------------------------------------------
+# git connects stdout to the terminal when run interactively; hooks run with
+# stdin closed. Require both a terminal on stdout and a controlling tty, or
+# bail out cleanly.
+if [ ! -t 1 ] || [ ! -e /dev/tty ]; then
+  exit 0
+fi
+exec </dev/tty
+# Final guard: if /dev/tty isn't actually a terminal, don't risk blocking.
+[ -t 0 ] || exit 0
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo HEAD)"
+
+printf '\n\033[1mCommit complete on %s.\033[0m  Sync branches?\n' "$branch"
+printf '  1) Push current branch        -> git push -u origin %s\n' "$branch"
+printf '  2) Update local main          -> fast-forward main from origin/main (no push to main)\n'
+printf '  3) Push current + update main -> both of the above\n'
+printf '  4) Skip\n'
+printf 'Choose [1-4] (default 4): '
+
+# Timeout is insurance against a non-delivering tty; defaults to "skip".
+read -r -t 120 choice || choice=4
+choice="${choice:-4}"
+
+push_current() {
+  printf '\n-> Pushing %s to origin...\n' "$branch"
+  git push -u origin "$branch"
+}
+
+update_main() {
+  printf '\n-> Updating local main from origin/main...\n'
+  git fetch origin main || return 1
+  if [ "$branch" = "main" ]; then
+    git merge --ff-only origin/main
+  else
+    # Fast-forward the local main ref without checking it out. Fails safely
+    # (non-zero) if main has diverged from origin/main.
+    git fetch origin main:main
+  fi
+}
+
+case "$choice" in
+  1) push_current ;;
+  2) update_main ;;
+  3) push_current && update_main ;;
+  *) printf '\n-> Skipped sync.\n' ;;
+esac
