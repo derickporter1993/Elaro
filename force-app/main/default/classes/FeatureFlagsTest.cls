@@ -201,7 +201,7 @@ private class FeatureFlagsTest {
     }
 
     /**
-     * Verifies requireEnabled does not throw when the module is enabled (default state).
+     * @description Verifies requireEnabled does not throw when the module is enabled (default state).
      */
     @IsTest
     static void requireEnabledShouldNotThrowWhenEnabled() {
@@ -220,7 +220,7 @@ private class FeatureFlagsTest {
     }
 
     /**
-     * Verifies requireEnabled throws AuraHandledException when the module is disabled.
+     * @description Verifies requireEnabled throws AuraHandledException when the module is disabled.
      */
     @IsTest
     static void requireEnabledShouldThrowWhenDisabled() {
@@ -248,7 +248,7 @@ private class FeatureFlagsTest {
     }
 
     /**
-     * Verifies isEnabled treats unknown module names as enabled, never silently disabled.
+     * @description Verifies isEnabled treats unknown module names as enabled, never silently disabled.
      */
     @IsTest
     static void isEnabledShouldTreatUnknownModuleAsEnabled() {

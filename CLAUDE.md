@@ -215,7 +215,7 @@ Agentforce and platform tools parse these. AppExchange reviewers expect them.
 
 ```apex
 /**
- * Scans Salesforce Security Health Check settings via Tooling API and returns
+ * @description Scans Salesforce Security Health Check settings via Tooling API and returns
  * risk-categorized findings with a composite security score.
  *
  * @author Elaro Team
@@ -227,7 +227,7 @@ Agentforce and platform tools parse these. AppExchange reviewers expect them.
 public inherited sharing class HealthCheckScanner {
 
     /**
-     * Executes a full security health check scan against the current org.
+     * @description Executes a full security health check scan against the current org.
      *
      * @param includeRiskItems Whether to include individual risk item details
      * @return HealthCheckResult containing score and categorized findings
@@ -242,9 +242,10 @@ public inherited sharing class HealthCheckScanner {
 }
 ```
 
-Required tags: `@author`, `@since`, `@group`, `@param`, `@return`, `@throws`, `@see` (where applicable).
-No `@description` tag — the description is the first text in the comment block.
+Required tags: `@description` (brief class/method summary on the first line of the block), `@author`, `@since`, `@group`, `@param`, `@return`, `@throws`, `@see` (where applicable).
+The `@description` tag is required by PMD's `ApexDoc` rule. Place it as the first `@`-tag and put the brief summary text on the same line; longer body paragraphs (if needed) can follow on subsequent comment lines before the next `@`-tag.
 Inline tags: `{@link ClassName}`, `{@code someCode}`.
+(Standard updated 2026-06-05: previously the description was plain text without an explicit tag. Legacy ApexDoc blocks without `@description` are accepted but should be migrated when the surrounding code is next touched.)
 
 ### Async Patterns
 

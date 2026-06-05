@@ -234,7 +234,7 @@ public with sharing class ElaroLogger {
     }
 
     /**
-     * Builds a LogEvent__e from a LogEntry, clamping fields to their max lengths.
+     * @description Builds a LogEvent__e from a LogEntry, clamping fields to their max lengths.
      *
      * @param entry The log entry
      * @return A populated LogEvent__e ready to publish

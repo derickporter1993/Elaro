@@ -89,7 +89,7 @@ public inherited sharing class FeatureFlags {
     }
 
     /**
-     * Returns whether the named module is enabled for the current user context.
+     * @description Returns whether the named module is enabled for the current user context.
      *
      * @param moduleName One of the MODULE_* identifiers
      * @return {@code true} if enabled or unknown; {@code false} if explicitly disabled
@@ -123,7 +123,7 @@ public inherited sharing class FeatureFlags {
     }
 
     /**
-     * Throws an {@link AuraHandledException} when the named module is disabled,
+     * @description Throws an {@link AuraHandledException} when the named module is disabled,
      * for use as a guard at the top of module controller entry points.
      *
      * @param moduleName One of the MODULE_* identifiers
