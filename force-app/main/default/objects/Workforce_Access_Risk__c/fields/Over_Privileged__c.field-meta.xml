@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Over_Privileged__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>True when the user can read at least half of the classified PHI-bearing objects (potential minimum-necessary violation).</description>
+    <externalId>false</externalId>
+    <label>Over Privileged</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>
