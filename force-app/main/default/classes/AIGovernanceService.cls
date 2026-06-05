@@ -207,25 +207,42 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
     }
 
     /**
-     * Generates AI governance compliance report.
+     * Generates a preliminary AI governance compliance summary.
      *
-     * @param auditPackageId Not used
-     * @return PDF report as Blob
+     * SECURITY/RELEASE NOTE: This is an interim plain-text summary, not a finalized
+     * PDF deliverable. It is gated by the AI Governance feature flag so it can be
+     * disabled per subscriber org until the full report pipeline is implemented,
+     * preventing a placeholder artifact from being mistaken for a certified report.
+     *
+     * @param auditPackageId Audit package whose score and gaps are summarized.
+     *        May be null, in which case org-default scoring is used.
+     * @return Blob containing the preliminary report text.
+     * @throws AuraHandledException if AI Governance reporting is disabled for the org.
+     * @see FeatureFlags
      */
     public Blob generateReport(Id auditPackageId) {
-        // Placeholder - would generate comprehensive PDF report
-        String reportContent = 'AI Governance Compliance Report\n\n';
-        reportContent += 'Framework: ' + FRAMEWORK_NAME + '\n';
-        reportContent += 'Version: ' + FRAMEWORK_VERSION + '\n';
-        reportContent += 'Generated: ' + Datetime.now().format() + '\n\n';
+        if (!FeatureFlags.isAIGovernanceEnabled()) {
+            throw new AuraHandledException('AI Governance reporting is disabled for this org.');
+        }
 
-        Decimal score = calculateScore(auditPackageId);
-        reportContent += 'Overall Compliance Score: ' + score.setScale(2) + '%\n\n';
+        try {
+            // Interim text summary pending the comprehensive PDF report pipeline.
+            String reportContent = 'AI Governance Compliance Report (PRELIMINARY)\n\n';
+            reportContent += 'Framework: ' + FRAMEWORK_NAME + '\n';
+            reportContent += 'Version: ' + FRAMEWORK_VERSION + '\n';
+            reportContent += 'Generated: ' + Datetime.now().format() + '\n\n';
 
-        List<IComplianceModule.Gap> gaps = identifyGaps(auditPackageId);
-        reportContent += 'Identified Gaps: ' + gaps.size() + '\n';
+            Decimal score = calculateScore(auditPackageId);
+            reportContent += 'Overall Compliance Score: ' + score.setScale(2) + '%\n\n';
 
-        return Blob.valueOf(reportContent);
+            List<IComplianceModule.Gap> gaps = identifyGaps(auditPackageId);
+            reportContent += 'Identified Gaps: ' + gaps.size() + '\n';
+
+            return Blob.valueOf(reportContent);
+        } catch (Exception e) {
+            ElaroLogger.error('AIGovernanceService.generateReport', e.getMessage(), e.getStackTraceString());
+            throw new AuraHandledException('Unable to generate the AI Governance report. Please try again or contact your administrator.');
+        }
     }
 
     /**
