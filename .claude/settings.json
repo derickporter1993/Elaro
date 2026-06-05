@@ -144,22 +144,6 @@
 
   "mcpServers": {},
 
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/scripts/claude-hooks/post-commit-sync.sh\"",
-            "timeout": 15,
-            "statusMessage": "Checking post-commit branch sync..."
-          }
-        ]
-      }
-    ]
-  },
-
   "experimental": {
     "parallelToolCalls": true,
     "enhancedCodeSearch": true
