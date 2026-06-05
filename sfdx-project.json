@@ -22,8 +22,7 @@
   "_TODO_HC_namespace": "Register 'elaroHC' namespace in DevHub for Health Check package",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "66.0",
-  "packageAliases": {
-    "elaro": "0HoXXXXXXXXXXXX"
-  },
+  "_TODO_packageAliases": "Package aliases (0Ho IDs) are generated automatically by `sf package create` against the registered DevHub. Do not hand-edit a placeholder ID here — register the namespace (see #216) and create the package first; the alias will be written back on creation.",
+  "packageAliases": {},
   "plugins": {}
 }
