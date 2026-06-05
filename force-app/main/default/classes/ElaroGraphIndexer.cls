@@ -204,7 +204,9 @@ public with sharing class ElaroGraphIndexer {
         // Tech debt reduction: remove placeholder integration stub and use explicit, observable fallback behavior.
         // This keeps current functionality stable while making Einstein readiness visible in logs.
         if (!isEinsteinPredictionAvailable()) {
-            ElaroLogger.warn(
+            // Expected fallback path until Einstein integration is enabled. Logged at DEBUG to avoid
+            // emitting WARN-level noise/alerting on every scoring call when AI reasoning is toggled on.
+            ElaroLogger.debug(
                 '[ElaroGraphIndexer] Einstein prediction requested but integration is not configured. '
                 + 'Using rule-based risk scoring fallback. Framework: ' + framework
             );
@@ -252,15 +254,19 @@ public with sharing class ElaroGraphIndexer {
         }
     }
 
+    // Hoisted to a static constant so the multiplier table is built once per transaction rather than
+    // allocated on every getFrameworkRiskMultiplier() call (this runs once per node during bulk indexing).
+    private static final Map<String, Decimal> FRAMEWORK_RISK_MULTIPLIERS = new Map<String, Decimal>{
+        'PCI_DSS' => 1.2,
+        'HIPAA' => 1.15,
+        'SOC2' => 1.1,
+        'NIST' => 1.05,
+        'GDPR' => 1.0
+    };
+
     private static Decimal getFrameworkRiskMultiplier(String framework) {
-        Map<String, Decimal> frameworkMultipliers = new Map<String, Decimal>{
-            'PCI_DSS' => 1.2,
-            'HIPAA' => 1.15,
-            'SOC2' => 1.1,
-            'NIST' => 1.05,
-            'GDPR' => 1.0
-        };
-        return frameworkMultipliers.containsKey(framework) ? frameworkMultipliers.get(framework) : 1.0;
+        Decimal multiplier = FRAMEWORK_RISK_MULTIPLIERS.get(framework);
+        return multiplier ?? 1.0;
     }
 
     private static String determineDriftCategory(Decimal riskScore, Map<String, Object> metadata) {
