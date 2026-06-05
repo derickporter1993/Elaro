@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Elaro Apex Ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>
+        Elaro Apex ruleset, aligned to CLAUDE.md and the 2026-06-05 audit.
+        Consumed by `sf scanner run --pmdconfig config/pmd-ruleset.xml` (v4) or
+        `sf code-analyzer run` (v5). Every rule below maps to a finding/standard so the
+        scanner enforces the same rules the team documents — instead of fighting them
+        (e.g. the ApexDoc @description rule now matches the CLAUDE.md decision).
+    </description>
+
+    <!-- ============================================================= -->
+    <!-- SECURITY (AppExchange review gates)                            -->
+    <!-- ============================================================= -->
+
+    <!-- CRUD/FLS: every SOQL/DML must enforce access. Finding: controllers w/o USER_MODE. -->
+    <rule ref="category/apex/security.xml/ApexCRUDViolation" />
+
+    <!-- Sharing must be explicit. Finding: DTOs/factories missing a sharing keyword (v67 flip). -->
+    <rule ref="category/apex/security.xml/ApexSharingViolations" />
+
+    <!-- Dynamic SOQL injection. Finding: ElaroMatrixController raw-string filter denylist. -->
+    <rule ref="category/apex/security.xml/ApexSOQLInjection" />
+
+    <!-- Insecure (non-TLS) endpoints. -->
+    <rule ref="category/apex/security.xml/ApexInsecureEndpoint" />
+
+    <!-- Weak crypto. Finding: PCIDataProtectionService placeholder tokenization. -->
+    <rule ref="category/apex/security.xml/ApexBadCrypto" />
+
+    <!-- Dangerous methods (incl. UserInfo.getSessionId for callout auth).
+         Finding: ToolingApiService getSessionId — AppExchange auto-fail. -->
+    <rule ref="category/apex/security.xml/ApexDangerousMethods" />
+
+    <!-- Prefer Named Credentials over hardcoded endpoints/keys. -->
+    <rule ref="category/apex/security.xml/ApexSuggestUsingNamedCred" />
+
+    <!-- XSS / open redirect surfaces. -->
+    <rule ref="category/apex/security.xml/ApexOpenRedirect" />
+    <rule ref="category/apex/security.xml/ApexXSSFromURLParam" />
+    <rule ref="category/apex/security.xml/ApexXSSFromEscapeFalse" />
+
+    <!-- ============================================================= -->
+    <!-- PERFORMANCE / GOVERNOR LIMITS                                  -->
+    <!-- ============================================================= -->
+
+    <!-- SOQL/DML/callout/enqueue in loops. Finding: SlackNotifier callout-in-loop,
+         MultiOrgManager enqueue-in-loop. (Loop ban extended per CLAUDE.md #9.) -->
+    <rule ref="category/apex/performance.xml/OperationWithLimitsInLoop" />
+    <rule ref="category/apex/performance.xml/AvoidSoqlInLoops" />
+    <rule ref="category/apex/performance.xml/AvoidDmlStatementsInLoops" />
+    <rule ref="category/apex/performance.xml/AvoidSoslInLoops" />
+
+    <!-- ============================================================= -->
+    <!-- ERROR-PRONE                                                    -->
+    <!-- ============================================================= -->
+
+    <!-- Swallowed exceptions. Finding: ElaroPCIAccessAlertTrigger silent drop. -->
+    <rule ref="category/apex/errorprone.xml/EmptyCatchBlock" />
+    <rule ref="category/apex/errorprone.xml/ApexCSRF" />
+
+    <!-- ============================================================= -->
+    <!-- BEST PRACTICES                                                 -->
+    <!-- ============================================================= -->
+
+    <!-- Dead locals. Finding: ElaroPCIAccessAlertTrigger accessCountByUser unused. -->
+    <rule ref="category/apex/bestpractices.xml/UnusedLocalVariable" />
+
+    <!-- Tests must assert. Finding (none open) — keeps the 0-stub-tests invariant. -->
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveAsserts" />
+
+    <!-- System.debug must use an explicit LoggingLevel (the grep gate bans it outright in
+         production; this catches any that slip into tests/util without a level). -->
+    <rule ref="category/apex/bestpractices.xml/DebugsShouldUseLoggingLevel" />
+
+    <!-- ============================================================= -->
+    <!-- DOCUMENTATION — ApexDoc REQUIRES @description                  -->
+    <!-- Resolves the conflict that produced 6 PMD findings on PR #215: -->
+    <!-- CLAUDE.md now requires @description, so the scanner does too.   -->
+    <!-- ============================================================= -->
+
+    <rule ref="category/apex/documentation.xml/ApexDoc">
+        <properties>
+            <property name="reportMissingDescription" value="true" />
+            <property name="reportPrivate" value="false" />
+            <property name="reportProtected" value="false" />
+            <property name="reportProperty" value="false" />
+        </properties>
+    </rule>
+
+</ruleset>

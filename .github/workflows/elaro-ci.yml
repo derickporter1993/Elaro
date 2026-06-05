@@ -117,6 +117,7 @@ jobs:
         run: |
           sf scanner run --target "force-app" --target "force-app-healthcheck" \
             --engine pmd \
+            --pmdconfig config/pmd-ruleset.xml \
             --format sarif \
             --outfile scanner-results.sarif || true
 

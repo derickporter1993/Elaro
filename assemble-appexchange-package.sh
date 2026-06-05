@@ -48,7 +48,7 @@ if [ -f "scanner-reports/code-analyzer-appexchange.html" ]; then
     echo "  ✅ Scanner reports copied"
 else
     echo "  ⚠️  Scanner reports not found - run scanner first (see SCANNER_REPORT_BUNDLE.md)"
-    echo "  Run: sf scanner run --target \"force-app/\" --engine \"pmd,retire-js,eslint-lwc\" --category \"Security,Best Practices\" --format \"html\" --outfile \"scanner-reports/code-analyzer-appexchange.html\""
+    echo "  Run: sf scanner run --target \"force-app/\" --target \"force-app-healthcheck/\" --pmdconfig config/pmd-ruleset.xml --engine \"pmd,retire-js,eslint-lwc\" --category \"Security,Best Practices\" --format \"html\" --outfile \"scanner-reports/code-analyzer-appexchange.html\""
 fi
 
 # Create package manifest
