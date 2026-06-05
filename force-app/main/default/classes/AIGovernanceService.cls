@@ -214,8 +214,9 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
      * disabled per subscriber org until the full report pipeline is implemented,
      * preventing a placeholder artifact from being mistaken for a certified report.
      *
-     * @param auditPackageId Audit package whose score and gaps are summarized.
-     *        May be null, in which case org-default scoring is used.
+     * @param auditPackageId Accepted for IComplianceModule conformance but not
+     *        currently consumed — score and gaps are computed org-wide from
+     *        discovered AI systems and the AI System Registry. May be null.
      * @return Blob containing the preliminary report text.
      * @throws AuraHandledException if AI Governance reporting is disabled for the org.
      * @see FeatureFlags

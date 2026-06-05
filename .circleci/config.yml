@@ -151,9 +151,10 @@ jobs:
               echo "    Add SFDX_AUTH_URL as a CircleCI project/context secret to enable this job."
               exit 0
             fi
-            echo "$SFDX_AUTH_URL" > ./SFDX_AUTH_URL.txt
-            sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias ci-org --set-default
-            rm -f ./SFDX_AUTH_URL.txt
+            AUTH_FILE="$(mktemp)"
+            trap 'rm -f "$AUTH_FILE"' EXIT
+            echo "$SFDX_AUTH_URL" > "$AUTH_FILE"
+            sf org login sfdx-url --sfdx-url-file "$AUTH_FILE" --alias ci-org --set-default
             echo "Validating deploy and running all local Apex tests..."
             sf project deploy start \
               --dry-run \
