@@ -67,8 +67,9 @@ public with sharing class ElaroLogger {
 
         LogEntry entry = new LogEntry(level, message, context);
 
-        // Developer-console mirror — preserves existing debug-log workflows.
-        System.debug(toDebugLoggingLevel(level), formatLogEntry(entry));
+        // Developer-console mirror — preserves existing debug-log workflows. The durable
+        // audit channel below is the Platform Event; this debug call is intentional UX.
+        System.debug(toDebugLoggingLevel(level), formatLogEntry(entry)); // NOPMD: intentional dev-console mirror
 
         // Durable audit channel — LogEvent__e is publishBehavior=PublishImmediately,
         // so entries survive a DML rollback in the publishing transaction.
@@ -83,7 +84,8 @@ public with sharing class ElaroLogger {
             for (Database.Error err : result.getErrors()) {
                 errorDetail += err.getStatusCode() + ': ' + err.getMessage() + '; ';
             }
-            System.debug(
+            // NOPMD: last-resort fallback when the durable Platform Event publish itself fails.
+            System.debug( // NOPMD
                 LoggingLevel.ERROR,
                 'ElaroLogger publish failed: ' + errorDetail + ' | original=' + formatLogEntry(entry)
             );

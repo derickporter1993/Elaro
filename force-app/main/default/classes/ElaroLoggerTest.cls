@@ -71,9 +71,10 @@ private class ElaroLoggerTest {
 
         Test.startTest();
         try {
-            Integer crash = 1 / 0;
+            // Force a runtime exception with no captured value to log
+            JSON.deserializeUntyped('{');
         } catch (Exception ex) {
-            ElaroLogger.error('division failed', ex);
+            ElaroLogger.error('deserialize failed', ex);
         }
         Test.stopTest();
 

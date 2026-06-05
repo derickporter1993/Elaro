@@ -14,6 +14,19 @@
  */
 public inherited sharing class FeatureFlags {
 
+    /** Module identifier for the Command Center kill switch. */
+    public static final String MODULE_COMMAND_CENTER = 'COMMAND_CENTER';
+    /** Module identifier for the Event Monitoring kill switch. */
+    public static final String MODULE_EVENT_MONITORING = 'EVENT_MONITORING';
+    /** Module identifier for the AI Governance kill switch. */
+    public static final String MODULE_AI_GOVERNANCE = 'AI_GOVERNANCE';
+    /** Module identifier for the SEC Cybersecurity Disclosure kill switch. */
+    public static final String MODULE_SEC = 'SEC_MODULE';
+    /** Module identifier for the Trust Center kill switch. */
+    public static final String MODULE_TRUST_CENTER = 'TRUST_CENTER';
+    /** Module identifier for the Assessment Wizard kill switch. */
+    public static final String MODULE_ASSESSMENT_WIZARD = 'ASSESSMENT_WIZARD';
+
     /**
      * Checks whether the Command Center module is enabled for the current user context.
      *
@@ -74,19 +87,6 @@ public inherited sharing class FeatureFlags {
         Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
         return flags?.Assessment_Wizard_Enabled__c ?? true;
     }
-
-    /** Module identifier for the Command Center kill switch. */
-    public static final String MODULE_COMMAND_CENTER = 'COMMAND_CENTER';
-    /** Module identifier for the Event Monitoring kill switch. */
-    public static final String MODULE_EVENT_MONITORING = 'EVENT_MONITORING';
-    /** Module identifier for the AI Governance kill switch. */
-    public static final String MODULE_AI_GOVERNANCE = 'AI_GOVERNANCE';
-    /** Module identifier for the SEC Cybersecurity Disclosure kill switch. */
-    public static final String MODULE_SEC = 'SEC_MODULE';
-    /** Module identifier for the Trust Center kill switch. */
-    public static final String MODULE_TRUST_CENTER = 'TRUST_CENTER';
-    /** Module identifier for the Assessment Wizard kill switch. */
-    public static final String MODULE_ASSESSMENT_WIZARD = 'ASSESSMENT_WIZARD';
 
     /**
      * Returns whether the named module is enabled for the current user context.
