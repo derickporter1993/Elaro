@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>PHI Field Registry</label>
+    <pluralLabel>PHI Field Registry</pluralLabel>
+    <description>Canonical registry of object fields classified for PHI sensitivity by the PHI Data Classification Engine (issue #212, HIPAA pack).</description>
+    <nameField>
+        <label>PHI Field Name</label>
+        <type>Text</type>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

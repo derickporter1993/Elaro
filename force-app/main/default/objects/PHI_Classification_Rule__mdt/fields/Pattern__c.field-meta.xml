@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pattern__c</fullName>
+    <description>Token to match. For Match_Type NameContains this is a lower-case substring matched against the field API name and label; for FieldType it is a Schema DisplayType name (e.g., EMAIL).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Pattern</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
