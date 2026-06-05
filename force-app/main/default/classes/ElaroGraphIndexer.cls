@@ -35,6 +35,16 @@ public with sharing class ElaroGraphIndexer {
     private static final Integer MAX_METADATA_SIZE = 50000;
     private static final String INJECTION_PATTERN = '.*[;\'\"\\-\\-<>\\\\/%].*';
 
+    // Hoisted to a static constant so the multiplier table is built once per transaction rather than
+    // allocated on every getFrameworkRiskMultiplier() call (this runs once per node during bulk indexing).
+    private static final Map<String, Decimal> FRAMEWORK_RISK_MULTIPLIERS = new Map<String, Decimal>{
+        'PCI_DSS' => 1.2,
+        'HIPAA' => 1.15,
+        'SOC2' => 1.1,
+        'NIST' => 1.05,
+        'GDPR' => 1.0
+    };
+
     /**
      * Indexes a single compliance entity change into the graph Big Object.
      *
@@ -253,16 +263,6 @@ public with sharing class ElaroGraphIndexer {
             return 0;
         }
     }
-
-    // Hoisted to a static constant so the multiplier table is built once per transaction rather than
-    // allocated on every getFrameworkRiskMultiplier() call (this runs once per node during bulk indexing).
-    private static final Map<String, Decimal> FRAMEWORK_RISK_MULTIPLIERS = new Map<String, Decimal>{
-        'PCI_DSS' => 1.2,
-        'HIPAA' => 1.15,
-        'SOC2' => 1.1,
-        'NIST' => 1.05,
-        'GDPR' => 1.0
-    };
 
     private static Decimal getFrameworkRiskMultiplier(String framework) {
         Decimal multiplier = FRAMEWORK_RISK_MULTIPLIERS.get(framework);
