@@ -71,6 +71,7 @@ export default [
         {
           argsIgnorePattern: "^_|^e$|^error$|^action$",
           varsIgnorePattern: "^_|^e$|^error$|^action$",
+          caughtErrorsIgnorePattern: "^_|^e$|^error$",
         },
       ],
       "@lwc/lwc/no-async-operation": "off", // Disable if rule definition not found

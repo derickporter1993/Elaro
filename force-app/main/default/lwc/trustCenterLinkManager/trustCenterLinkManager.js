@@ -289,7 +289,7 @@ export default class TrustCenterLinkManager extends LightningElement {
           variant: "success",
         })
       );
-    } catch (e) {
+    } catch (_e) {
       // Clipboard copy failed silently
     }
     document.body.removeChild(textArea);
