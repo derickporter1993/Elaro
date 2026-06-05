@@ -168,10 +168,8 @@ public with sharing class ElaroMatrixController {
 
         validateAggregateExpression(cfg.aggregateExpression, cfg.objectName);
 
-        // Validate filters if present
-        if (String.isNotBlank(cfg.filters)) {
-            validateFilterClause(cfg.filters, cfg.objectName);
-        }
+        // Filters are validated + bound by SafeSoqlBuilder.buildWhere at query-build time
+        // (it throws AuraHandledException on an invalid field/operator).
     }
 
     /**
@@ -245,61 +243,9 @@ public with sharing class ElaroMatrixController {
         }
     }
 
-    /**
-     * Validate filter clause (comprehensive security validation)
-     */
-    private static void validateFilterClause(String filters, String objectName) {
-        // Check for dangerous patterns
-        String upper = filters.toUpperCase();
-
-        Set<String> dangerous = new Set<String>{
-            'INSERT', 'UPDATE', 'DELETE', 'UPSERT', 'MERGE',
-            'DROP', 'TRUNCATE', 'ALTER', 'CREATE', 'GRANT',
-            '--', '/*', '*/', ';', 'EXEC', 'EXECUTE'
-        };
-
-        for (String keyword : dangerous) {
-            if (upper.contains(keyword)) {
-                throw new AuraHandledException('Invalid filter keyword: ' + keyword);
-            }
-        }
-
-        // Basic structure validation - should have field, operator, value pattern
-        if (!filters.contains('=') && !filters.contains('>') &&
-            !filters.contains('<') && !upper.contains(' IN ') &&
-            !upper.contains(' LIKE ')) {
-            throw new AuraHandledException('Filter must contain valid comparison operators');
-        }
-    }
-
-    /**
-     * Sanitize filter clause by escaping string literals
-     * This prevents SOQL injection by escaping single quotes in string values
-     */
-    private static String sanitizeFilterClause(String filters) {
-        if (String.isBlank(filters)) {
-            return '';
-        }
-        
-        // Pattern to find string literals (values within single quotes)
-        // Replace unescaped single quotes within values
-        String result = filters;
-        
-        // Find all string literals and escape internal quotes
-        Pattern p = Pattern.compile('\'([^\']*)\'');
-        Matcher m = p.matcher(filters);
-        
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            String value = m.group(1);
-            // Escape single quotes within the value
-            String escapedValue = String.escapeSingleQuotes(value);
-            m.appendReplacement(sb, '\'' + escapedValue + '\'');
-        }
-        m.appendTail(sb);
-        
-        return sb.toString();
-    }
+    // validateFilterClause / sanitizeFilterClause removed: filter validation and value binding
+    // are now handled by SafeSoqlBuilder.buildWhere (structured field+operator+bind), replacing
+    // the prior denylist + escapeSingleQuotes approach which did not stop boolean-logic injection.
 
     /**
      * Estimate group count to determine if direct query is safe
@@ -308,14 +254,14 @@ public with sharing class ElaroMatrixController {
         String rowField = sanitizeFieldName(cfg.rowField);
         String colField = sanitizeFieldName(cfg.columnField);
 
-        String baseFilter = String.isNotBlank(cfg.filters) ?
-            ' WHERE ' + sanitizeFilterClause(cfg.filters) : '';
+        SafeSoqlBuilder.SafeQuery filter = SafeSoqlBuilder.buildWhere(cfg.filters, cfg.objectName, null);
+        String baseFilter = filter.whereClause;
 
         try {
-            Map<String, Object> binds = new Map<String, Object>();
+            Map<String, Object> binds = filter.binds;
 
             // Count distinct row values
-            // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist
+            // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist; filter values are bound via SafeSoqlBuilder
             String rowCountQuery = 'SELECT COUNT_DISTINCT(' + rowField + ') distinctCount ' +
                                    'FROM ' + cfg.objectName + baseFilter +
                                    ' WITH USER_MODE';
@@ -325,7 +271,7 @@ public with sharing class ElaroMatrixController {
             Integer rowCount = rowResults.isEmpty() ? 0 : (Integer)rowResults[0].get('distinctCount');
 
             // Count distinct column values
-            // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist
+            // NOPMD ApexSOQLInjection - field names validated against schema, object validated against ALLOWED_OBJECTS allowlist; filter values are bound via SafeSoqlBuilder
             String colCountQuery = 'SELECT COUNT_DISTINCT(' + colField + ') distinctCount ' +
                                    'FROM ' + cfg.objectName + baseFilter +
                                    ' WITH USER_MODE';
@@ -354,15 +300,14 @@ public with sharing class ElaroMatrixController {
         String colField = sanitizeFieldName(cfg.columnField);
         String aggExpr = cfg.aggregateExpression;
 
-        // NOPMD ApexSOQLInjection - field names validated against schema, object/aggregate validated against allowlists
+        SafeSoqlBuilder.SafeQuery filter = SafeSoqlBuilder.buildWhere(cfg.filters, cfg.objectName, null);
+
+        // NOPMD ApexSOQLInjection - field names validated against schema, object/aggregate validated against allowlists; filter values are bound via SafeSoqlBuilder
         String soql = 'SELECT ' + rowField + ' rowDim, ' +
                                   colField + ' colDim, ' +
                                   aggExpr + ' metricValue ' +
-                      'FROM ' + cfg.objectName;
-
-        if (String.isNotBlank(cfg.filters)) {
-            soql += ' WHERE ' + sanitizeFilterClause(cfg.filters);
-        }
+                      'FROM ' + cfg.objectName +
+                      filter.whereClause;
 
         soql += ' GROUP BY ' + rowField + ', ' + colField +
                 ' WITH USER_MODE' +
@@ -370,9 +315,8 @@ public with sharing class ElaroMatrixController {
 
         List<AggregateResult> results;
         try {
-            Map<String, Object> binds = new Map<String, Object>();
             results = (List<AggregateResult>) Database.queryWithBinds(
-                soql, binds, AccessLevel.USER_MODE
+                soql, filter.binds, AccessLevel.USER_MODE
             );
         } catch (QueryException e) {
             ElaroLogger.error('ElaroMatrixController.queryDirect', e.getMessage(), e.getStackTraceString());
@@ -575,7 +519,7 @@ public with sharing class ElaroMatrixController {
         public String rowField;
         public String columnField;
         public String aggregateExpression;
-        public String filters;
+        public List<SafeSoqlBuilder.FilterCriteria> filters;
     }
 
     public class MatrixResult {

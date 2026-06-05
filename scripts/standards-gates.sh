@@ -55,9 +55,11 @@ grep -rnE "^[^*/]*System\.debug\s*\(" "${ROOTS[@]}" --include="*.cls" --include=
   | grep -vE "/(ElaroLogger|HCLogger)\.cls:" \
   | hit "no System.debug() in production code" "Use ElaroLogger/HCLogger; annotate intentional ones with // NOPMD. (HCLogger needs the same NOPMD treatment as ElaroLogger.)"
 
-# Gate 4: raw-string SOQL filter concatenation — push to SafeSoqlBuilder
+# Gate 4: raw-string SOQL filter concatenation — push to SafeSoqlBuilder.
+# Excludes String.join(...) (the sanctioned structured-predicate pattern) and SafeSoqlBuilder
+# itself (the canonical builder); the target is `' WHERE ' + <rawStringVar>`.
 grep -rnE "' (WHERE|AND|OR) ' \+|\+ ' (WHERE|AND|OR) '" "${ROOTS[@]}" --include="*.cls" 2>/dev/null \
-  | grep -v "Test\.cls" \
+  | grep -v "Test\.cls" | grep -v "String\.join" | grep -v "/SafeSoqlBuilder\.cls:" \
   | hit "no raw-string SOQL filter concatenation" "Use SafeSoqlBuilder (structured field+operator+bind) (CLAUDE.md #7)."
 
 # Gate 5: fabricated compliance results — hardcoded pass / placeholder score in live code

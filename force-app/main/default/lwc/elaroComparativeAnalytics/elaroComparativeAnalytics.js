@@ -71,7 +71,9 @@ export default class ElaroComparativeAnalytics extends LightningElement {
       rowField: this.rowField,
       columnField: this.columnField,
       aggregateExpression: this.aggregateExpression,
-      filters: "",
+      // Structured filter criteria [{ field, operator, value }], bound server-side by
+      // SafeSoqlBuilder. Empty for now; the matrix UI does not yet expose filter inputs.
+      filters: [],
     };
 
     executeMatrixQuery({ configJson: JSON.stringify(config) })
