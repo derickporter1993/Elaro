@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Financial_Services_Pack_Enabled__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Kill switch for the Financial Services vertical pack (e.g., GLBA, SOX, FINRA, SEC). When false, PackRegistry treats Financial Services pack frameworks as inactive. Defaults true.</description>
+    <externalId>false</externalId>
+    <label>Financial Services Pack Enabled</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

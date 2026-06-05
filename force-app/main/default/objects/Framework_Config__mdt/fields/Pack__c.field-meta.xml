@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pack__c</fullName>
+    <description>Vertical pack this framework belongs to: "None" (Core), "HIPAA", "FinancialServices", or "AIGovernance". Read by PackRegistry. See docs/architecture/ELARO_PLATFORM_REDESIGN.md (#211).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Pack</label>
+    <length>40</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
