@@ -132,6 +132,35 @@ jobs:
           path: scanner-reports
           destination: scanner-reports
 
+  # Job to run Apex tests against an authenticated org (RunLocalTests)
+  apex-tests:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Setup Salesforce CLI
+          command: |
+            npm install -g @salesforce/cli
+      - run:
+          name: Run Apex Tests (RunLocalTests)
+          command: |
+            if [ -z "$SFDX_AUTH_URL" ]; then
+              echo "⚠️  SFDX_AUTH_URL is not set — skipping Apex test execution."
+              echo "    Add SFDX_AUTH_URL as a CircleCI project/context secret to enable this job."
+              exit 0
+            fi
+            echo "$SFDX_AUTH_URL" > ./SFDX_AUTH_URL.txt
+            sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias ci-org --set-default
+            rm -f ./SFDX_AUTH_URL.txt
+            echo "Validating deploy and running all local Apex tests..."
+            sf project deploy start \
+              --dry-run \
+              --test-level RunLocalTests \
+              --wait 30 \
+              --target-org ci-org
+
 # Define workflows
 workflows:
   # Main workflow for CI/CD
@@ -153,10 +182,9 @@ workflows:
           requires:
             - install-dependencies
 
-      # Uncomment when additional checks are implemented
-      # - additional-checks:
-      #     requires:
-      #       - install-dependencies
+      - apex-tests:
+          requires:
+            - install-dependencies
 
   # Nightly workflow (optional - runs on a schedule)
   nightly-build:
@@ -176,5 +204,8 @@ workflows:
           requires:
             - install-dependencies
       - sfdx-scan:
+          requires:
+            - install-dependencies
+      - apex-tests:
           requires:
             - install-dependencies
