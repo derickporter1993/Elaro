@@ -76,6 +76,7 @@
       "Bash(git commit*)",
       "Bash(git push*)",
       "Bash(git pull*)",
+      "Bash(git fetch*)",
       "Write(~/Elaro/**)",
       "Read(~/Elaro/**)"
     ],
