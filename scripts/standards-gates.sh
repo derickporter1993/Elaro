@@ -96,6 +96,36 @@ for r in "${ROOTS[@]}"; do
   done
 done | hit "executable CMDT must be Protected" "Set <visibility>Protected</visibility> (CLAUDE.md #6)."
 
+# ============================================================================
+# platform/ TypeScript gates (the monorepo shipped alongside the package).
+# Added after the 2026-06-05 three-target sweep found weak crypto in the
+# masking library and a command-injection pattern in the CLI.
+# ============================================================================
+if [ -d platform/packages ]; then
+  TS_SRC=(platform/packages/*/src)
+
+  # Gate 10: Math.random() for tokens/secrets/salts — not cryptographically secure.
+  # Finding: masking tokenize.ts predictable vault tokens; hash.ts weak salt.
+  grep -rnE "Math\.random\(\)" "${TS_SRC[@]}" 2>/dev/null \
+    | grep -iE "token|salt|secret|key|nonce|iv|id|password" \
+    | hit "no Math.random() for tokens/secrets/salts" "Use crypto.randomBytes/randomUUID (CLAUDE.md #10)."
+
+  # Gate 11: non-cryptographic hash used where PII/de-identification is implied.
+  # Finding: masking hash.ts offers murmur3 for PII hashing (reversible/brute-forceable).
+  grep -rnE "murmur|md5|sha1[^0-9]" "${TS_SRC[@]}" 2>/dev/null \
+    | grep -viE "//|comment|sha1[0-9]" \
+    | hit "no weak hash (murmur3/md5/sha1) in masking/PII paths" "Use sha256+ for PII hashing (CLAUDE.md #10)."
+
+  # Gate 12: home-rolled crypto in masking — admitted non-production ciphers.
+  grep -rniE "simplified implementation|for production:|home-?rolled|not production" platform/packages/masking/src 2>/dev/null \
+    | hit "no home-rolled/placeholder crypto in masking" "Use a vetted library (e.g. FF1/FF3-1) (CLAUDE.md #10)."
+
+  # Gate 13: shell command built by string interpolation of a variable (injection).
+  # Finding: cli/org.ts execSync(`sf org delete -o ${options.targetOrg} ...`) unsanitized.
+  grep -rnE "(execSync|exec)\(\s*\`[^\`]*\\\$\{" platform/packages/cli/src 2>/dev/null \
+    | hit "no shell command built from interpolated variables" "Use spawn(cmd, [args]) or validate the value first (CLAUDE.md #5-adjacent)."
+fi
+
 echo ""
 if [ -s "$FAILMARK" ] && [ "$REPORT_ONLY" -eq 0 ]; then
   echo "standards-gates: FAIL ($(wc -l < "$FAILMARK") gate(s) tripped)"
