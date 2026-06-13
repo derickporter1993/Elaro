@@ -591,10 +591,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>BenchmarkingService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>BlockchainVerification</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -771,10 +767,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>ElaroRemediationEngine</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ElaroShieldService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -888,10 +880,6 @@
     </classAccesses>
     <classAccesses>
         <apexClass>SegregationOfDutiesService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>ServiceNowIntegration</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>

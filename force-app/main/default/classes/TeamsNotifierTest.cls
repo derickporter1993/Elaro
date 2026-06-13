@@ -75,107 +75,11 @@ private class TeamsNotifierTest {
         Assert.areEqual(null, caughtException, 'notifyRichAsync should not throw exception');
     }
     
-    /**
-     * Test: Compliance alert notification
-     */
-    @isTest
-    static void testNotifyComplianceAlert() {
-        Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
+    // testNotifyComplianceAlert / testNotifyComplianceAlertSeverities /
+    // testNotifyComplianceAlertFrameworks removed 2026-06-13: covered methods
+    // (notifyComplianceAlert / buildComplianceAlertCard) were unreferenced in
+    // production and deleted in the same commit.
 
-        Test.startTest();
-        Exception caughtException = null;
-        try {
-            TeamsNotifier.notifyComplianceAlert(
-                'Test Alert',
-                ElaroConstants.SEVERITY_HIGH,
-                ElaroConstants.FRAMEWORK_HIPAA,
-                'This is a test compliance alert',
-                'node123',
-                0.95
-            );
-        } catch (Exception e) {
-            caughtException = e;
-        }
-        Test.stopTest();
-
-        Assert.areEqual(null, caughtException, 'notifyComplianceAlert should not throw exception');
-    }
-    
-    /**
-     * Test: Compliance alert with different severities
-     */
-    @isTest
-    static void testNotifyComplianceAlertSeverities() {
-        Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
-        
-        List<String> severities = new List<String>{
-            ElaroConstants.SEVERITY_CRITICAL,
-            ElaroConstants.SEVERITY_HIGH,
-            ElaroConstants.SEVERITY_MEDIUM,
-            ElaroConstants.SEVERITY_LOW
-        };
-        
-        Assert.areEqual(4, severities.size(), 'Should test 4 severity levels');
-
-        Test.startTest();
-        Exception caughtException = null;
-        try {
-            for (String severity : severities) {
-                TeamsNotifier.notifyComplianceAlert(
-                    'Test Alert - ' + severity,
-                    severity,
-                    ElaroConstants.FRAMEWORK_SOC2,
-                    'Test description',
-                    'node123',
-                    0.85
-                );
-            }
-        } catch (Exception e) {
-            caughtException = e;
-        }
-        Test.stopTest();
-
-        Assert.areEqual(null, caughtException, 'All severity levels should send without exception');
-    }
-    
-    /**
-     * Test: Compliance alert with different frameworks
-     */
-    @isTest
-    static void testNotifyComplianceAlertFrameworks() {
-        Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
-        
-        List<String> frameworks = new List<String>{
-            ElaroConstants.FRAMEWORK_HIPAA,
-            ElaroConstants.FRAMEWORK_SOC2,
-            ElaroConstants.FRAMEWORK_NIST,
-            ElaroConstants.FRAMEWORK_FEDRAMP,
-            ElaroConstants.FRAMEWORK_GDPR
-        };
-        
-        Assert.areEqual(5, frameworks.size(), 'Should test 5 frameworks');
-
-        Test.startTest();
-        Exception caughtException = null;
-        try {
-            for (String framework : frameworks) {
-                TeamsNotifier.notifyComplianceAlert(
-                    'Test Alert - ' + framework,
-                    ElaroConstants.SEVERITY_HIGH,
-                    framework,
-                    'Test description',
-                    'node123',
-                    0.90
-                );
-            }
-        } catch (Exception e) {
-            caughtException = e;
-        }
-        Test.stopTest();
-
-        Assert.areEqual(null, caughtException, 'All frameworks should send without exception');
-    }
-    
     /**
      * Test: Weekly scorecard notification
      */
@@ -236,36 +140,10 @@ private class TeamsNotifierTest {
         Assert.areEqual(null, caughtException, 'Should handle null/empty messages without throwing');
     }
     
-    /**
-     * Test: Remediation notification
-     */
-    @isTest
-    static void testNotifyRemediation() {
-        Test.setMock(HttpCalloutMock.class, new TeamsCalloutMock(200, 'OK'));
-        
-        // Create mock remediation result
-        ElaroRemediationEngine.RemediationResult result = 
-            new ElaroRemediationEngine.RemediationResult();
-        result.success = true;
-        result.action = 'Permission Set Removed';
-        result.message = 'Test remediation completed';
-        result.remediationId = 'remediation123';
-        result.reviewDeadline = Datetime.now().addDays(7);
-        
-        Assert.areNotEqual(null, result, 'Remediation result should not be null');
+    // testNotifyRemediation removed 2026-06-13: notifyRemediation, buildRemediationCard,
+    // and the ElaroRemediationEngine.RemediationResult type were all deleted in the
+    // same commit (engine was an unwired stub).
 
-        Test.startTest();
-        Exception caughtException = null;
-        try {
-            TeamsNotifier.notifyRemediation(result, ElaroConstants.FRAMEWORK_HIPAA);
-        } catch (Exception e) {
-            caughtException = e;
-        }
-        Test.stopTest();
-
-        Assert.areEqual(null, caughtException, 'notifyRemediation should not throw exception');
-    }
-    
     /**
      * Test: Multiple notifications in sequence
      */
