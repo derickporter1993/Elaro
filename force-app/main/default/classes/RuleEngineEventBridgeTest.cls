@@ -11,13 +11,45 @@
 @IsTest(testFor=RuleEngineEventBridge.class)
 private class RuleEngineEventBridgeTest {
 
+    /**
+     * @description Minimal IComplianceModule stub so the bridge test does not depend on any
+     * concrete framework module. Only getFrameworkName() is exercised by publishGapsAsAlerts;
+     * the rest return inert values. (Replaces the former `new HIPAAModule()` fixture.)
+     */
+    private class StubComplianceModule implements IComplianceModule {
+        public String getFrameworkName() {
+            return 'HIPAA';
+        }
+        public String getFrameworkVersion() {
+            return '1.0';
+        }
+        public List<IComplianceModule.Control> getControls() {
+            return new List<IComplianceModule.Control>();
+        }
+        public Decimal calculateScore(Id auditPackageId) {
+            return 0;
+        }
+        public List<IComplianceModule.Gap> identifyGaps(Id auditPackageId) {
+            return new List<IComplianceModule.Gap>();
+        }
+        public Blob generateReport(Id auditPackageId) {
+            return Blob.valueOf('');
+        }
+        public IComplianceModule.Control getControlById(String controlId) {
+            return null;
+        }
+        public IComplianceModule.ControlResult evaluateControl(String controlId, Map<String, Object> context) {
+            return null;
+        }
+    }
+
     // =========================================================================
     // Forward Integration: publishGapsAsAlerts
     // =========================================================================
 
     @IsTest
     static void shouldPublishGapsAsAlerts() {
-        IComplianceModule module = new HIPAAModule();
+        IComplianceModule module = new StubComplianceModule();
 
         List<IComplianceModule.Gap> gaps = new List<IComplianceModule.Gap>();
 
@@ -62,7 +94,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldHandleEmptyGaps() {
-        IComplianceModule module = new HIPAAModule();
+        IComplianceModule module = new StubComplianceModule();
 
         Test.startTest();
         List<RuleEngineEventBridge.ComplianceFinding> findings =
