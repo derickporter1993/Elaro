@@ -1,7 +1,7 @@
 /**
  * Core rule evaluation engine that loads active compliance rules from Custom Metadata
  * and dispatches evaluation to the appropriate strategy (SOQL_QUERY, METADATA_CHECK,
- * CONFIG_SCAN). Implements CursorStep for large-scale batch evaluation.
+ * CONFIG_SCAN).
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)

@@ -4,10 +4,6 @@
     <description>Full access to the Elaro Async Framework: custom setting management and step log subscription</description>
     <hasActivationRequired>false</hasActivationRequired>
     <classAccesses>
-        <apexClass>StepProcessor</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>ElaroAsyncFeatureFlags</apexClass>
         <enabled>true</enabled>
     </classAccesses>
