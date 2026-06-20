@@ -11,45 +11,45 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testCalculateRiskScore_LoginEvent_ReturnsBaseScore() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginEvent();
         
         Test.startTest();
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
         // Login base score is 20, may have additional factors
-        Assert.isTrue(riskScore &gt;= 20, 'Login event should have minimum score of 20');
-        Assert.isTrue(riskScore &lt;= 100, 'Score should not exceed 100');
+        Assert.isTrue(riskScore >= 20, 'Login event should have minimum score of 20');
+        Assert.isTrue(riskScore <= 100, 'Score should not exceed 100');
     }
     
     @isTest
     static void testCalculateRiskScore_LoginAsEvent_ReturnsCriticalScore() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginAsEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginAsEvent();
         
         Test.startTest();
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
         // LoginAs base score is 70
-        Assert.isTrue(riskScore &gt;= 70, 'LoginAs event should have minimum score of 70');
+        Assert.isTrue(riskScore >= 70, 'LoginAs event should have minimum score of 70');
     }
     
     @isTest
     static void testCalculateRiskScore_HighVolumeEvent_AddsVolumeFactor() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockApiEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockApiEvent();
         eventData.put('ROWS_PROCESSED', '15000'); // High volume
         
         Test.startTest();
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
-        // API base (40) + volume factor (20 for &gt;10000 rows)
-        Assert.isTrue(riskScore &gt;= 60, 'High volume should add 20 to score');
+        // API base (40) + volume factor (20 for >10000 rows)
+        Assert.isTrue(riskScore >= 60, 'High volume should add 20 to score');
     }
     
     @isTest
     static void testCalculateRiskScore_NonUSLocation_AddsLocationFactor() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginEvent();
         eventData.put('COUNTRY', 'Russia');
         
         Test.startTest();
@@ -57,12 +57,12 @@ private class ElaroRealtimeMonitorTest {
         Test.stopTest();
         
         // Login base (20) + location factor (15)
-        Assert.isTrue(riskScore &gt;= 35, 'Non-US location should add 15 to score');
+        Assert.isTrue(riskScore >= 35, 'Non-US location should add 15 to score');
     }
     
     @isTest
     static void testCalculateRiskScore_GeoLocationNonUS_AddsLocationFactor() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginEvent();
         eventData.put('GEO_LOCATION', 'Moscow, Russia');
         eventData.remove('COUNTRY');
         
@@ -70,16 +70,16 @@ private class ElaroRealtimeMonitorTest {
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
-        Assert.isTrue(riskScore &gt;= 35, 'Non-US geo location should add 15 to score');
+        Assert.isTrue(riskScore >= 35, 'Non-US geo location should add 15 to score');
     }
     
     @isTest
     static void testCalculateRiskScore_MaxCap100() {
         // Create worst-case event
-        Map&lt;String, Object&gt; eventData = new Map&lt;String, Object&gt;{
-            'EVENT_TYPE' =&gt; 'LoginAs', // Base 70
-            'ROWS_PROCESSED' =&gt; '50000', // +20
-            'COUNTRY' =&gt; 'Russia' // +15
+        Map<String, Object> eventData = new Map<String, Object>{
+            'EVENT_TYPE' => 'LoginAs', // Base 70
+            'ROWS_PROCESSED' => '50000', // +20
+            'COUNTRY' => 'Russia' // +15
             // Time factor could add more
         };
         
@@ -87,7 +87,7 @@ private class ElaroRealtimeMonitorTest {
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
-        Assert.isTrue(riskScore &lt;= 100, 'Score should be capped at 100');
+        Assert.isTrue(riskScore <= 100, 'Score should be capped at 100');
     }
     
     @isTest
@@ -101,29 +101,29 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testCalculateRiskScore_EmptyEventData_ReturnsBaseScore() {
-        Map&lt;String, Object&gt; eventData = new Map&lt;String, Object&gt;();
+        Map<String, Object> eventData = new Map<String, Object>();
         
         Test.startTest();
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
         // Unknown event type defaults to 10
-        Assert.isTrue(riskScore &gt;= 0, 'Empty event should return base score');
+        Assert.isTrue(riskScore >= 0, 'Empty event should return base score');
     }
     
     @isTest
     static void testCalculateRiskScore_MediumVolume_AddsSmallFactor() {
-        Map&lt;String, Object&gt; eventData = new Map&lt;String, Object&gt;{
-            'EVENT_TYPE' =&gt; 'API',
-            'ROWS_PROCESSED' =&gt; '5000'
+        Map<String, Object> eventData = new Map<String, Object>{
+            'EVENT_TYPE' => 'API',
+            'ROWS_PROCESSED' => '5000'
         };
         
         Test.startTest();
         Integer riskScore = ElaroRealtimeMonitor.calculateRiskScore(eventData);
         Test.stopTest();
         
-        // API base (40) + volume factor (10 for &gt;1000 rows)
-        Assert.isTrue(riskScore &gt;= 50, 'Medium volume should add factor');
+        // API base (40) + volume factor (10 for >1000 rows)
+        Assert.isTrue(riskScore >= 50, 'Medium volume should add factor');
     }
     
     // ═══════════════════════════════════════════════════════════════
@@ -132,7 +132,7 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testProcessRealtimeEvent_LowRiskEvent_NoAlert() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginEvent();
         
         Test.startTest();
         Exception caughtEx;
@@ -149,7 +149,7 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testProcessRealtimeEvent_HighRiskEvent_TriggersAlert() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createHighRiskEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createHighRiskEvent();
         
         Test.startTest();
         Exception caughtEx;
@@ -183,7 +183,7 @@ private class ElaroRealtimeMonitorTest {
         Test.startTest();
         Exception caughtEx;
         try {
-            ElaroRealtimeMonitor.processRealtimeEvent(new Map&lt;String, Object&gt;());
+            ElaroRealtimeMonitor.processRealtimeEvent(new Map<String, Object>());
         } catch (Exception e) {
             caughtEx = e;
         }
@@ -199,7 +199,7 @@ private class ElaroRealtimeMonitorTest {
     @isTest
     static void testGetRealtimeStats_ReturnsStatsMap() {
         Test.startTest();
-        Map&lt;String, Object&gt; stats = ElaroRealtimeMonitor.getRealtimeStats(60);
+        Map<String, Object> stats = ElaroRealtimeMonitor.getRealtimeStats(60);
         Test.stopTest();
         
         Assert.areNotEqual(null, stats, 'Should return stats map');
@@ -216,7 +216,7 @@ private class ElaroRealtimeMonitorTest {
         ElaroTestDataFactory.createEvidenceItems(pkg.Id, 5);
         
         Test.startTest();
-        Map&lt;String, Object&gt; stats = ElaroRealtimeMonitor.getRealtimeStats(60);
+        Map<String, Object> stats = ElaroRealtimeMonitor.getRealtimeStats(60);
         Test.stopTest();
         
         Assert.areNotEqual(null, stats, 'Should return stats');
@@ -229,7 +229,7 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testTriggerAlert_CriticalSeverity() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginAsEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginAsEvent();
         
         Test.startTest();
         Exception caughtEx;
@@ -251,7 +251,7 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testTriggerAlert_HighSeverity() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockReportExportEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockReportExportEvent();
         
         Test.startTest();
         Exception caughtEx;
@@ -272,7 +272,7 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testTriggerAlert_AtThreshold() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockApiEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockApiEvent();
         
         Test.startTest();
         Exception caughtEx;
@@ -309,9 +309,9 @@ private class ElaroRealtimeMonitorTest {
     
     @isTest
     static void testCalculateRiskScore_InvalidRowsProcessed() {
-        Map&lt;String, Object&gt; eventData = new Map&lt;String, Object&gt;{
-            'EVENT_TYPE' =&gt; 'API',
-            'ROWS_PROCESSED' =&gt; 'invalid_number'
+        Map<String, Object> eventData = new Map<String, Object>{
+            'EVENT_TYPE' => 'API',
+            'ROWS_PROCESSED' => 'invalid_number'
         };
         
         Test.startTest();
@@ -319,12 +319,12 @@ private class ElaroRealtimeMonitorTest {
         Test.stopTest();
         
         // Should handle invalid number gracefully
-        Assert.isTrue(riskScore &gt;= 0, 'Should handle invalid rows gracefully');
+        Assert.isTrue(riskScore >= 0, 'Should handle invalid rows gracefully');
     }
     
     @isTest
     static void testCalculateRiskScore_OutsideBusinessHours() {
-        Map&lt;String, Object&gt; eventData = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> eventData = ElaroTestDataFactory.createMockLoginEvent();
         eventData.put('HOUR', '3'); // 3 AM
         
         Test.startTest();
@@ -332,6 +332,6 @@ private class ElaroRealtimeMonitorTest {
         Test.stopTest();
         
         // Should add time factor
-        Assert.isTrue(riskScore &gt; 20, 'Outside business hours should add risk');
+        Assert.isTrue(riskScore > 20, 'Outside business hours should add risk');
     }
 }

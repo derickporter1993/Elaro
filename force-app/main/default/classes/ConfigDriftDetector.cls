@@ -97,8 +97,8 @@ public inherited sharing class ConfigDriftDetector implements Schedulable {
             SELECT Action, Section, CreatedBy.Username, CreatedDate, Display
             FROM SetupAuditTrail
             WHERE CreatedDate >= :cutoff
-            ORDER BY CreatedDate DESC
             WITH USER_MODE
+            ORDER BY CreatedDate DESC
             LIMIT 1000
         ];
 

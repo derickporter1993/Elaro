@@ -62,7 +62,7 @@ private class AIGovernanceServiceTest {
         AIGovernanceService service = new AIGovernanceService();
 
         Test.startTest();
-        List<IComplianceModule.Control> controls = service.getControls();
+        List<ComplianceModuleTypes.Control> controls = service.getControls();
         Test.stopTest();
 
         Assert.isTrue(controls.size() > 0, 'Should return multiple controls');
@@ -70,7 +70,7 @@ private class AIGovernanceServiceTest {
         Boolean hasEUControls = false;
         Boolean hasRMFControls = false;
 
-        for (IComplianceModule.Control ctrl : controls) {
+        for (ComplianceModuleTypes.Control ctrl : controls) {
             if (ctrl.category == 'EU AI Act') {
                 hasEUControls = true;
             }
@@ -103,7 +103,7 @@ private class AIGovernanceServiceTest {
         Test.setMock(HttpCalloutMock.class, new ToolingApiMock());
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = service.identifyGaps(null);
+        List<ComplianceModuleTypes.Gap> gaps = service.identifyGaps(null);
         Test.stopTest();
 
         Assert.isNotNull(gaps, 'Should return list of gaps');
@@ -127,7 +127,7 @@ private class AIGovernanceServiceTest {
         AIGovernanceService service = new AIGovernanceService();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = service.getControlById('AI-001');
+        ComplianceModuleTypes.Control ctrl = service.getControlById('AI-001');
         Test.stopTest();
 
         Assert.isNotNull(ctrl, 'Should return control AI-001');
@@ -139,7 +139,7 @@ private class AIGovernanceServiceTest {
         AIGovernanceService service = new AIGovernanceService();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = service.getControlById('INVALID-999');
+        ComplianceModuleTypes.Control ctrl = service.getControlById('INVALID-999');
         Test.stopTest();
 
         Assert.isNull(ctrl, 'Should return null for invalid control ID');
@@ -152,7 +152,7 @@ private class AIGovernanceServiceTest {
         Test.setMock(HttpCalloutMock.class, new ToolingApiMock());
 
         Test.startTest();
-        IComplianceModule.ControlResult result = service.evaluateControl('AI-001', new Map<String, Object>());
+        ComplianceModuleTypes.ControlResult result = service.evaluateControl('AI-001', new Map<String, Object>());
         Test.stopTest();
 
         Assert.isNotNull(result, 'Should return control result');
@@ -165,7 +165,7 @@ private class AIGovernanceServiceTest {
         AIGovernanceService service = new AIGovernanceService();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = service.evaluateControl('AI-002', new Map<String, Object>());
+        ComplianceModuleTypes.ControlResult result = service.evaluateControl('AI-002', new Map<String, Object>());
         Test.stopTest();
 
         Assert.isNotNull(result, 'Should return control result');
@@ -178,7 +178,7 @@ private class AIGovernanceServiceTest {
         AIGovernanceService service = new AIGovernanceService();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = service.evaluateControl('UNKNOWN-999', new Map<String, Object>());
+        ComplianceModuleTypes.ControlResult result = service.evaluateControl('UNKNOWN-999', new Map<String, Object>());
         Test.stopTest();
 
         Assert.areEqual('NOT_APPLICABLE', result.status, 'Unknown control should be not applicable');

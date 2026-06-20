@@ -33,7 +33,7 @@ The Elaro interface consists of several key areas:
 
 - **Main Dashboard**: Central hub displaying compliance scores, alerts, and key metrics
 - **Framework Selector**: Choose which compliance framework to view (HIPAA, SOC2, GDPR, etc.)
-- **AI Copilot**: Access AI-powered compliance assistance
+- **Compliance Copilot**: Access guided compliance assistance
 - **Reports**: Generate audit reports and evidence packages
 - **Settings**: Configure alerts, integrations, and preferences
 
@@ -63,6 +63,7 @@ The dashboard is organized into several key sections:
 #### Compliance Score Cards
 
 Each framework displays a score card showing:
+
 - **Overall Score**: Percentage-based compliance rating (0-100%)
 - **Status Indicator**: Visual status (🟢 Compliant, 🟡 At Risk, 🔴 Non-Compliant)
 - **Gap Count**: Number of identified compliance gaps
@@ -73,6 +74,7 @@ Each framework displays a score card showing:
 #### Key Metrics Panel
 
 The metrics panel displays:
+
 - **Total Frameworks Monitored**: Number of active compliance frameworks
 - **Critical Gaps**: High-priority issues requiring immediate attention
 - **Remediation Progress**: Percentage of gaps that have been addressed
@@ -81,6 +83,7 @@ The metrics panel displays:
 #### Alert Panel
 
 Real-time alerts appear in the alert panel for:
+
 - New compliance gaps detected
 - Approaching deadlines (e.g., CCPA request deadlines)
 - Critical security issues
@@ -93,6 +96,7 @@ Real-time alerts appear in the alert panel for:
 **Compliance Score Calculation**
 
 Each framework's score is calculated based on:
+
 - **Control Coverage**: Percentage of required controls that are implemented
 - **Evidence Completeness**: Availability of audit evidence for controls
 - **Gap Severity**: Weighted impact of identified gaps
@@ -118,6 +122,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: Healthcare data protection and privacy
 
 **Key Controls Monitored**:
+
 - Administrative safeguards (workforce security, access management)
 - Physical safeguards (facility access controls, workstation security)
 - Technical safeguards (access control, audit controls, integrity controls)
@@ -130,6 +135,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: Security, availability, processing integrity, confidentiality, and privacy trust principles
 
 **Key Controls Monitored**:
+
 - Logical access controls
 - System operations monitoring
 - Change management processes
@@ -143,6 +149,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: EU data privacy and protection
 
 **Key Controls Monitored**:
+
 - Data subject rights (access, erasure, portability)
 - Consent management
 - Data breach notification (72-hour requirement)
@@ -156,6 +163,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: Payment card data security
 
 **Key Controls Monitored**:
+
 - Cardholder data protection
 - Access control measures
 - Network security
@@ -169,6 +177,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: Information security management system (ISMS)
 
 **Key Controls Monitored**:
+
 - Access control policies
 - Cryptography controls
 - Physical and environmental security
@@ -182,6 +191,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: Financial privacy and data protection
 
 **Key Controls Monitored**:
+
 - Privacy notice requirements
 - Safeguards rule compliance
 - Annual notice distribution
@@ -194,6 +204,7 @@ Elaro supports multiple compliance frameworks simultaneously, allowing you to ma
 **Purpose**: California consumer privacy rights
 
 **Key Controls Monitored**:
+
 - Consumer rights (access, deletion, opt-out)
 - Privacy policy requirements
 - Data sale opt-out mechanisms
@@ -323,6 +334,7 @@ The Elaro AI Copilot provides intelligent, context-aware assistance for complian
 ### Example Prompts and Queries
 
 **Framework-Specific Questions**
+
 ```
 "What are the key requirements for HIPAA compliance in Salesforce?"
 "Show me all GDPR gaps that need attention this quarter"
@@ -330,6 +342,7 @@ The Elaro AI Copilot provides intelligent, context-aware assistance for complian
 ```
 
 **General Compliance Guidance**
+
 ```
 "Explain the difference between SOC 2 Type I and Type II"
 "What evidence do I need for ISO 27001 access control controls?"
@@ -337,6 +350,7 @@ The Elaro AI Copilot provides intelligent, context-aware assistance for complian
 ```
 
 **Remediation Assistance**
+
 ```
 "Generate a remediation plan for the top 5 critical gaps"
 "What steps should I take to fix the data encryption gap?"
@@ -344,6 +358,7 @@ The Elaro AI Copilot provides intelligent, context-aware assistance for complian
 ```
 
 **Report Generation**
+
 ```
 "Generate an executive summary for SOC 2 compliance"
 "Create a gap analysis report for HIPAA"
@@ -353,12 +368,14 @@ The Elaro AI Copilot provides intelligent, context-aware assistance for complian
 ### Understanding AI Recommendations
 
 The AI Copilot provides recommendations based on:
+
 - **Framework Requirements**: Official compliance framework documentation
 - **Best Practices**: Industry-standard implementation approaches
 - **Your Org Context**: Specific configuration and data in your Salesforce org
 - **Historical Patterns**: Similar gaps and their successful remediation
 
 **Recommendation Types**:
+
 - **Action Items**: Specific steps to take
 - **Configuration Changes**: Settings or metadata modifications
 - **Process Improvements**: Workflow or policy updates
@@ -373,18 +390,19 @@ The AI Copilot provides recommendations based on:
 5. **Iterate**: Refine your questions based on initial responses
 
 **Example Conversation Flow**:
+
 ```
 You: "What are the HIPAA access control requirements?"
 
-Copilot: "HIPAA requires administrative, physical, and technical safeguards for access control. 
-Key requirements include unique user identification, emergency access procedures, automatic 
+Copilot: "HIPAA requires administrative, physical, and technical safeguards for access control.
+Key requirements include unique user identification, emergency access procedures, automatic
 logoff, and encryption/decryption of ePHI. Would you like details on any specific requirement?"
 
 You: "Tell me more about unique user identification"
 
-Copilot: "Unique user identification means each user must have a unique identifier (username) 
-that cannot be shared. In Salesforce, this is enforced by the User object where each user 
-has a unique Username field. You should also implement multi-factor authentication (MFA) 
+Copilot: "Unique user identification means each user must have a unique identifier (username)
+that cannot be shared. In Salesforce, this is enforced by the User object where each user
+has a unique Username field. You should also implement multi-factor authentication (MFA)
 for additional security. Would you like help checking your MFA configuration?"
 ```
 
@@ -395,6 +413,7 @@ for additional security. Would you like help checking your MFA configuration?"
 ### Available Report Types
 
 **Executive Summary Report**
+
 - High-level compliance overview
 - Key metrics and scores
 - Critical gaps summary
@@ -402,6 +421,7 @@ for additional security. Would you like help checking your MFA configuration?"
 - Suitable for C-suite and board presentations
 
 **Detailed Compliance Report**
+
 - Comprehensive framework analysis
 - All controls and their status
 - Detailed gap descriptions
@@ -409,6 +429,7 @@ for additional security. Would you like help checking your MFA configuration?"
 - Evidence requirements
 
 **Gap Analysis Report**
+
 - Focused on identified gaps
 - Prioritized by severity
 - Remediation timelines
@@ -416,6 +437,7 @@ for additional security. Would you like help checking your MFA configuration?"
 - Progress tracking
 
 **Evidence Package**
+
 - Complete audit documentation
 - All supporting evidence
 - Control-to-evidence mapping
@@ -433,6 +455,7 @@ All reports can be generated as PDF documents:
 5. **Download**: Save the PDF to your local system or Salesforce Files
 
 **PDF Features**:
+
 - Professional formatting with Elaro branding
 - Table of contents and page numbering
 - Charts and visualizations
@@ -444,6 +467,7 @@ All reports can be generated as PDF documents:
 The Evidence Package Builder helps you compile all necessary documentation for audits:
 
 **Package Contents**:
+
 - Compliance assessment results
 - Control implementation evidence
 - Policy documents
@@ -452,6 +476,7 @@ The Evidence Package Builder helps you compile all necessary documentation for a
 - Test results and validation reports
 
 **Package Formats**:
+
 - **ZIP Archive**: All files organized in folders
 - **PDF Bundle**: Single PDF with all documents
 - **Salesforce Files**: Uploaded to Salesforce Files for sharing
@@ -469,6 +494,7 @@ Set up automated report generation:
 3. **Save Schedule**: The system will generate and distribute reports automatically
 
 **Use Cases**:
+
 - Weekly compliance score updates to management
 - Monthly gap analysis reports to compliance team
 - Quarterly executive summaries to board
@@ -484,4 +510,4 @@ Set up automated report generation:
 
 ---
 
-*Last Updated: January 2026*
+_Last Updated: January 2026_

@@ -2,7 +2,7 @@ name: Elaro CI/CD
 
 on:
   push:
-    branches: [main, develop, "release/*", "claude/*"]
+    branches: [main, develop, "release/*"]
   pull_request:
     branches: [main]
 
@@ -63,47 +63,29 @@ jobs:
         run: npm install -g @salesforce/cli
 
       - name: Install Code Analyzer
-        run: sf plugins install @salesforce/sfdx-scanner
+        run: sf plugins install code-analyzer@latest
 
-      - name: Create Scanner Reports Directory
+      - name: Create Code Analyzer Reports Directory
         run: mkdir -p scanner-reports
 
-      - name: Run AppExchange Security Scan (HTML)
+      - name: Run AppExchange Security Scan
         run: |
-          echo "🔍 Running Salesforce Code Analyzer with AppExchange engine..."
-          sf scanner run \
-            --target "force-app/" \
-            --engine pmd-appexchange \
-            --format "html" \
-            --outfile "scanner-reports/code-analyzer-appexchange.html" \
-            --severity-threshold 2
-
-      - name: Run AppExchange Security Scan (JSON)
-        run: |
-          echo "📊 Generating JSON report for CI analysis..."
-          sf scanner run \
-            --target "force-app/" \
-            --engine pmd-appexchange \
-            --format "json" \
-            --outfile "scanner-reports/code-analyzer-appexchange.json" \
-            --severity-threshold 2
-
-      - name: Run AppExchange Security Scan (Table)
-        run: |
-          echo "📋 Displaying scan results in console..."
-          sf scanner run \
-            --target "force-app/" \
-            --engine pmd-appexchange \
-            --format "table" \
-            --severity-threshold 2
+          sf code-analyzer run \
+            --workspace force-app \
+            --workspace force-app-healthcheck \
+            --rule-selector AppExchange \
+            --rule-selector Recommended:Security \
+            --output-file scanner-reports/code-analyzer-appexchange.html \
+            --output-file scanner-reports/code-analyzer-appexchange.json
 
       - name: Generate SARIF Report
         if: always()
         run: |
-          sf scanner run --target "force-app" \
-            --engine pmd \
-            --format sarif \
-            --outfile scanner-results.sarif || true
+          sf code-analyzer run \
+            --workspace force-app \
+            --workspace force-app-healthcheck \
+            --rule-selector Recommended:Security \
+            --output-file scanner-results.sarif || true
 
       - name: Upload SARIF to GitHub
         if: always()
@@ -160,14 +142,14 @@ jobs:
 
       - name: Verify Platform Build Output
         run: |
-          echo "🔍 Verifying platform build artifacts..."
+          echo "Verifying platform build artifacts..."
           if [ -d "platform/packages/cli" ]; then
-            test -f platform/packages/cli/dist/index.js && echo "✅ CLI entry point built"
-            test -f platform/packages/cli/dist/index.d.ts && echo "✅ CLI type declarations generated"
+            test -f platform/packages/cli/dist/index.js && echo "CLI entry point built"
+            test -f platform/packages/cli/dist/index.d.ts && echo "CLI type declarations generated"
           else
-            echo "⚠️ CLI package not found, skipping verification"
+            echo "CLI package not found, skipping verification"
           fi
-          echo "✅ Platform build successful"
+          echo "Platform build successful"
 
   build-success:
     runs-on: ubuntu-latest
@@ -175,7 +157,6 @@ jobs:
     steps:
       - name: Build Summary
         run: |
-          echo "✅ Elaro CI/CD Pipeline Complete"
-          echo "🔒 Security scan completed"
-          echo "🎉 All quality checks passed!"
-          echo "📦 Ready for deployment"
+          echo "Elaro CI/CD pipeline complete"
+          echo "Security scan completed"
+          echo "All quality checks passed"

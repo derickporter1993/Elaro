@@ -12,9 +12,9 @@ public with sharing class ElaroPDFController {
     // ═══════════════════════════════════════════════════════════════
     
     public Elaro_Audit_Package__c auditPackage { get; private set; }
-    public List&lt;Elaro_Evidence_Item__c&gt; evidenceItems { get; private set; }
+    public List<Elaro_Evidence_Item__c> evidenceItems { get; private set; }
     public Integer evidenceCount { get; private set; }
-    public List&lt;ControlSummary&gt; controlSummary { get; private set; }
+    public List<ControlSummary> controlSummary { get; private set; }
     public String documentHash { get; private set; }
     public Datetime generatedAt { get; private set; }
     public String generatedBy { get; private set; }
@@ -26,7 +26,7 @@ public with sharing class ElaroPDFController {
     public Integer lowCount { get; private set; }
     
     // Filtered controls (for evidence report)
-    public List&lt;String&gt; selectedControls { get; private set; }
+    public List<String> selectedControls { get; private set; }
     
     // ═══════════════════════════════════════════════════════════════
     // CONSTRUCTOR
@@ -38,11 +38,7 @@ public with sharing class ElaroPDFController {
      */
     public ElaroPDFController(ApexPages.StandardController stdController) {
         Id packageId = stdController.getId();
-        
-        if (packageId == null) {
-            packageId = ApexPages.currentPage().getParameters().get('id');
-        }
-        
+
         if (packageId != null) {
             loadPackageData(packageId);
             loadEvidenceData(packageId);
@@ -61,7 +57,7 @@ public with sharing class ElaroPDFController {
      * @param packageId The package ID
      */
     private void loadPackageData(Id packageId) {
-        List&lt;Elaro_Audit_Package__c&gt; packages = [
+        List<Elaro_Audit_Package__c> packages = [
             SELECT Id, Name, Package_Name__c, Framework__c, Status__c,
                    Audit_Period_Start__c, Audit_Period_End__c,
                    Last_Generated__c, CreatedDate, CreatedById,
@@ -74,7 +70,7 @@ public with sharing class ElaroPDFController {
 
         if (!packages.isEmpty()) {
             // Strip inaccessible fields for FLS security
-            packages = (List&lt;Elaro_Audit_Package__c&gt;) ElaroSecurityUtils.stripInaccessibleFields(
+            packages = (List<Elaro_Audit_Package__c>) ElaroSecurityUtils.stripInaccessibleFields(
                 AccessType.READABLE,
                 packages
             );
@@ -89,7 +85,7 @@ public with sharing class ElaroPDFController {
     private void loadEvidenceData(Id packageId) {
         // Check for control filter parameter
         String controlFilter = ApexPages.currentPage().getParameters().get('controls');
-        selectedControls = new List&lt;String&gt;();
+        selectedControls = new List<String>();
         
         if (String.isNotBlank(controlFilter)) {
             selectedControls = controlFilter.split(',');
@@ -110,7 +106,7 @@ public with sharing class ElaroPDFController {
         evidenceItems = Database.queryWithBinds(query, binds, AccessLevel.USER_MODE);
 
         // Strip inaccessible fields for FLS security
-        evidenceItems = (List&lt;Elaro_Evidence_Item__c&gt;) ElaroSecurityUtils.stripInaccessibleFields(
+        evidenceItems = (List<Elaro_Evidence_Item__c>) ElaroSecurityUtils.stripInaccessibleFields(
             AccessType.READABLE,
             evidenceItems
         );
@@ -127,16 +123,16 @@ public with sharing class ElaroPDFController {
         mediumCount = 0;
         lowCount = 0;
         
-        Map&lt;String, String&gt; eventRiskLevels = new Map&lt;String, String&gt;{
-            'LoginAs' =&gt; 'CRITICAL',
-            'ReportExport' =&gt; 'CRITICAL',
-            'ContentDistribution' =&gt; 'CRITICAL',
-            'API' =&gt; 'HIGH',
-            'BulkApiResult' =&gt; 'HIGH',
-            'PermissionSetEventLog' =&gt; 'HIGH',
-            'Login' =&gt; 'MEDIUM',
-            'ApexExecution' =&gt; 'MEDIUM',
-            'Logout' =&gt; 'LOW'
+        Map<String, String> eventRiskLevels = new Map<String, String>{
+            'LoginAs' => 'CRITICAL',
+            'ReportExport' => 'CRITICAL',
+            'ContentDistribution' => 'CRITICAL',
+            'API' => 'HIGH',
+            'BulkApiResult' => 'HIGH',
+            'PermissionSetEventLog' => 'HIGH',
+            'Login' => 'MEDIUM',
+            'ApexExecution' => 'MEDIUM',
+            'Logout' => 'LOW'
         };
         
         for (Elaro_Evidence_Item__c item : evidenceItems) {
@@ -160,10 +156,10 @@ public with sharing class ElaroPDFController {
      * Build control summary for the package
      */
     private void buildControlSummary() {
-        controlSummary = new List&lt;ControlSummary&gt;();
+        controlSummary = new List<ControlSummary>();
         
         // Group evidence by type
-        Map&lt;String, Integer&gt; typeCounts = new Map&lt;String, Integer&gt;();
+        Map<String, Integer> typeCounts = new Map<String, Integer>();
         
         for (Elaro_Evidence_Item__c item : evidenceItems) {
             String eventType = item.Evidence_Type__c;
@@ -179,7 +175,7 @@ public with sharing class ElaroPDFController {
             cs.controlId = eventType;
             cs.controlName = getControlName(eventType);
             cs.evidenceCount = typeCounts.get(eventType);
-            cs.status = cs.evidenceCount &gt; 0 ? 'Evidence Collected' : 'No Evidence';
+            cs.status = cs.evidenceCount > 0 ? 'Evidence Collected' : 'No Evidence';
             cs.riskLevel = ElaroShieldService.getRiskLevel(eventType);
             controlSummary.add(cs);
         }
@@ -209,16 +205,16 @@ public with sharing class ElaroPDFController {
      * @return Control name
      */
     private String getControlName(String eventType) {
-        Map&lt;String, String&gt; controlNames = new Map&lt;String, String&gt;{
-            'Login' =&gt; 'User Authentication Events',
-            'LoginAs' =&gt; 'User Impersonation Events',
-            'Logout' =&gt; 'Session Termination Events',
-            'API' =&gt; 'API Access Events',
-            'ReportExport' =&gt; 'Report Export Events',
-            'ContentDistribution' =&gt; 'Content Sharing Events',
-            'ApexExecution' =&gt; 'Code Execution Events',
-            'PermissionSetEventLog' =&gt; 'Permission Change Events',
-            'BulkApiResult' =&gt; 'Bulk Data Operation Events'
+        Map<String, String> controlNames = new Map<String, String>{
+            'Login' => 'User Authentication Events',
+            'LoginAs' => 'User Impersonation Events',
+            'Logout' => 'Session Termination Events',
+            'API' => 'API Access Events',
+            'ReportExport' => 'Report Export Events',
+            'ContentDistribution' => 'Content Sharing Events',
+            'ApexExecution' => 'Code Execution Events',
+            'PermissionSetEventLog' => 'Permission Change Events',
+            'BulkApiResult' => 'Bulk Data Operation Events'
         };
         
         return controlNames.containsKey(eventType) 
@@ -243,10 +239,10 @@ public with sharing class ElaroPDFController {
         // Critical events reduce score, collected evidence increases it
         Decimal baseScore = 100;
         
-        if (criticalCount &gt; 0) {
+        if (criticalCount > 0) {
             baseScore -= Math.min(criticalCount * 5, 30);
         }
-        if (highCount &gt; 0) {
+        if (highCount > 0) {
             baseScore -= Math.min(highCount * 2, 20);
         }
         
@@ -278,11 +274,11 @@ public with sharing class ElaroPDFController {
      * @return CSS color class
      */
     public String getRiskColorClass(String riskLevel) {
-        Map&lt;String, String&gt; colorClasses = new Map&lt;String, String&gt;{
-            'CRITICAL' =&gt; 'risk-critical',
-            'HIGH' =&gt; 'risk-high',
-            'MEDIUM' =&gt; 'risk-medium',
-            'LOW' =&gt; 'risk-low'
+        Map<String, String> colorClasses = new Map<String, String>{
+            'CRITICAL' => 'risk-critical',
+            'HIGH' => 'risk-high',
+            'MEDIUM' => 'risk-medium',
+            'LOW' => 'risk-low'
         };
         
         return colorClasses.containsKey(riskLevel) 

@@ -1,7 +1,7 @@
 {
   "name": "elaro-enterprise",
   "version": "3.0.0",
-  "description": "Elaro - Court-defensible compliance & AI governance platform for Salesforce",
+  "description": "Elaro - Salesforce compliance and audit readiness platform",
   "type": "module",
   "private": true,
   "scripts": {
@@ -71,7 +71,7 @@
   "keywords": [
     "salesforce",
     "compliance",
-    "ai-governance",
+    "governance",
     "audit",
     "security",
     "elaro"

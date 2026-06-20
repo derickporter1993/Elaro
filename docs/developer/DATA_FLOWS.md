@@ -57,7 +57,7 @@ sequenceDiagram
     participant LWC as Compliance Copilot LWC
     participant Controller as ElaroComplianceCopilotService
     participant Security as ElaroSecurityUtils
-    participant API as Claude API (Named Credential)
+    participant API as External AI API (Named Credential)
     participant DB as Salesforce Database
 
     User->>LWC: Ask compliance question
@@ -92,7 +92,7 @@ graph LR
     B -->|Slack| C[SlackIntegration]
     B -->|Teams| D[TeamsNotifier]
     B -->|PagerDuty| E[PagerDutyIntegration]
-    B -->|Claude AI| F[ElaroComplianceCopilotService]
+    B -->|External AI| F[ElaroComplianceCopilotService]
 
     C --> G[Named Credential: Slack_Webhook]
     D --> H[Named Credential: Teams_Webhook]
@@ -281,7 +281,7 @@ All external callouts use Named Credentials:
 
 ```apex
 HttpRequest req = new HttpRequest();
-req.setEndpoint('callout:Elaro_Claude_API');  // ← Named Credential
+req.setEndpoint('callout:Elaro_Claude_API');  // Named Credential
 req.setMethod('POST');
 // ... rest of request
 ```
@@ -321,4 +321,4 @@ For detailed security implementation, see:
 
 - `ElaroSecurityUtils.cls` - Centralized security utilities
 - `docs/SECURITY.md` - Security documentation
-- `CLAUDE.md` - Development guidelines
+- `README.md` - Development and validation guidelines

@@ -656,13 +656,12 @@ npm run fmt
 npm run lint:fix
 
 # Run Salesforce Code Analyzer
-sf scanner run --target force-app/ --format table
+sf code-analyzer run --workspace force-app --workspace force-app-healthcheck --rule-selector Recommended:Security
 ```
 
 ## Additional Resources
 
 - **[README.md](README.md)** - Project overview and setup
-- **[CLAUDE.md](CLAUDE.md)** - Complete coding standards and patterns
 - **[API_REFERENCE.md](API_REFERENCE.md)** - API documentation
 - **[Salesforce CLI Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/)** - CLI command reference
 

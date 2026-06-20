@@ -14,7 +14,8 @@
  */
 public inherited sharing class ToolingApiService {
 
-    private static final String TOOLING_ENDPOINT = '/services/data/v66.0/tooling/query/?q=';
+    private static final String TOOLING_ENDPOINT =
+        'callout:Salesforce_Tooling_API/services/data/v66.0/tooling/query/?q=';
 
     /**
      * Executes a SOQL query against the Salesforce Tooling API and returns
@@ -32,12 +33,10 @@ public inherited sharing class ToolingApiService {
     public static Map<String, Object> queryTooling(String query) {
         HttpRequest req = new HttpRequest();
         req.setEndpoint(
-            URL.getOrgDomainUrl().toExternalForm()
-            + TOOLING_ENDPOINT
+            TOOLING_ENDPOINT
             + EncodingUtil.urlEncode(query, 'UTF-8')
         );
         req.setMethod('GET');
-        req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
         req.setHeader('Content-Type', 'application/json');
 
         Http http = new Http();

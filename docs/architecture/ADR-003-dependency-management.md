@@ -2,23 +2,26 @@
 
 **Status**: Accepted
 **Date**: 2026-02-02
-**Deciders**: Derick Porter, Claude Code (Sentinel Architecture)
+**Deciders**: Derick Porter
 
 ## Context
 
 The dual-architecture pattern (ADR-001) creates two distinct dependency contexts:
 
 **Root Context** (`/Users/derickporter/Elaro/package.json`):
+
 - Purpose: Salesforce development (LWC testing, linting, formatting)
 - Dependencies: Jest, ESLint, Prettier, Salesforce CLI
 - Scope: `force-app/` directory only
 
 **Platform Context** (`/Users/derickporter/Elaro/platform/package.json`):
+
 - Purpose: Node.js CLI and tooling
 - Dependencies: Turbo, TypeScript, Commander, Chalk
 - Scope: `platform/packages/*` directories
 
 **The Problem**:
+
 - New developers don't know which `npm install` to run
 - Root scripts reference platform but don't ensure it's ready
 - Build failures when platform dependencies missing
@@ -41,6 +44,7 @@ The dual-architecture pattern (ADR-001) creates two distinct dependency contexts
 ### Implementation
 
 **Root `package.json`**:
+
 ```json
 {
   "scripts": {
@@ -54,6 +58,7 @@ The dual-architecture pattern (ADR-001) creates two distinct dependency contexts
 ```
 
 **`scripts/preflight.sh`**:
+
 ```bash
 #!/bin/bash
 set -e
@@ -94,6 +99,7 @@ echo "✅ Workspace valid"
 ### Alternative A: Full Workspace Hoisting
 
 **Structure**:
+
 ```
 elaro/
 ├── package.json (workspaces: ["force-app", "platform/packages/*"])
@@ -102,11 +108,13 @@ elaro/
 ```
 
 **Pros**:
+
 - Single `npm install`
 - Shared dependency versions
 - One lock file
 
 **Cons**:
+
 - Salesforce CLI expects standard structure
 - `force-app/` is not a real package
 - Would need to restructure significantly
@@ -116,6 +124,7 @@ elaro/
 ### Alternative B: Manual Setup Only
 
 **No postinstall hook, just documentation**:
+
 ```bash
 # Setup
 npm install           # Root deps
@@ -123,10 +132,12 @@ cd platform && npm install  # Platform deps
 ```
 
 **Pros**:
+
 - Explicit control
 - No automatic behavior
 
 **Cons**:
+
 - Easy to forget platform install
 - Build failures with unclear errors
 - Violates "fail fast" principle
@@ -138,10 +149,12 @@ cd platform && npm install  # Platform deps
 **Move platform to separate repo, include as submodule**
 
 **Pros**:
+
 - True independence
 - Separate version control
 
 **Cons**:
+
 - Submodule complexity (developers hate them)
 - Coordination overhead
 - Premature optimization
@@ -153,10 +166,12 @@ cd platform && npm install  # Platform deps
 **Provide devcontainer.json with pre-installed deps**
 
 **Pros**:
+
 - Consistent environment
 - Pre-configured everything
 
 **Cons**:
+
 - Requires Docker knowledge
 - Slower development (volume mounts)
 - Overkill for Node.js project
@@ -169,13 +184,13 @@ cd platform && npm install  # Platform deps
 
 Some dependencies exist in both contexts with potentially different versions:
 
-| Package | Root Version | Platform Version | Strategy |
-|---------|--------------|------------------|----------|
-| **prettier** | ^3.1.0 | ^3.1.0 | Keep in sync (formatting consistency) |
-| **typescript** | ^5.3.0 | ^5.3.0 | Keep in sync (type compatibility) |
-| **eslint** | ^8.x | - | Root only (LWC linting) |
-| **jest** | ^29.x | - | Root only (LWC testing) |
-| **turbo** | - | ^2.0.0 | Platform only (monorepo orchestration) |
+| Package        | Root Version | Platform Version | Strategy                               |
+| -------------- | ------------ | ---------------- | -------------------------------------- |
+| **prettier**   | ^3.1.0       | ^3.1.0           | Keep in sync (formatting consistency)  |
+| **typescript** | ^5.3.0       | ^5.3.0           | Keep in sync (type compatibility)      |
+| **eslint**     | ^8.x         | -                | Root only (LWC linting)                |
+| **jest**       | ^29.x        | -                | Root only (LWC testing)                |
+| **turbo**      | -            | ^2.0.0           | Platform only (monorepo orchestration) |
 
 **Rule**: If a package exists in both, root version is source of truth. Update platform to match.
 
@@ -218,6 +233,7 @@ These are installed in `platform/node_modules/` only (not hoisted to root).
 
 **Cause**: Platform dependencies not installed
 **Fix**:
+
 ```bash
 cd platform && npm install
 ```
@@ -226,6 +242,7 @@ cd platform && npm install
 
 **Cause**: Platform not built
 **Fix**:
+
 ```bash
 cd platform && npm run build
 ```
@@ -234,6 +251,7 @@ cd platform && npm run build
 
 **Cause**: Dependency drift between root and platform
 **Fix**:
+
 ```bash
 # Update platform to match root
 cd platform
@@ -244,6 +262,7 @@ npm install prettier@$(cd .. && node -p "require('./package.json').devDependenci
 
 **Cause**: Two node_modules directories
 **Fix**:
+
 ```bash
 # Clean and reinstall
 rm -rf node_modules platform/node_modules
@@ -253,6 +272,7 @@ npm install  # Postinstall will set up platform
 ## Setup Workflow
 
 ### New Developer Setup
+
 ```bash
 git clone https://github.com/solentra/elaro.git
 cd elaro
@@ -262,6 +282,7 @@ npm run org:create    # Create Salesforce scratch org
 ```
 
 ### Existing Developer Updates
+
 ```bash
 git pull
 npm install           # Re-runs postinstall if package.json changed
@@ -269,9 +290,10 @@ npm run preflight     # Verify workspace still valid
 ```
 
 ### CI/CD Setup
+
 ```yaml
 - name: Install Dependencies
-  run: npm ci         # postinstall runs automatically
+  run: npm ci # postinstall runs automatically
 
 - name: Verify Workspace
   run: npm run preflight
@@ -300,5 +322,5 @@ npm run preflight     # Verify workspace still valid
 
 ## Review History
 
-- 2026-02-02: Proposed by Claude Code (Sentinel Architecture)
+- 2026-02-02: Proposed by Elaro Engineering
 - 2026-02-02: Accepted by Derick Porter

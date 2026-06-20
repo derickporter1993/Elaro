@@ -73,14 +73,14 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
         Test.stopTest();
 
         Assert.areNotEqual(null, controls, 'Controls list should not be null');
         Assert.isTrue(controls.size() > 0, 'Should have at least one control');
 
         Set<String> categories = new Set<String>();
-        for (IComplianceModule.Control ctrl : controls) {
+        for (ComplianceModuleTypes.Control ctrl : controls) {
             categories.add(ctrl.category);
         }
         Assert.isTrue(categories.contains('Supervision'), 'Should include Supervision controls');
@@ -118,11 +118,11 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
+        List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
-        for (IComplianceModule.Gap gap : gaps) {
+        for (ComplianceModuleTypes.Gap gap : gaps) {
             Assert.isTrue(gap.id.startsWith('GAP-FINRA-'), 'Gap ID should start with GAP-FINRA-');
             Assert.areNotEqual(null, gap.recommendation, 'Gap recommendation should not be null');
         }
@@ -146,7 +146,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('3110(a)');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('3110(a)');
         Test.stopTest();
 
         Assert.areNotEqual(null, ctrl, 'Should find Supervisory System control');
@@ -158,7 +158,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
         Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
@@ -170,7 +170,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '3110(a)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -186,7 +186,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '3110(d)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -203,7 +203,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '4511(a)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -220,7 +220,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '4370(a)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -236,7 +236,7 @@ private class FINRAModuleTest {
         FINRAModule module = new FINRAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '3110(c)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -250,11 +250,11 @@ private class FINRAModuleTest {
     static void testEvaluateControl_AllControlTypes() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'FINRA' LIMIT 1];
         FINRAModule module = new FINRAModule();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
 
         Test.startTest();
-        for (IComplianceModule.Control ctrl : controls) {
-            IComplianceModule.ControlResult result = module.evaluateControl(
+        for (ComplianceModuleTypes.Control ctrl : controls) {
+            ComplianceModuleTypes.ControlResult result = module.evaluateControl(
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );

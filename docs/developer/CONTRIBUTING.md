@@ -4,6 +4,7 @@
 > This contributing guide is being deprecated. Please refer to the updated **[CONTRIBUTING.md](../../CONTRIBUTING.md)** in the repository root for the most current guidelines.
 >
 > **Key Updates in the New Guide:**
+>
 > - Spring '26 security standards (`WITH USER_MODE` instead of deprecated `WITH SECURITY_ENFORCED`)
 > - Modern Assert class usage (replaces deprecated `System.assertEquals`)
 > - Governor limit optimization patterns
@@ -86,6 +87,7 @@ git checkout -b feature/your-feature-name
 ```
 
 **Branch Naming Conventions:**
+
 - `feature/` - New features
 - `fix/` - Bug fixes
 - `docs/` - Documentation updates
@@ -195,32 +197,37 @@ public with sharing class ClassName {
 **All Apex classes MUST:**
 
 1. **Use `with sharing` keyword**
+
    ```apex
    public with sharing class MyClass { }
    ```
 
 2. **Include `WITH USER_MODE` on SOQL queries (Spring '26 standard)**
+
    ```apex
    List<Account> accounts = [
        SELECT Id, Name FROM Account
        WITH USER_MODE
    ];
    ```
-   
+
    **Note:** `WITH SECURITY_ENFORCED` is deprecated. Always use `WITH USER_MODE`.
 
 3. **Use ElaroSecurityUtils for CRUD/FLS checks**
+
    ```apex
    ElaroSecurityUtils.validateCRUDAccess('Account', DmlOperation.DML_UPDATE);
    update Security.stripInaccessible(AccessType.UPDATABLE, accounts).getRecords();
    ```
 
 4. **Sanitize user inputs**
+
    ```apex
    String userInput = String.escapeSingleQuotes(rawInput);
    ```
 
 5. **No hardcoded credentials or secrets**
+
    ```apex
    // ❌ BAD
    String apiKey = 'sk-abc123';
@@ -253,33 +260,33 @@ myComponent/
 #### LWC Best Practices
 
 ```javascript
-import { LightningElement, wire, api } from 'lwc';
-import getScores from '@salesforce/apex/Controller.getScores';
+import { LightningElement, wire, api } from "lwc";
+import getScores from "@salesforce/apex/Controller.getScores";
 
 export default class MyComponent extends LightningElement {
-    // Public properties
-    @api recordId;
+  // Public properties
+  @api recordId;
 
-    // Private properties
-    scores;
-    error;
+  // Private properties
+  scores;
+  error;
 
-    // Wire service
-    @wire(getScores, { recordId: '$recordId' })
-    wiredScores({ error, data }) {
-        if (data) {
-            this.scores = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.scores = undefined;
-        }
+  // Wire service
+  @wire(getScores, { recordId: "$recordId" })
+  wiredScores({ error, data }) {
+    if (data) {
+      this.scores = data;
+      this.error = undefined;
+    } else if (error) {
+      this.error = error;
+      this.scores = undefined;
     }
+  }
 
-    // Event handlers
-    handleRefresh() {
-        // Implementation
-    }
+  // Event handlers
+  handleRefresh() {
+    // Implementation
+  }
 }
 ```
 
@@ -296,6 +303,7 @@ npm run fmt:check
 ```
 
 **Prettier Configuration (`.prettierrc`):**
+
 ```json
 {
   "semi": true,
@@ -319,6 +327,7 @@ npm run lint:fix
 ```
 
 **ESLint enforces:**
+
 - ES2021 syntax
 - LWC best practices
 - Security patterns
@@ -403,37 +412,37 @@ List<Compliance_Score__c> scores = ElaroTestDataFactory.createBulkComplianceScor
 #### LWC Test Template
 
 ```javascript
-import { createElement } from 'lwc';
-import MyComponent from 'c/myComponent';
-import getScores from '@salesforce/apex/Controller.getScores';
+import { createElement } from "lwc";
+import MyComponent from "c/myComponent";
+import getScores from "@salesforce/apex/Controller.getScores";
 
 // Mock Apex wire adapter
 jest.mock(
-    '@salesforce/apex/Controller.getScores',
-    () => {
-        const { createApexTestWireAdapter } = require('@salesforce/sfdx-lwc-jest');
-        return { default: createApexTestWireAdapter(jest.fn()) };
-    },
-    { virtual: true }
+  "@salesforce/apex/Controller.getScores",
+  () => {
+    const { createApexTestWireAdapter } = require("@salesforce/sfdx-lwc-jest");
+    return { default: createApexTestWireAdapter(jest.fn()) };
+  },
+  { virtual: true }
 );
 
-describe('c-my-component', () => {
-    afterEach(() => {
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
-    });
+describe("c-my-component", () => {
+  afterEach(() => {
+    while (document.body.firstChild) {
+      document.body.removeChild(document.body.firstChild);
+    }
+  });
 
-    it('should render data from wire', async () => {
-        const element = createElement('c-my-component', { is: MyComponent });
-        document.body.appendChild(element);
+  it("should render data from wire", async () => {
+    const element = createElement("c-my-component", { is: MyComponent });
+    document.body.appendChild(element);
 
-        getScores.emit({ data: [{ Id: '001', Score__c: 85 }] });
-        await Promise.resolve();
+    getScores.emit({ data: [{ Id: "001", Score__c: 85 }] });
+    await Promise.resolve();
 
-        const scoreElement = element.shadowRoot.querySelector('.score');
-        expect(scoreElement.textContent).toBe('85');
-    });
+    const scoreElement = element.shadowRoot.querySelector(".score");
+    expect(scoreElement.textContent).toBe("85");
+  });
 });
 ```
 
@@ -534,20 +543,24 @@ feat(scanner): add support for FedRAMP compliance framework
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Manual testing completed
 - [ ] Test coverage ≥95%
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Documentation updated
@@ -555,6 +568,7 @@ Brief description of changes
 - [ ] Tests pass locally
 
 ## Related Issues
+
 Closes #123
 ```
 
@@ -585,14 +599,14 @@ The `main` branch has the following protection rules enabled:
 
 All of the following CI jobs must pass before merging:
 
-| Job | Description |
-|-----|-------------|
-| `code-quality` | Prettier formatting, ESLint, npm audit |
-| `unit-tests` | LWC Jest tests |
-| `cli-build` | TypeScript compilation, CLI tests |
-| `security-scan` | Salesforce Code Analyzer (AppExchange rules) |
-| `validate-metadata` | Salesforce metadata structure validation |
-| `build-success` | Final pipeline verification |
+| Job                 | Description                                  |
+| ------------------- | -------------------------------------------- |
+| `code-quality`      | Prettier formatting, ESLint, npm audit       |
+| `unit-tests`        | LWC Jest tests                               |
+| `cli-build`         | TypeScript compilation, CLI tests            |
+| `security-scan`     | Salesforce Code Analyzer (AppExchange rules) |
+| `validate-metadata` | Salesforce metadata structure validation     |
+| `build-success`     | Final pipeline verification                  |
 
 ### Additional Rules
 
@@ -605,15 +619,16 @@ All of the following CI jobs must pass before merging:
 
 ### Protected Branches
 
-| Branch | Protection Level |
-|--------|------------------|
-| `main` | Full protection (all rules above) |
-| `release/*` | Full protection |
-| `develop` | Status checks required |
+| Branch      | Protection Level                  |
+| ----------- | --------------------------------- |
+| `main`      | Full protection (all rules above) |
+| `release/*` | Full protection                   |
+| `develop`   | Status checks required            |
 
 ### Bypassing Protection (Emergency Only)
 
 Repository admins can bypass protection for critical hotfixes. This should be:
+
 - Used only for production emergencies
 - Documented in the commit message
 - Followed by a retrospective PR for review
@@ -625,6 +640,7 @@ Repository admins can bypass protection for critical hotfixes. This should be:
 ### When to Update Documentation
 
 Update documentation when:
+
 - Adding new features
 - Changing public APIs
 - Modifying configuration
@@ -639,7 +655,6 @@ Update documentation when:
 - **docs/SCANNER_REPORT_BUNDLE.md** - Security scanning guide
 - **API_REFERENCE.md** - API documentation
 - **TECHNICAL_DEEP_DIVE.md** - Architecture deep dive
-- **CLAUDE.md** - AI assistant guide
 
 ### Code Comments
 
@@ -667,6 +682,7 @@ public ComplianceScore calculateScore(String framework, Boolean includeHistory) 
 **DO NOT open public GitHub issues for security vulnerabilities.**
 
 Instead:
+
 1. Email: security@elaro.io
 2. Include:
    - Detailed description of vulnerability
@@ -716,6 +732,7 @@ By contributing, you agree that your contributions will be licensed under the sa
 ## Recognition
 
 Contributors will be recognized in:
+
 - Release notes
 - Contributors list
 - Project documentation

@@ -7,7 +7,7 @@
  */
 public with sharing class DataResidencyService {
     
-    public enum Region { US, EU, APAC, GLOBAL }
+    public enum Region { US, EU, APAC, GLOBAL_REGION }
     
     private static final Map<String, Region> COUNTRY_REGIONS = new Map<String, Region>{
         'United States' => Region.US,
@@ -203,7 +203,7 @@ public with sharing class DataResidencyService {
     }
     
     private static Set<Region> getAllowedRegions(Region primary) {
-        Set<Region> allowed = new Set<Region>{ primary, Region.GLOBAL };
+        Set<Region> allowed = new Set<Region>{ primary, Region.GLOBAL_REGION };
         
         // US can transfer to most regions with proper safeguards
         if (primary == Region.US) {

@@ -18,7 +18,7 @@ public with sharing class ElaroDeliveryService {
      * @throws AuraHandledException if delivery fails
      */
     @AuraEnabled
-    public static void deliverAuditPackage(String packageId, List&lt;String&gt; recipientEmails) {
+    public static void deliverAuditPackage(String packageId, List<String> recipientEmails) {
         // Validate inputs
         if (String.isBlank(packageId)) {
             throw new AuraHandledException('Package ID is required');
@@ -50,11 +50,11 @@ public with sharing class ElaroDeliveryService {
             ];
             
             // Build and send emails
-            List&lt;Messaging.SingleEmailMessage&gt; emails = new List&lt;Messaging.SingleEmailMessage&gt;();
+            List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
             
             for (String email : recipientEmails) {
                 Messaging.SingleEmailMessage message = new Messaging.SingleEmailMessage();
-                message.setToAddresses(new List&lt;String&gt;{ email });
+                message.setToAddresses(new List<String>{ email });
                 message.setSubject('Audit Package: ' + pkg.Package_Name__c + ' (' + pkg.Framework__c + ')');
                 message.setPlainTextBody(buildEmailBody(pkg));
                 message.setHtmlBody(buildHtmlEmailBody(pkg));
@@ -64,7 +64,7 @@ public with sharing class ElaroDeliveryService {
                 attachment.setFileName(cv.Title + '.pdf');
                 attachment.setBody(cv.VersionData);
                 attachment.setContentType('application/pdf');
-                message.setFileAttachments(new List&lt;Messaging.EmailFileAttachment&gt;{ attachment });
+                message.setFileAttachments(new List<Messaging.EmailFileAttachment>{ attachment });
                 
                 emails.add(message);
             }
@@ -88,7 +88,7 @@ public with sharing class ElaroDeliveryService {
      * @return Scheduled job ID
      */
     @AuraEnabled
-    public static Id scheduleRecurringDelivery(String packageId, String cronExpression, List&lt;String&gt; recipientEmails) {
+    public static Id scheduleRecurringDelivery(String packageId, String cronExpression, List<String> recipientEmails) {
         // Validate inputs
         if (String.isBlank(packageId)) {
             throw new AuraHandledException('Package ID is required');
@@ -132,7 +132,7 @@ public with sharing class ElaroDeliveryService {
             throw new AuraHandledException('Package ID is required');
         }
         
-        if (expirationDays == null || expirationDays &lt; 1) {
+        if (expirationDays == null || expirationDays < 1) {
             expirationDays = 30; // Default to 30 days
         }
         
@@ -217,25 +217,25 @@ public with sharing class ElaroDeliveryService {
      * @return List of delivery records
      */
     @AuraEnabled(cacheable=true)
-    public static List&lt;Map&lt;String, Object&gt;&gt; getDeliveryHistory(String packageId) {
+    public static List<Map<String, Object>> getDeliveryHistory(String packageId) {
         try {
-            List&lt;Map&lt;String, Object&gt;&gt; history = new List&lt;Map&lt;String, Object&gt;&gt;();
+            List<Map<String, Object>> history = new List<Map<String, Object>>();
 
             // Query ContentDistribution records
-            List&lt;ContentDocumentLink&gt; links = [
+            List<ContentDocumentLink> links = [
                 SELECT ContentDocumentId
                 FROM ContentDocumentLink
                 WHERE LinkedEntityId = :packageId
                 WITH USER_MODE
             ];
 
-            Set&lt;Id&gt; docIds = new Set&lt;Id&gt;();
+            Set<Id> docIds = new Set<Id>();
             for (ContentDocumentLink link : links) {
                 docIds.add(link.ContentDocumentId);
             }
 
             if (!docIds.isEmpty()) {
-                List&lt;ContentDistribution&gt; distributions = [
+                List<ContentDistribution> distributions = [
                     SELECT Id, Name, DistributionPublicUrl, ExpiryDate,
                            FirstViewDate, LastViewDate, ViewCount, CreatedDate
                     FROM ContentDistribution
@@ -245,15 +245,15 @@ public with sharing class ElaroDeliveryService {
                 ];
 
                 for (ContentDistribution cd : distributions) {
-                    history.add(new Map&lt;String, Object&gt;{
-                        'id' =&gt; cd.Id,
-                        'name' =&gt; cd.Name,
-                        'url' =&gt; cd.DistributionPublicUrl,
-                        'expiryDate' =&gt; cd.ExpiryDate,
-                        'firstViewDate' =&gt; cd.FirstViewDate,
-                        'lastViewDate' =&gt; cd.LastViewDate,
-                        'viewCount' =&gt; cd.ViewCount,
-                        'createdDate' =&gt; cd.CreatedDate
+                    history.add(new Map<String, Object>{
+                        'id' => cd.Id,
+                        'name' => cd.Name,
+                        'url' => cd.DistributionPublicUrl,
+                        'expiryDate' => cd.ExpiryDate,
+                        'firstViewDate' => cd.FirstViewDate,
+                        'lastViewDate' => cd.LastViewDate,
+                        'viewCount' => cd.ViewCount,
+                        'createdDate' => cd.CreatedDate
                     });
                 }
             }
@@ -278,7 +278,7 @@ public with sharing class ElaroDeliveryService {
      *
      * @author Elaro Team
      * @since v3.1.0 (Spring '26)
-     * @group Export &amp; Delivery
+     * @group Export & Delivery
      * @see ElaroDeliveryService
      */
     public class SlackDeliveryQueueable implements Queueable, Database.AllowsCallouts {
@@ -313,7 +313,7 @@ public with sharing class ElaroDeliveryService {
                 ];
 
                 // Build Slack Block Kit message
-                Map&lt;String, Object&gt; slackMessage = buildSlackMessage(pkg, channel);
+                Map<String, Object> slackMessage = buildSlackMessage(pkg, channel);
 
                 // Send to Slack webhook
                 HttpRequest req = new HttpRequest();
@@ -326,7 +326,7 @@ public with sharing class ElaroDeliveryService {
                 Http http = new Http();
                 HttpResponse res = http.send(req);
 
-                if (res.getStatusCode() &gt;= 200 &amp;&amp; res.getStatusCode() &lt; 300) {
+                if (res.getStatusCode() >= 200 && res.getStatusCode() < 300) {
                     ElaroLogger.info('ElaroDeliveryService.SlackDeliveryQueueable: Slack notification sent successfully for package ' + packageId);
                 } else {
                     ElaroLogger.error('ElaroDeliveryService.SlackDeliveryQueueable: Slack notification failed with status ' + res.getStatusCode() + ': ' + res.getBody());
@@ -388,54 +388,54 @@ public with sharing class ElaroDeliveryService {
      * @param channel The Slack channel
      * @return Slack message object
      */
-    private static Map&lt;String, Object&gt; buildSlackMessage(Elaro_Audit_Package__c pkg, String channel) {
-        List&lt;Object&gt; blocks = new List&lt;Object&gt;{
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'header',
-                'text' =&gt; new Map&lt;String, Object&gt;{
-                    'type' =&gt; 'plain_text',
-                    'text' =&gt; '📋 Audit Package Generated',
-                    'emoji' =&gt; true
+    private static Map<String, Object> buildSlackMessage(Elaro_Audit_Package__c pkg, String channel) {
+        List<Object> blocks = new List<Object>{
+            new Map<String, Object>{
+                'type' => 'header',
+                'text' => new Map<String, Object>{
+                    'type' => 'plain_text',
+                    'text' => '📋 Audit Package Generated',
+                    'emoji' => true
                 }
             },
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'section',
-                'fields' =&gt; new List&lt;Object&gt;{
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Package:*\n' + pkg.Package_Name__c
+            new Map<String, Object>{
+                'type' => 'section',
+                'fields' => new List<Object>{
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Package:*\n' + pkg.Package_Name__c
                     },
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Framework:*\n' + pkg.Framework__c
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Framework:*\n' + pkg.Framework__c
                     },
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Status:*\n' + pkg.Status__c
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Status:*\n' + pkg.Status__c
                     },
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Generated:*\n' + Datetime.now().format()
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Generated:*\n' + Datetime.now().format()
                     }
                 }
             },
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'divider'
+            new Map<String, Object>{
+                'type' => 'divider'
             },
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'context',
-                'elements' =&gt; new List&lt;Object&gt;{
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; 'Sent from *Elaro Compliance Platform*'
+            new Map<String, Object>{
+                'type' => 'context',
+                'elements' => new List<Object>{
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => 'Sent from *Elaro Compliance Platform*'
                     }
                 }
             }
         };
         
-        return new Map&lt;String, Object&gt;{
-            'channel' =&gt; channel,
-            'blocks' =&gt; blocks
+        return new Map<String, Object>{
+            'channel' => channel,
+            'blocks' => blocks
         };
     }
 }

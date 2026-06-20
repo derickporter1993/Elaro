@@ -2,7 +2,7 @@
 
 **Status**: Accepted
 **Date**: 2026-02-02
-**Deciders**: Derick Porter, Claude Code (Sentinel Architecture)
+**Deciders**: Derick Porter
 
 ## Context
 
@@ -23,6 +23,7 @@ The Elaro project contains two distinct technical domains:
    - Independent build pipeline
 
 **The Problem**: Initial structure created confusion:
+
 - Root scripts assumed platform was built
 - Unclear dependency boundaries
 - No documentation of architectural intent
@@ -51,6 +52,7 @@ elaro/
 ```
 
 **Key Principles**:
+
 1. **Independence**: Each domain can build/test/deploy without the other
 2. **Orchestration**: Root provides convenience commands but guarantees nothing
 3. **Clear Contracts**: No cross-dependencies (Salesforce never imports platform code)
@@ -84,6 +86,7 @@ elaro/
 ### Alternative A: Full Monorepo Consolidation
 
 **Structure**:
+
 ```
 elaro/
 └── packages/
@@ -94,6 +97,7 @@ elaro/
 ```
 
 **Rejected because**:
+
 - Major migration effort (2-3 days)
 - Salesforce deployment tooling expects `force-app/` at root
 - No immediate benefit (not shipping CLI as product yet)
@@ -102,6 +106,7 @@ elaro/
 ### Alternative B: Collapse Platform into Scripts
 
 **Structure**:
+
 ```
 elaro/
 ├── force-app/
@@ -110,6 +115,7 @@ elaro/
 ```
 
 **Rejected because**:
+
 - Loses optionality (can't easily extract CLI to npm later)
 - CLI has genuine complexity (sf-client, masking are real libraries)
 - Would need to rebuild infrastructure if CLI becomes product
@@ -118,10 +124,12 @@ elaro/
 ### Alternative C: Separate Git Repositories
 
 **Structure**:
+
 - `elaro/` (Salesforce only)
 - `elaro-platform/` (Separate repo)
 
 **Rejected because**:
+
 - Coordination overhead (two repos, two CI/CD pipelines)
 - Overkill for current team size (1-2 developers)
 - Complicates feature work that touches both domains
@@ -130,17 +138,20 @@ elaro/
 ## Implementation
 
 ### Phase 1: Documentation (Completed)
+
 - [x] Create `docs/architecture/` with ADRs
 - [x] Document dual-repo pattern (this ADR)
-- [x] Update CLAUDE.md with architecture decisions
+- [x] Update project documentation with architecture decisions
 
 ### Phase 2: Formalize Boundaries (In Progress)
+
 - [ ] Update root `package.json` with postinstall hook
 - [ ] Create `scripts/preflight.sh` validation
 - [ ] Add platform `README.md` documenting independence
 - [ ] Update CI/CD to handle both domains
 
 ### Phase 3: Developer Experience
+
 - [ ] Create setup guide in docs/
 - [ ] Add troubleshooting section
 - [ ] Document common workflows (Salesforce dev, CLI dev, both)
@@ -150,7 +161,7 @@ elaro/
 - [ ] New developer can set up workspace in <15 minutes
 - [ ] Platform builds independently: `cd platform && npm install && npm run build`
 - [ ] Root commands degrade gracefully if platform not built
-- [ ] Architecture pattern documented in 3 places (ADR, CLAUDE.md, README)
+- [ ] Architecture pattern documented in 2 places (ADR and README)
 - [ ] Zero confusion about "which package.json do I use?"
 
 ## References
@@ -163,5 +174,5 @@ elaro/
 
 ## Review History
 
-- 2026-02-02: Proposed by Claude Code (Sentinel Architecture)
+- 2026-02-02: Proposed by Elaro Engineering
 - 2026-02-02: Accepted by Derick Porter

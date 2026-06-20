@@ -7,14 +7,14 @@
 global with sharing class ElaroScheduledDelivery implements Schedulable {
     
     private String packageId;
-    private List&lt;String&gt; recipientEmails;
+    private List<String> recipientEmails;
     
     /**
      * Constructor for scheduled delivery
      * @param packageId The audit package ID
      * @param recipientEmails List of recipient email addresses
      */
-    global ElaroScheduledDelivery(String packageId, List&lt;String&gt; recipientEmails) {
+    global ElaroScheduledDelivery(String packageId, List<String> recipientEmails) {
         this.packageId = packageId;
         this.recipientEmails = recipientEmails;
     }
@@ -59,7 +59,7 @@ global with sharing class ElaroScheduledDelivery implements Schedulable {
             email.setSaveAsActivity(false);
             
             if (!Test.isRunningTest()) {
-                Messaging.sendEmail(new List&lt;Messaging.SingleEmailMessage&gt;{ email });
+                Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{ email });
             }
         } catch (Exception e) {
             ElaroLogger.error( 'Failed to send error notification: ' + e.getMessage());
@@ -73,7 +73,7 @@ global with sharing class ElaroScheduledDelivery implements Schedulable {
      * @param cronExpression The cron expression
      * @return Job ID
      */
-    public static Id scheduleDelivery(String packageId, List&lt;String&gt; recipientEmails, String cronExpression) {
+    public static Id scheduleDelivery(String packageId, List<String> recipientEmails, String cronExpression) {
         ElaroScheduledDelivery scheduler = new ElaroScheduledDelivery(packageId, recipientEmails);
         String jobName = 'Elaro_Delivery_' + packageId.left(15) + '_' + Datetime.now().getTime();
         return System.schedule(jobName, cronExpression, scheduler);
@@ -85,7 +85,7 @@ global with sharing class ElaroScheduledDelivery implements Schedulable {
      * @param recipientEmails List of recipient email addresses
      * @return Job ID
      */
-    public static Id scheduleWeekly(String packageId, List&lt;String&gt; recipientEmails) {
+    public static Id scheduleWeekly(String packageId, List<String> recipientEmails) {
         return scheduleDelivery(packageId, recipientEmails, '0 0 8 ? * MON');
     }
     
@@ -95,7 +95,7 @@ global with sharing class ElaroScheduledDelivery implements Schedulable {
      * @param recipientEmails List of recipient email addresses
      * @return Job ID
      */
-    public static Id scheduleMonthly(String packageId, List&lt;String&gt; recipientEmails) {
+    public static Id scheduleMonthly(String packageId, List<String> recipientEmails) {
         return scheduleDelivery(packageId, recipientEmails, '0 0 8 1 * ?');
     }
     
@@ -105,7 +105,7 @@ global with sharing class ElaroScheduledDelivery implements Schedulable {
      * @param recipientEmails List of recipient email addresses
      * @return Job ID
      */
-    public static Id scheduleQuarterly(String packageId, List&lt;String&gt; recipientEmails) {
+    public static Id scheduleQuarterly(String packageId, List<String> recipientEmails) {
         return scheduleDelivery(packageId, recipientEmails, '0 0 8 1 1,4,7,10 ?');
     }
 }

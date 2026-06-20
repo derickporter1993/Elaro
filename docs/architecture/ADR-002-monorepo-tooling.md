@@ -2,17 +2,19 @@
 
 **Status**: Accepted
 **Date**: 2026-02-02
-**Deciders**: Derick Porter, Claude Code (Sentinel Architecture)
+**Deciders**: Derick Porter
 
 ## Context
 
 The `platform/` directory contains 4 interconnected Node.js packages:
+
 - `@platform/cli` - Command-line interface (depends on: types, sf-client)
 - `@platform/sf-client` - Salesforce API client (depends on: types)
 - `@platform/masking` - Data masking engine (depends on: types)
 - `@platform/types` - Shared TypeScript types (no dependencies)
 
 **Requirements**:
+
 1. Build packages in dependency order (types → clients → cli)
 2. Run commands across multiple packages (test, lint, typecheck)
 3. Cache build outputs to avoid redundant work
@@ -20,6 +22,7 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 5. Simple developer experience (`npm run build` just works)
 
 **Constraints**:
+
 - Team size: 1-2 developers (can't maintain complex tooling)
 - TypeScript native (ESM modules with NodeNext resolution)
 - npm as package manager (already in use at root)
@@ -31,17 +34,18 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 
 ### Tooling Stack
 
-| Tool | Purpose | Why |
-|------|---------|-----|
-| **npm workspaces** | Package linking | Built into npm, zero config |
-| **Turborepo** | Build orchestration | Caching, parallelization, task pipelines |
-| **TypeScript** | Compilation | Project references for incremental builds |
-| **ESLint** | Linting | Shared config across packages |
-| **Prettier** | Formatting | Unified code style |
+| Tool               | Purpose             | Why                                       |
+| ------------------ | ------------------- | ----------------------------------------- |
+| **npm workspaces** | Package linking     | Built into npm, zero config               |
+| **Turborepo**      | Build orchestration | Caching, parallelization, task pipelines  |
+| **TypeScript**     | Compilation         | Project references for incremental builds |
+| **ESLint**         | Linting             | Shared config across packages             |
+| **Prettier**       | Formatting          | Unified code style                        |
 
 ### Configuration
 
 **`platform/package.json`**:
+
 ```json
 {
   "workspaces": ["packages/*"],
@@ -56,12 +60,13 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 ```
 
 **`platform/turbo.json`**:
+
 ```json
 {
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],      // Build deps first
-      "outputs": ["dist/**"],        // Cache dist/ folders
+      "dependsOn": ["^build"], // Build deps first
+      "outputs": ["dist/**"], // Cache dist/ folders
       "cache": true
     },
     "dev": {
@@ -77,13 +82,14 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 ```
 
 **`platform/tsconfig.base.json`**:
+
 ```json
 {
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "composite": true,              // Enable project references
-    "declarationMap": true          // Enable jump-to-source
+    "composite": true, // Enable project references
+    "declarationMap": true // Enable jump-to-source
   }
 }
 ```
@@ -119,11 +125,13 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 ### Alternative A: Lerna
 
 **Pros**:
+
 - Mature, battle-tested
 - Independent versioning/publishing built-in
 - Used by Babel, Jest, React
 
 **Cons**:
+
 - Heavier than Turbo (more features we don't need)
 - Slower builds (no caching by default)
 - More complex configuration
@@ -134,11 +142,13 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 ### Alternative B: Nx
 
 **Pros**:
+
 - Most powerful (computation caching, affected commands, code generation)
 - Excellent for large monorepos (100+ packages)
 - Strong TypeScript integration
 
 **Cons**:
+
 - Overkill for 4 packages
 - Steep learning curve
 - Heavy tooling investment
@@ -149,11 +159,13 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 ### Alternative C: Plain npm Workspaces
 
 **Pros**:
+
 - Zero dependencies
 - Simple mental model
 - Works everywhere npm works
 
 **Cons**:
+
 - No caching (rebuild everything every time)
 - No parallelization (manual with `npm run build --workspaces`)
 - No dependency ordering (must specify manually)
@@ -164,11 +176,13 @@ The `platform/` directory contains 4 interconnected Node.js packages:
 ### Alternative D: pnpm Workspaces
 
 **Pros**:
+
 - Faster installs than npm
 - Stricter dependency management (phantom deps)
 - Better disk space efficiency
 
 **Cons**:
+
 - Requires switching package manager
 - Some tools have npm-specific assumptions
 - Migration effort
@@ -226,12 +240,14 @@ npm run lint
 ## Migration Path
 
 ### Completed
+
 - [x] Turbo installed as devDependency
 - [x] `turbo.json` configured with task pipeline
 - [x] Package scripts updated to use `turbo run`
 - [x] TypeScript project references configured
 
 ### Remaining
+
 - [ ] Document Turbo cache behavior in platform README
 - [ ] Add cache clearing instructions to troubleshooting
 - [ ] Test remote caching (defer until team grows)
@@ -254,6 +270,6 @@ npm run lint
 
 ## Review History
 
-- 2026-02-02: Proposed by Claude Code (Sentinel Architecture)
+- 2026-02-02: Proposed by Elaro Engineering
 - 2026-02-02: Accepted by Derick Porter
 - 2026-02-02: Updated with `--ignore-scripts` workaround for esbuild issue

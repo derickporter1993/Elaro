@@ -8,7 +8,7 @@ This document contains all content needed for the Salesforce AppExchange listing
 
 **Title**: Elaro Compliance Hub
 
-**Tagline**: AI-Powered Multi-Framework Compliance Management for Salesforce
+**Tagline**: Multi-Framework Compliance Management for Salesforce
 
 **Category**: Compliance, Security, Governance
 
@@ -23,14 +23,14 @@ This document contains all content needed for the Salesforce AppExchange listing
 ## Short Description (80 characters)
 
 ```
-AI-driven compliance monitoring for HIPAA, SOC2, GDPR, PCI-DSS, and more.
+Compliance monitoring for HIPAA, SOC2, GDPR, PCI-DSS, and more.
 ```
 
 ---
 
 ## Full Description (4000 characters)
 
-Elaro Compliance Hub transforms your Salesforce org into a comprehensive compliance command center. Monitor multiple frameworks simultaneously, detect gaps automatically, and leverage AI to accelerate remediation.
+Elaro Compliance Hub transforms your Salesforce org into a comprehensive compliance command center. Monitor multiple frameworks simultaneously, detect gaps automatically, and accelerate remediation.
 
 ### KEY FEATURES
 
@@ -40,8 +40,8 @@ Monitor HIPAA, SOC 2, GDPR, PCI-DSS, ISO 27001, GLBA, and CCPA compliance from a
 **Real-Time Compliance Scoring**
 Track compliance scores across all frameworks with visual indicators, trend analysis, and automated gap detection. Scores are calculated based on control coverage, evidence completeness, gap severity, and remediation progress.
 
-**AI-Powered Compliance Copilot**
-Leverage artificial intelligence for instant compliance guidance. Ask natural language questions, get framework-specific recommendations, and receive step-by-step remediation guidance. The AI Copilot understands your org context and provides tailored advice.
+**Compliance Copilot**
+Ask natural language questions, get framework-specific recommendations, and receive step-by-step remediation guidance. Compliance Copilot uses org context to provide tailored advice.
 
 **Automated Gap Detection and Alerting**
 Continuously monitor your Salesforce configuration and data to identify compliance gaps in real-time. Receive alerts via Slack, Microsoft Teams, email, or PagerDuty when critical issues are detected or deadlines are approaching.
@@ -54,6 +54,7 @@ Create executive summaries, detailed compliance reports, gap analysis reports, a
 
 **Integration Ready**
 Connect Elaro with your existing tools:
+
 - **Slack**: Real-time compliance alerts in your team channels
 - **Microsoft Teams**: Notifications and updates in Teams
 - **PagerDuty**: Critical alerts trigger PagerDuty incidents
@@ -61,6 +62,7 @@ Connect Elaro with your existing tools:
 
 **Scheduled Compliance Monitoring**
 Automated daily, weekly, and quarterly compliance checks:
+
 - CCPA SLA monitoring for consumer request deadlines
 - Dormant account detection and security reporting
 - GLBA annual notice distribution
@@ -114,7 +116,7 @@ Implement ISO 27001 information security management. Conduct quarterly access re
 
 **Installation**: Deploy via Salesforce CLI or Package Installer
 **Configuration**: Set up Named Credentials, Custom Metadata, and Permission Sets
-**Dependencies**: Requires Claude API for AI Copilot (optional)
+**Dependencies**: Optional external AI API for Compliance Copilot
 **Governor Limits**: Optimized for Salesforce governor limits with bulkification and batch processing
 **API Version**: Built on Salesforce API 63.0
 **Mobile**: Fully responsive Lightning Web Components
@@ -134,7 +136,7 @@ Implement ISO 27001 information security management. Conduct quarterly access re
 
 1. **Multi-Framework Dashboard** - Single pane of glass for all compliance frameworks (HIPAA, SOC2, GDPR, PCI-DSS, ISO 27001, GLBA, CCPA)
 
-2. **AI Compliance Copilot** - Natural language queries and recommendations powered by Claude AI for instant compliance guidance
+2. **Compliance Copilot** - Natural language queries and recommendations for instant compliance guidance
 
 3. **Automated Gap Detection** - Real-time monitoring with configurable alerts via Slack, Teams, PagerDuty, or email
 
@@ -154,24 +156,25 @@ Implement ISO 27001 information security management. Conduct quarterly access re
 
 The following screenshots should be captured for the AppExchange listing:
 
-| # | Screen | Component | Purpose | File Name |
-|---|--------|-----------|---------|-----------|
-| 1 | Main Dashboard | elaroDashboard | Hero shot - overall view showing compliance scores, metrics, and alerts | dashboard-overview.png |
-| 2 | Compliance Score Card | complianceScoreCard | Framework scores with visual indicators and trend arrows | compliance-scorecard.png |
-| 3 | AI Copilot | elaroCopilot | AI interaction demo showing natural language query and response | ai-copilot.png |
-| 4 | Gap Analysis | complianceGapList | Issue identification with severity indicators and remediation status | gap-analysis.png |
-| 5 | Risk Heatmap | riskHeatmap | Visual risk assessment with color-coded risk levels | risk-heatmap.png |
-| 6 | Audit Wizard | elaroAuditWizard | Report generation interface with framework selection and customization options | audit-wizard.png |
-| 7 | Event Explorer | elaroEventExplorer | Audit trail view showing compliance events and timeline | event-explorer.png |
-| 8 | Executive KPIs | elaroExecutiveKPIDashboard | C-suite metrics with charts and trend analysis | executive-kpis.png |
-| 9 | Trend Analyzer | elaroTrendAnalyzer | Historical trends showing compliance score changes over time | trend-analyzer.png |
-| 10 | Control Matrix | controlMappingMatrix | Cross-framework mapping showing how controls map across different standards | control-matrix.png |
-| 11 | Alert Panel | performanceAlertPanel | Real-time alerts with severity indicators and action buttons | alert-panel.png |
-| 12 | Mobile View | elaroDashboard (mobile) | Responsive design showing dashboard on mobile device | mobile-view.png |
+| #   | Screen                | Component                  | Purpose                                                                        | File Name                |
+| --- | --------------------- | -------------------------- | ------------------------------------------------------------------------------ | ------------------------ |
+| 1   | Main Dashboard        | elaroDashboard             | Hero shot - overall view showing compliance scores, metrics, and alerts        | dashboard-overview.png   |
+| 2   | Compliance Score Card | complianceScoreCard        | Framework scores with visual indicators and trend arrows                       | compliance-scorecard.png |
+| 3   | AI Copilot            | elaroCopilot               | AI interaction demo showing natural language query and response                | ai-copilot.png           |
+| 4   | Gap Analysis          | complianceGapList          | Issue identification with severity indicators and remediation status           | gap-analysis.png         |
+| 5   | Risk Heatmap          | riskHeatmap                | Visual risk assessment with color-coded risk levels                            | risk-heatmap.png         |
+| 6   | Audit Wizard          | elaroAuditWizard           | Report generation interface with framework selection and customization options | audit-wizard.png         |
+| 7   | Event Explorer        | elaroEventExplorer         | Audit trail view showing compliance events and timeline                        | event-explorer.png       |
+| 8   | Executive KPIs        | elaroExecutiveKPIDashboard | C-suite metrics with charts and trend analysis                                 | executive-kpis.png       |
+| 9   | Trend Analyzer        | elaroTrendAnalyzer         | Historical trends showing compliance score changes over time                   | trend-analyzer.png       |
+| 10  | Control Matrix        | controlMappingMatrix       | Cross-framework mapping showing how controls map across different standards    | control-matrix.png       |
+| 11  | Alert Panel           | performanceAlertPanel      | Real-time alerts with severity indicators and action buttons                   | alert-panel.png          |
+| 12  | Mobile View           | elaroDashboard (mobile)    | Responsive design showing dashboard on mobile device                           | mobile-view.png          |
 
 ### Screenshot Requirements
 
 **Technical Specifications**:
+
 - **Format**: PNG or JPG
 - **Resolution**: Minimum 1920x1080 for desktop, 750x1334 for mobile
 - **File Size**: Maximum 5MB per image
@@ -179,6 +182,7 @@ The following screenshots should be captured for the AppExchange listing:
 - **Annotations**: Optional callouts and labels to highlight key features
 
 **Content Guidelines**:
+
 - Use realistic but anonymized data
 - Ensure consistent branding and styling
 - Highlight key features and benefits
@@ -189,7 +193,7 @@ The following screenshots should be captured for the AppExchange listing:
 
 1. **Main Dashboard**: "Comprehensive compliance overview with multi-framework scores, key metrics, and real-time alerts"
 2. **Compliance Score Card**: "Framework-specific compliance scores with visual status indicators and trend analysis"
-3. **AI Copilot**: "AI-powered compliance assistant providing instant guidance and recommendations"
+3. **Compliance Copilot**: "Compliance assistant providing instant guidance and recommendations"
 4. **Gap Analysis**: "Detailed gap identification with severity levels and remediation tracking"
 5. **Risk Heatmap**: "Visual risk assessment showing compliance risk distribution across controls"
 6. **Audit Wizard**: "One-click report generation with customizable framework selection and content options"
@@ -205,24 +209,28 @@ The following screenshots should be captured for the AppExchange listing:
 ## Key Selling Points
 
 **For Compliance Managers**:
+
 - Reduce audit preparation time by 60%
 - Continuous monitoring instead of point-in-time checks
 - Automated evidence collection and package generation
-- AI-powered guidance for faster remediation
+- Guided recommendations for faster remediation
 
 **For Security Teams**:
+
 - Real-time gap detection and alerting
 - Automated security monitoring (dormant accounts, access reviews)
 - Integration with existing security tools (Slack, PagerDuty)
 - Comprehensive audit trails
 
 **For Executives**:
+
 - Executive dashboards with high-level metrics
 - Trend analysis and compliance score tracking
 - Automated reporting and scorecard distribution
 - Risk visualization and heatmaps
 
 **For IT Administrators**:
+
 - Easy installation and configuration
 - Flexible scheduling and automation
 - Integration with existing workflows
@@ -235,6 +243,7 @@ The following screenshots should be captured for the AppExchange listing:
 **Installation Time**: 15-30 minutes
 
 **Setup Steps**:
+
 1. Install package from AppExchange
 2. Assign permission sets to users
 3. Configure Named Credentials (for AI Copilot and integrations)
@@ -242,21 +251,24 @@ The following screenshots should be captured for the AppExchange listing:
 5. Run initial compliance assessment
 
 **Prerequisites**:
+
 - Salesforce Enterprise, Unlimited, or Performance Edition
 - Admin access for configuration
-- Claude API key (optional, for AI Copilot)
+- External AI API key (optional, for Compliance Copilot)
 
 ---
 
 ## Support Information
 
 **Support Channels**:
+
 - Email: support@elaro.com
 - Documentation: Included in package
 - Community: [Community Forum URL]
 - Video Tutorials: [YouTube Channel URL]
 
 **Response Times**:
+
 - Critical Issues: 4 hours
 - General Support: 24 hours
 - Feature Requests: Tracked in roadmap
@@ -266,6 +278,7 @@ The following screenshots should be captured for the AppExchange listing:
 ## Pricing Information
 
 Contact sales for pricing information. Pricing is based on:
+
 - Number of users
 - Number of frameworks
 - Support level required
@@ -276,6 +289,7 @@ Contact sales for pricing information. Pricing is based on:
 ## Release Notes
 
 **Version 1.0** (Current)
+
 - Initial release
 - Multi-framework support (HIPAA, SOC2, GDPR, PCI-DSS, ISO 27001, GLBA, CCPA)
 - AI Compliance Copilot
@@ -297,4 +311,4 @@ Contact sales for pricing information. Pricing is based on:
 
 ---
 
-*Last Updated: January 2026*
+_Last Updated: January 2026_

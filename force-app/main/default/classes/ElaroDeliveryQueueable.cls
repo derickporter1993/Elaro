@@ -5,7 +5,7 @@
  *
  * @author Elaro Team
  * @since v1.0.0 (Spring '26)
- * @group Export &amp; Delivery
+ * @group Export & Delivery
  * @see ElaroDeliveryService
  * @see ElaroLogger
  */
@@ -59,7 +59,7 @@ public inherited sharing class ElaroDeliveryQueueable implements Queueable, Data
         ];
 
         // Build Slack Block Kit message
-        Map&lt;String, Object&gt; slackMessage = buildSlackMessage(pkg, this.channel);
+        Map<String, Object> slackMessage = buildSlackMessage(pkg, this.channel);
 
         // Send to Slack webhook via Named Credential
         HttpRequest req = new HttpRequest();
@@ -88,54 +88,54 @@ public inherited sharing class ElaroDeliveryQueueable implements Queueable, Data
      * @param slackChannel The target Slack channel
      * @return A map representing the Slack Block Kit message structure
      */
-    private Map&lt;String, Object&gt; buildSlackMessage(Elaro_Audit_Package__c pkg, String slackChannel) {
-        List&lt;Object&gt; blocks = new List&lt;Object&gt;{
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'header',
-                'text' =&gt; new Map&lt;String, Object&gt;{
-                    'type' =&gt; 'plain_text',
-                    'text' =&gt; '📋 Audit Package Generated',
-                    'emoji' =&gt; true
+    private Map<String, Object> buildSlackMessage(Elaro_Audit_Package__c pkg, String slackChannel) {
+        List<Object> blocks = new List<Object>{
+            new Map<String, Object>{
+                'type' => 'header',
+                'text' => new Map<String, Object>{
+                    'type' => 'plain_text',
+                    'text' => '📋 Audit Package Generated',
+                    'emoji' => true
                 }
             },
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'section',
-                'fields' =&gt; new List&lt;Object&gt;{
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Package:*\n' + pkg.Package_Name__c
+            new Map<String, Object>{
+                'type' => 'section',
+                'fields' => new List<Object>{
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Package:*\n' + pkg.Package_Name__c
                     },
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Framework:*\n' + pkg.Framework__c
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Framework:*\n' + pkg.Framework__c
                     },
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Status:*\n' + pkg.Status__c
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Status:*\n' + pkg.Status__c
                     },
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; '*Generated:*\n' + Datetime.now().format()
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => '*Generated:*\n' + Datetime.now().format()
                     }
                 }
             },
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'divider'
+            new Map<String, Object>{
+                'type' => 'divider'
             },
-            new Map&lt;String, Object&gt;{
-                'type' =&gt; 'context',
-                'elements' =&gt; new List&lt;Object&gt;{
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'mrkdwn',
-                        'text' =&gt; 'Sent from *Elaro Compliance Platform*'
+            new Map<String, Object>{
+                'type' => 'context',
+                'elements' => new List<Object>{
+                    new Map<String, Object>{
+                        'type' => 'mrkdwn',
+                        'text' => 'Sent from *Elaro Compliance Platform*'
                     }
                 }
             }
         };
 
-        return new Map&lt;String, Object&gt;{
-            'channel' =&gt; slackChannel,
-            'blocks' =&gt; blocks
+        return new Map<String, Object>{
+            'channel' => slackChannel,
+            'blocks' => blocks
         };
     }
 
@@ -146,7 +146,7 @@ public inherited sharing class ElaroDeliveryQueueable implements Queueable, Data
      *
      * @author Elaro Team
      * @since v1.0.0 (Spring '26)
-     * @group Export &amp; Delivery
+     * @group Export & Delivery
      * @see ElaroDeliveryQueueable
      */
     public class DeliveryFinalizer implements Finalizer {
@@ -179,7 +179,7 @@ public inherited sharing class ElaroDeliveryQueueable implements Queueable, Data
             if (ctx.getResult() == ParentJobResult.UNHANDLED_EXCEPTION) {
                 String errorMessage = ctx.getException()?.getMessage() ?? 'Unknown error';
 
-                if (this.retryCount &lt; MAX_RETRIES) {
+                if (this.retryCount < MAX_RETRIES) {
                     ElaroLogger.error(
                         'ElaroDeliveryQueueable.DeliveryFinalizer: Slack delivery failed (attempt '
                         + (this.retryCount + 1) + '/' + MAX_RETRIES + '): ' + errorMessage

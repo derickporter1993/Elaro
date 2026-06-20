@@ -54,8 +54,8 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
     /**
      * Assess a potential breach incident
      */
-    public IBreachNotificationService.BreachAssessment assessBreach(IBreachNotificationService.BreachAssessmentRequest request) {
-        IBreachNotificationService.BreachAssessment assessment = new IBreachNotificationService.BreachAssessment();
+    public BreachNotificationTypes.BreachAssessment assessBreach(BreachNotificationTypes.BreachAssessmentRequest request) {
+        BreachNotificationTypes.BreachAssessment assessment = new BreachNotificationTypes.BreachAssessment();
 
         // Calculate risk score
         Decimal riskScore = calculateBreachRiskScore(request);
@@ -168,8 +168,8 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
     /**
      * Get notification status
      */
-    public IBreachNotificationService.NotificationStatus getNotificationStatus(Id breachId) {
-        IBreachNotificationService.NotificationStatus status = new IBreachNotificationService.NotificationStatus();
+    public BreachNotificationTypes.NotificationStatus getNotificationStatus(Id breachId) {
+        BreachNotificationTypes.NotificationStatus status = new BreachNotificationTypes.NotificationStatus();
         status.breachId = breachId;
 
         Security_Incident__c incident = [
@@ -248,8 +248,8 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
     /**
      * Get open breaches
      */
-    public List<IBreachNotificationService.BreachSummary> getOpenBreaches() {
-        List<IBreachNotificationService.BreachSummary> summaries = new List<IBreachNotificationService.BreachSummary>();
+    public List<BreachNotificationTypes.BreachSummary> getOpenBreaches() {
+        List<BreachNotificationTypes.BreachSummary> summaries = new List<BreachNotificationTypes.BreachSummary>();
 
         List<Security_Incident__c> incidents = [
             SELECT Id, Name, Incident_Type__c, Severity__c, Status__c,
@@ -261,7 +261,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
         ];
 
         for (Security_Incident__c inc : incidents) {
-            IBreachNotificationService.BreachSummary summary = new IBreachNotificationService.BreachSummary();
+            BreachNotificationTypes.BreachSummary summary = new BreachNotificationTypes.BreachSummary();
             summary.breachId = inc.Id;
             summary.incidentType = inc.Incident_Type__c;
             summary.severity = inc.Severity__c;
@@ -280,8 +280,8 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
     /**
      * Get breach metrics
      */
-    public IBreachNotificationService.BreachMetrics getBreachMetrics(Integer daysBack) {
-        IBreachNotificationService.BreachMetrics metrics = new IBreachNotificationService.BreachMetrics();
+    public BreachNotificationTypes.BreachMetrics getBreachMetrics(Integer daysBack) {
+        BreachNotificationTypes.BreachMetrics metrics = new BreachNotificationTypes.BreachMetrics();
 
         Date cutoffDate = Date.today().addDays(-daysBack);
 
@@ -366,13 +366,13 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
         try {
             SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
-            IBreachNotificationService.BreachAssessmentRequest assessmentReq = new IBreachNotificationService.BreachAssessmentRequest();
+            BreachNotificationTypes.BreachAssessmentRequest assessmentReq = new BreachNotificationTypes.BreachAssessmentRequest();
             assessmentReq.incidentType = request.incidentType;
             assessmentReq.description = request.description;
             assessmentReq.recordsAffected = request.recordsAffected;
             assessmentReq.discoveryDate = DateTime.now();
 
-            IBreachNotificationService.BreachAssessment assessment = service.assessBreach(assessmentReq);
+            BreachNotificationTypes.BreachAssessment assessment = service.assessBreach(assessmentReq);
             return assessment.breachId;
         } catch (AuraHandledException ahe) {
             throw ahe;
@@ -485,7 +485,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
     public static IncidentMetrics getIncidentMetrics(Integer daysBack) {
         try {
             SOC2IncidentResponseService service = new SOC2IncidentResponseService();
-            IBreachNotificationService.BreachMetrics breachMetrics = service.getBreachMetrics(daysBack);
+            BreachNotificationTypes.BreachMetrics breachMetrics = service.getBreachMetrics(daysBack);
 
             IncidentMetrics metrics = new IncidentMetrics();
             metrics.totalIncidents = breachMetrics.totalBreaches;
@@ -601,7 +601,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
         return violations;
     }
 
-    private Decimal calculateBreachRiskScore(IBreachNotificationService.BreachAssessmentRequest request) {
+    private Decimal calculateBreachRiskScore(BreachNotificationTypes.BreachAssessmentRequest request) {
         Decimal score = 5.0;
 
         // Records affected
@@ -652,7 +652,7 @@ public with sharing class SOC2IncidentResponseService extends ComplianceServiceB
         return 3.5;
     }
 
-    private String generateBreachAnalysis(IBreachNotificationService.BreachAssessmentRequest request, Decimal riskScore) {
+    private String generateBreachAnalysis(BreachNotificationTypes.BreachAssessmentRequest request, Decimal riskScore) {
         String analysis = 'Incident Type: ' + request.incidentType + '\n';
         analysis += 'Risk Score: ' + riskScore + '/10\n';
         analysis += 'Records Affected: ' + (request.recordsAffected != null ? String.valueOf(request.recordsAffected) : 'Unknown') + '\n';

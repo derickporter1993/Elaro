@@ -19,7 +19,7 @@ private class ElaroShieldServiceTest {
     @isTest
     static void testGetAvailableEventTypes_ReturnsListOrEmpty() {
         Test.startTest();
-        List&lt;String&gt; eventTypes = ElaroShieldService.getAvailableEventTypes();
+        List<String> eventTypes = ElaroShieldService.getAvailableEventTypes();
         Test.stopTest();
         
         // Should return a list (may be empty if no Shield license)
@@ -33,7 +33,7 @@ private class ElaroShieldServiceTest {
     @isTest
     static void testGetShieldStatus_ReturnsStatusMap() {
         Test.startTest();
-        Map&lt;String, Object&gt; status = ElaroShieldService.getShieldStatus();
+        Map<String, Object> status = ElaroShieldService.getShieldStatus();
         Test.stopTest();
         
         Assert.areNotEqual(null, status, 'Should return status map');
@@ -111,16 +111,16 @@ private class ElaroShieldServiceTest {
     
     @isTest
     static void testGetRiskLevel_AllSupportedTypes() {
-        Map&lt;String, String&gt; expectedLevels = new Map&lt;String, String&gt;{
-            'LoginAs' =&gt; 'CRITICAL',
-            'ReportExport' =&gt; 'CRITICAL',
-            'ContentDistribution' =&gt; 'CRITICAL',
-            'BulkApiResult' =&gt; 'HIGH',
-            'API' =&gt; 'HIGH',
-            'Login' =&gt; 'MEDIUM',
-            'Report' =&gt; 'MEDIUM',
-            'ApexExecution' =&gt; 'MEDIUM',
-            'Logout' =&gt; 'LOW'
+        Map<String, String> expectedLevels = new Map<String, String>{
+            'LoginAs' => 'CRITICAL',
+            'ReportExport' => 'CRITICAL',
+            'ContentDistribution' => 'CRITICAL',
+            'BulkApiResult' => 'HIGH',
+            'API' => 'HIGH',
+            'Login' => 'MEDIUM',
+            'Report' => 'MEDIUM',
+            'ApexExecution' => 'MEDIUM',
+            'Logout' => 'LOW'
         };
         
         Test.startTest();
@@ -142,7 +142,7 @@ private class ElaroShieldServiceTest {
     @isTest
     static void testGetEventRiskLevels_ReturnsMap() {
         Test.startTest();
-        Map&lt;String, String&gt; riskLevels = ElaroShieldService.getEventRiskLevels();
+        Map<String, String> riskLevels = ElaroShieldService.getEventRiskLevels();
         Test.stopTest();
         
         Assert.areNotEqual(null, riskLevels, 'Should return risk levels map');
@@ -206,7 +206,7 @@ private class ElaroShieldServiceTest {
     static void testGetEventLogFiles_ValidEventType_ReturnsResults() {
         // Note: In orgs without Shield, this returns empty list
         Test.startTest();
-        List&lt;EventLogFile&gt; results = ElaroShieldService.getEventLogFiles(
+        List<EventLogFile> results = ElaroShieldService.getEventLogFiles(
             'Login',
             Date.today().addDays(-7),
             Date.today()

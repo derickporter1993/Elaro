@@ -46,9 +46,9 @@ private class IComplianceModuleTest {
         GDPRModule gdpr = new GDPRModule();
 
         Test.startTest();
-        List<IComplianceModule.Control> hipaaControls = hipaa.getControls();
-        List<IComplianceModule.Control> soc2Controls = soc2.getControls();
-        List<IComplianceModule.Control> gdprControls = gdpr.getControls();
+        List<ComplianceModuleTypes.Control> hipaaControls = hipaa.getControls();
+        List<ComplianceModuleTypes.Control> soc2Controls = soc2.getControls();
+        List<ComplianceModuleTypes.Control> gdprControls = gdpr.getControls();
         Test.stopTest();
 
         Assert.isNotNull(hipaaControls, 'HIPAA controls should not be null');
@@ -61,7 +61,7 @@ private class IComplianceModuleTest {
         Assert.isFalse(gdprControls.isEmpty(), 'GDPR should have at least one control');
 
         // Verify control structure completeness
-        for (IComplianceModule.Control ctrl : hipaaControls) {
+        for (ComplianceModuleTypes.Control ctrl : hipaaControls) {
             Assert.isNotNull(ctrl.code, 'HIPAA control code should not be null');
             Assert.isNotNull(ctrl.name, 'HIPAA control name should not be null');
             Assert.isNotNull(ctrl.severity, 'HIPAA control severity should not be null');
@@ -74,10 +74,10 @@ private class IComplianceModuleTest {
         SOC2Module soc2 = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.Control hipaaCtrl = hipaa.getControlById('164.312(a)');
-        IComplianceModule.Control hipaaNull = hipaa.getControlById('INVALID_CONTROL_ID');
-        IComplianceModule.Control soc2Ctrl = soc2.getControlById('CC6.1');
-        IComplianceModule.Control soc2Null = soc2.getControlById('NONEXISTENT');
+        ComplianceModuleTypes.Control hipaaCtrl = hipaa.getControlById('164.312(a)');
+        ComplianceModuleTypes.Control hipaaNull = hipaa.getControlById('INVALID_CONTROL_ID');
+        ComplianceModuleTypes.Control soc2Ctrl = soc2.getControlById('CC6.1');
+        ComplianceModuleTypes.Control soc2Null = soc2.getControlById('NONEXISTENT');
         Test.stopTest();
 
         Assert.isNotNull(hipaaCtrl, 'Should find HIPAA control 164.312(a)');
@@ -115,7 +115,7 @@ private class IComplianceModuleTest {
         };
 
         Test.startTest();
-        IComplianceModule.ControlResult result = hipaa.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = hipaa.evaluateControl(
             '164.312(e)', context
         );
         Test.stopTest();
@@ -189,9 +189,9 @@ private class IComplianceModuleTest {
     @IsTest
     static void shouldVerifyInnerClassDefaults() {
         Test.startTest();
-        IComplianceModule.Control control = new IComplianceModule.Control();
-        IComplianceModule.Gap gap = new IComplianceModule.Gap();
-        IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
+        ComplianceModuleTypes.Control control = new ComplianceModuleTypes.Control();
+        ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
+        ComplianceModuleTypes.ControlResult result = new ComplianceModuleTypes.ControlResult();
         Test.stopTest();
 
         // Control defaults

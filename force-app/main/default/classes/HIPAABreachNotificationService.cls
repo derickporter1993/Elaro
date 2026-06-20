@@ -69,11 +69,11 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
     /**
      * Assess breach risk using 4-factor analysis per §164.402
      */
-    public IBreachNotificationService.BreachAssessment assessBreach(
-        IBreachNotificationService.BreachAssessmentRequest request
+    public BreachNotificationTypes.BreachAssessment assessBreach(
+        BreachNotificationTypes.BreachAssessmentRequest request
     ) {
-        IBreachNotificationService.BreachAssessment assessment =
-            new IBreachNotificationService.BreachAssessment();
+        BreachNotificationTypes.BreachAssessment assessment =
+            new BreachNotificationTypes.BreachAssessment();
         assessment.assessmentDate = DateTime.now();
 
         // Factor 1: Nature and extent of PHI involved
@@ -118,9 +118,9 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
     /**
      * Get notification status for a breach
      */
-    public IBreachNotificationService.NotificationStatus getNotificationStatus(Id breachId) {
-        IBreachNotificationService.NotificationStatus status =
-            new IBreachNotificationService.NotificationStatus();
+    public BreachNotificationTypes.NotificationStatus getNotificationStatus(Id breachId) {
+        BreachNotificationTypes.NotificationStatus status =
+            new BreachNotificationTypes.NotificationStatus();
 
         HIPAA_Breach__c breach = [
             SELECT Id, Name, Discovery_Date__c, Notification_Deadline__c,
@@ -167,9 +167,9 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
     /**
      * Get breach summary for dashboard
      */
-    public IBreachNotificationService.BreachSummary getBreachSummary() {
-        IBreachNotificationService.BreachSummary summary =
-            new IBreachNotificationService.BreachSummary();
+    public BreachNotificationTypes.BreachSummary getBreachSummary() {
+        BreachNotificationTypes.BreachSummary summary =
+            new BreachNotificationTypes.BreachSummary();
 
         Date yearStart = Date.today().addYears(-1);
 
@@ -219,9 +219,9 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
     /**
      * Get breach metrics for reporting
      */
-    public IBreachNotificationService.BreachMetrics getBreachMetrics(Integer days) {
-        IBreachNotificationService.BreachMetrics metrics =
-            new IBreachNotificationService.BreachMetrics();
+    public BreachNotificationTypes.BreachMetrics getBreachMetrics(Integer days) {
+        BreachNotificationTypes.BreachMetrics metrics =
+            new BreachNotificationTypes.BreachMetrics();
 
         Date startDate = Date.today().addDays(-days);
 
@@ -514,7 +514,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
         ];
     }
 
-    private Decimal calculateNatureExtentScore(IBreachNotificationService.BreachAssessmentRequest request) {
+    private Decimal calculateNatureExtentScore(BreachNotificationTypes.BreachAssessmentRequest request) {
         Decimal score = 1;
 
         // High-risk PHI types increase score
@@ -535,7 +535,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
         return Math.min(score, 10);
     }
 
-    private Decimal calculateUnauthorizedPersonScore(IBreachNotificationService.BreachAssessmentRequest request) {
+    private Decimal calculateUnauthorizedPersonScore(BreachNotificationTypes.BreachAssessmentRequest request) {
         Decimal score = 5; // Default medium risk
 
         if (request.recipientAuthorized) {
@@ -549,7 +549,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
         return score;
     }
 
-    private Decimal calculateAcquisitionScore(IBreachNotificationService.BreachAssessmentRequest request) {
+    private Decimal calculateAcquisitionScore(BreachNotificationTypes.BreachAssessmentRequest request) {
         if (request.dataAcquired && request.dataViewed) {
             return 10; // Highest risk
         } else if (request.dataAcquired || request.dataViewed) {
@@ -559,7 +559,7 @@ public with sharing class HIPAABreachNotificationService extends ComplianceServi
         }
     }
 
-    private Decimal calculateMitigationScore(IBreachNotificationService.BreachAssessmentRequest request) {
+    private Decimal calculateMitigationScore(BreachNotificationTypes.BreachAssessmentRequest request) {
         Decimal score = 10; // Start at highest risk
 
         // Each mitigation reduces score

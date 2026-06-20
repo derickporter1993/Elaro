@@ -112,7 +112,7 @@ public with sharing class ElaroPDFExporter {
      * @return ContentVersion ID of the generated PDF
      */
     @AuraEnabled
-    public static Id generateEvidenceReport(String packageId, List&lt;String&gt; controlIds) {
+    public static Id generateEvidenceReport(String packageId, List<String> controlIds) {
         validatePackageId(packageId);
         
         try {
@@ -121,7 +121,7 @@ public with sharing class ElaroPDFExporter {
             PageReference pdfPage = Page.ElaroEvidenceReportPDF;
             pdfPage.getParameters().put('id', packageId);
             
-            if (controlIds != null &amp;&amp; !controlIds.isEmpty()) {
+            if (controlIds != null && !controlIds.isEmpty()) {
                 pdfPage.getParameters().put('controls', String.join(controlIds, ','));
             }
             
@@ -157,8 +157,8 @@ public with sharing class ElaroPDFExporter {
      * @param packageIds List of audit package IDs
      * @return List of ContentVersion IDs
      */
-    public static List&lt;Id&gt; batchGeneratePDFs(List&lt;String&gt; packageIds) {
-        List&lt;Id&gt; contentVersionIds = new List&lt;Id&gt;();
+    public static List<Id> batchGeneratePDFs(List<String> packageIds) {
+        List<Id> contentVersionIds = new List<Id>();
         
         for (String packageId : packageIds) {
             try {
@@ -183,7 +183,7 @@ public with sharing class ElaroPDFExporter {
         
         try {
             // Query evidence items
-            List&lt;Elaro_Evidence_Item__c&gt; evidence = [
+            List<Elaro_Evidence_Item__c> evidence = [
                 SELECT Id, Name, Evidence_Type__c, Evidence_Date__c, Description__c,
                        Status__c, CreatedDate
                 FROM Elaro_Evidence_Item__c
@@ -227,7 +227,7 @@ public with sharing class ElaroPDFExporter {
             Elaro_Audit_Package__c pkg = queryAuditPackage(packageId);
             
             // Query evidence items
-            List&lt;Elaro_Evidence_Item__c&gt; evidence = [
+            List<Elaro_Evidence_Item__c> evidence = [
                 SELECT Id, Name, Evidence_Type__c, Evidence_Date__c, Description__c,
                        Status__c, CreatedDate
                 FROM Elaro_Evidence_Item__c
@@ -237,35 +237,35 @@ public with sharing class ElaroPDFExporter {
             ];
 
             // Build export object
-            Map&lt;String, Object&gt; exportData = new Map&lt;String, Object&gt;{
-                'exportDate' =&gt; Datetime.now(),
-                'package' =&gt; new Map&lt;String, Object&gt;{
-                    'id' =&gt; pkg.Id,
-                    'name' =&gt; pkg.Package_Name__c,
-                    'framework' =&gt; pkg.Framework__c,
-                    'status' =&gt; pkg.Status__c,
-                    'periodStart' =&gt; pkg.Audit_Period_Start__c,
-                    'periodEnd' =&gt; pkg.Audit_Period_End__c
+            Map<String, Object> exportData = new Map<String, Object>{
+                'exportDate' => Datetime.now(),
+                'package' => new Map<String, Object>{
+                    'id' => pkg.Id,
+                    'name' => pkg.Package_Name__c,
+                    'framework' => pkg.Framework__c,
+                    'status' => pkg.Status__c,
+                    'periodStart' => pkg.Audit_Period_Start__c,
+                    'periodEnd' => pkg.Audit_Period_End__c
                 },
-                'evidence' =&gt; new List&lt;Map&lt;String, Object&gt;&gt;(),
-                'metadata' =&gt; new Map&lt;String, Object&gt;{
-                    'totalEvidence' =&gt; evidence.size(),
-                    'generatedBy' =&gt; UserInfo.getName(),
-                    'generatedAt' =&gt; Datetime.now()
+                'evidence' => new List<Map<String, Object>>(),
+                'metadata' => new Map<String, Object>{
+                    'totalEvidence' => evidence.size(),
+                    'generatedBy' => UserInfo.getName(),
+                    'generatedAt' => Datetime.now()
                 }
             };
             
             // Add evidence items
-            List&lt;Map&lt;String, Object&gt;&gt; evidenceList = new List&lt;Map&lt;String, Object&gt;&gt;();
+            List<Map<String, Object>> evidenceList = new List<Map<String, Object>>();
             for (Elaro_Evidence_Item__c item : evidence) {
-                evidenceList.add(new Map&lt;String, Object&gt;{
-                    'id' =&gt; item.Id,
-                    'name' =&gt; item.Name,
-                    'type' =&gt; item.Evidence_Type__c,
-                    'date' =&gt; item.Evidence_Date__c,
-                    'description' =&gt; item.Description__c,
-                    'status' =&gt; item.Status__c,
-                    'createdDate' =&gt; item.CreatedDate
+                evidenceList.add(new Map<String, Object>{
+                    'id' => item.Id,
+                    'name' => item.Name,
+                    'type' => item.Evidence_Type__c,
+                    'date' => item.Evidence_Date__c,
+                    'description' => item.Description__c,
+                    'status' => item.Status__c,
+                    'createdDate' => item.CreatedDate
                 });
             }
             exportData.put('evidence', evidenceList);
@@ -358,7 +358,7 @@ public with sharing class ElaroPDFExporter {
      * @return Elaro_Audit_Package__c record
      */
     private static Elaro_Audit_Package__c queryAuditPackage(String packageId) {
-        List&lt;Elaro_Audit_Package__c&gt; packages = [
+        List<Elaro_Audit_Package__c> packages = [
             SELECT Id, Name, Package_Name__c, Framework__c, Status__c,
                    Audit_Period_Start__c, Audit_Period_End__c, Last_Generated__c
             FROM Elaro_Audit_Package__c

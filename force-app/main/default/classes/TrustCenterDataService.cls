@@ -57,8 +57,8 @@ public without sharing class TrustCenterDataService implements Schedulable {
         for (AggregateResult ar : [
             SELECT Framework__c fw, COUNT(Id) cnt
             FROM Compliance_Control__c
-            GROUP BY Framework__c
             WITH USER_MODE
+            GROUP BY Framework__c
         ]) {
             totalByFramework.put((String) ar.get('fw'), (Integer) ar.get('cnt'));
         }
@@ -69,8 +69,8 @@ public without sharing class TrustCenterDataService implements Schedulable {
             SELECT Framework__c fw, COUNT(Id) cnt
             FROM Compliance_Control__c
             WHERE Status__c = 'Compliant'
-            GROUP BY Framework__c
             WITH USER_MODE
+            GROUP BY Framework__c
         ]) {
             compliantByFramework.put((String) ar.get('fw'), (Integer) ar.get('cnt'));
         }
@@ -80,8 +80,8 @@ public without sharing class TrustCenterDataService implements Schedulable {
         for (AggregateResult ar : [
             SELECT Framework__c fw, MAX(Assessment_Date__c) maxDate
             FROM Compliance_Assessment__c
-            GROUP BY Framework__c
             WITH USER_MODE
+            GROUP BY Framework__c
         ]) {
             auditDateByFramework.put((String) ar.get('fw'), (Date) ar.get('maxDate'));
         }

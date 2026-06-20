@@ -5,7 +5,7 @@
 This deep dive was executed against the entire repository snapshot.
 
 - Total files enumerated: **2,146** via `rg --files`.
-- Full file inventory captured in: `docs/planning/FILE_REVIEW_INVENTORY.txt`.
+- Full file inventory was captured during the review and is intentionally not committed.
 - High-level codebase distribution (from filesystem scan):
   - Salesforce metadata-heavy core (`force-app/`)
   - Secondary package (`force-app-healthcheck/`)
@@ -43,6 +43,7 @@ Elaro is functionally broad and test-rich on LWC, but the remaining delivery ris
 **Problem:** conflicting “what’s done / what’s left” views across `HANDOFF.md`, archive status docs, and current code.
 
 **Action:**
+
 - Create and maintain a canonical delivery board doc (`docs/planning/DELIVERY_STATUS_SOURCE_OF_TRUTH.md`) keyed by workstream with objective evidence columns:
   - metadata present
   - tests present
@@ -58,6 +59,7 @@ Elaro is functionally broad and test-rich on LWC, but the remaining delivery ris
 **Problem:** readiness evidence appears fragmented across planning docs.
 
 **Action:**
+
 - Run and capture all mandatory quality/security outputs into `docs/release-evidence/<date>/`:
   - code analyzer results
   - AppExchange scanner outputs
@@ -72,6 +74,7 @@ Elaro is functionally broad and test-rich on LWC, but the remaining delivery ris
 **Problem:** explicit TODO markers in project config can block packaging flow late.
 
 **Action:**
+
 - Replace namespace TODO placeholders with validated release checklist item and signed-off environment readiness steps.
 - Add CI check that fails if `_TODO_` keys remain in packaging-critical config.
 
@@ -82,6 +85,7 @@ Elaro is functionally broad and test-rich on LWC, but the remaining delivery ris
 **Problem:** Einstein callout path intentionally deferred; should be tracked as explicit debt with target release.
 
 **Action:**
+
 - Convert current TODO into tracked issue with:
   - decision (keep fallback-only OR implement Einstein integration)
   - acceptance criteria
@@ -95,6 +99,7 @@ Elaro is functionally broad and test-rich on LWC, but the remaining delivery ris
 **Problem:** large repo breadth requires a focused modernization lane to prevent drift.
 
 **Action:**
+
 - Launch a dedicated initiative for design-system and implementation consistency:
   - shared UX patterns and token governance
   - standardized telemetry and error model
@@ -204,4 +209,3 @@ Mission: deliver a coherent next-generation implementation standard that unifies
 - Repository-wide file inventory captured.
 - Remaining TODO/BLOCKER markers scanned.
 - LWC/Jest test suite executed successfully in current environment.
-

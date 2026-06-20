@@ -1,7 +1,7 @@
 # Elaro Security Audit Report
 
 **Date:** 2026-02-19
-**Auditor:** Claude (Opus 4.6) — Senior Salesforce Platform Architect
+**Auditor:** Elaro Security Review
 **Standards:** Winter '26 (API v65.0) / Spring '26 (API v66.0), AppExchange Security Review Requirements
 **Scope:** 370 Apex classes, 60 LWC components, 5 triggers, 3 Visualforce pages, 54 custom objects
 
@@ -9,16 +9,16 @@
 
 ## 1. Auto-Fail Scan
 
-| # | Condition | Result | Count | Details |
-|---|-----------|--------|-------|---------|
-| 1 | SOQL inside loops | **PASS** | 0 | All `for (SObject x : [SOQL])` patterns are SOQL-for-loop iterators (single query). No SOQL in loop bodies. |
-| 2 | DML inside loops | **FAIL** | 1 | `ElaroTestUserFactory.cls:163` — `update manager` inside a `for` loop |
-| 3 | CRUD/FLS violation | **FAIL** | 30+ | 8 SOQL queries missing `WITH USER_MODE` in `ElaroDeliveryService.cls`; 111+ bare DML statements (no `as user` / `AccessLevel.USER_MODE`) across 30+ production classes |
-| 4 | Hardcoded credentials/secrets | **PASS** | 0 | No hardcoded API keys, tokens, or passwords found. All auth uses Named Credentials or `UserInfo.getSessionId()`. |
-| 5 | Missing sharing declaration | **FAIL** | 4 | `HealthCheckResult.cls`, `ScanFinding.cls`, `ScanRecommendation.cls`, `ElaroSchedulerTests.cls` |
-| 6 | SOQL injection | **FAIL** | 2 | `HIPAAPrivacyRuleService.cls:157` — user-supplied `objectName` concatenated into FROM clause; `ElaroExecutiveKPIController.cls:123` — Custom Metadata SOQL executed without bind variables |
-| 7 | Stored XSS | **FAIL** | 1 | `complianceTrendChart.html:29` — `lwc:dom="manual"` on `<canvas>` element |
-| 8 | API version below v58.0 | **PASS** | 0 | All 370 `.cls-meta.xml` and 59 `.js-meta.xml` files use API v66.0 |
+| #   | Condition                     | Result   | Count | Details                                                                                                                                                                                    |
+| --- | ----------------------------- | -------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | SOQL inside loops             | **PASS** | 0     | All `for (SObject x : [SOQL])` patterns are SOQL-for-loop iterators (single query). No SOQL in loop bodies.                                                                                |
+| 2   | DML inside loops              | **FAIL** | 1     | `ElaroTestUserFactory.cls:163` — `update manager` inside a `for` loop                                                                                                                      |
+| 3   | CRUD/FLS violation            | **FAIL** | 30+   | 8 SOQL queries missing `WITH USER_MODE` in `ElaroDeliveryService.cls`; 111+ bare DML statements (no `as user` / `AccessLevel.USER_MODE`) across 30+ production classes                     |
+| 4   | Hardcoded credentials/secrets | **PASS** | 0     | No hardcoded API keys, tokens, or passwords found. All auth uses Named Credentials or `UserInfo.getSessionId()`.                                                                           |
+| 5   | Missing sharing declaration   | **FAIL** | 4     | `HealthCheckResult.cls`, `ScanFinding.cls`, `ScanRecommendation.cls`, `ElaroSchedulerTests.cls`                                                                                            |
+| 6   | SOQL injection                | **FAIL** | 2     | `HIPAAPrivacyRuleService.cls:157` — user-supplied `objectName` concatenated into FROM clause; `ElaroExecutiveKPIController.cls:123` — Custom Metadata SOQL executed without bind variables |
+| 7   | Stored XSS                    | **FAIL** | 1     | `complianceTrendChart.html:29` — `lwc:dom="manual"` on `<canvas>` element                                                                                                                  |
+| 8   | API version below v58.0       | **PASS** | 0     | All 370 `.cls-meta.xml` and 59 `.js-meta.xml` files use API v66.0                                                                                                                          |
 
 **Auto-Fail Result: FAIL** — 4 of 7 testable conditions have violations.
 
@@ -44,6 +44,7 @@
 **Lines:** 33, 44, 140, 147, 170, 197, 240, 252
 
 Current code (line 32-37):
+
 ```apex
 Elaro_Audit_Package__c pkg = [
     SELECT Id, Name, Package_Name__c, Framework__c, Status__c
@@ -54,6 +55,7 @@ Elaro_Audit_Package__c pkg = [
 ```
 
 Fixed code:
+
 ```apex
 Elaro_Audit_Package__c pkg = [
     SELECT Id, Name, Package_Name__c, Framework__c, Status__c
@@ -75,6 +77,7 @@ Apply the same fix to all 8 queries in this file.
 **Risk:** Data encrypted via `encryptWithManagedIV()` cannot be decrypted — the key is generated and discarded. For a PCI DSS compliance product, this is a fundamental data loss vulnerability.
 
 Current code:
+
 ```apex
 private Blob getEncryptionKey() {
     // In production, would retrieve from secure key management service
@@ -84,6 +87,7 @@ private Blob getEncryptionKey() {
 ```
 
 Fixed code:
+
 ```apex
 private Blob getEncryptionKey() {
     Elaro_Encryption_Config__c config = Elaro_Encryption_Config__c.getOrgDefaults();
@@ -107,11 +111,13 @@ Note: Use a Protected Custom Setting with Shield Platform Encryption for the key
 **Risk:** Returns `null` in Lightning Experience and Salesforce1 contexts. Removed from outbound messages Feb 16, 2026. All Tooling API and REST API calls silently fail with 401 Unauthorized.
 
 Current code:
+
 ```apex
 req.setHeader('Authorization', 'Bearer ' + UserInfo.getSessionId());
 ```
 
 Fixed code:
+
 ```apex
 // Use a Named Credential with OAuth 2.0 Client Credentials or JWT Bearer flow
 req.setEndpoint('callout:Elaro_Tooling_API/services/data/v66.0/tooling/query/?q=' +
@@ -128,6 +134,7 @@ req.setEndpoint('callout:Elaro_Tooling_API/services/data/v66.0/tooling/query/?q=
 **Risk:** An attacker can supply a crafted `objectName` string to query arbitrary History objects, potentially accessing field change history on objects they should not see.
 
 Current code:
+
 ```apex
 String historyObjectName = objectName.endsWith('__c') ?
     objectName.replace('__c', '__History') :
@@ -141,6 +148,7 @@ List<SObject> historyRecords = Database.query(query);
 ```
 
 Fixed code:
+
 ```apex
 private static final Set<String> ALLOWED_HISTORY_OBJECTS = new Set<String>{
     'ContactHistory', 'AccountHistory', 'Patient__History',
@@ -186,6 +194,7 @@ List<SObject> historyRecords = Database.queryWithBinds(query, binds, AccessLevel
 | `RemediationSuggestionService.cls` | 3 | 77, 197, 576 |
 
 Fix pattern for all:
+
 ```apex
 // Before:
 insert newRecords;
@@ -211,6 +220,7 @@ Database.insert(records, false, AccessLevel.USER_MODE);
 **Risk:** With a trigger batch of 200 events, this consumes 200 SOQL queries and 200 DML statements — exceeding governor limits of 100/150.
 
 Current code:
+
 ```apex
 public static void processEvents(List<Elaro_Event__e> events) {
     for (Elaro_Event__e event : events) {
@@ -220,6 +230,7 @@ public static void processEvents(List<Elaro_Event__e> events) {
 ```
 
 Fixed code:
+
 ```apex
 public static void processEvents(List<Elaro_Event__e> events) {
     // Collect all entity IDs first
@@ -249,6 +260,7 @@ public static void processEvents(List<Elaro_Event__e> events) {
 **Risk:** If `payloads` exceeds 100 items (possible from `PerformanceAlertEventTrigger` with 2000 platform events), throws `System.LimitException: Too many callouts`.
 
 Fix: Add a callout guard and chain overflow to a new Queueable:
+
 ```apex
 private static final Integer MAX_CALLOUTS_PER_EXECUTION = 50;
 // ... in execute():
@@ -295,6 +307,7 @@ Fix: Create a `PagerDuty_Events` Named Credential and use `callout:PagerDuty_Eve
 **Risk:** DML-in-loop auto-fail. Even in test code, AppExchange Code Analyzer will flag this.
 
 Current code:
+
 ```apex
 for (Integer level = 0; level < levels; level++) {
     User manager = createBaseUser('Manager_L' + level);
@@ -308,6 +321,7 @@ for (Integer level = 0; level < levels; level++) {
 ```
 
 Fixed code:
+
 ```apex
 List<User> managersToUpdate = new List<User>();
 for (Integer level = 0; level < levels; level++) {
@@ -343,6 +357,7 @@ Fix: Use `Auth.SessionManagement.getCurrentSession().get('SessionId')`.
 **Finding:** `without sharing` class with no documented justification.
 
 Fix: Add justification comment or change to `inherited sharing`:
+
 ```apex
 /**
  * SECURITY: without sharing required because SetupAuditTrail records
@@ -386,6 +401,7 @@ public without sharing class ElaroAuditTrailPoller implements Schedulable {
 **Finding:** DTO classes missing sharing declarations.
 
 Fix: Add `inherited sharing` to all three:
+
 ```apex
 public inherited sharing class HealthCheckResult {
 public inherited sharing class ScanFinding {
@@ -500,17 +516,17 @@ Fix: Use Shield Platform Encryption on the field, or move to a Named Credential 
 
 ## 3. Scorecard
 
-| Category | Weight | Score (1-5) | Weighted |
-|----------|--------|-------------|----------|
-| Security | 25% | 2 | 0.50 |
-| Governor Limits & Performance | 20% | 3 | 0.60 |
-| Test Quality | 15% | 3 | 0.45 |
-| Maintainability | 15% | 3 | 0.45 |
-| Architecture & Async Patterns | 10% | 3 | 0.30 |
-| Documentation | 5% | 3 | 0.15 |
-| API Version & Platform Compliance | 5% | 4 | 0.20 |
-| AppExchange Security Review Readiness | 5% | 2 | 0.10 |
-| **TOTAL** | **100%** | | **2.75 / 5.00** |
+| Category                              | Weight   | Score (1-5) | Weighted        |
+| ------------------------------------- | -------- | ----------- | --------------- |
+| Security                              | 25%      | 2           | 0.50            |
+| Governor Limits & Performance         | 20%      | 3           | 0.60            |
+| Test Quality                          | 15%      | 3           | 0.45            |
+| Maintainability                       | 15%      | 3           | 0.45            |
+| Architecture & Async Patterns         | 10%      | 3           | 0.30            |
+| Documentation                         | 5%       | 3           | 0.15            |
+| API Version & Platform Compliance     | 5%       | 4           | 0.20            |
+| AppExchange Security Review Readiness | 5%       | 2           | 0.10            |
+| **TOTAL**                             | **100%** |             | **2.75 / 5.00** |
 
 **Letter Grade: D (55%)**
 **Percentage: 55.0%**
@@ -539,51 +555,61 @@ Fix: Use Shield Platform Encryption on the field, or move to a Named Credential 
 ## 4. Priority Fix List
 
 ### Rank 1: Add `as user` to all 111+ bare DML operations
+
 - **Files:** 30+ production classes (see detailed list in Section 2)
 - **Why:** Systemic FLS enforcement failure. AppExchange auto-rejection. Every DML must use `insert as user`, `update as user`, etc. or `Database.insert(records, false, AccessLevel.USER_MODE)`.
 - **Effort:** Medium (mechanical find-and-replace across 30+ files)
 
 ### Rank 2: Fix SOQL injection in `HIPAAPrivacyRuleService.cls:151-162`
+
 - **Files:** `HIPAAPrivacyRuleService.cls`
 - **Why:** User-supplied `objectName` directly in dynamic SOQL `FROM` clause. Allows querying arbitrary History objects. HIPAA compliance service with SOQL injection = audit catastrophe.
 - **Effort:** Small (add allowlist validation + `Database.queryWithBinds`)
 
 ### Rank 3: Fix encryption key management in `PCIDataProtectionService.cls:168-171`
+
 - **Files:** `PCIDataProtectionService.cls`
 - **Why:** New random key generated per call makes all encrypted PCI data permanently unrecoverable. Core function of a PCI compliance service is broken.
 - **Effort:** Medium (need Protected Custom Setting with Shield encryption for key storage)
 
 ### Rank 4: Replace `UserInfo.getSessionId()` with Named Credentials
+
 - **Files:** `ToolingApiService.cls:40`, `AIDetectionEngine.cls:65`, `ElaroPCIAccessLogger.cls:50,85`
 - **Why:** Returns `null` in Lightning. Session IDs removed from outbound messages Feb 16, 2026. Health Check scanner and AI detection are completely broken in Lightning.
 - **Effort:** Medium (need Named Credential with OAuth 2.0 flow + Session Auth)
 
 ### Rank 5: Add `WITH USER_MODE` to 15+ missing SOQL queries
+
 - **Files:** `ElaroDeliveryService.cls` (8), `ElaroComplianceCopilotService.cls` (2), `ElaroPDFExporter.cls` (4), `RemediationOrchestrator.cls` (3)
 - **Why:** FLS not enforced on reads. Users can see field values they should not access.
 - **Effort:** Small (add `WITH USER_MODE` clause to each query)
 
 ### Rank 6: Fix `ElaroEventProcessor.processEvents()` governor limit violation
+
 - **Files:** `ElaroEventProcessor.cls`
 - **Why:** SOQL + DML per platform event in a loop. Will throw `System.LimitException` at 100+ events. Platform Event triggers can receive up to 2,000 events per batch.
 - **Effort:** Medium (refactor `ElaroGraphIndexer` for bulk operations)
 
 ### Rank 7: Replace 59 placeholder test assertions
+
 - **Files:** 59 test classes with `Assert.isTrue(true, 'Test passed')`
 - **Why:** Provides false coverage confidence. No regression detection. The 4 fully-stub test classes (`ElaroEventProcessorTest`, `ElaroEventMonitoringServiceTest`, `ElaroFrameworkEngineTest`, `ElaroAuditPackageGeneratorTest`) are functionally empty.
 - **Effort:** Large (each test needs real assertions on actual behavior)
 
 ### Rank 8: Add Custom Labels to 39 LWC components
+
 - **Files:** 39 main-package LWC components (see AppExchange section)
 - **Why:** AppExchange requires i18n support. Hardcoded English strings are rejected during security review. Estimated 200+ individual string replacements.
 - **Effort:** Large (200+ labels to create and import)
 
 ### Rank 9: Add Permission Set coverage for ~55 uncovered classes
+
 - **Files:** `Elaro_Admin.permissionset-meta.xml`, `Elaro_User.permissionset-meta.xml`, new module-specific PS files
 - **Why:** Users assigned only `Elaro_User` get "insufficient privileges" on most LWC-powered pages. Controllers like `AssessmentWizardController`, `TrustCenterController`, `JiraIntegrationService` are inaccessible.
 - **Effort:** Medium (audit class-to-PS mapping, add `classAccesses` entries)
 
 ### Rank 10: Migrate 8 `@future` methods to Queueable
+
 - **Files:** `SlackIntegration.cls` (4), `MultiOrgManager.cls` (2), `JiraIntegrationService.cls` (1), `ElaroDeliveryService.cls` (1)
 - **Why:** `@future` is legacy. `SlackIntegration.cls` duplicates functionality already in `ElaroSlackNotifierQueueable.cls`. `MultiOrgManager.refreshAllConnections()` calls `@future` in a loop (50-call limit risk).
 - **Effort:** Medium (retire `SlackIntegration.cls`, refactor `MultiOrgManager` and `JiraIntegrationService`)
@@ -592,23 +618,23 @@ Fix: Use Shield Platform Encryption on the field, or move to a Named Credential 
 
 ## 5. Modernization Opportunities
 
-| Current Pattern | Modern Pattern | Files Affected |
-|----------------|----------------|----------------|
-| `WITH SECURITY_ENFORCED` | `WITH USER_MODE` | **0 remaining** — fully migrated |
-| `System.assertEquals` | `Assert.areEqual` | **0 remaining** — fully migrated |
-| `@future` methods | `Queueable + Database.AllowsCallouts` | 8 in 4 files |
-| `Batch Apex` (Database.Batchable) | `Database.Cursor + Queueable` chain | 3 candidates: `ElaroHistoricalEventBatch`, `RetentionEnforcementBatch`, `ConsentExpirationBatch` |
-| `System.enqueueJob(job)` | `System.enqueueJob(job, asyncOptions)` with `QueueableDuplicateSignature` | 14 Queueable implementations |
-| No Transaction Finalizers | `implements Finalizer` + `System.attachFinalizer()` | All Queueable classes (14) |
-| `Database.query(soql)` | `Database.queryWithBinds(soql, binds, AccessLevel.USER_MODE)` | `HIPAAPrivacyRuleService.cls`, `ElaroExecutiveKPIController.cls`, dynamic report controllers |
-| `UserInfo.getSessionId()` | Named Credential with OAuth 2.0 | `ToolingApiService.cls`, `AIDetectionEngine.cls` |
-| Ternary null checks | `??` null coalescing | Scattered — already well-adopted in newer code |
-| Nested null checks | `?.` safe navigation | Scattered — already well-adopted in newer code |
-| Manual `Schema.Describe` FLS | `WITH USER_MODE` / `as user` | 10+ files with `isCreateable()`/`isUpdateable()` |
-| `sfdx force:*` commands | `sf org create scratch`, `sf project deploy start` | `scripts/orgInit.sh`, `.cursorrules` |
-| `@IsTest` without `testFor` | `@IsTest(testFor=ProductionClass.class)` | 159 of 184 test classes |
-| Inline test data creation | `ComplianceTestDataFactory` / `ElaroTestDataFactory` | 158 of 184 test classes |
-| Copy-paste Slack/Teams Queueables | Abstract base `WebhookNotifierQueueable` | `ElaroSlackNotifierQueueable.cls`, `ElaroTeamsNotifierQueueable.cls` |
+| Current Pattern                   | Modern Pattern                                                            | Files Affected                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `WITH SECURITY_ENFORCED`          | `WITH USER_MODE`                                                          | **0 remaining** — fully migrated                                                                 |
+| `System.assertEquals`             | `Assert.areEqual`                                                         | **0 remaining** — fully migrated                                                                 |
+| `@future` methods                 | `Queueable + Database.AllowsCallouts`                                     | 8 in 4 files                                                                                     |
+| `Batch Apex` (Database.Batchable) | `Database.Cursor + Queueable` chain                                       | 3 candidates: `ElaroHistoricalEventBatch`, `RetentionEnforcementBatch`, `ConsentExpirationBatch` |
+| `System.enqueueJob(job)`          | `System.enqueueJob(job, asyncOptions)` with `QueueableDuplicateSignature` | 14 Queueable implementations                                                                     |
+| No Transaction Finalizers         | `implements Finalizer` + `System.attachFinalizer()`                       | All Queueable classes (14)                                                                       |
+| `Database.query(soql)`            | `Database.queryWithBinds(soql, binds, AccessLevel.USER_MODE)`             | `HIPAAPrivacyRuleService.cls`, `ElaroExecutiveKPIController.cls`, dynamic report controllers     |
+| `UserInfo.getSessionId()`         | Named Credential with OAuth 2.0                                           | `ToolingApiService.cls`, `AIDetectionEngine.cls`                                                 |
+| Ternary null checks               | `??` null coalescing                                                      | Scattered — already well-adopted in newer code                                                   |
+| Nested null checks                | `?.` safe navigation                                                      | Scattered — already well-adopted in newer code                                                   |
+| Manual `Schema.Describe` FLS      | `WITH USER_MODE` / `as user`                                              | 10+ files with `isCreateable()`/`isUpdateable()`                                                 |
+| `sfdx force:*` commands           | `sf org create scratch`, `sf project deploy start`                        | `scripts/orgInit.sh`, `.cursorrules`                                                             |
+| `@IsTest` without `testFor`       | `@IsTest(testFor=ProductionClass.class)`                                  | 159 of 184 test classes                                                                          |
+| Inline test data creation         | `ComplianceTestDataFactory` / `ElaroTestDataFactory`                      | 158 of 184 test classes                                                                          |
+| Copy-paste Slack/Teams Queueables | Abstract base `WebhookNotifierQueueable`                                  | `ElaroSlackNotifierQueueable.cls`, `ElaroTeamsNotifierQueueable.cls`                             |
 
 ---
 

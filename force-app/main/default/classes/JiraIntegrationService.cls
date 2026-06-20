@@ -13,7 +13,7 @@
  */
 public with sharing class JiraIntegrationService {
 
-    private static final String NAMED_CREDENTIAL = 'callout:Jira_API';
+    private static final String CALLOUT_ENDPOINT = 'callout:Jira_API';
     private static final String API_VERSION = '/rest/api/3';
 
     /**
@@ -430,9 +430,9 @@ public with sharing class JiraIntegrationService {
         };
     }
 
-    private static String mapSeverityToJiraPriority(String severity, String override) {
-        if (String.isNotBlank(override)) {
-            return override;
+    private static String mapSeverityToJiraPriority(String severity, String priorityOverride) {
+        if (String.isNotBlank(priorityOverride)) {
+            return priorityOverride;
         }
 
         Map<String, String> severityToPriority = new Map<String, String>{
@@ -533,7 +533,7 @@ public with sharing class JiraIntegrationService {
 
     private static HttpResponse makeCallout(String method, String endpoint, String body) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(NAMED_CREDENTIAL + endpoint);
+        req.setEndpoint(CALLOUT_ENDPOINT + endpoint);
         req.setMethod(method);
         req.setHeader('Content-Type', 'application/json');
         req.setHeader('Accept', 'application/json');

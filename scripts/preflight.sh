@@ -44,7 +44,17 @@ if [ ! -d "platform/packages/cli/dist" ]; then
   echo "   Note: This is optional for Salesforce-only development"
 fi
 
-# Check 5: Git status (optional info)
+# Check 5: Token values must not be written to logs
+if rg -n -U "ElaroLogger\\.[A-Za-z]+\\([^;]*Link_Token__c" force-app/main/default/classes >/tmp/elaro-token-log-scan.txt; then
+  echo "❌ Trust Center link tokens are logged"
+  cat /tmp/elaro-token-log-scan.txt
+  echo "   Fix: log record IDs or redacted token prefixes only"
+  FAILED=1
+else
+  echo "✅ Trust Center link tokens are not logged"
+fi
+
+# Check 6: Git status (optional info)
 if command -v git &> /dev/null; then
   UNCOMMITTED=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
   if [ "$UNCOMMITTED" -gt 0 ]; then

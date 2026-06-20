@@ -30,48 +30,48 @@
 
 ## Component-by-Component Summary
 
-| # | Component | Issues Found | Severity | Has Tests |
-|---|-----------|-------------|----------|-----------|
-| 1 | `apiUsageDashboard` | Unnecessary @track (2) | Low | Yes |
-| 2 | `auditReportGenerator` | No @track issues; good error handling | -- | Yes |
-| 3 | `complianceCopilot` | Unnecessary @track (5); debounce cleanup OK | Low | Yes |
-| 4 | `complianceDashboard` | Clean; uses wire correctly | -- | Yes |
-| 5 | `complianceGapList` | Unnecessary @track (3) | Low | Yes |
-| 6 | `complianceGraphViewer` | **innerHTML DOM manipulation (XSS risk)**; addEventListener without cleanup; no tests; unnecessary @track (9); console.error (2) | **Critical** | **No** |
-| 7 | `complianceScoreCard` | Unnecessary @track (4) | Low | Yes |
-| 8 | `complianceTimeline` | Unnecessary @track (3) | Low | Yes |
-| 9 | `complianceTrendChart` | Unnecessary @track (3) | Low | Yes |
-| 10 | `controlMappingMatrix` | 3x `!important` in CSS; unnecessary @track (8); setTimeout without cleanup | Medium | Yes |
-| 11 | `deploymentMonitorDashboard` | Unnecessary @track (4); console not used; lifecycle OK | Low | Yes |
-| 12 | `elaroAiSettings` | Good wire+imperative pattern | -- | Yes |
-| 13 | `elaroAuditPackageBuilder` | Unnecessary @track (5) | Low | Yes |
-| 14 | `elaroAuditWizard` | Hardcoded control data (not Apex); unnecessary @track (13); no disconnectedCallback for setTimeout | Medium | Yes |
-| 15 | `elaroComparativeAnalytics` | Unnecessary @track (12) | Medium | Yes |
-| 16 | `elaroCopilot` | Unnecessary @track (4); debounce cleanup OK | Low | Yes |
-| 17 | `elaroDashboard` | Unnecessary @track (6) | Low | Yes |
-| 18 | `elaroDrillDownViewer` | Unnecessary @track (9) | Medium | Yes |
-| 19 | `elaroDynamicReportBuilder` | Unnecessary @track (17) | Medium | Yes |
-| 20 | `elaroEventExplorer` | Unnecessary @track (16); large component (470+ LOC) | Medium | Yes |
-| 21 | `elaroEventMonitor` | Unnecessary @track (2); lifecycle OK (subscribe/unsubscribe) | Low | Yes |
-| 22 | `elaroExecutiveKPIDashboard` | Unnecessary @track (4) | Low | Yes |
-| 23 | `elaroReadinessScore` | Unnecessary @track (14) | Medium | Yes |
-| 24 | `elaroROICalculator` | Unnecessary @track (11); connectedCallback with no cleanup needed | Medium | Yes |
-| 25 | `elaroScoreListener` | Lifecycle correct (subscribe/unsubscribe) | -- | Yes |
-| 26 | `elaroSetupWizard` | Unnecessary @track (18); largest component; setTimeout used in simulateDelay | Medium | Yes |
-| 27 | `elaroTrendAnalyzer` | Unnecessary @track (10) | Medium | Yes |
-| 28 | `escalationPathConfig` | Unnecessary @track (7); console.error; **no tests** | **High** | **No** |
-| 29 | `executiveKpiDashboard` | Clean wire usage | -- | Yes |
-| 30 | `flowExecutionMonitor` | Unnecessary @track (4); lifecycle OK | Low | Yes |
-| 31 | `frameworkSelector` | Unnecessary @track (3) | Low | Yes |
-| 32 | `jiraCreateModal` | Unnecessary @track (5); **no tests**; naming collision (`isConfigured` property shadows import) | **High** | **No** |
-| 33 | `jiraIssueCard` | Unnecessary @track (8); **no tests**; console not used in prod code | **High** | **No** |
-| 34 | `onCallScheduleManager` | Unnecessary @track (8); console.error (2); **no tests** | **High** | **No** |
-| 35 | `performanceAlertPanel` | Unnecessary @track (4); debounce timer; lifecycle OK | Low | Yes |
-| 36 | `pollingManager` | Good utility pattern; addEventListener/removeEventListener correct | -- | Yes |
-| 37 | `remediationSuggestionCard` | Unnecessary @track (7); console.error; **no tests** | **High** | **No** |
-| 38 | `reportSchedulerConfig` | Unnecessary @track (8); good modal accessibility | Medium | Yes |
-| 39 | `riskHeatmap` | Clean; good accessibility | -- | Yes |
-| 40 | `systemMonitorDashboard` | Unnecessary @track (1); lifecycle OK | Low | Yes |
+| #   | Component                    | Issues Found                                                                                                                     | Severity     | Has Tests |
+| --- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------ | --------- |
+| 1   | `apiUsageDashboard`          | Unnecessary @track (2)                                                                                                           | Low          | Yes       |
+| 2   | `auditReportGenerator`       | No @track issues; good error handling                                                                                            | --           | Yes       |
+| 3   | `complianceCopilot`          | Unnecessary @track (5); debounce cleanup OK                                                                                      | Low          | Yes       |
+| 4   | `complianceDashboard`        | Clean; uses wire correctly                                                                                                       | --           | Yes       |
+| 5   | `complianceGapList`          | Unnecessary @track (3)                                                                                                           | Low          | Yes       |
+| 6   | `complianceGraphViewer`      | **innerHTML DOM manipulation (XSS risk)**; addEventListener without cleanup; no tests; unnecessary @track (9); console.error (2) | **Critical** | **No**    |
+| 7   | `complianceScoreCard`        | Unnecessary @track (4)                                                                                                           | Low          | Yes       |
+| 8   | `complianceTimeline`         | Unnecessary @track (3)                                                                                                           | Low          | Yes       |
+| 9   | `complianceTrendChart`       | Unnecessary @track (3)                                                                                                           | Low          | Yes       |
+| 10  | `controlMappingMatrix`       | 3x `!important` in CSS; unnecessary @track (8); setTimeout without cleanup                                                       | Medium       | Yes       |
+| 11  | `deploymentMonitorDashboard` | Unnecessary @track (4); console not used; lifecycle OK                                                                           | Low          | Yes       |
+| 12  | `elaroAiSettings`            | Good wire+imperative pattern                                                                                                     | --           | Yes       |
+| 13  | `elaroAuditPackageBuilder`   | Unnecessary @track (5)                                                                                                           | Low          | Yes       |
+| 14  | `elaroAuditWizard`           | Hardcoded control data (not Apex); unnecessary @track (13); no disconnectedCallback for setTimeout                               | Medium       | Yes       |
+| 15  | `elaroComparativeAnalytics`  | Unnecessary @track (12)                                                                                                          | Medium       | Yes       |
+| 16  | `elaroCopilot`               | Unnecessary @track (4); debounce cleanup OK                                                                                      | Low          | Yes       |
+| 17  | `elaroDashboard`             | Unnecessary @track (6)                                                                                                           | Low          | Yes       |
+| 18  | `elaroDrillDownViewer`       | Unnecessary @track (9)                                                                                                           | Medium       | Yes       |
+| 19  | `elaroDynamicReportBuilder`  | Unnecessary @track (17)                                                                                                          | Medium       | Yes       |
+| 20  | `elaroEventExplorer`         | Unnecessary @track (16); large component (470+ LOC)                                                                              | Medium       | Yes       |
+| 21  | `elaroEventMonitor`          | Unnecessary @track (2); lifecycle OK (subscribe/unsubscribe)                                                                     | Low          | Yes       |
+| 22  | `elaroExecutiveKPIDashboard` | Unnecessary @track (4)                                                                                                           | Low          | Yes       |
+| 23  | `elaroReadinessScore`        | Unnecessary @track (14)                                                                                                          | Medium       | Yes       |
+| 24  | `elaroROICalculator`         | Unnecessary @track (11); connectedCallback with no cleanup needed                                                                | Medium       | Yes       |
+| 25  | `elaroScoreListener`         | Lifecycle correct (subscribe/unsubscribe)                                                                                        | --           | Yes       |
+| 26  | `elaroSetupWizard`           | Unnecessary @track (18); largest component; setTimeout used in simulateDelay                                                     | Medium       | Yes       |
+| 27  | `elaroTrendAnalyzer`         | Unnecessary @track (10)                                                                                                          | Medium       | Yes       |
+| 28  | `escalationPathConfig`       | Unnecessary @track (7); console.error; **no tests**                                                                              | **High**     | **No**    |
+| 29  | `executiveKpiDashboard`      | Clean wire usage                                                                                                                 | --           | Yes       |
+| 30  | `flowExecutionMonitor`       | Unnecessary @track (4); lifecycle OK                                                                                             | Low          | Yes       |
+| 31  | `frameworkSelector`          | Unnecessary @track (3)                                                                                                           | Low          | Yes       |
+| 32  | `jiraCreateModal`            | Unnecessary @track (5); **no tests**; naming collision (`isConfigured` property shadows import)                                  | **High**     | **No**    |
+| 33  | `jiraIssueCard`              | Unnecessary @track (8); **no tests**; console not used in prod code                                                              | **High**     | **No**    |
+| 34  | `onCallScheduleManager`      | Unnecessary @track (8); console.error (2); **no tests**                                                                          | **High**     | **No**    |
+| 35  | `performanceAlertPanel`      | Unnecessary @track (4); debounce timer; lifecycle OK                                                                             | Low          | Yes       |
+| 36  | `pollingManager`             | Good utility pattern; addEventListener/removeEventListener correct                                                               | --           | Yes       |
+| 37  | `remediationSuggestionCard`  | Unnecessary @track (7); console.error; **no tests**                                                                              | **High**     | **No**    |
+| 38  | `reportSchedulerConfig`      | Unnecessary @track (8); good modal accessibility                                                                                 | Medium       | Yes       |
+| 39  | `riskHeatmap`                | Clean; good accessibility                                                                                                        | --           | Yes       |
+| 40  | `systemMonitorDashboard`     | Unnecessary @track (1); lifecycle OK                                                                                             | Low          | Yes       |
 
 ---
 
@@ -132,10 +132,12 @@ Wire service handlers also check both `data` and `error` branches consistently.
 **Result: PASS -- Appropriate use of wire service.**
 
 Components correctly use `@wire` for:
+
 - Read-only data fetching (`getDashboardSummary`, `getQuickCommands`, `getScheduledReports`, `getEscalationPaths`, `getKPIMetrics`, etc.)
 - Reactive parameters (`$recordId`, `$jiraKey`, `$selectedObject`)
 
 Imperative calls are used appropriately for:
+
 - User-triggered mutations (`createSchedule`, `deleteSchedule`, `approveSuggestion`, etc.)
 - Actions that need explicit loading states (`generateAuditPackage`, `executeReport`)
 - Sequential operations (`refreshApex` after mutations)
@@ -149,6 +151,7 @@ No unnecessary imperative calls were found where wire would suffice.
 **Result: MOSTLY PASS -- Strong accessibility in newer components, gaps in older ones.**
 
 **Well-implemented accessibility:**
+
 - `elaroAuditWizard`: Excellent -- `role="main"`, `aria-label` on sections, `role="radiogroup"`, `aria-live="polite"` for progress updates, keyboard navigation support (`handleFrameworkKeydown`)
 - `elaroSetupWizard`: Strong -- similar patterns to audit wizard
 - `controlMappingMatrix`: Thorough -- `role="grid"`, `role="columnheader"`, `role="rowheader"`, `aria-label` on every interactive element
@@ -156,6 +159,7 @@ No unnecessary imperative calls were found where wire would suffice.
 - `elaroROICalculator`: Good -- `role="region"`, `role="article"`, `role="group"`
 
 **Missing accessibility:**
+
 - `remediationSuggestionCard`: Modal dialogs use `role="dialog"` but lack `aria-modal="true"` and `aria-labelledby`
 - `onCallScheduleManager`: Modal dialogs use `role="dialog"` but lack `aria-modal="true"` and `aria-labelledby`
 - `escalationPathConfig`: Same modal pattern issue
@@ -169,6 +173,7 @@ No unnecessary imperative calls were found where wire would suffice.
 **Result: MOSTLY PASS -- 3 `!important` overrides found.**
 
 **Issues found:**
+
 - `controlMappingMatrix.css:14,20,27`: Three `!important` overrides on `background-color: #032d60`. This hardcoded color bypasses SLDS tokens and will not respect theme changes.
 
 **No other CSS issues** -- no excessive inline styles detected in JS files, and most components rely on SLDS classes.
@@ -182,6 +187,7 @@ No unnecessary imperative calls were found where wire would suffice.
 **Result: PASS -- CustomEvent usage is correct.**
 
 All `CustomEvent` dispatches use:
+
 - Lowercase event names (e.g., `issuecreated`, `frameworkselected`)
 - `detail` property for passing data
 - Standard `this.dispatchEvent(new CustomEvent(...))` pattern
@@ -208,6 +214,7 @@ One naming note: `issuecreated` in `jiraCreateModal` could follow kebab-case (`i
 | `elaroCopilot` | -- | Clear debounce timer | Timer cleanup |
 
 **Leak risk:**
+
 - **`complianceGraphViewer`**: Uses `group.addEventListener("click", ...)` on SVG nodes at line 201 but has **no `disconnectedCallback`** and **no cleanup** of these event listeners. If the component is destroyed and recreated, the old listeners on detached DOM nodes create memory leaks.
 
 - **`elaroAuditWizard`**: Uses `setTimeout` at line 386 in `simulateProgress` but has no `disconnectedCallback` to clear the timer if the component is unmounted during generation.
@@ -220,16 +227,16 @@ One naming note: `issuecreated` in `jiraCreateModal` could follow kebab-case (`i
 
 **Components MISSING Jest tests entirely (5 of 40 = 12.5% untested):**
 
-| Component | Apex Methods Used | Complexity | Priority |
-|-----------|------------------|------------|----------|
-| **`complianceGraphViewer`** | 5 (getComplianceGraph, getGraphByFramework, getGraphStats, getNodeDetails, analyzeImpact) | High -- SVG rendering, force layout | P0 |
-| **`escalationPathConfig`** | 4 (getPaths, createPath, updatePath, deletePath) | Medium -- CRUD with modals | P1 |
-| **`jiraCreateModal`** | 2 (createIssue, isConfigured) | Low -- modal with form | P1 |
-| **`jiraIssueCard`** | 5 (getIssueStatus, syncIssueStatus, addComment, getAvailableTransitions, transitionIssue) | High -- wire + imperative + modals | P0 |
-| **`onCallScheduleManager`** | 5 (getCurrentOnCallUsers, getOnCallSchedules, createSchedule, updateSchedule, deleteSchedule) | High -- CRUD with wire + datatable | P0 |
-| **`remediationSuggestionCard`** | 6 (getSuggestions, generateSuggestions, approveSuggestion, rejectSuggestion, executeRemediation, markAsManuallyApplied) | High -- wire + 6 imperative calls + modals | P0 |
+| Component                       | Apex Methods Used                                                                                                       | Complexity                                 | Priority |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------- |
+| **`complianceGraphViewer`**     | 5 (getComplianceGraph, getGraphByFramework, getGraphStats, getNodeDetails, analyzeImpact)                               | High -- SVG rendering, force layout        | P0       |
+| **`escalationPathConfig`**      | 4 (getPaths, createPath, updatePath, deletePath)                                                                        | Medium -- CRUD with modals                 | P1       |
+| **`jiraCreateModal`**           | 2 (createIssue, isConfigured)                                                                                           | Low -- modal with form                     | P1       |
+| **`jiraIssueCard`**             | 5 (getIssueStatus, syncIssueStatus, addComment, getAvailableTransitions, transitionIssue)                               | High -- wire + imperative + modals         | P0       |
+| **`onCallScheduleManager`**     | 5 (getCurrentOnCallUsers, getOnCallSchedules, createSchedule, updateSchedule, deleteSchedule)                           | High -- CRUD with wire + datatable         | P0       |
+| **`remediationSuggestionCard`** | 6 (getSuggestions, generateSuggestions, approveSuggestion, rejectSuggestion, executeRemediation, markAsManuallyApplied) | High -- wire + 6 imperative calls + modals | P0       |
 
-**Note**: `remediationSuggestionCard` is the highest-risk untested component -- it manages AI-powered remediation execution, which is a core compliance workflow.
+**Note**: `remediationSuggestionCard` is the highest-risk untested component -- it manages guided remediation execution, which is a core compliance workflow.
 
 ---
 
@@ -261,12 +268,12 @@ One naming note: `issuecreated` in `jiraCreateModal` could follow kebab-case (`i
 
 The following production (non-test) files contain `console.error` calls that should be removed or replaced with a structured logging approach:
 
-| File | Line | Statement |
-|------|------|-----------|
-| `complianceGraphViewer.js` | 100, 285, 342 | `console.error(...)` |
-| `escalationPathConfig.js` | 255 | `console.error(...)` |
-| `onCallScheduleManager.js` | 145, 308 | `console.error(...)` |
-| `remediationSuggestionCard.js` | 270 | `console.error(...)` |
+| File                           | Line          | Statement            |
+| ------------------------------ | ------------- | -------------------- |
+| `complianceGraphViewer.js`     | 100, 285, 342 | `console.error(...)` |
+| `escalationPathConfig.js`      | 255           | `console.error(...)` |
+| `onCallScheduleManager.js`     | 145, 308      | `console.error(...)` |
+| `remediationSuggestionCard.js` | 270           | `console.error(...)` |
 
 ---
 
@@ -299,14 +306,14 @@ The following production (non-test) files contain `console.error` calls that sho
 
 ## Test Coverage Gap Matrix
 
-| Component | Apex Methods | Has Tests | Risk Level |
-|-----------|-------------|-----------|------------|
-| `remediationSuggestionCard` | 6 | NO | **Critical** -- manages AI remediation execution |
-| `onCallScheduleManager` | 5 | NO | **High** -- CRUD operations on schedules |
-| `jiraIssueCard` | 5 | NO | **High** -- external system integration |
-| `complianceGraphViewer` | 5 | NO | **High** -- complex DOM manipulation |
-| `escalationPathConfig` | 4 | NO | **Medium** -- CRUD with validation |
-| `jiraCreateModal` | 2 | NO | **Medium** -- simple modal + API call |
+| Component                   | Apex Methods | Has Tests | Risk Level                                       |
+| --------------------------- | ------------ | --------- | ------------------------------------------------ |
+| `remediationSuggestionCard` | 6            | NO        | **Critical** -- manages AI remediation execution |
+| `onCallScheduleManager`     | 5            | NO        | **High** -- CRUD operations on schedules         |
+| `jiraIssueCard`             | 5            | NO        | **High** -- external system integration          |
+| `complianceGraphViewer`     | 5            | NO        | **High** -- complex DOM manipulation             |
+| `escalationPathConfig`      | 4            | NO        | **Medium** -- CRUD with validation               |
+| `jiraCreateModal`           | 2            | NO        | **Medium** -- simple modal + API call            |
 
 **Overall test coverage**: 34 of 40 components have Jest tests (85%). Target is 100% for AppExchange readiness.
 

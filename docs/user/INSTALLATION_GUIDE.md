@@ -47,7 +47,7 @@
 
 For full functionality, you may need accounts with:
 
-- **Claude AI (Anthropic):** For AI-powered compliance analysis ([Sign up](https://www.anthropic.com))
+- **Anthropic API:** For optional AI-assisted compliance analysis ([Sign up](https://www.anthropic.com))
 - **Slack:** For real-time compliance alerts ([Slack Webhooks](https://api.slack.com/messaging/webhooks))
 - **PagerDuty:** For incident management ([PagerDuty Events API](https://developer.pagerduty.com))
 - **ServiceNow:** For GRC integration ([ServiceNow REST API](https://docs.servicenow.com))
@@ -84,7 +84,7 @@ Before installing Elaro, complete these steps:
 
 If you plan to use AI or external integrations:
 
-- [ ] Obtain Claude AI API key from Anthropic
+- [ ] Obtain Anthropic API key
 - [ ] Create Slack Incoming Webhook URL
 - [ ] Obtain PagerDuty routing key
 - [ ] Create ServiceNow integration user credentials
@@ -113,7 +113,7 @@ If you plan to use AI or external integrations:
    - Review Lightning Web Components: 33 components
    - Review Custom Objects: 46 objects
    - Review Permission Sets: 5 permission sets
-   - Click **Approve Third-Party Access** (required for Claude AI integration)
+   - Click **Approve Third-Party Access** (required for optional external AI integration)
 
 5. **Start Installation**
    - Click **Install**
@@ -129,6 +129,7 @@ If you plan to use AI or external integrations:
 After installation completes, the `ElaroInstallHandler` automatically executes:
 
 **Automatic Configuration:**
+
 - ✅ Creates default AI settings (AI disabled until you configure API key)
 - ✅ Creates welcome audit log entry
 - ✅ Posts Chatter notification with next steps (if Chatter enabled)
@@ -159,15 +160,15 @@ System.debug('Install Log: ' + logs[0].Description__c);
 
 ### Step 1: Configure Named Credentials
 
-#### 1.1 Claude AI API (Required for AI Features)
+#### 1.1 External AI API (Required for AI Features)
 
-**Purpose:** Enables AI-powered compliance analysis, natural language queries, and root cause analysis
+**Purpose:** Enables AI-assisted compliance analysis, natural language queries, and root cause analysis
 
 **Steps:**
 
 1. Navigate to: **Setup → Named Credentials → New Legacy**
 2. Enter configuration:
-   - **Label:** Elaro Claude API
+   - **Label:** Elaro AI API
    - **Name:** `Elaro_Claude_API`
    - **URL:** `https://api.anthropic.com`
    - **Identity Type:** Named Principal
@@ -242,12 +243,13 @@ SlackIntegration.sendMessage('Test message from Elaro!');
 Navigate to: **Setup → Custom Metadata Types → Elaro API Config → Manage Records**
 
 If "PagerDuty" record doesn't exist:
-   - Click **New**
-   - **Label:** PagerDuty
-   - **Elaro API Config Name:** PagerDuty
-   - **API Key:** [Your PagerDuty Routing Key from Events API v2]
-   - **Is Active:** ✅ Checked
-   - Click **Save**
+
+- Click **New**
+- **Label:** PagerDuty
+- **Elaro API Config Name:** PagerDuty
+- **API Key:** [Your PagerDuty Routing Key from Events API v2]
+- **Is Active:** ✅ Checked
+- Click **Save**
 
 2. **Obtain PagerDuty Routing Key:**
    - Log in to [PagerDuty](https://www.pagerduty.com)
@@ -269,7 +271,7 @@ PagerDutyIntegration.triggerIncident('{"alertId":"TEST-001","eventType":"Test Al
 1. Navigate to: **Setup → Custom Settings → Elaro AI Settings → Manage**
 2. Click **Edit** next to organization defaults
 3. Update settings:
-   - **AI Enabled:** ✅ Checked (only after configuring Claude API Named Credential)
+   - **AI Enabled:** Checked (only after configuring the AI API Named Credential)
    - **Model Name:** `claude-sonnet-4-20250514` (default)
    - **Max Tokens:** `4096`
    - **Temperature:** `0.7`
@@ -278,7 +280,7 @@ PagerDutyIntegration.triggerIncident('{"alertId":"TEST-001","eventType":"Test Al
    - **Timeout Seconds:** `60`
 4. Click **Save**
 
-**⚠️ Important:** Do not enable AI until Claude API Named Credential is configured, or API calls will fail.
+**Important:** Do not enable AI until the AI API Named Credential is configured, or API calls will fail.
 
 ---
 
@@ -324,13 +326,13 @@ Elaro includes 5 permission sets. Assign users to appropriate permission sets ba
 
 ### Permission Set Overview
 
-| Permission Set | Purpose | Typical Users |
-|----------------|---------|---------------|
-| **Elaro_Admin** | Full administrative access to all Elaro features | Compliance Managers, System Administrators |
-| **Elaro_Auditor** | Read-only access to audit data and reports | Internal Auditors, Compliance Officers |
-| **Elaro_User** | Standard access to compliance dashboards and evidence | Compliance Team Members, Department Heads |
-| **Elaro_AI_User** | Access to AI-powered compliance analysis features | Compliance Analysts, Risk Managers |
-| **Elaro_API_User** | API access for external integrations | Integration Users, Service Accounts |
+| Permission Set     | Purpose                                               | Typical Users                              |
+| ------------------ | ----------------------------------------------------- | ------------------------------------------ |
+| **Elaro_Admin**    | Full administrative access to all Elaro features      | Compliance Managers, System Administrators |
+| **Elaro_Auditor**  | Read-only access to audit data and reports            | Internal Auditors, Compliance Officers     |
+| **Elaro_User**     | Standard access to compliance dashboards and evidence | Compliance Team Members, Department Heads  |
+| **Elaro_AI_User**  | Access to AI-assisted compliance analysis features    | Compliance Analysts, Risk Managers         |
+| **Elaro_API_User** | API access for external integrations                  | Integration Users, Service Accounts        |
 
 ### Assigning Permission Sets
 
@@ -385,6 +387,7 @@ System.debug('Permission Sets: ' + [SELECT COUNT() FROM PermissionSet WHERE Name
 ```
 
 Expected output:
+
 - Apex Classes: ~207
 - Custom Objects: ~46
 - Permission Sets: 5
@@ -430,7 +433,7 @@ System.assertEquals('Completed', logs[0].Status__c, 'Install should be completed
 ### 7. Test AI Features (If Configured)
 
 ```apex
-// Only run if Claude API Named Credential is configured
+// Only run if the external AI API Named Credential is configured
 String query = 'Analyze recent login patterns for compliance risks';
 String result = ElaroComplianceCopilotService.analyzeCompliance(query, 'HIPAA');
 System.assertNotEquals(null, result, 'AI analysis should return result');
@@ -494,6 +497,7 @@ System.assertNotEquals(null, result, 'AI analysis should return result');
 **Symptoms:** Installation fails with generic error
 
 **Resolution:**
+
 1. Verify org meets all prerequisites (Edition, API version, My Domain)
 2. Check available storage (Data and File storage)
 3. Review installation error details in email notification
@@ -504,6 +508,7 @@ System.assertNotEquals(null, result, 'AI analysis should return result');
 **Symptoms:** Installation blocked waiting for approval
 
 **Resolution:**
+
 1. Check **Setup → Installed Packages → Elaro → View Components**
 2. Click **Approve Third-Party Access**
 3. Resume installation
@@ -517,6 +522,7 @@ System.assertNotEquals(null, result, 'AI analysis should return result');
 **Symptoms:** AI analysis returns errors or null results
 
 **Diagnosis:**
+
 ```apex
 // Check AI settings
 Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
@@ -531,6 +537,7 @@ System.debug('NC Status: ' + http.send(req).getStatusCode());
 ```
 
 **Resolution:**
+
 1. Verify Named Credential `Elaro_Claude_API` exists
 2. Check API key is valid (test at api.anthropic.com)
 3. Verify `anthropic-version` header is set to `2023-06-01`
@@ -540,6 +547,7 @@ System.debug('NC Status: ' + http.send(req).getStatusCode());
 #### Issue: "Slack Notifications Not Sending"
 
 **Diagnosis:**
+
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   -d '{"text":"Test from curl"}' \
@@ -547,6 +555,7 @@ curl -X POST -H 'Content-Type: application/json' \
 ```
 
 **Resolution:**
+
 1. Verify webhook URL is correct and active
 2. Check Slack app is installed in workspace
 3. Confirm Named Credential `Slack_Webhook` uses exact webhook URL
@@ -555,6 +564,7 @@ curl -X POST -H 'Content-Type: application/json' \
 #### Issue: "Permission Sets Not Assigning"
 
 **Resolution:**
+
 1. Verify user has Standard User profile or higher
 2. Check for conflicting permission set assignments
 3. Review Setup Audit Trail for errors
@@ -563,6 +573,7 @@ curl -X POST -H 'Content-Type: application/json' \
 #### Issue: "Compliance Scan Fails"
 
 **Diagnosis:**
+
 ```apex
 List<Elaro_Audit_Log__c> errors = [
     SELECT Description__c, Severity__c
@@ -577,6 +588,7 @@ for (Elaro_Audit_Log__c log : errors) {
 ```
 
 **Resolution:**
+
 1. Check API call limits (should have at least 5,000 available)
 2. Verify user has access to objects being scanned
 3. Review debug logs for SOQL errors
@@ -589,6 +601,7 @@ for (Elaro_Audit_Log__c log : errors) {
 #### Issue: "Compliance Scans Taking Too Long"
 
 **Optimization Steps:**
+
 1. Run scans during off-peak hours
 2. Reduce number of frameworks scanned simultaneously
 3. Archive old compliance data (older than 365 days)
@@ -597,6 +610,7 @@ for (Elaro_Audit_Log__c log : errors) {
 #### Issue: "Dashboard Loading Slowly"
 
 **Resolution:**
+
 1. Clear browser cache
 2. Verify no browser console errors
 3. Check for large data volumes (>100,000 records)
@@ -611,6 +625,7 @@ for (Elaro_Audit_Log__c log : errors) {
 ### Before Uninstalling
 
 1. **Export Critical Data:**
+
    ```bash
    sf data export --query "SELECT * FROM Compliance_Score__c" --output-file compliance_scores.csv
    sf data export --query "SELECT * FROM Elaro_Audit_Log__c" --output-file audit_logs.csv
@@ -650,7 +665,6 @@ for (Elaro_Audit_Log__c log : errors) {
 
 - **Installation Guide:** This document
 - **External Services Guide:** [docs/EXTERNAL_SERVICES.md](EXTERNAL_SERVICES.md)
-- **PagerDuty Security Review:** [docs/PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md](PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md)
 - **Technical Deep Dive:** [TECHNICAL_DEEP_DIVE.md](../TECHNICAL_DEEP_DIVE.md)
 - **API Reference:** [API_REFERENCE.md](../API_REFERENCE.md)
 

@@ -60,7 +60,7 @@ public class SOC2IncidentResponseServiceTest {
     static void testAssessBreach() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
-        IBreachNotificationService.BreachAssessmentRequest request = new IBreachNotificationService.BreachAssessmentRequest();
+        BreachNotificationTypes.BreachAssessmentRequest request = new BreachNotificationTypes.BreachAssessmentRequest();
         request.incidentType = 'DATA_BREACH';
         request.description = 'Test breach assessment';
         request.recordsAffected = 5000;
@@ -69,7 +69,7 @@ public class SOC2IncidentResponseServiceTest {
         request.encryptionInPlace = false;
 
         Test.startTest();
-        IBreachNotificationService.BreachAssessment assessment = service.assessBreach(request);
+        BreachNotificationTypes.BreachAssessment assessment = service.assessBreach(request);
         Test.stopTest();
 
         Assert.areNotEqual(null, assessment, 'Assessment should not be null');
@@ -82,14 +82,14 @@ public class SOC2IncidentResponseServiceTest {
     static void testAssessBreachLowRisk() {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
-        IBreachNotificationService.BreachAssessmentRequest request = new IBreachNotificationService.BreachAssessmentRequest();
+        BreachNotificationTypes.BreachAssessmentRequest request = new BreachNotificationTypes.BreachAssessmentRequest();
         request.incidentType = 'POLICY_VIOLATION';
         request.description = 'Minor policy violation';
         request.recordsAffected = 10;
         request.encryptionInPlace = true;
 
         Test.startTest();
-        IBreachNotificationService.BreachAssessment assessment = service.assessBreach(request);
+        BreachNotificationTypes.BreachAssessment assessment = service.assessBreach(request);
         Test.stopTest();
 
         Assert.areNotEqual(null, assessment, 'Assessment should not be null');
@@ -128,7 +128,7 @@ public class SOC2IncidentResponseServiceTest {
         Security_Incident__c incident = [SELECT Id FROM Security_Incident__c WHERE Severity__c = 'CRITICAL' LIMIT 1];
 
         Test.startTest();
-        IBreachNotificationService.NotificationStatus status = service.getNotificationStatus(incident.Id);
+        BreachNotificationTypes.NotificationStatus status = service.getNotificationStatus(incident.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, status, 'Status should not be null');
@@ -152,7 +152,7 @@ public class SOC2IncidentResponseServiceTest {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
         Test.startTest();
-        List<IBreachNotificationService.BreachSummary> breaches = service.getOpenBreaches();
+        List<BreachNotificationTypes.BreachSummary> breaches = service.getOpenBreaches();
         Test.stopTest();
 
         Assert.areNotEqual(null, breaches, 'Breaches list should not be null');
@@ -164,7 +164,7 @@ public class SOC2IncidentResponseServiceTest {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
         Test.startTest();
-        IBreachNotificationService.BreachMetrics metrics = service.getBreachMetrics(30);
+        BreachNotificationTypes.BreachMetrics metrics = service.getBreachMetrics(30);
         Test.stopTest();
 
         Assert.areNotEqual(null, metrics, 'Metrics should not be null');
@@ -271,7 +271,7 @@ public class SOC2IncidentResponseServiceTest {
         SOC2IncidentResponseService service = new SOC2IncidentResponseService();
 
         Test.startTest();
-        List<IBreachNotificationService.BreachSummary> breaches = service.getOpenBreaches();
+        List<BreachNotificationTypes.BreachSummary> breaches = service.getOpenBreaches();
         Test.stopTest();
 
         Assert.isTrue(breaches.size() >= 200, 'Should retrieve bulk incidents');

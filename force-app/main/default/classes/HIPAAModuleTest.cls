@@ -86,7 +86,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
         Test.stopTest();
 
         Assert.areNotEqual(null, controls, 'Controls list should not be null');
@@ -94,7 +94,7 @@ private class HIPAAModuleTest {
 
         // Verify controls cover Administrative, Physical, and Technical safeguards
         Set<String> categories = new Set<String>();
-        for (IComplianceModule.Control ctrl : controls) {
+        for (ComplianceModuleTypes.Control ctrl : controls) {
             categories.add(ctrl.category);
             Assert.areNotEqual(null, ctrl.code, 'Control code should not be null');
             Assert.areNotEqual(null, ctrl.name, 'Control name should not be null');
@@ -143,13 +143,13 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
+        List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
 
         // Verify gap structure
-        for (IComplianceModule.Gap gap : gaps) {
+        for (ComplianceModuleTypes.Gap gap : gaps) {
             Assert.areNotEqual(null, gap.id, 'Gap id should not be null');
             Assert.areNotEqual(null, gap.controlCode, 'Gap controlCode should not be null');
             Assert.areNotEqual(null, gap.severity, 'Gap severity should not be null');
@@ -184,7 +184,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('164.312(a)');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('164.312(a)');
         Test.stopTest();
 
         Assert.areNotEqual(null, ctrl, 'Should find Access Control control');
@@ -197,7 +197,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
         Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
@@ -206,11 +206,11 @@ private class HIPAAModuleTest {
     @IsTest
     static void testGetControlById_AllControls() {
         HIPAAModule module = new HIPAAModule();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
 
         Test.startTest();
-        for (IComplianceModule.Control ctrl : controls) {
-            IComplianceModule.Control found = module.getControlById(ctrl.code);
+        for (ComplianceModuleTypes.Control ctrl : controls) {
+            ComplianceModuleTypes.Control found = module.getControlById(ctrl.code);
             Assert.areNotEqual(null, found, 'Should find control by code: ' + ctrl.code);
         }
         Test.stopTest();
@@ -226,7 +226,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '164.312(a)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -245,7 +245,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '164.312(b)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -261,7 +261,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '164.312(d)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -279,7 +279,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '164.312(e)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -298,7 +298,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '164.308(a)(6)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -316,7 +316,7 @@ private class HIPAAModuleTest {
 
         // Test a control that falls into the 'else' branch (e.g., 164.308(a)(2))
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             '164.308(a)(2)',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -330,11 +330,11 @@ private class HIPAAModuleTest {
     static void testEvaluateControl_AllControlTypes() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'HIPAA' LIMIT 1];
         HIPAAModule module = new HIPAAModule();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
 
         Test.startTest();
-        for (IComplianceModule.Control ctrl : controls) {
-            IComplianceModule.ControlResult result = module.evaluateControl(
+        for (ComplianceModuleTypes.Control ctrl : controls) {
+            ComplianceModuleTypes.ControlResult result = module.evaluateControl(
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );
@@ -363,7 +363,7 @@ private class HIPAAModuleTest {
         HIPAAModule module = new HIPAAModule();
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = module.identifyGaps(cleanPkg.Id);
+        List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(cleanPkg.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
@@ -371,7 +371,7 @@ private class HIPAAModuleTest {
         Assert.isTrue(gaps.size() > 0, 'Should identify gaps when no evidence is present');
 
         // Verify gap properties
-        for (IComplianceModule.Gap gap : gaps) {
+        for (ComplianceModuleTypes.Gap gap : gaps) {
             Assert.isTrue(gap.id.startsWith('GAP-'), 'Gap ID should start with GAP-');
             Assert.areNotEqual(null, gap.description, 'Gap description should not be null');
             Assert.areNotEqual(null, gap.riskScore, 'Gap risk score should not be null');
@@ -429,7 +429,7 @@ private class HIPAAModuleTest {
             Decimal score = module.calculateScore(pkg.Id);
             Assert.isTrue(score >= 0, 'Score should be non-negative for package: ' + pkg.Id);
 
-            List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
+            List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(pkg.Id);
             Assert.areNotEqual(null, gaps, 'Gaps should not be null for package: ' + pkg.Id);
         }
         Test.stopTest();

@@ -75,7 +75,7 @@ Elaro starts as a **compliance drift guardrail** for regulated organizations, th
 #### 1. **AI Change Explanations** 🤖
 
 **Problem**: Users don't understand WHY a change is flagged as high-risk.
-**Solution**: GPT/Claude integration to explain compliance violations in plain English.
+**Solution**: External model integration to explain compliance violations in plain English.
 
 **Example**:
 
@@ -603,7 +603,7 @@ enforcement:
 ### Potential Future Features (v4.0+)
 
 - **Predictive Compliance**: ML models predict when org will drift out of compliance
-- **Compliance Copilot**: ChatGPT-like interface ("Show me all users with Modify All Data")
+- **Compliance Assistant**: conversational interface ("Show me all users with Modify All Data")
 - **Blockchain Evidence Storage**: Immutable audit trail using blockchain
 - **Compliance Marketplace**: Buy/sell compliance policies and frameworks
 - **Multi-Cloud Support**: Expand beyond Salesforce (AWS, Azure, Google Cloud)

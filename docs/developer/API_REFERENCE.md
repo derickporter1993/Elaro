@@ -20,10 +20,10 @@ Receives compliance scores from external systems (e.g., AWS Lambda) and updates 
 
 #### Request Headers
 
-| Header | Required | Description |
-|--------|----------|-------------|
-| `X-Elaro-Api-Key` | Yes | API key configured in `Elaro_API_Config__mdt` |
-| `Content-Type` | Yes | Must be `application/json` |
+| Header            | Required | Description                                   |
+| ----------------- | -------- | --------------------------------------------- |
+| `X-Elaro-Api-Key` | Yes      | API key configured in `Elaro_API_Config__mdt` |
+| `Content-Type`    | Yes      | Must be `application/json`                    |
 
 #### Request Body
 
@@ -50,15 +50,15 @@ Receives compliance scores from external systems (e.g., AWS Lambda) and updates 
 
 #### Request Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `orgId` | String | Yes | Salesforce Organization ID (18-char) |
-| `entityType` | String | Yes | Type of entity scored: `PERMISSION_SET`, `PROFILE`, `USER`, `ORG` |
-| `entityId` | String | Yes | Salesforce ID of the entity being scored |
-| `riskScore` | Decimal | Yes | Overall risk score (0.0-10.0, higher = more risk) |
-| `frameworkScores` | Object | No | Map of framework names to compliance scores (0-100) |
-| `findings` | Array | No | List of compliance findings as strings |
-| `s3Key` | String | No | Reference to detailed report in external storage |
+| Parameter         | Type    | Required | Description                                                       |
+| ----------------- | ------- | -------- | ----------------------------------------------------------------- |
+| `orgId`           | String  | Yes      | Salesforce Organization ID (18-char)                              |
+| `entityType`      | String  | Yes      | Type of entity scored: `PERMISSION_SET`, `PROFILE`, `USER`, `ORG` |
+| `entityId`        | String  | Yes      | Salesforce ID of the entity being scored                          |
+| `riskScore`       | Decimal | Yes      | Overall risk score (0.0-10.0, higher = more risk)                 |
+| `frameworkScores` | Object  | No       | Map of framework names to compliance scores (0-100)               |
+| `findings`        | Array   | No       | List of compliance findings as strings                            |
+| `s3Key`           | String  | No       | Reference to detailed report in external storage                  |
 
 #### Response (Success - 200)
 
@@ -102,11 +102,11 @@ Receives compliance scores from external systems (e.g., AWS Lambda) and updates 
 The endpoint automatically calculates risk level based on score:
 
 | Risk Score | Risk Level |
-|------------|------------|
-| 8.0 - 10.0 | CRITICAL |
-| 6.0 - 7.9 | HIGH |
-| 4.0 - 5.9 | MEDIUM |
-| 0.0 - 3.9 | LOW |
+| ---------- | ---------- |
+| 8.0 - 10.0 | CRITICAL   |
+| 6.0 - 7.9  | HIGH       |
+| 4.0 - 5.9  | MEDIUM     |
+| 0.0 - 3.9  | LOW        |
 
 #### Platform Event
 
@@ -178,9 +178,9 @@ public static FrameworkDashboardData getFrameworkDashboard(String framework)
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `framework` | String | Yes | Framework name (e.g., `HIPAA`, `SOC2`, `GDPR`) |
+| Parameter   | Type   | Required | Description                                    |
+| ----------- | ------ | -------- | ---------------------------------------------- |
+| `framework` | String | Yes      | Framework name (e.g., `HIPAA`, `SOC2`, `GDPR`) |
 
 **Returns:** `FrameworkDashboardData`
 
@@ -249,9 +249,9 @@ public static KPIMetric getKPIByName(String kpiName)
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `kpiName` | String | Yes | The unique KPI name from Custom Metadata |
+| Parameter | Type   | Required | Description                              |
+| --------- | ------ | -------- | ---------------------------------------- |
+| `kpiName` | String | Yes      | The unique KPI name from Custom Metadata |
 
 **Returns:** `KPIMetric`
 
@@ -311,7 +311,7 @@ public static ScoreResult calculateReadinessScore()
 
 ### ElaroComplianceCopilot
 
-AI-powered natural language interface for compliance queries.
+Natural language interface for compliance queries.
 
 #### askQuestion(String question)
 
@@ -324,11 +324,12 @@ public static CopilotResponse askQuestion(String question)
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `question` | String | Yes | Natural language question (max 1000 chars) |
+| Parameter  | Type   | Required | Description                                |
+| ---------- | ------ | -------- | ------------------------------------------ |
+| `question` | String | Yes      | Natural language question (max 1000 chars) |
 
 **Example Questions:**
+
 - "What are our critical HIPAA gaps?"
 - "Show me SOC2 evidence from last month"
 - "What's our PCI-DSS readiness?"
@@ -373,11 +374,11 @@ public static DrillDownResult getDrillDownData(String metricType, String framewo
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `metricType` | String | Yes | Type: `GAPS`, `EVIDENCE`, `SCORE`, `USERS` |
-| `framework` | String | No | Filter by framework (null = all frameworks) |
-| `timeRange` | String | No | Filter by time: `TODAY`, `WEEK`, `MONTH`, `QUARTER`, `YEAR` |
+| Parameter    | Type   | Required | Description                                                 |
+| ------------ | ------ | -------- | ----------------------------------------------------------- |
+| `metricType` | String | Yes      | Type: `GAPS`, `EVIDENCE`, `SCORE`, `USERS`                  |
+| `framework`  | String | No       | Filter by framework (null = all frameworks)                 |
+| `timeRange`  | String | No       | Filter by time: `TODAY`, `WEEK`, `MONTH`, `QUARTER`, `YEAR` |
 
 **Returns:** `DrillDownResult`
 
@@ -398,10 +399,10 @@ public static List<TrendDataPoint> getTrendData(String framework, Integer months
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `framework` | String | No | All | Filter by framework |
-| `months` | Integer | No | 12 | Number of months of history |
+| Parameter   | Type    | Required | Default | Description                 |
+| ----------- | ------- | -------- | ------- | --------------------------- |
+| `framework` | String  | No       | All     | Filter by framework         |
+| `months`    | Integer | No       | 12      | Number of months of history |
 
 **Returns:** `List<TrendDataPoint>`
 
@@ -451,6 +452,7 @@ public static ReportResult generateReport(ReportRequest request)
 ```
 
 **Report Types:**
+
 - `EXECUTIVE_SUMMARY` - High-level overview for executives
 - `DETAILED_GAP_ANALYSIS` - Comprehensive gap report
 - `EVIDENCE_COLLECTION` - All evidence organized by framework
@@ -485,10 +487,10 @@ public static ErasureResult initiateErasure(Id contactId, String reason)
 
 **Parameters:**
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `contactId` | Id | Yes | Contact to erase |
-| `reason` | String | Yes | Legal basis for erasure |
+| Parameter   | Type   | Required | Description             |
+| ----------- | ------ | -------- | ----------------------- |
+| `contactId` | Id     | Yes      | Contact to erase        |
+| `reason`    | String | Yes      | Legal basis for erasure |
 
 **Returns:** `ErasureResult`
 
@@ -583,14 +585,14 @@ public static PagedResult getRecords(Integer pageNumber, Integer pageSize)
 
 ### HTTP Status Codes (REST)
 
-| Code | Meaning | When Used |
-|------|---------|-----------|
-| 200 | Success | Request completed successfully |
-| 400 | Bad Request | Validation error, malformed request |
-| 401 | Unauthorized | Missing or invalid API key |
-| 403 | Forbidden | User lacks permission |
-| 404 | Not Found | Resource doesn't exist |
-| 500 | Server Error | Unexpected error |
+| Code | Meaning      | When Used                           |
+| ---- | ------------ | ----------------------------------- |
+| 200  | Success      | Request completed successfully      |
+| 400  | Bad Request  | Validation error, malformed request |
+| 401  | Unauthorized | Missing or invalid API key          |
+| 403  | Forbidden    | User lacks permission               |
+| 404  | Not Found    | Resource doesn't exist              |
+| 500  | Server Error | Unexpected error                    |
 
 ### AuraHandledException (LWC)
 
@@ -603,16 +605,18 @@ throw new AuraHandledException('Contact not found: ' + contactId);
 In LWC:
 
 ```javascript
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 try {
-    const result = await getData();
+  const result = await getData();
 } catch (error) {
-    this.dispatchEvent(new ShowToastEvent({
-        title: 'Error',
-        message: error.body.message,
-        variant: 'error'
-    }));
+  this.dispatchEvent(
+    new ShowToastEvent({
+      title: "Error",
+      message: error.body.message,
+      variant: "error",
+    })
+  );
 }
 ```
 
@@ -638,7 +642,7 @@ public static List<KPIMetric> getKPIMetrics()
 Use `refreshApex()` in LWC to invalidate cache:
 
 ```javascript
-import { refreshApex } from '@salesforce/apex';
+import { refreshApex } from "@salesforce/apex";
 await refreshApex(this.wiredResult);
 ```
 

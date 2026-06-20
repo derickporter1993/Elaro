@@ -94,7 +94,7 @@ export function safeCleanupDom() {
         // Force remove the child
         try {
           document.body.firstChild.remove();
-        } catch {
+        } catch (_error) {
           // If even remove() fails, just continue
         }
       } else {
