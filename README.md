@@ -630,6 +630,28 @@ GitHub Actions runs on push to `main`, `develop`, `release/*`, `claude/*`:
 5. **cli-build** — Platform TypeScript build
 6. **build-success** — Final deployment readiness check
 
+### Delivery Governance
+
+Elaro changes should be planned and verified against package boundaries, not just feature names:
+
+| Workstream       | Scope                                | Required checkpoint                                                            |
+| ---------------- | ------------------------------------ | ------------------------------------------------------------------------------ |
+| Main package     | `force-app/`                         | Validate compliance services, shared utilities, UI flows, and Apex/LWC tests   |
+| Health Check     | `force-app-healthcheck/`             | Validate standalone scanner behavior, namespace assumptions, and package tests |
+| Platform tooling | `platform/`                          | Run TypeScript build/tests and confirm CLI behavior remains compatible         |
+| Security model   | CRUD/FLS, sharing, SOQL, DML, errors | Confirm `WITH USER_MODE`, user-mode DML, sharing, and sanitized exceptions     |
+
+Use an architecture decision checkpoint before implementation when a change crosses package boundaries, changes logging or security utilities, alters package metadata, or introduces a new cross-module contract.
+
+Sequence delivery by dependency risk:
+
+1. Package, namespace, versioning, and source-conversion blockers
+2. Shared architecture contracts and security utilities
+3. Framework-specific services, LWCs, and operational modules
+4. Documentation, polish, and release notes
+
+Release-bound work is not complete until local validation and org-level validation both pass. At minimum, run `npm run precommit`, package source conversion, a dry-run deploy, and targeted Apex tests for the touched packages. Packaging or AppExchange work also requires a package-version or packaging dry run before release approval.
+
 ### Quality Gates
 
 - Code Analyzer v5: Zero HIGH severity findings
