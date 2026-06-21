@@ -108,13 +108,19 @@ public interface IComplianceModule {
     }
     
     /**
-     * Result of control evaluation
+     * Result of control evaluation.
+     *
+     * A control must only be marked COMPLIANT/NON_COMPLIANT/PARTIAL when it was
+     * actually evaluated. When a control cannot be programmatically verified (it
+     * needs process/legal evidence or org introspection unavailable in context),
+     * set status to NOT_EVALUATED so the scorer excludes it from the denominator
+     * rather than fabricating a pass. See ElaroConstants.STATUS_* constants.
      */
     class ControlResult {
         public String controlId;
         public Boolean passed;
         public Decimal score;
-        public String status; // COMPLIANT, NON_COMPLIANT, PARTIAL, NOT_APPLICABLE
+        public String status; // COMPLIANT, NON_COMPLIANT, PARTIAL, NOT_APPLICABLE, NOT_EVALUATED
         public String finding;
         public List<String> evidenceIds;
         public Datetime evaluatedAt;

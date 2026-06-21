@@ -84,7 +84,24 @@ public with sharing class ElaroConstants {
     public static final Decimal SCORE_THRESHOLD_GOOD = 80;
     public static final Decimal SCORE_THRESHOLD_FAIR = 70;
     public static final Decimal SCORE_THRESHOLD_NEEDS_IMPROVEMENT = 50;
-    
+
+    // ============================================
+    // CONTROL EVALUATION STATUSES
+    // ============================================
+    // Status values for IComplianceModule.ControlResult.status. A control is only
+    // reported COMPLIANT / NON_COMPLIANT / PARTIAL when it was actually evaluated
+    // against real org configuration or collected evidence. When a control cannot
+    // be programmatically verified — it requires process/legal evidence, or an org
+    // introspection capability not available in the running context — it MUST be
+    // reported NOT_EVALUATED and EXCLUDED from score denominators, never assumed to
+    // pass. This is what keeps Elaro's compliance verdicts court-defensible: the
+    // product must never claim a control passed if it never checked it.
+    public static final String STATUS_COMPLIANT = 'COMPLIANT';
+    public static final String STATUS_NON_COMPLIANT = 'NON_COMPLIANT';
+    public static final String STATUS_PARTIAL = 'PARTIAL';
+    public static final String STATUS_NOT_APPLICABLE = 'NOT_APPLICABLE';
+    public static final String STATUS_NOT_EVALUATED = 'NOT_EVALUATED';
+
     // ============================================
     // COMPLIANCE DEADLINES
     // ============================================

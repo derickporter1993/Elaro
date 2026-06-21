@@ -269,8 +269,9 @@ private class HIPAAModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('164.312(d)', result.controlId, 'Control ID should match');
-        Assert.isTrue(result.passed, 'Authentication control should pass by default');
-        Assert.areEqual(85, result.score, 'Score should be 85');
+        Assert.isFalse(result.passed, 'Authentication cannot be auto-verified from Apex, so it must not report a pass');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Authentication should be NOT_EVALUATED rather than a fabricated pass');
     }
 
     @IsTest
@@ -287,9 +288,9 @@ private class HIPAAModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('164.312(e)', result.controlId, 'Control ID should match');
-        Assert.isTrue(result.passed, 'Transmission security should pass (TLS enforced)');
-        Assert.areEqual(100, result.score, 'Score should be 100');
-        Assert.areEqual('COMPLIANT', result.status, 'Status should be COMPLIANT');
+        Assert.isFalse(result.passed, 'Transmission security configuration cannot be auto-verified from Apex');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Transmission security should be NOT_EVALUATED, not an unverified COMPLIANT claim');
     }
 
     @IsTest
@@ -306,7 +307,36 @@ private class HIPAAModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('164.308(a)(6)', result.controlId, 'Control ID should match');
-        Assert.isTrue(result.passed, 'Incident procedures should pass');
+        // @TestSetup includes a SecurityIncident evidence item, so this legitimately passes.
+        Assert.isTrue(result.passed, 'Incident procedures should pass when evidence exists');
+        Assert.areEqual(ElaroConstants.STATUS_COMPLIANT, result.status,
+            'With incident evidence the status should be COMPLIANT');
+    }
+
+    @IsTest
+    static void testEvaluateControl_IncidentProcedures_NoEvidence() {
+        Elaro_Audit_Package__c cleanPkg = new Elaro_Audit_Package__c(
+            Package_Name__c = 'No-Evidence HIPAA Package',
+            Framework__c = 'HIPAA',
+            Status__c = 'DRAFT',
+            Audit_Period_Start__c = Date.today().addDays(-30),
+            Audit_Period_End__c = Date.today()
+        );
+        insert cleanPkg;
+
+        HIPAAModule module = new HIPAAModule();
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = module.evaluateControl(
+            '164.308(a)(6)',
+            new Map<String, Object>{ 'auditPackageId' => cleanPkg.Id }
+        );
+        Test.stopTest();
+
+        // No evidence: the control must NOT be assumed to pass.
+        Assert.isFalse(result.passed, 'Incident procedures must not pass without evidence');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Incident procedures should be NOT_EVALUATED when no evidence exists');
     }
 
     @IsTest

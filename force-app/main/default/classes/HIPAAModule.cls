@@ -105,16 +105,22 @@ public with sharing class HIPAAModule implements IComplianceModule {
         Decimal totalWeight = 0;
         
         for (IComplianceModule.Control ctrl : HIPAA_CONTROLS) {
-            IComplianceModule.ControlResult result = evaluateControl(ctrl.code, 
+            IComplianceModule.ControlResult result = evaluateControl(ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => auditPackageId });
-            
+
+            // Controls that could not be evaluated are excluded from the denominator so
+            // they neither inflate nor deflate the score (never counted as a silent pass).
+            if (result.status == ElaroConstants.STATUS_NOT_EVALUATED) {
+                continue;
+            }
+
             Decimal weight = getControlWeight(ctrl.severity);
             totalWeight += weight;
-            
+
             if (result.passed) {
                 passedControls++;
                 weightedScore += weight * result.score;
-            } else if (result.status == 'PARTIAL') {
+            } else if (result.status == ElaroConstants.STATUS_PARTIAL) {
                 weightedScore += weight * result.score * 0.5;
             }
         }
@@ -137,7 +143,10 @@ public with sharing class HIPAAModule implements IComplianceModule {
                 gap.controlName = ctrl.name;
                 gap.description = result.finding;
                 gap.severity = ctrl.severity;
-                gap.status = 'Open';
+                // Distinguish a real failure from a control we simply could not verify.
+                gap.status = (result.status == ElaroConstants.STATUS_NOT_EVALUATED)
+                    ? 'Manual Review Required'
+                    : 'Open';
                 gap.recommendation = getRecommendation(ctrl.code);
                 gap.riskScore = calculateGapRiskScore(ctrl, result);
                 gaps.add(gap);
@@ -266,33 +275,42 @@ public with sharing class HIPAAModule implements IComplianceModule {
     private IComplianceModule.ControlResult evaluateAuthentication(Id auditPackageId) {
         IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
         result.controlId = '164.312(d)';
-        
-        // Check organization security settings
-        result.passed = true; // Simplified check
-        result.score = 85;
-        result.status = 'PARTIAL';
-        result.finding = 'Authentication controls in place. Recommend reviewing MFA enforcement.';
-        
+
+        // Person/Entity Authentication (MFA enforcement, password and session policy)
+        // cannot be verified from plain Apex — it requires Security Health Check /
+        // Tooling API introspection of org-wide settings. We do NOT assume a pass:
+        // report NOT_EVALUATED so the score excludes this control until evidence exists.
+        result.passed = false;
+        result.score = 0;
+        result.status = ElaroConstants.STATUS_NOT_EVALUATED;
+        result.finding = 'Authentication controls (MFA enforcement, password and session '
+            + 'policy) could not be automatically verified. Provide Security Health Check '
+            + 'evidence or enable Tooling API introspection to evaluate 164.312(d).';
+
         return result;
     }
-    
+
     private IComplianceModule.ControlResult evaluateTransmissionSecurity(Id auditPackageId) {
         IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
         result.controlId = '164.312(e)';
-        
-        // Salesforce enforces TLS by default
-        result.passed = true;
-        result.score = 100;
-        result.status = 'COMPLIANT';
-        result.finding = 'TLS 1.2+ encryption enforced for all data transmission';
-        
+
+        // Salesforce enforces TLS for HTTPS transport by default, but the org-specific
+        // minimum TLS version and end-to-end ePHI transmission posture cannot be
+        // confirmed from Apex. Report NOT_EVALUATED rather than asserting compliance.
+        result.passed = false;
+        result.score = 0;
+        result.status = ElaroConstants.STATUS_NOT_EVALUATED;
+        result.finding = 'Transmission security relies on the Salesforce default TLS, but '
+            + 'the minimum TLS version and ePHI transmission configuration require manual '
+            + 'verification. Marked NOT_EVALUATED to avoid an unverified compliance claim.';
+
         return result;
     }
-    
+
     private IComplianceModule.ControlResult evaluateIncidentProcedures(Id auditPackageId) {
         IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
         result.controlId = '164.308(a)(6)';
-        
+
         // Check for incident-related evidence
         Integer incidentEvidence = [
             SELECT COUNT() FROM Elaro_Evidence_Item__c
@@ -301,14 +319,24 @@ public with sharing class HIPAAModule implements IComplianceModule {
             WITH USER_MODE
             LIMIT 100
         ];
-        
-        result.passed = true; // Assume procedures exist
-        result.score = incidentEvidence > 0 ? 90 : 70;
-        result.status = incidentEvidence > 0 ? 'COMPLIANT' : 'PARTIAL';
-        result.finding = incidentEvidence > 0 
-            ? 'Security incident procedures documented with evidence'
-            : 'Security incident procedures should be documented';
-        
+
+        if (incidentEvidence > 0) {
+            // Evidence of incident procedures exists — this we can attest to.
+            result.passed = true;
+            result.score = 90;
+            result.status = ElaroConstants.STATUS_COMPLIANT;
+            result.finding = 'Security incident procedures documented with '
+                + incidentEvidence + ' evidence item(s).';
+        } else {
+            // No evidence — do NOT assume procedures exist.
+            result.passed = false;
+            result.score = 0;
+            result.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            result.finding = 'No incident-procedure evidence found for this audit package. '
+                + 'Attach documented security incident response procedures to evaluate '
+                + '164.308(a)(6).';
+        }
+
         return result;
     }
     
