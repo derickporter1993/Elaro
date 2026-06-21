@@ -70,7 +70,7 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Contract & Data Processing</label>
+        <label>Contract &amp; Data Processing</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>

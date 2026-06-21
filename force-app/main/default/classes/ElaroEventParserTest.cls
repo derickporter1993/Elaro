@@ -11,10 +11,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseLoginEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockLoginEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseLoginEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('Login', parsed.get('eventType'), 'Event type should be Login');
@@ -26,14 +26,14 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseLoginEvent_GeoLocationBuilt() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'CITY' =&gt; 'San Francisco',
-            'SUBDIVISION' =&gt; 'California',
-            'COUNTRY' =&gt; 'United States'
+        Map<String, Object> raw = new Map<String, Object>{
+            'CITY' => 'San Francisco',
+            'SUBDIVISION' => 'California',
+            'COUNTRY' => 'United States'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseLoginEvent(raw);
         Test.stopTest();
         
         String geoLocation = (String)parsed.get('geoLocation');
@@ -44,10 +44,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseLoginEvent_EmptyInput() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;();
+        Map<String, Object> raw = new Map<String, Object>();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseLoginEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('Login', parsed.get('eventType'), 'Event type should be Login');
@@ -60,10 +60,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseLoginAsEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockLoginAsEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockLoginAsEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseLoginAsEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseLoginAsEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('LoginAs', parsed.get('eventType'), 'Event type should be LoginAs');
@@ -80,10 +80,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseReportExportEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockReportExportEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockReportExportEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseReportExportEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseReportExportEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('ReportExport', parsed.get('eventType'), 'Event type should be ReportExport');
@@ -94,12 +94,12 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseReportExportEvent_LargeExportFlagged() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'ROWS_PROCESSED' =&gt; '5000'
+        Map<String, Object> raw = new Map<String, Object>{
+            'ROWS_PROCESSED' => '5000'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseReportExportEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseReportExportEvent(raw);
         Test.stopTest();
         
         Assert.areEqual(true, parsed.get('isLargeExport'), 'Should be flagged as large export');
@@ -108,12 +108,12 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseReportExportEvent_CriticalExportFlagged() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'ROWS_PROCESSED' =&gt; '15000'
+        Map<String, Object> raw = new Map<String, Object>{
+            'ROWS_PROCESSED' => '15000'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseReportExportEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseReportExportEvent(raw);
         Test.stopTest();
         
         Assert.areEqual(true, parsed.get('isLargeExport'), 'Should be flagged as large export');
@@ -126,10 +126,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseApiEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockApiEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockApiEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApiEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseApiEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('API', parsed.get('eventType'), 'Event type should be API');
@@ -139,12 +139,12 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseApiEvent_BulkOperationFlagged() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'ROWS_PROCESSED' =&gt; '500'
+        Map<String, Object> raw = new Map<String, Object>{
+            'ROWS_PROCESSED' => '500'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApiEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseApiEvent(raw);
         Test.stopTest();
         
         Assert.areEqual(true, parsed.get('isBulkOperation'), 'Should be flagged as bulk operation');
@@ -156,10 +156,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseContentDistributionEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockContentDistributionEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockContentDistributionEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseContentDistributionEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseContentDistributionEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('ContentDistribution', parsed.get('eventType'), 
@@ -172,13 +172,13 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseContentDistributionEvent_UnprotectedPublicFlagged() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'DISTRIBUTION_TYPE' =&gt; 'Public',
-            'IS_PASSWORD_PROTECTED' =&gt; 'false'
+        Map<String, Object> raw = new Map<String, Object>{
+            'DISTRIBUTION_TYPE' => 'Public',
+            'IS_PASSWORD_PROTECTED' => 'false'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseContentDistributionEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseContentDistributionEvent(raw);
         Test.stopTest();
         
         Assert.areEqual(true, parsed.get('isUnprotectedPublic'), 
@@ -191,10 +191,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseApexExecutionEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockApexExecutionEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockApexExecutionEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApexExecutionEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseApexExecutionEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('ApexExecution', parsed.get('eventType'), 
@@ -205,13 +205,13 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseApexExecutionEvent_ResourceIntensiveFlagged() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'CPU_TIME' =&gt; '7000',
-            'EXEC_TIME' =&gt; '15000'
+        Map<String, Object> raw = new Map<String, Object>{
+            'CPU_TIME' => '7000',
+            'EXEC_TIME' => '15000'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseApexExecutionEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parseApexExecutionEvent(raw);
         Test.stopTest();
         
         Assert.areEqual(true, parsed.get('isResourceIntensive'), 
@@ -224,10 +224,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParsePermissionSetEvent_AllFieldsMapped() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockPermissionSetEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockPermissionSetEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parsePermissionSetEvent(raw);
+        Map<String, Object> parsed = ElaroEventParser.parsePermissionSetEvent(raw);
         Test.stopTest();
         
         Assert.areEqual('PermissionSetEventLog', parsed.get('eventType'), 
@@ -244,10 +244,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseEvent_LoginType() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockLoginEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockLoginEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('Login', raw);
+        Map<String, Object> parsed = ElaroEventParser.parseEvent('Login', raw);
         Test.stopTest();
         
         Assert.areEqual('Login', parsed.get('eventType'), 'Should use Login parser');
@@ -256,10 +256,10 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseEvent_LoginAsType() {
-        Map&lt;String, Object&gt; raw = ElaroTestDataFactory.createMockLoginAsEvent();
+        Map<String, Object> raw = ElaroTestDataFactory.createMockLoginAsEvent();
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('LoginAs', raw);
+        Map<String, Object> parsed = ElaroEventParser.parseEvent('LoginAs', raw);
         Test.stopTest();
         
         Assert.areEqual('LoginAs', parsed.get('eventType'), 'Should use LoginAs parser');
@@ -267,12 +267,12 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseEvent_UnknownType_ReturnsRawWithEventType() {
-        Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{
-            'SOME_FIELD' =&gt; 'someValue'
+        Map<String, Object> raw = new Map<String, Object>{
+            'SOME_FIELD' => 'someValue'
         };
         
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('UnknownType', raw);
+        Map<String, Object> parsed = ElaroEventParser.parseEvent('UnknownType', raw);
         Test.stopTest();
         
         Assert.areEqual('UnknownType', parsed.get('eventType'), 
@@ -283,15 +283,15 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testParseEvent_AllSupportedTypes() {
-        List&lt;String&gt; supportedTypes = new List&lt;String&gt;{
+        List<String> supportedTypes = new List<String>{
             'Login', 'LoginAs', 'ReportExport', 'API', 
             'ContentDistribution', 'ApexExecution', 'PermissionSetEventLog'
         };
         
         Test.startTest();
         for (String eventType : supportedTypes) {
-            Map&lt;String, Object&gt; raw = new Map&lt;String, Object&gt;{'TEST' =&gt; 'value'};
-            Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent(eventType, raw);
+            Map<String, Object> raw = new Map<String, Object>{'TEST' => 'value'};
+            Map<String, Object> parsed = ElaroEventParser.parseEvent(eventType, raw);
             Assert.areEqual(eventType, parsed.get('eventType'), 
                 eventType + ' should be parsed correctly');
         }
@@ -301,7 +301,7 @@ private class ElaroEventParserTest {
     @isTest
     static void testParseEvent_NullInput() {
         Test.startTest();
-        Map&lt;String, Object&gt; parsed = ElaroEventParser.parseEvent('Login', null);
+        Map<String, Object> parsed = ElaroEventParser.parseEvent('Login', null);
         Test.stopTest();
         
         Assert.areEqual('Login', parsed.get('eventType'), 'Should handle null input');
@@ -313,14 +313,14 @@ private class ElaroEventParserTest {
     
     @isTest
     static void testBatchParseEvents_MultipleEvents() {
-        List&lt;Map&lt;String, Object&gt;&gt; rawEvents = new List&lt;Map&lt;String, Object&gt;&gt;{
+        List<Map<String, Object>> rawEvents = new List<Map<String, Object>>{
             ElaroTestDataFactory.createMockLoginEvent(),
             ElaroTestDataFactory.createMockLoginEvent(),
             ElaroTestDataFactory.createMockLoginEvent()
         };
         
         Test.startTest();
-        List&lt;Map&lt;String, Object&gt;&gt; parsedEvents = ElaroEventParser.batchParseEvents(
+        List<Map<String, Object>> parsedEvents = ElaroEventParser.batchParseEvents(
             'Login', rawEvents);
         Test.stopTest();
         
@@ -330,8 +330,8 @@ private class ElaroEventParserTest {
     @isTest
     static void testBatchParseEvents_EmptyList() {
         Test.startTest();
-        List&lt;Map&lt;String, Object&gt;&gt; parsedEvents = ElaroEventParser.batchParseEvents(
-            'Login', new List&lt;Map&lt;String, Object&gt;&gt;());
+        List<Map<String, Object>> parsedEvents = ElaroEventParser.batchParseEvents(
+            'Login', new List<Map<String, Object>>());
         Test.stopTest();
         
         Assert.areEqual(0, parsedEvents.size(), 'Should return empty list');
@@ -340,7 +340,7 @@ private class ElaroEventParserTest {
     @isTest
     static void testBatchParseEvents_NullList() {
         Test.startTest();
-        List&lt;Map&lt;String, Object&gt;&gt; parsedEvents = ElaroEventParser.batchParseEvents(
+        List<Map<String, Object>> parsedEvents = ElaroEventParser.batchParseEvents(
             'Login', null);
         Test.stopTest();
         

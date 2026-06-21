@@ -8,23 +8,27 @@
 
 ## Overview
 
-Elaro integrates with external services for AI-powered compliance analysis, alerting, incident management, and evidence sharing. All integrations use **Named Credentials** for secure authentication and follow Salesforce best practices.
+Elaro integrates with external services for compliance analysis, alerting, incident management, and evidence sharing. Integrations use Named Credentials or protected custom metadata for secure authentication and follow Salesforce best practices.
 
 ---
 
-## 1. Claude AI (Anthropic API)
+## 1. External AI API (Anthropic)
 
 ### Purpose
-AI-powered compliance analysis, event pattern recognition, audit summaries, and natural language query processing.
+
+Compliance analysis, event pattern recognition, audit summaries, and natural language query processing.
 
 ### Authentication
+
 - **Method:** Named Credential with API Key authentication
 - **Named Credential:** `callout:Elaro_Claude_API`
 - **Endpoint:** `https://api.anthropic.com/v1/messages`
 - **Protocol:** HTTPS (TLS 1.2+)
 
 ### Configuration
+
 **Named Credential Settings:**
+
 - Identity Type: Named Principal
 - Authentication Protocol: Password Authentication
 - Callout Options: Generate Authorization Header = checked
@@ -32,17 +36,20 @@ AI-powered compliance analysis, event pattern recognition, audit summaries, and 
 - API Version Header: `anthropic-version: 2023-06-01`
 
 **Custom Metadata:**
+
 - Store model selection in `Elaro_AI_Settings__c`
 - Current model: `claude-sonnet-4-20250514`
 
 ### API Usage
 
-**Classes Using Claude API:**
-- `ElaroComplianceCopilotService.cls` - Main AI service
+**Classes Using External AI API:**
+
+- `ElaroComplianceCopilotService.cls` - Main compliance copilot service
 - `NaturalLanguageQueryService.cls` - Natural language SOQL
 - `RootCauseAnalysisEngine.cls` - Root cause analysis
 
 **Request Pattern:**
+
 ```apex
 Http req = new HttpRequest();
 req.setEndpoint('callout:Elaro_Claude_API');
@@ -57,6 +64,7 @@ HttpResponse res = http.send(req);
 ```
 
 ### Error Handling
+
 - **Timeout:** 60 seconds (configurable)
 - **Retry Logic:** None (single attempt)
 - **Caching:** 1 hour cache for repeated queries (Platform Cache)
@@ -64,14 +72,17 @@ HttpResponse res = http.send(req);
 - **Logging:** No PII/credentials logged, correlation IDs used
 
 ### Rate Limits
+
 - **Tier:** Standard (customer-specific)
 - **Requests/Minute:** Managed by Anthropic account
 - **Circuit Breaker:** Platform Cache prevents excessive retries
 
 ### Required Permissions
-Users must have `Elaro_AI_User` permission set to use AI features.
+
+Users must have the `Elaro_AI_User` permission set to use these features.
 
 ### Security Considerations
+
 - ✅ No hardcoded API keys (stored in Named Credential)
 - ✅ API key rotates outside Salesforce (customer-managed)
 - ✅ Sensitive data sanitized before sending to API
@@ -83,16 +94,20 @@ Users must have `Elaro_AI_User` permission set to use AI features.
 ## 2. Slack Integration
 
 ### Purpose
+
 Real-time compliance alerts, audit package notifications, and daily compliance digests.
 
 ### Authentication
+
 - **Method:** Named Credential with Webhook URL
 - **Named Credential:** `callout:Slack_Webhook`
 - **Endpoint:** Customer-provided Slack Incoming Webhook URL
 - **Protocol:** HTTPS (TLS 1.2+)
 
 ### Configuration
+
 **Named Credential Settings:**
+
 - Identity Type: Named Principal
 - Authentication Protocol: No Authentication (webhook contains authentication token)
 - URL: `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX`
@@ -100,17 +115,20 @@ Real-time compliance alerts, audit package notifications, and daily compliance d
 ### API Usage
 
 **Classes Using Slack API:**
+
 - `SlackIntegration.cls` - Primary integration service
 - `ElaroSlackNotifierQueueable.cls` - Asynchronous alerts
 - `ElaroDailyDigest.cls` - Daily digest delivery
 - `SlackNotifier.cls` - Legacy notifier
 
 **Message Types:**
+
 1. **Compliance Alerts** - Real-time alert notifications
 2. **Audit Packages** - Package generation notifications
 3. **Daily Digests** - Scheduled daily summaries
 
 **Request Pattern:**
+
 ```apex
 HttpRequest req = new HttpRequest();
 req.setEndpoint('callout:Slack_Webhook');
@@ -124,21 +142,25 @@ HttpResponse res = http.send(req);
 ```
 
 ### Error Handling
+
 - **Timeout:** 30 seconds
 - **Retry Logic:** None (fire-and-forget for notifications)
 - **Fallback:** Logs error, continues processing
 - **Logging:** Logs HTTP status code, no sensitive data
 
 ### Rate Limits
+
 - **Slack Limit:** 1 message per second per webhook
 - **Implementation:** @future(callout=true) prevents bursts
 - **Queue Management:** Queueable for batch notifications
 
 ### Required Permissions
+
 - Users must have `Elaro_Admin` or `Elaro_Auditor` permission set
 - Slack workspace must have Elaro app installed
 
 ### Security Considerations
+
 - ✅ Webhook URL stored in Named Credential (not hardcoded)
 - ✅ No sensitive data in message bodies
 - ✅ Links use org domain URL (not direct record IDs exposed)
@@ -149,16 +171,20 @@ HttpResponse res = http.send(req);
 ## 3. Microsoft Teams Integration
 
 ### Purpose
+
 Compliance alerts and notifications for Teams-based organizations.
 
 ### Authentication
+
 - **Method:** Named Credential with Webhook URL
 - **Named Credential:** `callout:Teams_Webhook`
 - **Endpoint:** Customer-provided Teams Incoming Webhook URL
 - **Protocol:** HTTPS (TLS 1.2+)
 
 ### Configuration
+
 **Named Credential Settings:**
+
 - Identity Type: Named Principal
 - Authentication Protocol: No Authentication (webhook contains authentication token)
 - URL: `https://outlook.office.com/webhook/...`
@@ -166,9 +192,11 @@ Compliance alerts and notifications for Teams-based organizations.
 ### API Usage
 
 **Classes Using Teams API:**
+
 - `ElaroTeamsNotifierQueueable.cls` - Asynchronous Teams notifications
 
 **Request Pattern:**
+
 ```apex
 HttpRequest req = new HttpRequest();
 req.setEndpoint('callout:Teams_Webhook');
@@ -182,16 +210,19 @@ HttpResponse res = http.send(req);
 ```
 
 ### Error Handling
+
 - **Timeout:** 30 seconds
 - **Retry Logic:** None (fire-and-forget)
 - **Fallback:** Logs error, continues processing
 - **Logging:** Logs HTTP status code
 
 ### Rate Limits
+
 - **Teams Limit:** 4 requests per second per webhook
 - **Implementation:** Queueable prevents bursts
 
 ### Security Considerations
+
 - ✅ Webhook URL stored in Named Credential
 - ✅ No sensitive data exposed in adaptive cards
 - ✅ Webhook rotation supported
@@ -200,46 +231,30 @@ HttpResponse res = http.send(req);
 
 ## 4. PagerDuty Events API
 
-⚠️ **SECURITY WARNING:** See [PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md](PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md) for critical security findings.
-
 ### Purpose
+
 Incident triggering, acknowledgment, and resolution for critical compliance alerts.
 
 ### Authentication
+
 - **Method:** Routing Key (Integration Key)
 - **Storage:** Protected Custom Metadata (`Elaro_API_Config__mdt`)
 - **Endpoint:** `https://events.pagerduty.com/v2/enqueue`
 - **Protocol:** HTTPS (TLS 1.2+)
 
-### ⚠️ Current Implementation Status
+### Implementation Status
 
-**CRITICAL ISSUE IDENTIFIED (2026-01-11):**
+`PagerDutyIntegration.cls` retrieves the routing key from protected custom metadata:
 
-The `PagerDutyIntegration.cls` file currently contains a **hardcoded placeholder** for the routing key (line 144-148):
+- Metadata type: `Elaro_API_Config__mdt`
+- Record developer name: `PagerDuty`
+- Required fields: `API_Key__c`, `Is_Active__c`
+- Security behavior: returns early when the record is inactive, missing, blank, or placeholder-valued
 
-```apex
-private static String getRoutingKey() {
-    // In production, retrieve from Custom Metadata or Named Credential
-    // This is a placeholder
-    return 'your-pagerduty-routing-key';
-}
-```
-
-**Impact:**
-- ❌ **Fails AppExchange Security Review** (hardcoded credentials)
-- ❌ **Integration non-functional** (placeholder key rejected by PagerDuty)
-- ❌ **Security violation** (credential visible in source code)
-
-**Fix Required (Cursor AI Task):**
-- Replace hardcoded placeholder with Custom Metadata query
-- Use existing `Elaro_API_Config__mdt` metadata type
-- Create metadata record: `Elaro_API_Config.PagerDuty`
-
-**See:** [PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md](PAGERDUTY_INTEGRATION_SECURITY_REVIEW.md) for complete fix implementation.
-
-### Configuration (RECOMMENDED AFTER FIX)
+### Configuration
 
 **Custom Metadata Record:**
+
 ```xml
 <!-- File: force-app/main/default/customMetadata/Elaro_API_Config.PagerDuty.md-meta.xml -->
 <CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -261,14 +276,17 @@ private static String getRoutingKey() {
 ### API Usage
 
 **Classes Using PagerDuty API:**
-- `PagerDutyIntegration.cls` - Primary integration (requires security fix)
+
+- `PagerDutyIntegration.cls` - Primary integration
 
 **Event Types:**
+
 1. **Trigger** - Create new incident
 2. **Acknowledge** - Acknowledge incident
 3. **Resolve** - Resolve incident
 
-**Request Pattern (AFTER FIX):**
+**Request Pattern:**
+
 ```apex
 // Routing key retrieved from Protected Custom Metadata
 String routingKey = getRoutingKey(); // Queries Elaro_API_Config__mdt
@@ -296,6 +314,7 @@ HttpResponse res = http.send(req);
 ```
 
 ### Error Handling
+
 - **Timeout:** 30 seconds
 - **Retry Logic:** None (idempotent with dedup_key)
 - **Dedup Key:** `elaro-{alertId}` prevents duplicates
@@ -303,13 +322,14 @@ HttpResponse res = http.send(req);
 - **Validation:** Returns early if routing key is placeholder or null
 
 ### Rate Limits
+
 - **PagerDuty Limit:** 120 events per minute
-- **Implementation:** @future prevents bursts
+- **Implementation:** Queueable callouts prevent bursts
 - **Deduplication:** Prevents duplicate incidents
 
-### Security Considerations (POST-FIX)
-- ⚠️ **CURRENT:** Routing key hardcoded (SECURITY VIOLATION)
-- ✅ **AFTER FIX:** Routing key in Protected Custom Metadata
+### Security Considerations
+
+- ✅ Routing key stored in Protected Custom Metadata
 - ✅ No PII in incident payloads
 - ✅ Dedup keys prevent replay attacks
 - ✅ HTTPS with TLS 1.2+
@@ -317,10 +337,11 @@ HttpResponse res = http.send(req);
 - ✅ Integration toggle via `Is_Active__c` checkbox
 
 ### Required Permissions
+
 - **Admin:** `Elaro_Admin` permission set required to configure routing key
 - **Users:** No direct access to Protected Custom Metadata (encrypted at rest)
 
-### Installation Steps (POST-FIX)
+### Installation Steps
 
 1. **Post-Package Installation:**
    - Navigate to: Setup → Custom Metadata Types → Elaro API Config → Manage Records
@@ -346,16 +367,20 @@ HttpResponse res = http.send(req);
 ## 5. ServiceNow GRC Integration
 
 ### Purpose
+
 Evidence sharing, control synchronization, and incident management with ServiceNow GRC.
 
 ### Authentication
+
 - **Method:** Named Credential with Basic Authentication
 - **Named Credential:** `callout:ServiceNow_API`
 - **Endpoint:** Customer ServiceNow instance URL
 - **Protocol:** HTTPS (TLS 1.2+)
 
 ### Configuration
+
 **Named Credential Settings:**
+
 - Identity Type: Named Principal
 - Authentication Protocol: Password Authentication
 - Username: ServiceNow integration user
@@ -365,14 +390,17 @@ Evidence sharing, control synchronization, and incident management with ServiceN
 ### API Usage
 
 **Classes Using ServiceNow API:**
+
 - `ServiceNowIntegration.cls` - Primary integration
 
 **Operations:**
+
 1. **Sync Controls** - Push compliance controls to ServiceNow GRC
 2. **Push Evidence** - Share evidence items
 3. **Create Incident** - Create ServiceNow incidents
 
 **Request Pattern:**
+
 ```apex
 HttpRequest req = new HttpRequest();
 req.setEndpoint('callout:ServiceNow_API/api/now/table/incident');
@@ -387,16 +415,19 @@ HttpResponse res = http.send(req);
 ```
 
 ### Error Handling
+
 - **Timeout:** 60 seconds
 - **Retry Logic:** None
 - **Fallback:** Logs error, data remains in Salesforce
 - **Logging:** Logs status code and sys_id on success
 
 ### Rate Limits
+
 - **ServiceNow Limit:** Customer instance limits
 - **Implementation:** @future prevents concurrent requests
 
 ### Security Considerations
+
 - ✅ Credentials stored in Named Credential
 - ✅ Integration user has minimal permissions
 - ✅ Only public-safe data shared
@@ -407,16 +438,20 @@ HttpResponse res = http.send(req);
 ## 6. Salesforce Limits API
 
 ### Purpose
+
 Internal API for real-time governor limit monitoring.
 
 ### Authentication
+
 - **Method:** Named Credential with OAuth (Session ID)
 - **Named Credential:** `callout:SF_Limits`
 - **Endpoint:** Salesforce REST API Limits endpoint
 - **Protocol:** HTTPS (TLS 1.2+)
 
 ### Configuration
+
 **Named Credential Settings:**
+
 - Identity Type: Per User
 - Authentication Protocol: OAuth 2.0
 - Scope: api
@@ -424,9 +459,11 @@ Internal API for real-time governor limit monitoring.
 ### API Usage
 
 **Classes Using Limits API:**
+
 - `ApiUsageSnapshot.cls` - Periodic limit snapshots
 
 **Request Pattern:**
+
 ```apex
 HttpRequest req = new HttpRequest();
 req.setEndpoint('callout:SF_Limits/services/data/v65.0/limits');
@@ -439,11 +476,13 @@ HttpResponse res = http.send(req);
 ```
 
 ### Error Handling
+
 - **Timeout:** 30 seconds
 - **Retry Logic:** None
 - **Fallback:** Returns cached limits
 
 ### Security Considerations
+
 - ✅ OAuth session-based authentication
 - ✅ Internal Salesforce API (no external exposure)
 - ✅ Read-only operations
@@ -452,13 +491,13 @@ HttpResponse res = http.send(req);
 
 ## Summary of Named Credentials
 
-| Named Credential | Service | Auth Method | Required |
-|------------------|---------|-------------|----------|
-| `Elaro_Claude_API` | Claude AI | API Key (Header) | No (fallback available) |
-| `Slack_Webhook` | Slack | Webhook URL | No (optional integration) |
-| `Teams_Webhook` | Microsoft Teams | Webhook URL | No (optional integration) |
-| `ServiceNow_API` | ServiceNow GRC | Basic Auth | No (optional integration) |
-| `SF_Limits` | Salesforce Limits API | OAuth 2.0 | Yes (core feature) |
+| Named Credential   | Service               | Auth Method      | Required                  |
+| ------------------ | --------------------- | ---------------- | ------------------------- |
+| `Elaro_Claude_API` | External AI API       | API Key (Header) | No (fallback available)   |
+| `Slack_Webhook`    | Slack                 | Webhook URL      | No (optional integration) |
+| `Teams_Webhook`    | Microsoft Teams       | Webhook URL      | No (optional integration) |
+| `ServiceNow_API`   | ServiceNow GRC        | Basic Auth       | No (optional integration) |
+| `SF_Limits`        | Salesforce Limits API | OAuth 2.0        | Yes (core feature)        |
 
 **Note:** PagerDuty uses Protected Custom Metadata instead of Named Credential.
 
@@ -467,15 +506,18 @@ HttpResponse res = http.send(req);
 ## Permission Set Access
 
 ### Elaro_Admin
+
 - Full access to all integration configurations
 - Can configure Named Credentials
 - Can enable/disable integrations
 
 ### Elaro_AI_User
-- Can use AI-powered features (Claude API)
+
+- Can use AI-assisted compliance features
 - Cannot configure integrations
 
 ### Elaro_Auditor
+
 - Read-only access to integration logs
 - Cannot trigger manual integrations
 
@@ -512,26 +554,31 @@ All external integrations follow these patterns:
 ## Security Checklist
 
 ✅ **Authentication:**
+
 - All Named Credentials use encryption at rest
 - No hardcoded credentials in code
 - API keys rotatable without code changes
 
 ✅ **Data Protection:**
+
 - No PII sent to external services without consent
 - Customer data sanitized before external API calls
 - Audit logging for all external calls
 
 ✅ **Network Security:**
+
 - HTTPS (TLS 1.2+) for all endpoints
 - Webhook URLs validated before configuration
 - No open redirects or SSRF vulnerabilities
 
 ✅ **Access Control:**
+
 - Permission sets control feature access
 - Sharing rules enforce record-level security
 - Integration users have minimal permissions
 
 ✅ **Monitoring:**
+
 - All callouts logged in Event Monitoring
 - Failed callouts trigger internal alerts
 - Admin dashboard shows integration health
@@ -544,7 +591,7 @@ All external integrations follow these patterns:
 
 Administrators must create Named Credentials after package installation:
 
-1. **Claude AI** (Required for AI features)
+1. **External AI API** (Required for AI features)
    - Setup → Named Credentials → New Legacy
    - Name: `Elaro_Claude_API`
    - URL: `https://api.anthropic.com`
@@ -552,7 +599,7 @@ Administrators must create Named Credentials after package installation:
    - Authentication: Password Authentication
    - Username: `x-api-key` (literal)
    - Password: Your Anthropic API key
-   - Generate Authorization Header: ✅
+   - Generate Authorization Header: checked
 
 2. **Slack** (Optional)
    - Setup → Named Credentials → New Legacy
@@ -596,7 +643,8 @@ If using PagerDuty:
 ### Step 3: Test Integrations
 
 Use the built-in test classes:
-- `ElaroComplianceCopilotServiceTest` - Tests Claude AI
+
+- `ElaroComplianceCopilotServiceTest` - Tests compliance copilot callouts
 - `ElaroSlackNotifierQueueableTest` - Tests Slack
 - `PagerDutyIntegrationTest` - Tests PagerDuty (if exists)
 
@@ -604,19 +652,22 @@ Use the built-in test classes:
 
 ## Troubleshooting
 
-### Claude AI Not Responding
+### External AI API Not Responding
+
 1. Verify Named Credential `Elaro_Claude_API` exists
 2. Check API key is valid (test at api.anthropic.com)
 3. Review Debug Logs for callout errors
 4. Check Anthropic API status page
 
 ### Slack Messages Not Sending
+
 1. Verify webhook URL is valid
 2. Test webhook with curl: `curl -X POST -H 'Content-Type: application/json' -d '{"text":"Test"}' <webhook-url>`
 3. Check Slack app is installed in workspace
 4. Review Event Monitoring for callout failures
 
 ### PagerDuty Incidents Not Creating
+
 1. Verify Custom Metadata `PagerDuty` record exists
 2. Check Routing Key is valid in PagerDuty console
 3. Review Debug Logs for HTTP errors
@@ -627,18 +678,21 @@ Use the built-in test classes:
 ## Compliance & Governance
 
 ### Data Residency
+
 - All integrations use customer-controlled endpoints
 - No Elaro-controlled data storage
 - Customer responsible for external service compliance
 
 ### Audit Trail
+
 - All external callouts logged in Event Monitoring
 - Audit reports available in Elaro dashboard
 - 6-month retention for callout logs
 
 ### Data Processing Agreement
+
 - Customers must review external service DPAs
-- Claude AI: Anthropic DPA required
+- Anthropic API: Anthropic DPA required
 - Slack: Slack DPA required
 - PagerDuty: PagerDuty DPA required
 - ServiceNow: ServiceNow DPA required
@@ -648,6 +702,7 @@ Use the built-in test classes:
 **For AppExchange Reviewers:**
 
 This document demonstrates:
+
 - ✅ All external integrations use Named Credentials
 - ✅ No hardcoded secrets or API keys
 - ✅ HTTPS (TLS 1.2+) for all communications

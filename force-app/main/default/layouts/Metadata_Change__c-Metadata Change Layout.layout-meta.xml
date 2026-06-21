@@ -70,7 +70,7 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Approval & Rollback</label>
+        <label>Approval &amp; Rollback</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>

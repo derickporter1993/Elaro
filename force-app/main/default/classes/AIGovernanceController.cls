@@ -232,7 +232,7 @@ public with sharing class AIGovernanceController {
      */
     public class DashboardSummary {
         @AuraEnabled public Decimal complianceScore { get; set; }
-        @AuraEnabled public List<IComplianceModule.Gap> gaps { get; set; }
+        @AuraEnabled public List<ComplianceModuleTypes.Gap> gaps { get; set; }
         @AuraEnabled public Integer totalSystems { get; set; }
         @AuraEnabled public Integer highRiskCount { get; set; }
         @AuraEnabled public Integer aiUserCount { get; set; }

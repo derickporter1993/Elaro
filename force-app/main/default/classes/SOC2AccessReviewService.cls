@@ -123,8 +123,8 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     /**
      * Get access review status
      */
-    public IAccessControlService.AccessReviewStatus getReviewStatus(Id reviewId) {
-        IAccessControlService.AccessReviewStatus status = new IAccessControlService.AccessReviewStatus();
+    public AccessControlTypes.AccessReviewStatus getReviewStatus(Id reviewId) {
+        AccessControlTypes.AccessReviewStatus status = new AccessControlTypes.AccessReviewStatus();
 
         // Get review cycle info
         List<Access_Review__c> reviews = [
@@ -171,8 +171,8 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     /**
      * Get users with excessive access
      */
-    public List<IAccessControlService.ExcessiveAccessUser> getExcessiveAccessUsers() {
-        List<IAccessControlService.ExcessiveAccessUser> result = new List<IAccessControlService.ExcessiveAccessUser>();
+    public List<AccessControlTypes.ExcessiveAccessUser> getExcessiveAccessUsers() {
+        List<AccessControlTypes.ExcessiveAccessUser> result = new List<AccessControlTypes.ExcessiveAccessUser>();
 
         // Query users with high-risk permissions
         List<PermissionSetAssignment> psAssignments = [
@@ -189,14 +189,14 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
         ];
 
         // Group by user
-        Map<Id, IAccessControlService.ExcessiveAccessUser> userMap = new Map<Id, IAccessControlService.ExcessiveAccessUser>();
+        Map<Id, AccessControlTypes.ExcessiveAccessUser> userMap = new Map<Id, AccessControlTypes.ExcessiveAccessUser>();
 
         for (PermissionSetAssignment psa : psAssignments) {
-            IAccessControlService.ExcessiveAccessUser exUser;
+            AccessControlTypes.ExcessiveAccessUser exUser;
             if (userMap.containsKey(psa.AssigneeId)) {
                 exUser = userMap.get(psa.AssigneeId);
             } else {
-                exUser = new IAccessControlService.ExcessiveAccessUser();
+                exUser = new AccessControlTypes.ExcessiveAccessUser();
                 exUser.userId = psa.AssigneeId;
                 exUser.userName = psa.Assignee.Name;
                 exUser.userEmail = psa.Assignee.Email;
@@ -240,8 +240,8 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     /**
      * Revoke access for users
      */
-    public IAccessControlService.RevokeAccessResult revokeAccess(List<Id> userIds, String reason) {
-        IAccessControlService.RevokeAccessResult result = new IAccessControlService.RevokeAccessResult();
+    public AccessControlTypes.RevokeAccessResult revokeAccess(List<Id> userIds, String reason) {
+        AccessControlTypes.RevokeAccessResult result = new AccessControlTypes.RevokeAccessResult();
         result.success = true;
         result.usersProcessed = 0;
         result.permissionsRevoked = 0;
@@ -288,8 +288,8 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     /**
      * Get stale permissions (users not logged in)
      */
-    public List<IAccessControlService.StalePermission> getStalePermissions(Integer daysSinceLogin) {
-        List<IAccessControlService.StalePermission> result = new List<IAccessControlService.StalePermission>();
+    public List<AccessControlTypes.StalePermission> getStalePermissions(Integer daysSinceLogin) {
+        List<AccessControlTypes.StalePermission> result = new List<AccessControlTypes.StalePermission>();
 
         Date cutoffDate = Date.today().addDays(-daysSinceLogin);
 
@@ -331,7 +331,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
         }
 
         for (User u : staleUsers) {
-            IAccessControlService.StalePermission sp = new IAccessControlService.StalePermission();
+            AccessControlTypes.StalePermission sp = new AccessControlTypes.StalePermission();
             sp.userId = u.Id;
             sp.userName = u.Name;
             sp.lastLoginDate = u.LastLoginDate;
@@ -349,8 +349,8 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     /**
      * Validate need-to-know access
      */
-    public IAccessControlService.NeedToKnowResult validateNeedToKnow(Id userId) {
-        IAccessControlService.NeedToKnowResult result = new IAccessControlService.NeedToKnowResult();
+    public AccessControlTypes.NeedToKnowResult validateNeedToKnow(Id userId) {
+        AccessControlTypes.NeedToKnowResult result = new AccessControlTypes.NeedToKnowResult();
         result.userId = userId;
         result.compliant = true;
         result.excessPermissions = new List<String>();
@@ -391,9 +391,9 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     private List<Violation> evaluateStaleAccess() {
         List<Violation> violations = new List<Violation>();
 
-        List<IAccessControlService.StalePermission> stalePerms = getStalePermissions(STALE_LOGIN_DAYS);
+        List<AccessControlTypes.StalePermission> stalePerms = getStalePermissions(STALE_LOGIN_DAYS);
 
-        for (IAccessControlService.StalePermission sp : stalePerms) {
+        for (AccessControlTypes.StalePermission sp : stalePerms) {
             if (sp.hasElevatedAccess) {
                 Violation v = new Violation(
                     'Stale Elevated Access',
@@ -418,7 +418,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     private List<Violation> evaluateExcessiveAccess() {
         List<Violation> violations = new List<Violation>();
 
-        List<IAccessControlService.ExcessiveAccessUser> excessiveUsers = getExcessiveAccessUsers();
+        List<AccessControlTypes.ExcessiveAccessUser> excessiveUsers = getExcessiveAccessUsers();
 
         // Only flag if more than 10% of active users have elevated access
         Integer activeUserCount = [SELECT COUNT() FROM User WHERE IsActive = true WITH USER_MODE];
@@ -463,7 +463,7 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     /**
      * Calculate risk score for stale user
      */
-    private Decimal calculateStaleUserRiskScore(IAccessControlService.StalePermission sp) {
+    private Decimal calculateStaleUserRiskScore(AccessControlTypes.StalePermission sp) {
         Decimal score = 3.0; // Base score
 
         if (sp.hasElevatedAccess) {

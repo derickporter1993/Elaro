@@ -76,7 +76,7 @@ Named Credentials must be configured in the org UI (cannot be deployed):
 
 1. Navigate to **Setup** → **Named Credentials**
 2. Configure the following:
-   - `Elaro_Claude_API` - Claude API endpoint for AI features
+   - `Elaro_Claude_API` - External AI API endpoint
    - `Slack_Webhook` - Slack integration (optional)
    - `Teams_Webhook` - Microsoft Teams integration (optional)
 
@@ -173,7 +173,7 @@ sf apex run test \
 3. Verify thresholds and status indicators
 4. Test real-time refresh functionality
 
-### Scenario 3: Compliance Copilot (AI Assistant)
+### Scenario 3: Compliance Copilot
 
 1. Navigate to **Elaro** → **Compliance Copilot**
 2. Ask questions like:

@@ -38,8 +38,8 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
      *
      * @return List of Control objects for AI governance
      */
-    public List<IComplianceModule.Control> getControls() {
-        List<IComplianceModule.Control> controls = new List<IComplianceModule.Control>();
+    public List<ComplianceModuleTypes.Control> getControls() {
+        List<ComplianceModuleTypes.Control> controls = new List<ComplianceModuleTypes.Control>();
 
         // EU AI Act Controls
         controls.add(createControl('AI-001', 'AI System Registry', 'All AI systems must be registered and classified',
@@ -126,8 +126,8 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
      * @param auditPackageId Not used (AI governance operates on detected systems)
      * @return List of Gap objects
      */
-    public List<IComplianceModule.Gap> identifyGaps(Id auditPackageId) {
-        List<IComplianceModule.Gap> gaps = new List<IComplianceModule.Gap>();
+    public List<ComplianceModuleTypes.Gap> identifyGaps(Id auditPackageId) {
+        List<ComplianceModuleTypes.Gap> gaps = new List<ComplianceModuleTypes.Gap>();
 
         try {
             // Discover AI systems
@@ -142,7 +142,7 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
             // Find unregistered systems
             for (AIDetectionEngine.AISystemMetadata system : systems) {
                 if (!registeredSystemNames.contains(system.systemName)) {
-                    IComplianceModule.Gap gap = new IComplianceModule.Gap();
+                    ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
                     gap.id = 'GAP-' + system.systemName;
                     gap.controlId = 'AI-001';
                     gap.controlCode = 'AI-001';
@@ -163,7 +163,7 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
                 WHERE Risk_Level__c = null
                 WITH USER_MODE
             ]) {
-                IComplianceModule.Gap gap = new IComplianceModule.Gap();
+                ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
                 gap.id = 'GAP-RISK-' + system.Id;
                 gap.controlId = 'AI-002';
                 gap.controlCode = 'AI-002';
@@ -185,7 +185,7 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
                 WITH USER_MODE
             ]) {
                 if (system.Human_Oversight_Records__r.isEmpty()) {
-                    IComplianceModule.Gap gap = new IComplianceModule.Gap();
+                    ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
                     gap.id = 'GAP-OVERSIGHT-' + system.Id;
                     gap.controlId = 'AI-004';
                     gap.controlCode = 'AI-004';
@@ -222,7 +222,7 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
         Decimal score = calculateScore(auditPackageId);
         reportContent += 'Overall Compliance Score: ' + score.setScale(2) + '%\n\n';
 
-        List<IComplianceModule.Gap> gaps = identifyGaps(auditPackageId);
+        List<ComplianceModuleTypes.Gap> gaps = identifyGaps(auditPackageId);
         reportContent += 'Identified Gaps: ' + gaps.size() + '\n';
 
         return Blob.valueOf(reportContent);
@@ -234,9 +234,9 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
      * @param controlId The control ID
      * @return Control object or null
      */
-    public IComplianceModule.Control getControlById(String controlId) {
-        List<IComplianceModule.Control> allControls = getControls();
-        for (IComplianceModule.Control ctrl : allControls) {
+    public ComplianceModuleTypes.Control getControlById(String controlId) {
+        List<ComplianceModuleTypes.Control> allControls = getControls();
+        for (ComplianceModuleTypes.Control ctrl : allControls) {
             if (ctrl.id == controlId) {
                 return ctrl;
             }
@@ -251,8 +251,8 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
      * @param context Evaluation context (may contain systemId, etc.)
      * @return ControlResult with evaluation outcome
      */
-    public IComplianceModule.ControlResult evaluateControl(String controlId, Map<String, Object> context) {
-        IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
+    public ComplianceModuleTypes.ControlResult evaluateControl(String controlId, Map<String, Object> context) {
+        ComplianceModuleTypes.ControlResult result = new ComplianceModuleTypes.ControlResult();
         result.controlId = controlId;
 
         try {
@@ -299,9 +299,9 @@ public inherited sharing class AIGovernanceService implements IComplianceModule 
     /**
      * Helper method to create a control object.
      */
-    private IComplianceModule.Control createControl(String id, String name, String description,
+    private ComplianceModuleTypes.Control createControl(String id, String name, String description,
                                                       String severity, String category, Boolean required) {
-        IComplianceModule.Control ctrl = new IComplianceModule.Control();
+        ComplianceModuleTypes.Control ctrl = new ComplianceModuleTypes.Control();
         ctrl.id = id;
         ctrl.code = id;
         ctrl.name = name;

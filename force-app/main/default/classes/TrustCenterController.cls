@@ -30,8 +30,8 @@ public with sharing class TrustCenterController {
                        Badge_Image_URL__c
                 FROM Trust_Center_View__c
                 WHERE Is_Public__c = true
-                ORDER BY Compliance_Percentage__c DESC
                 WITH USER_MODE
+                ORDER BY Compliance_Percentage__c DESC
                 LIMIT 100
             ];
         } catch (Exception e) {

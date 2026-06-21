@@ -23,7 +23,7 @@ public interface IComplianceModule {
      * Get all controls for this framework
      * @return List of Control objects
      */
-    List<Control> getControls();
+    List<ComplianceModuleTypes.Control> getControls();
     
     /**
      * Calculate compliance score for an audit package
@@ -37,7 +37,7 @@ public interface IComplianceModule {
      * @param auditPackageId The audit package ID
      * @return List of Gap objects
      */
-    List<Gap> identifyGaps(Id auditPackageId);
+    List<ComplianceModuleTypes.Gap> identifyGaps(Id auditPackageId);
     
     /**
      * Generate framework-specific report
@@ -51,7 +51,7 @@ public interface IComplianceModule {
      * @param controlId The control ID
      * @return Control object or null
      */
-    Control getControlById(String controlId);
+    ComplianceModuleTypes.Control getControlById(String controlId);
     
     /**
      * Evaluate a specific control
@@ -59,69 +59,5 @@ public interface IComplianceModule {
      * @param context Evaluation context
      * @return ControlResult with evaluation outcome
      */
-    ControlResult evaluateControl(String controlId, Map<String, Object> context);
-    
-    // ═══════════════════════════════════════════════════════════════
-    // INNER CLASSES
-    // ═══════════════════════════════════════════════════════════════
-    
-    /**
-     * Represents a compliance control
-     */
-    class Control {
-        public String id;
-        public String code;
-        public String name;
-        public String description;
-        public String category;
-        public String family;
-        public String severity; // CRITICAL, HIGH, MEDIUM, LOW
-        public Boolean isRequired;
-        public List<String> relatedControls;
-        public Map<String, Object> metadata;
-        
-        public Control() {
-            this.relatedControls = new List<String>();
-            this.metadata = new Map<String, Object>();
-            this.isRequired = true;
-        }
-    }
-    
-    /**
-     * Represents a compliance gap
-     */
-    class Gap {
-        public String id;
-        public String controlId;
-        public String controlCode;
-        public String controlName;
-        public String description;
-        public String severity;
-        public String status;
-        public String recommendation;
-        public Date dueDate;
-        public Decimal riskScore;
-        
-        public Gap() {
-            this.status = 'Open';
-        }
-    }
-    
-    /**
-     * Result of control evaluation
-     */
-    class ControlResult {
-        public String controlId;
-        public Boolean passed;
-        public Decimal score;
-        public String status; // COMPLIANT, NON_COMPLIANT, PARTIAL, NOT_APPLICABLE
-        public String finding;
-        public List<String> evidenceIds;
-        public Datetime evaluatedAt;
-        
-        public ControlResult() {
-            this.evidenceIds = new List<String>();
-            this.evaluatedAt = Datetime.now();
-        }
-    }
+    ComplianceModuleTypes.ControlResult evaluateControl(String controlId, Map<String, Object> context);
 }

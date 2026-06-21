@@ -12,7 +12,7 @@
 public inherited sharing class MetadataCheckEvaluator {
 
     private static final String CHECK_OBJECT_EXISTS = 'OBJECT_EXISTS';
-    private static final String CHECK_FIELD_ENCRYPTED = 'FIELD_ENCRYPTED';
+    private static final String CHECK_FIELD_PROTECTION = 'FIELD_ENCRYPTED';
     private static final String CHECK_FLS_ENFORCED = 'FLS_ENFORCED';
     private static final String CHECK_SHARING_ENABLED = 'SHARING_ENABLED';
 
@@ -75,7 +75,7 @@ public inherited sharing class MetadataCheckEvaluator {
             Map<String, Object> config) {
         if (checkType == CHECK_OBJECT_EXISTS) {
             return checkObjectExists(target);
-        } else if (checkType == CHECK_FIELD_ENCRYPTED) {
+        } else if (checkType == CHECK_FIELD_PROTECTION) {
             return checkFieldEncrypted(target, (String) config.get('field'));
         } else if (checkType == CHECK_FLS_ENFORCED) {
             return checkFLSEnforced(target, (String) config.get('field'));

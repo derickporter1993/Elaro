@@ -142,9 +142,9 @@ public class ElaroEventMonitoringService {
 - `DataExportEvent` - Bulk data exports
 - `UriEvent` - Page view patterns
 
-#### 1.3 AI-Powered Anomaly Detection
+#### 1.3 Model-Assisted Anomaly Detection
 
-**Integrate with Claude for Pattern Recognition:**
+**Integrate with an external model for pattern recognition:**
 
 ```apex
 public class ElaroAnomalyDetector {
@@ -238,7 +238,7 @@ public class ElaroEventProcessor {
 - **Setup Audit Trail**: Query via SOQL (existing)
 - **Event Monitoring**: REST API calls (new)
 - **Platform Events**: Custom events + subscribers (new)
-- **Claude AI**: Anomaly detection prompts (new)
+- **External AI API**: Anomaly detection prompts (new)
 
 ### Performance Considerations
 
@@ -1554,7 +1554,7 @@ scores_table = dynamodb.Table(os.environ['SCORES_TABLE'])
 def lambda_handler(event, context):
     """
     Analyze compliance event and calculate risk score
-    Calls Claude API for AI-powered analysis
+    Calls external AI API for model-assisted analysis
     """
     payload = json.loads(event['Payload']) if isinstance(event, str) else event
 

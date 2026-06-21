@@ -59,14 +59,14 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
         Test.stopTest();
 
         Assert.areNotEqual(null, controls, 'Controls list should not be null');
         Assert.isTrue(controls.size() > 0, 'Should have at least one control');
 
         Set<String> families = new Set<String>();
-        for (IComplianceModule.Control ctrl : controls) {
+        for (ComplianceModuleTypes.Control ctrl : controls) {
             families.add(ctrl.family);
             Assert.areNotEqual(null, ctrl.code, 'Control code should not be null');
             Assert.areNotEqual(null, ctrl.name, 'Control name should not be null');
@@ -135,11 +135,11 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
+        List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
-        for (IComplianceModule.Gap gap : gaps) {
+        for (ComplianceModuleTypes.Gap gap : gaps) {
             Assert.isTrue(gap.id.startsWith('GAP-SOC2-'), 'Gap ID should start with GAP-SOC2-');
             Assert.areNotEqual(null, gap.controlCode, 'Gap controlCode should not be null');
             Assert.areNotEqual(null, gap.severity, 'Gap severity should not be null');
@@ -161,7 +161,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = module.identifyGaps(cleanPkg.Id);
+        List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(cleanPkg.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
@@ -194,7 +194,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('CC6.1');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('CC6.1');
         Test.stopTest();
 
         Assert.areNotEqual(null, ctrl, 'Should find Logical Access Security control');
@@ -206,7 +206,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
         Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
@@ -215,11 +215,11 @@ private class SOC2ModuleTest {
     @IsTest
     static void testGetControlById_AllControls() {
         SOC2Module module = new SOC2Module();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
 
         Test.startTest();
-        for (IComplianceModule.Control ctrl : controls) {
-            IComplianceModule.Control found = module.getControlById(ctrl.code);
+        for (ComplianceModuleTypes.Control ctrl : controls) {
+            ComplianceModuleTypes.Control found = module.getControlById(ctrl.code);
             Assert.areNotEqual(null, found, 'Should find control by code: ' + ctrl.code);
         }
         Test.stopTest();
@@ -235,7 +235,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'CC6.1',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -253,7 +253,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'CC7.2',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -269,7 +269,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'CC7.4',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -287,7 +287,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'CC8.1',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -305,7 +305,7 @@ private class SOC2ModuleTest {
         SOC2Module module = new SOC2Module();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'CC6.2',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -320,11 +320,11 @@ private class SOC2ModuleTest {
     static void testEvaluateControl_AllControlTypes() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'SOC2' LIMIT 1];
         SOC2Module module = new SOC2Module();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
 
         Test.startTest();
-        for (IComplianceModule.Control ctrl : controls) {
-            IComplianceModule.ControlResult result = module.evaluateControl(
+        for (ComplianceModuleTypes.Control ctrl : controls) {
+            ComplianceModuleTypes.ControlResult result = module.evaluateControl(
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );
@@ -359,7 +359,7 @@ private class SOC2ModuleTest {
             Decimal score = module.calculateScore(pkg.Id);
             Assert.isTrue(score >= 0, 'Score should be non-negative for package: ' + pkg.Id);
 
-            List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
+            List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(pkg.Id);
             Assert.areNotEqual(null, gaps, 'Gaps should not be null for package: ' + pkg.Id);
         }
         Test.stopTest();

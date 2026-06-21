@@ -4,7 +4,7 @@ Node.js tooling and utilities for the Elaro compliance platform.
 
 ## Overview
 
-This is a **Turborepo monorepo** containing CLI tools, Salesforce API clients, and data masking utilities for Prometheion/Elaro.
+This is a **Turborepo monorepo** containing CLI tools, Salesforce API clients, and data masking utilities for Elaro.
 
 **Architecture**: This platform is independent from the Salesforce codebase (`../force-app/`). See [ADR-001: Dual-Repo Strategy](../docs/architecture/ADR-001-dual-repo-strategy.md).
 
@@ -13,7 +13,7 @@ This is a **Turborepo monorepo** containing CLI tools, Salesforce API clients, a
 ```
 platform/
 ├── packages/
-│   ├── cli/           # Prometheion CLI (elaro command)
+│   ├── cli/           # Elaro CLI
 │   ├── types/         # Shared TypeScript types
 │   ├── sf-client/     # Salesforce API client library
 │   └── masking/       # Data masking engine
@@ -38,9 +38,10 @@ Build order: `types` → `sf-client` & `masking` (parallel) → `cli`
 
 ### @platform/cli
 
-**Command-line interface** for Prometheion operations.
+**Command-line interface** for Elaro operations.
 
 **Commands**:
+
 - `elaro status` - Show Salesforce org status and metrics
 - `elaro scan` - Scan codebase for compliance issues
 - `elaro validate` - Run pre-deployment validation
@@ -54,6 +55,7 @@ Build order: `types` → `sf-client` & `masking` (parallel) → `cli`
 **Shared TypeScript types** used across all packages.
 
 **Key types**:
+
 - `MaskingStrategy`, `MaskingPolicy` - Data masking types
 - Salesforce API types (org, metadata, limits)
 - CLI command types
@@ -65,6 +67,7 @@ Build order: `types` → `sf-client` & `masking` (parallel) → `cli`
 **Salesforce API client library** for authentication and API calls.
 
 **Features**:
+
 - JWT and OAuth authentication
 - REST API client
 - Tooling API client
@@ -77,6 +80,7 @@ Build order: `types` → `sf-client` & `masking` (parallel) → `cli`
 **Data masking engine** for transforming sensitive data.
 
 **Strategies**:
+
 - `redact` - Replace with placeholder (e.g., `[REDACTED]`)
 - `hash` - One-way hash (SHA-256, MurmurHash)
 - `fake` - Generate realistic fake data (Faker.js)
@@ -84,6 +88,7 @@ Build order: `types` → `sf-client` & `masking` (parallel) → `cli`
 - `tokenize` - Replace with tokens (reversible via vault)
 
 **Policy templates**:
+
 - `PII_STANDARD` - Standard PII masking
 - `PCI_DSS` - Payment card data compliance
 - `HIPAA` - Protected health information
@@ -187,15 +192,15 @@ npm run cli          # Run elaro command
 
 ## Package Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run build` | Build all packages in dependency order |
-| `npm run dev` | Watch mode (rebuild on changes) |
-| `npm run typecheck` | Check TypeScript types |
-| `npm run lint` | Lint all packages |
-| `npm run test` | Run tests (future) |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check formatting |
+| Script                 | Description                            |
+| ---------------------- | -------------------------------------- |
+| `npm run build`        | Build all packages in dependency order |
+| `npm run dev`          | Watch mode (rebuild on changes)        |
+| `npm run typecheck`    | Check TypeScript types                 |
+| `npm run lint`         | Lint all packages                      |
+| `npm run test`         | Run tests (future)                     |
+| `npm run format`       | Format code with Prettier              |
+| `npm run format:check` | Check formatting                       |
 
 ## Turborepo Cache
 
@@ -221,17 +226,16 @@ rm -rf .turbo
 TypeScript uses [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) for incremental builds.
 
 Each package has:
+
 - `tsconfig.json` (extends `../tsconfig.base.json`)
 - References to dependencies in `references` array
 
 **Example** (`packages/cli/tsconfig.json`):
+
 ```json
 {
   "extends": "../../tsconfig.base.json",
-  "references": [
-    { "path": "../types" },
-    { "path": "../sf-client" }
-  ]
+  "references": [{ "path": "../types" }, { "path": "../sf-client" }]
 }
 ```
 
@@ -263,6 +267,7 @@ Each package has:
 
 **Cause**: Platform dependencies not installed
 **Fix**:
+
 ```bash
 npm install --ignore-scripts
 ```
@@ -271,6 +276,7 @@ npm install --ignore-scripts
 
 **Cause**: Packages not built
 **Fix**:
+
 ```bash
 npm run build
 ```
@@ -279,6 +285,7 @@ npm run build
 
 **Cause**: esbuild postinstall script issue
 **Fix**: Always use `--ignore-scripts` when installing:
+
 ```bash
 npm install --ignore-scripts
 ```
@@ -287,6 +294,7 @@ npm install --ignore-scripts
 
 **Cause**: Dependency drift
 **Fix**: Sync versions with root:
+
 ```bash
 # From platform/
 npm install prettier@$(cd .. && node -p "require('./package.json').devDependencies.prettier")
@@ -312,6 +320,7 @@ See architecture documentation in `../docs/architecture/`:
 ### Commit Convention
 
 Follow root repository commit conventions:
+
 ```
 type(scope): description
 

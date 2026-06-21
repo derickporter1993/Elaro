@@ -136,9 +136,9 @@ public without sharing class ElaroReasoningEngine {
             return '';
         }
         // Escape HTML special characters
-        return input.replace('&', '&amp;')
-                   .replace('<', '&lt;')
-                   .replace('>', '&gt;')
+        return input.replace('&', '&')
+                   .replace('<', '<')
+                   .replace('>', '>')
                    .replace('"', '&quot;')
                    .replace('\'', '&#39;');
     }

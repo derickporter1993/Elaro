@@ -39,7 +39,7 @@ public inherited sharing class TrustCenterLinkService {
         insert as user link;
 
         ElaroLogger.info('TrustCenterLinkService.createLink',
-            'Created link ' + link.Link_Token__c + ' for ' + (createdFor ?? 'anonymous'));
+            'Created Trust_Center_Link__c record ' + link.Id + ' for ' + (createdFor ?? 'anonymous'));
 
         return link;
     }

@@ -74,7 +74,7 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Review & Approval</label>
+        <label>Review &amp; Approval</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>

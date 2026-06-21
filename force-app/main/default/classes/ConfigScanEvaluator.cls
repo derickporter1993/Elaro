@@ -13,7 +13,7 @@ public inherited sharing class ConfigScanEvaluator {
 
     private static final String SCAN_AUDIT_TRAIL = 'AUDIT_TRAIL';
     private static final String SCAN_SESSION_SETTINGS = 'SESSION_SETTINGS';
-    private static final String SCAN_PASSWORD_POLICY = 'PASSWORD_POLICY';
+    private static final String SCAN_AUTH_POLICY = 'PASSWORD_POLICY';
     private static final String SCAN_CUSTOM_SETTING = 'CUSTOM_SETTING';
 
     /**
@@ -74,7 +74,7 @@ public inherited sharing class ConfigScanEvaluator {
             return scanAuditTrail(config);
         } else if (scanType == SCAN_SESSION_SETTINGS) {
             return scanSessionSettings(config);
-        } else if (scanType == SCAN_PASSWORD_POLICY) {
+        } else if (scanType == SCAN_AUTH_POLICY) {
             return scanPasswordPolicy(config);
         } else if (scanType == SCAN_CUSTOM_SETTING) {
             return scanCustomSetting(config);

@@ -75,7 +75,7 @@ public without sharing class RuleEngineEventBridge {
      */
     public static List<ComplianceFinding> publishGapsAsAlerts(
         IComplianceModule module,
-        List<IComplianceModule.Gap> gaps
+        List<ComplianceModuleTypes.Gap> gaps
     ) {
         List<ComplianceFinding> findings = new List<ComplianceFinding>();
 
@@ -88,7 +88,7 @@ public without sharing class RuleEngineEventBridge {
         try {
             List<ComplianceAlert__e> alerts = new List<ComplianceAlert__e>();
 
-            for (IComplianceModule.Gap gap : gaps) {
+            for (ComplianceModuleTypes.Gap gap : gaps) {
                 ComplianceFinding finding = new ComplianceFinding(
                     frameworkName,
                     gap.controlCode ?? gap.controlId,
@@ -185,7 +185,7 @@ public without sharing class RuleEngineEventBridge {
 
     /**
      * Publishes a ComplianceAlert__e event for a single non-compliant
-     * IComplianceModule.ControlResult. Use this for real-time alerting
+     * ComplianceModuleTypes.ControlResult. Use this for real-time alerting
      * during individual control evaluations rather than batch gap analysis.
      *
      * @param frameworkName The compliance framework identifier
@@ -196,7 +196,7 @@ public without sharing class RuleEngineEventBridge {
     public static ComplianceFinding publishControlResultAsAlert(
         String frameworkName,
         String controlId,
-        IComplianceModule.ControlResult controlResult
+        ComplianceModuleTypes.ControlResult controlResult
     ) {
         if (controlResult == null || controlResult.passed) {
             return null;
@@ -429,13 +429,13 @@ public without sharing class RuleEngineEventBridge {
     // =========================================================================
 
     /**
-     * Builds a human-readable summary from an IComplianceModule.Gap object.
+     * Builds a human-readable summary from an ComplianceModuleTypes.Gap object.
      *
      * @param gap The compliance gap to summarize
      * @return Formatted summary string
      */
     @TestVisible
-    private static String buildGapSummary(IComplianceModule.Gap gap) {
+    private static String buildGapSummary(ComplianceModuleTypes.Gap gap) {
         String summary = '';
         if (String.isNotBlank(gap.controlName)) {
             summary += gap.controlName + ': ';
@@ -490,7 +490,7 @@ public without sharing class RuleEngineEventBridge {
     }
 
     /**
-     * Maps IComplianceModule.ControlResult status to a severity level.
+     * Maps ComplianceModuleTypes.ControlResult status to a severity level.
      *
      * @param status The control result status (COMPLIANT, NON_COMPLIANT, PARTIAL, NOT_APPLICABLE)
      * @return Corresponding severity level

@@ -18,7 +18,7 @@ private class ElaroDeliveryServiceTest {
     @isTest
     static void testDeliverAuditPackage_SendsEmail() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        List&lt;String&gt; recipients = new List&lt;String&gt;{'test@example.com'};
+        List<String> recipients = new List<String>{'test@example.com'};
         
         Test.startTest();
         // In test context, email is not actually sent
@@ -33,7 +33,7 @@ private class ElaroDeliveryServiceTest {
     @isTest
     static void testDeliverAuditPackage_MultipleRecipients() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        List&lt;String&gt; recipients = new List&lt;String&gt;{
+        List<String> recipients = new List<String>{
             'test1@example.com',
             'test2@example.com',
             'test3@example.com'
@@ -51,7 +51,7 @@ private class ElaroDeliveryServiceTest {
     static void testDeliverAuditPackage_NullPackageId_ThrowsException() {
         Test.startTest();
         try {
-            ElaroDeliveryService.deliverAuditPackage(null, new List&lt;String&gt;{'test@example.com'});
+            ElaroDeliveryService.deliverAuditPackage(null, new List<String>{'test@example.com'});
             Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             Assert.isTrue(e.getMessage().contains('required'), 'Should mention required fields');
@@ -65,7 +65,7 @@ private class ElaroDeliveryServiceTest {
         
         Test.startTest();
         try {
-            ElaroDeliveryService.deliverAuditPackage(pkg.Id, new List&lt;String&gt;());
+            ElaroDeliveryService.deliverAuditPackage(pkg.Id, new List<String>());
             Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
             Assert.isTrue(e.getMessage().contains('required'), 'Should mention required fields');
@@ -95,7 +95,7 @@ private class ElaroDeliveryServiceTest {
     static void testScheduleRecurringDelivery_CreatesScheduledJob() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
         String cronExpression = '0 0 6 * * ?'; // Daily at 6 AM
-        List&lt;String&gt; recipients = new List&lt;String&gt;{'test@example.com'};
+        List<String> recipients = new List<String>{'test@example.com'};
         
         Test.startTest();
         Id jobId = ElaroDeliveryService.scheduleRecurringDelivery(
@@ -128,7 +128,7 @@ private class ElaroDeliveryServiceTest {
             ElaroDeliveryService.scheduleRecurringDelivery(
                 pkg.Id,
                 null,
-                new List&lt;String&gt;{'test@example.com'}
+                new List<String>{'test@example.com'}
             );
             Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
@@ -146,7 +146,7 @@ private class ElaroDeliveryServiceTest {
             ElaroDeliveryService.scheduleRecurringDelivery(
                 pkg.Id,
                 '',
-                new List&lt;String&gt;{'test@example.com'}
+                new List<String>{'test@example.com'}
             );
             Assert.fail( 'Should throw exception');
         } catch (AuraHandledException e) {
@@ -170,7 +170,7 @@ private class ElaroDeliveryServiceTest {
         Assert.areNotEqual(null, shareableUrl, 'Should return shareable URL');
         
         // Verify ContentDistribution was created
-        List&lt;ContentDistribution&gt; distributions = [
+        List<ContentDistribution> distributions = [
             SELECT ExpiryDate, PreferencesPasswordRequired
             FROM ContentDistribution
             WHERE Name LIKE '%Audit Package Share%'
@@ -189,7 +189,7 @@ private class ElaroDeliveryServiceTest {
         Test.stopTest();
         
         // Should default to 30 days
-        List&lt;ContentDistribution&gt; distributions = [
+        List<ContentDistribution> distributions = [
             SELECT ExpiryDate
             FROM ContentDistribution
             WHERE Name LIKE '%Audit Package Share%'
@@ -273,7 +273,7 @@ private class ElaroDeliveryServiceTest {
         ElaroDeliveryService.generateShareableLink(pkg.Id, 30);
         
         Test.startTest();
-        List&lt;Map&lt;String, Object&gt;&gt; history = ElaroDeliveryService.getDeliveryHistory(pkg.Id);
+        List<Map<String, Object>> history = ElaroDeliveryService.getDeliveryHistory(pkg.Id);
         Test.stopTest();
         
         Assert.isTrue(!history.isEmpty(), 'Should return delivery history');
@@ -285,7 +285,7 @@ private class ElaroDeliveryServiceTest {
         Elaro_Audit_Package__c newPkg = ElaroTestDataFactory.createAuditPackage('SOC2');
         
         Test.startTest();
-        List&lt;Map&lt;String, Object&gt;&gt; history = ElaroDeliveryService.getDeliveryHistory(newPkg.Id);
+        List<Map<String, Object>> history = ElaroDeliveryService.getDeliveryHistory(newPkg.Id);
         Test.stopTest();
         
         Assert.areEqual(0, history.size(), 'Should return empty list for new package');
@@ -298,7 +298,7 @@ private class ElaroDeliveryServiceTest {
     @isTest
     static void testScheduledDelivery_Execute() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        List&lt;String&gt; recipients = new List&lt;String&gt;{'test@example.com'};
+        List<String> recipients = new List<String>{'test@example.com'};
         
         ElaroScheduledDelivery scheduler = new ElaroScheduledDelivery(
             pkg.Id, recipients
@@ -316,7 +316,7 @@ private class ElaroDeliveryServiceTest {
     @isTest
     static void testScheduledDelivery_ScheduleWeekly() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        List&lt;String&gt; recipients = new List&lt;String&gt;{'test@example.com'};
+        List<String> recipients = new List<String>{'test@example.com'};
         
         Test.startTest();
         Id jobId = ElaroScheduledDelivery.scheduleWeekly(pkg.Id, recipients);
@@ -331,7 +331,7 @@ private class ElaroDeliveryServiceTest {
     @isTest
     static void testScheduledDelivery_ScheduleMonthly() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        List&lt;String&gt; recipients = new List&lt;String&gt;{'test@example.com'};
+        List<String> recipients = new List<String>{'test@example.com'};
         
         Test.startTest();
         Id jobId = ElaroScheduledDelivery.scheduleMonthly(pkg.Id, recipients);
@@ -346,7 +346,7 @@ private class ElaroDeliveryServiceTest {
     @isTest
     static void testScheduledDelivery_ScheduleQuarterly() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        List&lt;String&gt; recipients = new List&lt;String&gt;{'test@example.com'};
+        List<String> recipients = new List<String>{'test@example.com'};
         
         Test.startTest();
         Id jobId = ElaroScheduledDelivery.scheduleQuarterly(pkg.Id, recipients);

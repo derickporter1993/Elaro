@@ -15,7 +15,7 @@
  */
 public inherited sharing class SlackIntegrationQueueable implements Queueable, Database.AllowsCallouts {
 
-    private static final String NAMED_CREDENTIAL = 'callout:Slack_Webhook';
+    private static final String CALLOUT_ENDPOINT = 'callout:Slack_Webhook';
     private static final Integer MAX_RETRY_ATTEMPTS = 2;
 
     /**
@@ -260,7 +260,7 @@ public inherited sharing class SlackIntegrationQueueable implements Queueable, D
      */
     private void sendToSlack(Map<String, Object> message) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(NAMED_CREDENTIAL);
+        req.setEndpoint(CALLOUT_ENDPOINT);
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(message));

@@ -116,8 +116,8 @@ public class HIPAABreachNotificationServiceTest {
     static void testAssessBreach() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
-        IBreachNotificationService.BreachAssessmentRequest request =
-            new IBreachNotificationService.BreachAssessmentRequest();
+        BreachNotificationTypes.BreachAssessmentRequest request =
+            new BreachNotificationTypes.BreachAssessmentRequest();
         request.dataTypesInvolved = new List<String>{'SSN', 'Medical Records'};
         request.recordsAffected = 100;
         request.recipientType = 'Unknown';
@@ -127,7 +127,7 @@ public class HIPAABreachNotificationServiceTest {
         request.mitigationsApplied = new List<String>{'Encryption enabled'};
 
         Test.startTest();
-        IBreachNotificationService.BreachAssessment assessment = service.assessBreach(request);
+        BreachNotificationTypes.BreachAssessment assessment = service.assessBreach(request);
         Test.stopTest();
 
         Assert.areNotEqual(null, assessment, 'Assessment should not be null');
@@ -141,8 +141,8 @@ public class HIPAABreachNotificationServiceTest {
     static void testAssessBreachLowRisk() {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
-        IBreachNotificationService.BreachAssessmentRequest request =
-            new IBreachNotificationService.BreachAssessmentRequest();
+        BreachNotificationTypes.BreachAssessmentRequest request =
+            new BreachNotificationTypes.BreachAssessmentRequest();
         request.dataTypesInvolved = new List<String>{'Name'};
         request.recordsAffected = 5;
         request.recipientType = 'Business Associate';
@@ -152,7 +152,7 @@ public class HIPAABreachNotificationServiceTest {
         request.mitigationsApplied = new List<String>{'Data Destroyed', 'Confidentiality Agreement'};
 
         Test.startTest();
-        IBreachNotificationService.BreachAssessment assessment = service.assessBreach(request);
+        BreachNotificationTypes.BreachAssessment assessment = service.assessBreach(request);
         Test.stopTest();
 
         Assert.isTrue(assessment.overallRiskScore < 5, 'Low risk scenario should have low score');
@@ -169,7 +169,7 @@ public class HIPAABreachNotificationServiceTest {
         ];
 
         Test.startTest();
-        IBreachNotificationService.NotificationStatus status =
+        BreachNotificationTypes.NotificationStatus status =
             service.getNotificationStatus(breach.Id);
         Test.stopTest();
 
@@ -184,7 +184,7 @@ public class HIPAABreachNotificationServiceTest {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
         Test.startTest();
-        IBreachNotificationService.BreachSummary summary = service.getBreachSummary();
+        BreachNotificationTypes.BreachSummary summary = service.getBreachSummary();
         Test.stopTest();
 
         Assert.areNotEqual(null, summary, 'Summary should not be null');
@@ -197,7 +197,7 @@ public class HIPAABreachNotificationServiceTest {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
         Test.startTest();
-        IBreachNotificationService.BreachMetrics metrics = service.getBreachMetrics(365);
+        BreachNotificationTypes.BreachMetrics metrics = service.getBreachMetrics(365);
         Test.stopTest();
 
         Assert.areNotEqual(null, metrics, 'Metrics should not be null');
@@ -327,7 +327,7 @@ public class HIPAABreachNotificationServiceTest {
         HIPAABreachNotificationService service = new HIPAABreachNotificationService();
 
         Test.startTest();
-        IBreachNotificationService.BreachSummary summary = service.getBreachSummary();
+        BreachNotificationTypes.BreachSummary summary = service.getBreachSummary();
         Test.stopTest();
 
         Assert.isTrue(summary.totalBreaches >= 100, 'Should handle bulk breaches');

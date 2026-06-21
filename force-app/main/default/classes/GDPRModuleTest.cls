@@ -93,14 +93,14 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
         Test.stopTest();
 
         Assert.areNotEqual(null, controls, 'Controls list should not be null');
         Assert.isTrue(controls.size() > 0, 'Should have at least one control');
 
         Set<String> families = new Set<String>();
-        for (IComplianceModule.Control ctrl : controls) {
+        for (ComplianceModuleTypes.Control ctrl : controls) {
             families.add(ctrl.family);
             Assert.areNotEqual(null, ctrl.code, 'Control code should not be null');
             Assert.areNotEqual(null, ctrl.name, 'Control name should not be null');
@@ -146,11 +146,11 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        List<IComplianceModule.Gap> gaps = module.identifyGaps(pkg.Id);
+        List<ComplianceModuleTypes.Gap> gaps = module.identifyGaps(pkg.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, gaps, 'Gaps list should not be null');
-        for (IComplianceModule.Gap gap : gaps) {
+        for (ComplianceModuleTypes.Gap gap : gaps) {
             Assert.isTrue(gap.id.startsWith('GAP-GDPR-'), 'Gap ID should start with GAP-GDPR-');
             Assert.areNotEqual(null, gap.controlCode, 'Gap controlCode should not be null');
             Assert.areNotEqual(null, gap.recommendation, 'Gap recommendation should not be null');
@@ -183,7 +183,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('Art.17');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('Art.17');
         Test.stopTest();
 
         Assert.areNotEqual(null, ctrl, 'Should find Right to Erasure control');
@@ -195,7 +195,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.Control ctrl = module.getControlById('NONEXISTENT');
+        ComplianceModuleTypes.Control ctrl = module.getControlById('NONEXISTENT');
         Test.stopTest();
 
         Assert.areEqual(null, ctrl, 'Should return null for nonexistent control');
@@ -211,7 +211,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'Art.17',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -227,7 +227,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'Art.30',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -243,7 +243,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'Art.32',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -260,7 +260,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'Art.33',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -276,7 +276,7 @@ private class GDPRModuleTest {
         GDPRModule module = new GDPRModule();
 
         Test.startTest();
-        IComplianceModule.ControlResult result = module.evaluateControl(
+        ComplianceModuleTypes.ControlResult result = module.evaluateControl(
             'Art.5',
             new Map<String, Object>{ 'auditPackageId' => pkg.Id }
         );
@@ -291,11 +291,11 @@ private class GDPRModuleTest {
     static void testEvaluateControl_AllControlTypes() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'GDPR' LIMIT 1];
         GDPRModule module = new GDPRModule();
-        List<IComplianceModule.Control> controls = module.getControls();
+        List<ComplianceModuleTypes.Control> controls = module.getControls();
 
         Test.startTest();
-        for (IComplianceModule.Control ctrl : controls) {
-            IComplianceModule.ControlResult result = module.evaluateControl(
+        for (ComplianceModuleTypes.Control ctrl : controls) {
+            ComplianceModuleTypes.ControlResult result = module.evaluateControl(
                 ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => pkg.Id }
             );

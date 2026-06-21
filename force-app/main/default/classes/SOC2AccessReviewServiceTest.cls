@@ -55,7 +55,7 @@ public class SOC2AccessReviewServiceTest {
         Access_Review__c existingReview = [SELECT Id FROM Access_Review__c LIMIT 1];
 
         Test.startTest();
-        IAccessControlService.AccessReviewStatus status = service.getReviewStatus(existingReview.Id);
+        AccessControlTypes.AccessReviewStatus status = service.getReviewStatus(existingReview.Id);
         Test.stopTest();
 
         Assert.areNotEqual(null, status, 'Status should not be null');
@@ -66,7 +66,7 @@ public class SOC2AccessReviewServiceTest {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
         Test.startTest();
-        List<IAccessControlService.ExcessiveAccessUser> users = service.getExcessiveAccessUsers();
+        List<AccessControlTypes.ExcessiveAccessUser> users = service.getExcessiveAccessUsers();
         Test.stopTest();
 
         Assert.areNotEqual(null, users, 'Users list should not be null');
@@ -78,7 +78,7 @@ public class SOC2AccessReviewServiceTest {
 
         // Test with empty list
         Test.startTest();
-        IAccessControlService.RevokeAccessResult result = service.revokeAccess(new List<Id>(), 'Test revocation');
+        AccessControlTypes.RevokeAccessResult result = service.revokeAccess(new List<Id>(), 'Test revocation');
         Test.stopTest();
 
         Assert.areNotEqual(null, result, 'Result should not be null');
@@ -90,7 +90,7 @@ public class SOC2AccessReviewServiceTest {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
         Test.startTest();
-        List<IAccessControlService.StalePermission> stalePerms = service.getStalePermissions(90);
+        List<AccessControlTypes.StalePermission> stalePerms = service.getStalePermissions(90);
         Test.stopTest();
 
         Assert.areNotEqual(null, stalePerms, 'Stale permissions list should not be null');
@@ -101,7 +101,7 @@ public class SOC2AccessReviewServiceTest {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
         Test.startTest();
-        IAccessControlService.NeedToKnowResult result = service.validateNeedToKnow(UserInfo.getUserId());
+        AccessControlTypes.NeedToKnowResult result = service.validateNeedToKnow(UserInfo.getUserId());
         Test.stopTest();
 
         Assert.areNotEqual(null, result, 'Result should not be null');
@@ -169,7 +169,7 @@ public class SOC2AccessReviewServiceTest {
         SOC2AccessReviewService service = new SOC2AccessReviewService();
 
         Test.startTest();
-        List<IAccessControlService.ExcessiveAccessUser> users = service.getExcessiveAccessUsers();
+        List<AccessControlTypes.ExcessiveAccessUser> users = service.getExcessiveAccessUsers();
         Test.stopTest();
 
         Assert.areNotEqual(null, users, 'Users list should not be null for bulk test');

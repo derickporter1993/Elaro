@@ -122,7 +122,7 @@ private class ElaroConsentWithdrawalHandlerTest {
     @IsTest
     static void testProcessWithdrawalsAllDataProcessing() {
         // Create consent for full data processing withdrawal
-        Contact testContact = [SELECT Id FROM Contact LIMIT 1 WITH USER_MODE];
+        Contact testContact = [SELECT Id FROM Contact WITH USER_MODE LIMIT 1];
         Consent__c fullConsent = new Consent__c(
             Contact__c = testContact.Id,
             Consent_Type__c = 'All Data Processing',

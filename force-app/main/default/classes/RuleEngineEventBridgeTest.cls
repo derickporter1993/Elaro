@@ -19,9 +19,9 @@ private class RuleEngineEventBridgeTest {
     static void shouldPublishGapsAsAlerts() {
         IComplianceModule module = new HIPAAModule();
 
-        List<IComplianceModule.Gap> gaps = new List<IComplianceModule.Gap>();
+        List<ComplianceModuleTypes.Gap> gaps = new List<ComplianceModuleTypes.Gap>();
 
-        IComplianceModule.Gap gap1 = new IComplianceModule.Gap();
+        ComplianceModuleTypes.Gap gap1 = new ComplianceModuleTypes.Gap();
         gap1.id = 'GAP-164.312(a)';
         gap1.controlId = '164.312(a)';
         gap1.controlCode = '164.312(a)';
@@ -32,7 +32,7 @@ private class RuleEngineEventBridgeTest {
         gap1.riskScore = 7.5;
         gaps.add(gap1);
 
-        IComplianceModule.Gap gap2 = new IComplianceModule.Gap();
+        ComplianceModuleTypes.Gap gap2 = new ComplianceModuleTypes.Gap();
         gap2.id = 'GAP-164.312(b)';
         gap2.controlId = '164.312(b)';
         gap2.controlCode = '164.312(b)';
@@ -66,7 +66,7 @@ private class RuleEngineEventBridgeTest {
 
         Test.startTest();
         List<RuleEngineEventBridge.ComplianceFinding> findings =
-            RuleEngineEventBridge.publishGapsAsAlerts(module, new List<IComplianceModule.Gap>());
+            RuleEngineEventBridge.publishGapsAsAlerts(module, new List<ComplianceModuleTypes.Gap>());
         Test.stopTest();
 
         Assert.isTrue(findings.isEmpty(), 'Empty gaps should return empty findings');
@@ -84,8 +84,8 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldHandleNullModuleWithGaps() {
-        List<IComplianceModule.Gap> gaps = new List<IComplianceModule.Gap>();
-        IComplianceModule.Gap gap = new IComplianceModule.Gap();
+        List<ComplianceModuleTypes.Gap> gaps = new List<ComplianceModuleTypes.Gap>();
+        ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
         gap.controlCode = 'TEST-1';
         gap.description = 'Test gap';
         gap.severity = ElaroConstants.SEVERITY_LOW;
@@ -107,7 +107,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldPublishNonCompliantControlResult() {
-        IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
+        ComplianceModuleTypes.ControlResult result = new ComplianceModuleTypes.ControlResult();
         result.controlId = '164.312(a)';
         result.passed = false;
         result.score = 20;
@@ -128,7 +128,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldReturnNullForPassingControlResult() {
-        IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
+        ComplianceModuleTypes.ControlResult result = new ComplianceModuleTypes.ControlResult();
         result.controlId = '164.312(e)';
         result.passed = true;
         result.score = 100;
@@ -154,7 +154,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldPublishPartialControlResult() {
-        IComplianceModule.ControlResult result = new IComplianceModule.ControlResult();
+        ComplianceModuleTypes.ControlResult result = new ComplianceModuleTypes.ControlResult();
         result.controlId = '164.308(a)(5)';
         result.passed = false;
         result.score = 60;
@@ -493,7 +493,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldBuildGapSummary() {
-        IComplianceModule.Gap gap = new IComplianceModule.Gap();
+        ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
         gap.controlName = 'Access Control';
         gap.description = 'Excessive admin permissions';
         gap.recommendation = 'Implement least privilege';
@@ -510,7 +510,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldBuildGapSummaryWithMinimalData() {
-        IComplianceModule.Gap gap = new IComplianceModule.Gap();
+        ComplianceModuleTypes.Gap gap = new ComplianceModuleTypes.Gap();
         gap.description = 'A gap';
 
         String summary = RuleEngineEventBridge.buildGapSummary(gap);

@@ -42,6 +42,7 @@ Salesforce enforces governor limits to ensure multi-tenant platform stability. E
 ```
 
 **Steps in UI**:
+
 1. Setup → Apps → App Manager
 2. Find "Elaro" app → Click "Edit"
 3. Navigation Items → Add "System Monitor Dashboard"
@@ -53,16 +54,17 @@ Salesforce enforces governor limits to ensure multi-tenant platform stability. E
 
 **Recommended Thresholds**:
 
-| Limit Type | Salesforce Max | Alert Threshold | Critical Threshold |
-|------------|----------------|-----------------|-------------------|
-| SOQL Queries | 100 | 80 (80%) | 90 (90%) |
-| DML Statements | 150 | 120 (80%) | 135 (90%) |
-| CPU Time (ms) | 10,000 | 7,500 (75%) | 9,000 (90%) |
-| Heap Size (MB) | 6 | 4.2 (70%) | 5.4 (90%) |
-| Callouts | 100 | 80 (80%) | 90 (90%) |
-| SOSL Queries | 20 | 16 (80%) | 18 (90%) |
+| Limit Type     | Salesforce Max | Alert Threshold | Critical Threshold |
+| -------------- | -------------- | --------------- | ------------------ |
+| SOQL Queries   | 100            | 80 (80%)        | 90 (90%)           |
+| DML Statements | 150            | 120 (80%)       | 135 (90%)          |
+| CPU Time (ms)  | 10,000         | 7,500 (75%)     | 9,000 (90%)        |
+| Heap Size (MB) | 6              | 4.2 (70%)       | 5.4 (90%)          |
+| Callouts       | 100            | 80 (80%)        | 90 (90%)           |
+| SOSL Queries   | 20             | 16 (80%)        | 18 (90%)           |
 
 **Configuration Steps**:
+
 1. Setup → Custom Metadata Types → Governor Limit Threshold → Manage Records
 2. Click "New" for each limit type
 3. Set threshold percentages
@@ -72,6 +74,7 @@ Salesforce enforces governor limits to ensure multi-tenant platform stability. E
 #### 3. Set Up Alert Channels
 
 **Email Alerts**:
+
 ```
 Recipients: ops-team@solentra.com, engineering@solentra.com
 Subject: [ELARO] Governor Limit Alert - {LimitType} at {Percentage}%
@@ -79,6 +82,7 @@ Severity: HIGH
 ```
 
 **Slack Integration** (Optional):
+
 ```
 Channel: #elaro-alerts
 Webhook URL: [Configure in Elaro AI Settings]
@@ -86,6 +90,7 @@ Alert Format: Governor limit {LimitType} exceeded threshold ({Current}/{Max})
 ```
 
 **Chatter Alerts**:
+
 ```
 Group: @elaro-ops
 Mention: When severity = CRITICAL
@@ -131,11 +136,13 @@ ORDER BY COUNT(Id) DESC
 #### SOQL Query Limit Exceeded
 
 **Symptoms**:
+
 - Users see error: "Too many SOQL queries: 101"
 - Dashboard fails to load
 - Batch jobs fail mid-execution
 
 **Investigation**:
+
 ```sql
 SELECT Id, ApexClass, DmlInfo, SoqlInfo, DurationMilliseconds
 FROM ApexLog
@@ -147,6 +154,7 @@ LIMIT 50
 ```
 
 **Resolution**:
+
 1. Identify offending class from logs
 2. Review code for SOQL in loops
 3. Implement bulkification
@@ -156,11 +164,13 @@ LIMIT 50
 #### CPU Time Limit Exceeded
 
 **Symptoms**:
+
 - Error: "Apex CPU time limit exceeded"
 - Long-running operations timeout
 - Performance degradation
 
 **Investigation**:
+
 ```sql
 SELECT Id, ApexClass, CpuTime, DurationMilliseconds
 FROM ApexLog
@@ -170,6 +180,7 @@ ORDER BY CpuTime DESC
 ```
 
 **Resolution**:
+
 1. Review CPU-intensive operations
 2. Optimize loops and calculations
 3. Move complex logic to @future or Queueable
@@ -179,11 +190,13 @@ ORDER BY CpuTime DESC
 #### Heap Size Limit Exceeded
 
 **Symptoms**:
+
 - Error: "Apex heap size too large"
 - Large data processing fails
 - Dashboard with many records fails
 
 **Investigation**:
+
 ```sql
 SELECT Id, ApexClass, HeapSize, DurationMilliseconds
 FROM ApexLog
@@ -193,6 +206,7 @@ ORDER BY HeapSize DESC
 ```
 
 **Resolution**:
+
 1. Reduce collection sizes
 2. Process data in batches
 3. Clear collections after use
@@ -211,12 +225,12 @@ Created → Identified → Assigned → In Progress → Resolved → Closed
 
 ### Alert Rules
 
-| Severity | Notification | SLA | Escalation |
-|----------|-------------|-----|------------|
-| CRITICAL | Immediate Slack + Email | 4 hours | Level 2 if >50% SLA |
-| HIGH | Email within 1 hour | 24 hours | Level 2 if >75% SLA |
-| MEDIUM | Daily digest | 1 week | Level 2 if overdue |
-| LOW | Weekly digest | 1 month | None |
+| Severity | Notification            | SLA      | Escalation          |
+| -------- | ----------------------- | -------- | ------------------- |
+| CRITICAL | Immediate Slack + Email | 4 hours  | Level 2 if >50% SLA |
+| HIGH     | Email within 1 hour     | 24 hours | Level 2 if >75% SLA |
+| MEDIUM   | Daily digest            | 1 week   | Level 2 if overdue  |
+| LOW      | Weekly digest           | 1 month  | None                |
 
 ### Notification Configuration
 
@@ -225,6 +239,7 @@ Created → Identified → Assigned → In Progress → Resolved → Closed
 **Alert Templates**:
 
 **CRITICAL Alert**:
+
 ```
 Subject: 🚨 CRITICAL Compliance Gap: {GapName}
 Body:
@@ -240,6 +255,7 @@ Link: {RecordURL}
 ```
 
 **HIGH Alert**:
+
 ```
 Subject: ⚠️ HIGH Priority Compliance Gap: {GapName}
 Body:
@@ -255,14 +271,17 @@ Link: {RecordURL}
 ### Escalation Path
 
 **Level 1**: Compliance Team (auto-assigned via Assignment Rules)
+
 - Response: Acknowledge within 1 hour
 - Action: Review and assign to appropriate specialist
 
 **Level 2**: Compliance Manager (escalated if SLA > 50%)
+
 - Response: Immediate
 - Action: Prioritize resources, provide guidance
 
 **Level 3**: CISO (escalated if CRITICAL severity AND SLA > 75%)
+
 - Response: Immediate
 - Action: Executive decision on resource allocation
 
@@ -304,18 +323,18 @@ ORDER BY Framework__c, Score_Date__c
 
 ### Critical Elaro Scheduled Jobs
 
-| Job Name | Frequency | Purpose | Critical? |
-|----------|-----------|---------|-----------|
-| ElaroAuditTrailPoller | Every 15 min | Poll Salesforce audit trail | Yes |
-| RetentionEnforcementScheduler | Daily 2 AM EST | Enforce data retention policies | Yes |
-| ConsentExpirationScheduler | Daily 3 AM EST | Check consent expiration | Yes |
-| ElaroCCPASLAMonitorScheduler | Hourly | Monitor CCPA request SLA | Yes |
-| ElaroGLBAAnnualNoticeBatch | Yearly | Send GLBA annual privacy notice | Yes |
-| ComplianceScoreSnapshotScheduler | Daily 1 AM EST | Capture compliance score snapshot | Yes |
-| AccessReviewScheduler | Monthly 1st | Trigger quarterly access reviews | Yes |
-| BreachDeadlineMonitor | Hourly | Monitor breach notification deadlines | Yes |
-| WeeklyScorecardScheduler | Weekly Mon 8 AM | Email weekly compliance scorecard | No |
-| ElaroISO27001QuarterlyScheduler | Quarterly | ISO 27001 quarterly review | No |
+| Job Name                         | Frequency       | Purpose                               | Critical? |
+| -------------------------------- | --------------- | ------------------------------------- | --------- |
+| ElaroAuditTrailPoller            | Every 15 min    | Poll Salesforce audit trail           | Yes       |
+| RetentionEnforcementScheduler    | Daily 2 AM EST  | Enforce data retention policies       | Yes       |
+| ConsentExpirationScheduler       | Daily 3 AM EST  | Check consent expiration              | Yes       |
+| ElaroCCPASLAMonitorScheduler     | Hourly          | Monitor CCPA request SLA              | Yes       |
+| ElaroGLBAAnnualNoticeBatch       | Yearly          | Send GLBA annual privacy notice       | Yes       |
+| ComplianceScoreSnapshotScheduler | Daily 1 AM EST  | Capture compliance score snapshot     | Yes       |
+| AccessReviewScheduler            | Monthly 1st     | Trigger quarterly access reviews      | Yes       |
+| BreachDeadlineMonitor            | Hourly          | Monitor breach notification deadlines | Yes       |
+| WeeklyScorecardScheduler         | Weekly Mon 8 AM | Email weekly compliance scorecard     | No        |
+| ElaroISO27001QuarterlyScheduler  | Quarterly       | ISO 27001 quarterly review            | No        |
 
 ### Job Monitoring
 
@@ -361,7 +380,9 @@ LIMIT 100
 #### Job Shows "Failed" Status
 
 **Investigation Steps**:
+
 1. Query AsyncApexJob for error details:
+
 ```sql
 SELECT Id, ApexClass.Name, ExtendedStatus, CreatedDate
 FROM AsyncApexJob
@@ -373,6 +394,7 @@ WHERE Id = 'JOB_ID'
 4. Check for data integrity issues
 
 **Common Failures**:
+
 - **FIELD_CUSTOM_VALIDATION_EXCEPTION**: Validation rule blocked operation
 - **REQUIRED_FIELD_MISSING**: Missing required field value
 - **CPU_TIME_LIMIT_EXCEEDED**: Optimize batch size
@@ -381,10 +403,12 @@ WHERE Id = 'JOB_ID'
 #### Job Stuck in "Processing" State
 
 **Symptoms**:
+
 - Job shows "Processing" for >2 hours
 - Progress not advancing
 
 **Resolution**:
+
 ```sql
 -- Abort the job
 System.abortJob('JOB_ID');
@@ -396,17 +420,21 @@ System.schedule('JobName', '0 0 2 * * ?', new SchedulerClass());
 #### Job Not Executing (NextFireTime in Past)
 
 **Symptoms**:
+
 - NextFireTime is in the past
 - Job hasn't run in >24 hours
 
 **Resolution**:
+
 1. Delete current scheduled job:
+
 ```apex
 CronTrigger ct = [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = 'JobName'];
 System.abortJob(ct.Id);
 ```
 
 2. Re-create job via Execute Anonymous:
+
 ```apex
 System.schedule('JobName', 'CRON_EXPRESSION', new SchedulerClass());
 ```
@@ -421,16 +449,17 @@ System.schedule('JobName', 'CRON_EXPRESSION', new SchedulerClass());
 
 **Widgets**:
 
-| Widget | Data Source | Refresh | Critical? |
-|--------|-------------|---------|-----------|
-| Compliance Gaps by Framework | Compliance_Gap__c | Real-time | Yes |
-| Gaps by Severity | Compliance_Gap__c | Real-time | Yes |
-| SLA Compliance Rate | Compliance_Gap__c | Hourly | Yes |
-| Audit Trail Summary | Elaro_Audit_Log__c | Every 15 min | Yes |
-| Framework Compliance Scores | Compliance_Score__c | Daily | No |
-| Gap Remediation Velocity | Compliance_Gap__c | Daily | No |
+| Widget                       | Data Source           | Refresh      | Critical? |
+| ---------------------------- | --------------------- | ------------ | --------- |
+| Compliance Gaps by Framework | Compliance_Gap\_\_c   | Real-time    | Yes       |
+| Gaps by Severity             | Compliance_Gap\_\_c   | Real-time    | Yes       |
+| SLA Compliance Rate          | Compliance_Gap\_\_c   | Hourly       | Yes       |
+| Audit Trail Summary          | Elaro_Audit_Log\_\_c  | Every 15 min | Yes       |
+| Framework Compliance Scores  | Compliance_Score\_\_c | Daily        | No        |
+| Gap Remediation Velocity     | Compliance_Gap\_\_c   | Daily        | No        |
 
 **Setup Steps**:
+
 1. Setup → Lightning App Builder
 2. Open "Compliance Dashboard" page
 3. Verify all components are active
@@ -443,16 +472,17 @@ System.schedule('JobName', 'CRON_EXPRESSION', new SchedulerClass());
 
 **Widgets**:
 
-| Widget | Data Source | Refresh | Alert Threshold |
-|--------|-------------|---------|----------------|
-| SOQL Queries Gauge | Governor_Limit_Snapshot__c | Real-time | 80% |
-| DML Statements Gauge | Governor_Limit_Snapshot__c | Real-time | 80% |
-| CPU Time Gauge | Governor_Limit_Snapshot__c | Real-time | 75% |
-| Heap Size Gauge | Governor_Limit_Snapshot__c | Real-time | 70% |
-| API Usage Trend | API_Usage_Snapshot__c | Hourly | 80% |
-| Error Log Summary | ApexLog | Real-time | >10 errors |
+| Widget               | Data Source                  | Refresh   | Alert Threshold |
+| -------------------- | ---------------------------- | --------- | --------------- |
+| SOQL Queries Gauge   | Governor_Limit_Snapshot\_\_c | Real-time | 80%             |
+| DML Statements Gauge | Governor_Limit_Snapshot\_\_c | Real-time | 80%             |
+| CPU Time Gauge       | Governor_Limit_Snapshot\_\_c | Real-time | 75%             |
+| Heap Size Gauge      | Governor_Limit_Snapshot\_\_c | Real-time | 70%             |
+| API Usage Trend      | API_Usage_Snapshot\_\_c      | Hourly    | 80%             |
+| Error Log Summary    | ApexLog                      | Real-time | >10 errors      |
 
 **Setup Steps**:
+
 1. Assign "Elaro System Admin" permission set to ops team
 2. Navigate to System Monitor Dashboard
 3. Click "Edit Page" if customization needed
@@ -465,16 +495,17 @@ System.schedule('JobName', 'CRON_EXPRESSION', new SchedulerClass());
 
 **Widgets**:
 
-| Widget | Metric | Target | Status Indicator |
-|--------|--------|--------|------------------|
-| Overall Compliance Score | Average across all frameworks | 95% | Green >90%, Yellow 80-90%, Red <80% |
-| Framework Compliance Breakdown | Score per framework | 90% per framework | Color-coded by framework |
-| Risk Trend Analysis | Gap count over time | Decreasing trend | Green if decreasing |
-| Remediation Velocity | Gaps closed per week | >20 per week | Green if on target |
-| Audit Readiness Score | Evidence coverage | 95% | Green >90% |
-| Open Critical Gaps | Count of CRITICAL severity | 0 | Red if >0 |
+| Widget                         | Metric                        | Target            | Status Indicator                    |
+| ------------------------------ | ----------------------------- | ----------------- | ----------------------------------- |
+| Overall Compliance Score       | Average across all frameworks | 95%               | Green >90%, Yellow 80-90%, Red <80% |
+| Framework Compliance Breakdown | Score per framework           | 90% per framework | Color-coded by framework            |
+| Risk Trend Analysis            | Gap count over time           | Decreasing trend  | Green if decreasing                 |
+| Remediation Velocity           | Gaps closed per week          | >20 per week      | Green if on target                  |
+| Audit Readiness Score          | Evidence coverage             | 95%               | Green >90%                          |
+| Open Critical Gaps             | Count of CRITICAL severity    | 0                 | Red if >0                           |
 
 **Setup Steps**:
+
 1. Assign to executive user profiles
 2. Schedule automated email delivery (weekly)
 3. Configure drill-down links to detailed reports
@@ -485,18 +516,19 @@ System.schedule('JobName', 'CRON_EXPRESSION', new SchedulerClass());
 
 ### Alert Priority Matrix
 
-| Priority | Channels | Response Time | Example |
-|----------|----------|---------------|---------|
-| P1 - CRITICAL | Slack + Email + SMS | 15 minutes | CRITICAL compliance gap, Security breach, System down |
-| P2 - HIGH | Slack + Email | 1 hour | HIGH priority gap, Governor limit at 90%, Scheduled job failure |
-| P3 - MEDIUM | Email | 4 hours | MEDIUM priority gap, Warning threshold reached |
-| P4 - LOW | Email digest | 24 hours | LOW priority gap, Informational alerts |
+| Priority      | Channels            | Response Time | Example                                                         |
+| ------------- | ------------------- | ------------- | --------------------------------------------------------------- |
+| P1 - CRITICAL | Slack + Email + SMS | 15 minutes    | CRITICAL compliance gap, Security breach, System down           |
+| P2 - HIGH     | Slack + Email       | 1 hour        | HIGH priority gap, Governor limit at 90%, Scheduled job failure |
+| P3 - MEDIUM   | Email               | 4 hours       | MEDIUM priority gap, Warning threshold reached                  |
+| P4 - LOW      | Email digest        | 24 hours      | LOW priority gap, Informational alerts                          |
 
 ### Email Alert Setup
 
 **Setup Location**: Setup → Email Alerts
 
 **Template: Governor Limit Alert**
+
 ```
 Subject: [P2] Elaro Governor Limit Alert - {LimitType}
 
@@ -521,6 +553,7 @@ View Dashboard: {SystemMonitorURL}
 ```
 
 **Template: Critical Compliance Gap**
+
 ```
 Subject: [P1] 🚨 CRITICAL Compliance Gap Identified
 
@@ -553,6 +586,7 @@ This is an automated alert from Elaro Compliance Platform.
 ### Slack Integration
 
 **Setup Steps**:
+
 1. Create Slack app at api.slack.com
 2. Enable Incoming Webhooks
 3. Copy Webhook URL
@@ -560,6 +594,7 @@ This is an automated alert from Elaro Compliance Platform.
 5. Test with "Send Test Alert" button
 
 **Alert Format**:
+
 ```json
 {
   "text": "⚠️ *Elaro Alert*",
@@ -576,7 +611,7 @@ This is an automated alert from Elaro Compliance Platform.
       "elements": [
         {
           "type": "button",
-          "text": {"type": "plain_text", "text": "View Dashboard"},
+          "text": { "type": "plain_text", "text": "View Dashboard" },
           "url": "https://yourorg.lightning.force.com/..."
         }
       ]
@@ -590,6 +625,7 @@ This is an automated alert from Elaro Compliance Platform.
 **Use Case**: On-call rotation for P1 incidents
 
 **Setup Steps**:
+
 1. Create PagerDuty service
 2. Copy Integration Key
 3. Setup → Elaro AI Settings → PagerDuty Integration Key
@@ -602,13 +638,13 @@ This is an automated alert from Elaro Compliance Platform.
 
 ### Retention Policy
 
-| Data Type | Retention Period | Archive Location |
-|-----------|------------------|------------------|
-| Audit Logs | 7 years | AWS S3 Glacier |
-| Compliance Gaps | 10 years | Salesforce Big Objects |
-| Compliance Evidence | 10 years | Salesforce Files + S3 |
-| API Usage Snapshots | 2 years | Salesforce Big Objects |
-| Governor Limit Snapshots | 1 year | CSV export to S3 |
+| Data Type                | Retention Period | Archive Location       |
+| ------------------------ | ---------------- | ---------------------- |
+| Audit Logs               | 7 years          | AWS S3 Glacier         |
+| Compliance Gaps          | 10 years         | Salesforce Big Objects |
+| Compliance Evidence      | 10 years         | Salesforce Files + S3  |
+| API Usage Snapshots      | 2 years          | Salesforce Big Objects |
+| Governor Limit Snapshots | 1 year           | CSV export to S3       |
 
 ### Audit Log Queries
 
@@ -671,13 +707,13 @@ aws s3 ls s3://elaro-archives/audit-logs/$(date +%Y-Q%q)/
 
 ### Key Performance Indicators
 
-| Metric | Target | Alert Threshold | Source |
-|--------|--------|----------------|--------|
-| Dashboard Load Time | <3 seconds | >5 seconds | Real User Monitoring |
-| API Response Time | <500ms | >2 seconds | API_Usage_Snapshot__c |
-| Batch Job Duration | <30 minutes | >60 minutes | AsyncApexJob |
-| SOQL Query Count (avg) | <50 per transaction | >80 per transaction | Governor_Limit_Snapshot__c |
-| CPU Time (avg) | <3000ms per transaction | >7500ms per transaction | Governor_Limit_Snapshot__c |
+| Metric                 | Target                  | Alert Threshold         | Source                       |
+| ---------------------- | ----------------------- | ----------------------- | ---------------------------- |
+| Dashboard Load Time    | <3 seconds              | >5 seconds              | Real User Monitoring         |
+| API Response Time      | <500ms                  | >2 seconds              | API_Usage_Snapshot\_\_c      |
+| Batch Job Duration     | <30 minutes             | >60 minutes             | AsyncApexJob                 |
+| SOQL Query Count (avg) | <50 per transaction     | >80 per transaction     | Governor_Limit_Snapshot\_\_c |
+| CPU Time (avg)         | <3000ms per transaction | >7500ms per transaction | Governor_Limit_Snapshot\_\_c |
 
 ### Performance Queries
 
@@ -713,16 +749,19 @@ ORDER BY Duration_Minutes DESC
 #### Issue #1: Dashboard Not Loading
 
 **Symptoms**:
+
 - Blank dashboard
 - Spinner indefinitely
 - Console error: "Timeout"
 
 **Investigation**:
+
 1. Check browser console (F12)
 2. Check governor limits dashboard
 3. Query audit logs for errors
 
 **Resolution**:
+
 ```sql
 -- Check for recent errors in apex logs
 SELECT Id, Request, Status, DurationMilliseconds
@@ -735,10 +774,12 @@ WHERE Request LIKE '%ComplianceDashboard%'
 #### Issue #2: Scheduled Job Not Running
 
 **Symptoms**:
+
 - NextFireTime in the past
 - No execution records
 
 **Investigation**:
+
 ```sql
 SELECT Id, CronJobDetail.Name, State, NextFireTime
 FROM CronTrigger
@@ -750,6 +791,7 @@ WHERE CronJobDetail.Name = 'JobName'
 #### Issue #3: High Governor Limit Usage
 
 **Symptoms**:
+
 - Frequent limit alerts
 - Performance degradation
 
@@ -818,20 +860,20 @@ WHERE CronJobDetail.Name = 'JobName'
 
 ## Contacts
 
-| Role | Contact | Email | Phone |
-|------|---------|-------|-------|
-| Ops Team Lead | TBD | ops-team@solentra.com | TBD |
-| Engineering Manager | TBD | engineering@solentra.com | TBD |
-| Security Lead | TBD | security@solentra.com | TBD |
-| Salesforce Support | Salesforce | - | 1-800-NO-SOFTWARE |
+| Role                | Contact    | Email                    | Phone             |
+| ------------------- | ---------- | ------------------------ | ----------------- |
+| Ops Team Lead       | TBD        | ops-team@solentra.com    | TBD               |
+| Engineering Manager | TBD        | engineering@solentra.com | TBD               |
+| Security Lead       | TBD        | security@solentra.com    | TBD               |
+| Salesforce Support  | Salesforce | -                        | 1-800-NO-SOFTWARE |
 
 ---
 
 ## Change Log
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 2026-02-02 | Initial operations guide | Claude Sonnet 4.5 |
+| Version | Date       | Changes                  | Author            |
+| ------- | ---------- | ------------------------ | ----------------- |
+| 1.0     | 2026-02-02 | Initial operations guide | Elaro Engineering |
 
 ---
 

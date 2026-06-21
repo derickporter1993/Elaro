@@ -48,7 +48,7 @@ private class ElaroHistoricalEventBatchTest {
     
     @isTest
     static void testBatch_DifferentEventTypes() {
-        List&lt;String&gt; eventTypes = new List&lt;String&gt;{
+        List<String> eventTypes = new List<String>{
             'Login', 'LoginAs', 'API', 'ReportExport'
         };
         
@@ -64,14 +64,14 @@ private class ElaroHistoricalEventBatchTest {
         Test.stopTest();
         
         // Verify all batches completed
-        List&lt;AsyncApexJob&gt; jobs = [
+        List<AsyncApexJob> jobs = [
             SELECT Status, NumberOfErrors
             FROM AsyncApexJob
             WHERE ApexClass.Name = 'ElaroHistoricalEventBatch'
             AND Status = 'Completed'
         ];
         
-        Assert.isTrue(jobs.size() &gt; 0, 'Batches should complete');
+        Assert.isTrue(jobs.size() > 0, 'Batches should complete');
     }
     
     @isTest
@@ -103,7 +103,7 @@ private class ElaroHistoricalEventBatchTest {
         );
         
         Test.startTest();
-        Map&lt;String, Object&gt; stats = batch.getStatistics();
+        Map<String, Object> stats = batch.getStatistics();
         Test.stopTest();
         
         Assert.areEqual('Login', stats.get('eventType'), 'Should return event type');
@@ -137,11 +137,11 @@ private class ElaroHistoricalEventBatchTest {
         
         Test.startTest();
         // Execute with empty list
-        batch.execute(null, new List&lt;EventLogFile&gt;());
+        batch.execute(null, new List<EventLogFile>());
         Test.stopTest();
         
         // Should not throw exception
-        Map&lt;String, Object&gt; stats = batch.getStatistics();
+        Map<String, Object> stats = batch.getStatistics();
         Assert.areEqual(0, stats.get('filesProcessed'), 'Should handle empty scope');
     }
     
@@ -210,7 +210,7 @@ private class ElaroHistoricalEventBatchTest {
         Test.stopTest();
         
         // Both batches should complete
-        List&lt;AsyncApexJob&gt; jobs = [
+        List<AsyncApexJob> jobs = [
             SELECT Status
             FROM AsyncApexJob
             WHERE Id IN (:batchId1, :batchId2)
@@ -224,7 +224,7 @@ private class ElaroHistoricalEventBatchTest {
     @isTest
     static void testBatch_WithRealEventTypes() {
         // Test with all supported event types
-        List&lt;String&gt; eventTypes = new List&lt;String&gt;{
+        List<String> eventTypes = new List<String>{
             'Login', 'LoginAs', 'API', 'ReportExport',
             'ContentDistribution', 'ApexExecution', 'PermissionSetEventLog'
         };
@@ -232,7 +232,7 @@ private class ElaroHistoricalEventBatchTest {
         Test.startTest();
         Integer count = 0;
         for (String eventType : eventTypes) {
-            if (count &lt; 5) { // Limit to avoid too many batches
+            if (count < 5) { // Limit to avoid too many batches
                 ElaroHistoricalEventBatch batch = new ElaroHistoricalEventBatch(
                     eventType,
                     Date.today().addDays(-7),
@@ -245,11 +245,11 @@ private class ElaroHistoricalEventBatchTest {
         Test.stopTest();
         
         // Verify batches were queued
-        List&lt;AsyncApexJob&gt; jobs = [
+        List<AsyncApexJob> jobs = [
             SELECT Status FROM AsyncApexJob
             WHERE ApexClass.Name = 'ElaroHistoricalEventBatch'
             AND Status = 'Completed'
         ];
-        Assert.isTrue(jobs.size() &gt; 0, 'At least one batch should complete for event types');
+        Assert.isTrue(jobs.size() > 0, 'At least one batch should complete for event types');
     }
 }

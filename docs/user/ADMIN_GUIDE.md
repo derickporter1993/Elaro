@@ -35,7 +35,7 @@ After deploying Elaro to your org, complete these setup tasks:
 
 Elaro requires Named Credentials for external API integrations.
 
-#### Claude API Named Credential
+#### External AI API Named Credential
 
 Required for AI Copilot functionality:
 
@@ -46,7 +46,7 @@ Required for AI Copilot functionality:
    - **URL**: `https://api.anthropic.com`
    - **Identity Type**: Named Principal
    - **Authentication Protocol**: OAuth 2.0 (or API Key)
-   - **API Key**: Enter your Claude API key
+   - **API Key**: Enter your Anthropic API key
 5. Click **Save**
 
 **Security Note**: Store API keys securely. Consider using Protected Custom Settings or Secure Storage for sensitive credentials.
@@ -65,17 +65,20 @@ For Slack notifications:
 
 ### External Service Setup
 
-**Claude AI Service**
-- Sign up for Anthropic Claude API access
+**Anthropic API Service**
+
+- Sign up for Anthropic API access
 - Obtain API key from Anthropic dashboard
 - Configure rate limits and usage monitoring
 
 **Slack Workspace**
+
 - Create dedicated channel for compliance alerts (e.g., `#compliance-alerts`)
 - Set up Incoming Webhook for the channel
 - Test webhook connectivity
 
 **Microsoft Teams** (if using)
+
 - Create Teams webhook connector
 - Configure channel for notifications
 - Test webhook URL
@@ -93,6 +96,7 @@ Elaro includes two permission sets for role-based access control.
 **Purpose**: Standard administrator access for day-to-day compliance management
 
 **Permissions Include**:
+
 - Read/Edit access to all Elaro custom objects
 - View All Records on compliance objects
 - Access to all Elaro Apex classes
@@ -106,6 +110,7 @@ Elaro includes two permission sets for role-based access control.
 **Purpose**: Extended permissions for system configuration and advanced features
 
 **Additional Permissions**:
+
 - Modify access to scheduler configurations
 - Access to integration settings
 - Ability to modify Custom Metadata (via Apex)
@@ -145,11 +150,13 @@ sf org assign permset \
 ### Object-Level vs Field-Level Security
 
 **Object-Level Security** is managed through permission sets:
+
 - Which objects users can access
 - CRUD permissions (Create, Read, Update, Delete)
 - Record-level visibility (View All, Modify All)
 
 **Field-Level Security** considerations:
+
 - Sensitive fields (e.g., API keys, audit logs) should have restricted access
 - Use Field-Level Security (FLS) profiles or permission sets
 - Review field accessibility in Apex classes (use `WITH USER_MODE` or `WITH SYSTEM_MODE`)
@@ -165,12 +172,14 @@ Elaro includes several scheduled jobs for automated compliance monitoring.
 ### Available Schedulers
 
 #### CCPA SLA Monitor
+
 - **Frequency**: Daily at 8:00 AM
 - **Purpose**: Monitors CCPA consumer request deadlines and sends alerts for approaching/overdue requests
 - **Custom Metadata**: `CCPASLAMonitor`
 - **CRON Expression**: `0 0 8 * * ?` (configurable)
 
 #### Dormant Account Alert
+
 - **Frequency**: Daily at 5:00 AM
 - **Purpose**: Identifies inactive user accounts (90+ days) and generates security reports
 - **Custom Metadata**: `DormantAccountAlert`
@@ -178,6 +187,7 @@ Elaro includes several scheduled jobs for automated compliance monitoring.
 - **Batch Size**: 500 records (configurable)
 
 #### GLBA Annual Notice
+
 - **Frequency**: Daily at 6:00 AM (runs only on business days)
 - **Purpose**: Sends annual privacy notices to customers as required by GLBA
 - **Custom Metadata**: `GLBAAnnualNotice`
@@ -185,12 +195,14 @@ Elaro includes several scheduled jobs for automated compliance monitoring.
 - **Batch Size**: 200 records (configurable)
 
 #### ISO 27001 Quarterly Review
+
 - **Frequency**: Quarterly (first day of each quarter at 7:00 AM)
 - **Purpose**: Initiates quarterly access reviews for ISO 27001 compliance
 - **Custom Metadata**: `ISO27001QuarterlyReview`
 - **CRON Expression**: `0 0 7 1 1,4,7,10 ?` (configurable)
 
 #### Weekly Scorecard
+
 - **Frequency**: Weekly on Mondays at 9:00 AM
 - **Purpose**: Generates and distributes weekly compliance scorecard reports
 - **Custom Metadata**: `WeeklyScorecard`
@@ -223,6 +235,7 @@ Scheduler configurations are managed through `Elaro_Scheduler_Config__mdt` Custo
 4. Click **Save**
 
 **CRON Expression Reference**:
+
 ```
 Format: Second Minute Hour Day Month DayOfWeek Year
 Example: 0 0 8 * * ? = Daily at 8:00 AM
@@ -253,6 +266,7 @@ Elaro logs scheduler errors to `Integration_Error__c`:
 4. Check Slack notifications for real-time alerts
 
 **Common Issues**:
+
 - **Job Not Running**: Check `Is_Active__c` in Custom Metadata
 - **CRON Invalid**: Verify CRON expression syntax
 - **Batch Failures**: Review batch size and governor limits
@@ -333,11 +347,12 @@ Configure which Teams channels receive which alert types:
 
 ## 5. Custom Metadata Configuration
 
-### Elaro_Scheduler_Config__mdt
+### Elaro_Scheduler_Config\_\_mdt
 
 Manages scheduler configurations (CRON expressions, batch sizes, active status).
 
 **Records**:
+
 - `CCPASLAMonitor`: CCPA SLA monitoring
 - `DormantAccountAlert`: Dormant account detection
 - `GLBAAnnualNotice`: GLBA annual notices
@@ -345,6 +360,7 @@ Manages scheduler configurations (CRON expressions, batch sizes, active status).
 - `WeeklyScorecard`: Weekly scorecard generation
 
 **Configuration Steps**:
+
 1. Navigate to **Setup** → **Custom Metadata Types** → **Elaro Scheduler Config**
 2. Click **Manage Records**
 3. Edit the desired scheduler record
@@ -353,15 +369,17 @@ Manages scheduler configurations (CRON expressions, batch sizes, active status).
 
 **Note**: Changes to Custom Metadata require a deployment or manual update in the org.
 
-### Compliance_Policy__mdt
+### Compliance_Policy\_\_mdt
 
 Defines compliance policies and controls for each framework.
 
 **Access**:
+
 1. Navigate to **Setup** → **Custom Metadata Types** → **Compliance Policy**
 2. View or edit policy records
 
 **Policy Fields**:
+
 - Policy name and description
 - Framework association
 - Control requirements
@@ -400,6 +418,7 @@ Elaro generates logs in `Integration_Error__c` for error tracking.
 4. Delete old records
 
 **Anonymous Apex Cleanup Script**:
+
 ```apex
 // Delete Integration_Error__c records older than 90 days
 Date cutoffDate = Date.today().addDays(-90);
@@ -421,6 +440,7 @@ Monitor system performance:
 4. **Storage**: Monitor data storage usage
 
 **Tools**:
+
 - **Setup** → **Apex Jobs**: View job execution
 - **Developer Console** → **Logs**: Analyze execution details
 - **Setup** → **System Overview**: Monitor org health
@@ -428,6 +448,7 @@ Monitor system performance:
 ### Backup Recommendations
 
 **Critical Data to Backup**:
+
 - Compliance assessment results
 - Evidence packages
 - Audit logs
@@ -435,6 +456,7 @@ Monitor system performance:
 - Alert configurations
 
 **Backup Methods**:
+
 1. **Salesforce Data Export**: Monthly full export
 2. **Salesforce Files**: Backup evidence documents
 3. **Version Control**: Backup Custom Metadata via SFDX
@@ -447,6 +469,7 @@ Monitor system performance:
 **Symptoms**: Scheduled job doesn't execute
 
 **Solutions**:
+
 1. Check `Is_Active__c` in Custom Metadata
 2. Verify CRON expression syntax
 3. Check Apex Jobs for error messages
@@ -458,6 +481,7 @@ Monitor system performance:
 **Symptoms**: Slack/Teams notifications not working
 
 **Solutions**:
+
 1. Verify Named Credential configuration
 2. Test webhook URL manually (curl/Postman)
 3. Check network/firewall settings
@@ -469,6 +493,7 @@ Monitor system performance:
 **Symptoms**: Slow dashboard loading, timeouts
 
 **Solutions**:
+
 1. Review SOQL query performance
 2. Check governor limit usage
 3. Optimize batch sizes in Custom Metadata
@@ -480,6 +505,7 @@ Monitor system performance:
 **Symptoms**: Users can't access features
 
 **Solutions**:
+
 1. Verify permission set assignments
 2. Check object-level permissions
 3. Review field-level security
@@ -493,6 +519,7 @@ Monitor system performance:
 ### Least Privilege Principle
 
 **Guidelines**:
+
 - Grant minimum necessary permissions
 - Use `Elaro_Admin` for most users
 - Reserve `Elaro_Admin_Extended` for system admins only
@@ -500,6 +527,7 @@ Monitor system performance:
 - Remove permissions when users change roles
 
 **Permission Audit**:
+
 1. Run report on permission set assignments
 2. Review quarterly
 3. Remove unused assignments
@@ -508,12 +536,14 @@ Monitor system performance:
 ### Audit Trail Monitoring
 
 Elaro maintains audit trails for:
+
 - Compliance assessments
 - Gap remediation actions
 - Configuration changes
 - User access
 
 **Monitoring Steps**:
+
 1. Review `Elaro_Audit_Log__c` records regularly
 2. Set up alerts for critical changes
 3. Export audit logs for compliance
@@ -522,18 +552,21 @@ Elaro maintains audit trails for:
 ### API Security Considerations
 
 **Named Credentials**:
+
 - Use Named Credentials instead of hardcoded credentials
 - Rotate API keys regularly
 - Use OAuth 2.0 where possible
 - Store sensitive credentials securely
 
 **Callout Security**:
+
 - Validate all external API responses
 - Implement retry logic with exponential backoff
 - Monitor for failed callouts
 - Set appropriate timeout values
 
 **Rate Limiting**:
+
 - Monitor API usage against limits
 - Implement rate limiting in Apex
 - Use queueable jobs for async callouts
@@ -542,12 +575,14 @@ Elaro maintains audit trails for:
 ### Data Protection
 
 **Sensitive Data**:
+
 - Encrypt sensitive compliance data at rest (Shield Platform Encryption)
 - Use field-level encryption for PII/PHI
 - Implement data masking in non-production orgs
 - Follow data retention policies
 
 **Access Controls**:
+
 - Implement IP restrictions for admin access
 - Use MFA for all admin users
 - Monitor login history for anomalies
@@ -563,4 +598,4 @@ Elaro maintains audit trails for:
 
 ---
 
-*Last Updated: January 2026*
+_Last Updated: January 2026_

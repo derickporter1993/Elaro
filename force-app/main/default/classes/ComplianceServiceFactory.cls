@@ -290,24 +290,24 @@ public with sharing class ComplianceServiceFactory {
             return baseService.initiateAccessReview(reviewType);
         }
 
-        public IAccessControlService.AccessReviewStatus getReviewStatus(Id reviewId) {
+        public AccessControlTypes.AccessReviewStatus getReviewStatus(Id reviewId) {
             return baseService.getReviewStatus(reviewId);
         }
 
-        public List<IAccessControlService.ExcessiveAccessUser> getExcessiveAccessUsers() {
+        public List<AccessControlTypes.ExcessiveAccessUser> getExcessiveAccessUsers() {
             // Add HIPAA-specific PHI access checks
             return baseService.getExcessiveAccessUsers();
         }
 
-        public IAccessControlService.RevokeAccessResult revokeAccess(List<Id> userIds, String reason) {
+        public AccessControlTypes.RevokeAccessResult revokeAccess(List<Id> userIds, String reason) {
             return baseService.revokeAccess(userIds, reason);
         }
 
-        public List<IAccessControlService.StalePermission> getStalePermissions(Integer daysSinceLogin) {
+        public List<AccessControlTypes.StalePermission> getStalePermissions(Integer daysSinceLogin) {
             return baseService.getStalePermissions(daysSinceLogin);
         }
 
-        public IAccessControlService.NeedToKnowResult validateNeedToKnow(Id userId) {
+        public AccessControlTypes.NeedToKnowResult validateNeedToKnow(Id userId) {
             return baseService.validateNeedToKnow(userId);
         }
     }

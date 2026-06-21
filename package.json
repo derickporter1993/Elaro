@@ -1,7 +1,7 @@
 {
   "name": "elaro-enterprise",
   "version": "3.0.0",
-  "description": "Elaro - Court-defensible compliance & AI governance platform for Salesforce",
+  "description": "Elaro - Salesforce compliance and audit readiness platform",
   "type": "module",
   "private": true,
   "scripts": {
@@ -44,9 +44,9 @@
     "axe-core": "^4.12.0",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^10.1.8",
-    "jest": "^30.3.0",
+    "jest": "^29.7.0",
     "jest-axe": "^10.0.0",
-    "lint-staged": "^17.0.7",
+    "lint-staged": "16.4.0",
     "prettier": "^3.8.3"
   },
   "overrides": {
@@ -71,7 +71,7 @@
   "keywords": [
     "salesforce",
     "compliance",
-    "ai-governance",
+    "governance",
     "audit",
     "security",
     "elaro"
@@ -79,7 +79,7 @@
   "author": "Elaro Compliance Team",
   "license": "MIT",
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=20.19.0",
     "npm": ">=10.0.0"
   }
 }

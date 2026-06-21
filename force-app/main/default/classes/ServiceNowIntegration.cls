@@ -7,7 +7,7 @@
  */
 public with sharing class ServiceNowIntegration {
     
-    private static final String NAMED_CREDENTIAL = 'callout:ServiceNow_API';
+    private static final String CALLOUT_ENDPOINT = 'callout:ServiceNow_API';
     
     /**
      * Sync controls from Elaro to ServiceNow GRC using Queueable
@@ -98,7 +98,7 @@ public with sharing class ServiceNowIntegration {
                 };
                 
                 HttpRequest req = new HttpRequest();
-                req.setEndpoint(NAMED_CREDENTIAL + '/api/now/table/u_compliance_evidence');
+                req.setEndpoint(CALLOUT_ENDPOINT + '/api/now/table/u_compliance_evidence');
                 req.setMethod('POST');
                 req.setHeader('Content-Type', 'application/json');
                 req.setHeader('Accept', 'application/json');
@@ -157,7 +157,7 @@ public with sharing class ServiceNowIntegration {
                 };
                 
                 HttpRequest req = new HttpRequest();
-                req.setEndpoint(NAMED_CREDENTIAL + '/api/now/table/u_compliance_status');
+                req.setEndpoint(CALLOUT_ENDPOINT + '/api/now/table/u_compliance_status');
                 req.setMethod('POST');
                 req.setHeader('Content-Type', 'application/json');
                 req.setHeader('Accept', 'application/json');
@@ -200,7 +200,7 @@ public with sharing class ServiceNowIntegration {
         };
         
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(NAMED_CREDENTIAL + '/api/now/table/incident');
+        req.setEndpoint(CALLOUT_ENDPOINT + '/api/now/table/incident');
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setHeader('Accept', 'application/json');
@@ -233,7 +233,7 @@ public with sharing class ServiceNowIntegration {
     @AuraEnabled(cacheable=true)
     public static Map<String, Object> getIncidentStatus(String incidentSysId) {
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(NAMED_CREDENTIAL + '/api/now/table/incident/' + incidentSysId);
+        req.setEndpoint(CALLOUT_ENDPOINT + '/api/now/table/incident/' + incidentSysId);
         req.setMethod('GET');
         req.setHeader('Accept', 'application/json');
         req.setTimeout(ElaroConstants.CALLOUT_TIMEOUT_MS);
@@ -252,18 +252,13 @@ public with sharing class ServiceNowIntegration {
         
         return new Map<String, Object>();
     }
-    
-    /**
-        }
-    }
-    
     private static List<Map<String, Object>> getControlsForFramework(String framework) {
         List<Map<String, Object>> controls = new List<Map<String, Object>>();
         
         // Get controls from framework module
         IComplianceModule module = getModuleForFramework(framework);
         if (module != null) {
-            for (IComplianceModule.Control ctrl : module.getControls()) {
+            for (ComplianceModuleTypes.Control ctrl : module.getControls()) {
                 controls.add(new Map<String, Object>{
                     'code' => ctrl.code,
                     'name' => ctrl.name,
@@ -288,7 +283,7 @@ public with sharing class ServiceNowIntegration {
         };
         
         HttpRequest req = new HttpRequest();
-        req.setEndpoint(NAMED_CREDENTIAL + '/api/now/table/u_compliance_control');
+        req.setEndpoint(CALLOUT_ENDPOINT + '/api/now/table/u_compliance_control');
         req.setMethod('POST');
         req.setHeader('Content-Type', 'application/json');
         req.setBody(JSON.serialize(snowControl));

@@ -35,7 +35,7 @@ public with sharing class PerformanceAlertPublisher {
 
             // XSS prevention: sanitize metric parameter
             // Escape HTML special characters (& must be escaped first to prevent double-encoding)
-            String safeMetric = metric.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            String safeMetric = metric.replace('&', '&').replace('<', '<').replace('>', '>')
                 .replace('"', '&quot;').replace('\'', '&#39;');
 
             // Truncate and sanitize stack trace if too long
@@ -43,9 +43,9 @@ public with sharing class PerformanceAlertPublisher {
                 ? stack.substring(0, 32765) + '...'
                 : stack;
             // XSS protection: escape HTML special characters in stack trace
-            // Note: & must be escaped first to prevent double-encoding of &lt; / &gt;
+            // Note: & must be escaped first to prevent double-encoding of < / >
             if (String.isNotBlank(safeStack)) {
-                safeStack = safeStack.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;');
+                safeStack = safeStack.replace('&', '&').replace('<', '<').replace('>', '>');
             }
 
             // Store alert in Performance_Alert_History__c instead of platform event

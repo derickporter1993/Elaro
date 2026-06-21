@@ -4,89 +4,89 @@
  */
 @IsTest(testFor=ElaroComplianceCopilotService.class)
 private class ElaroComplianceCopilotServiceTest {
-    
+
     @testSetup
     static void setupTestData() {
         Elaro_Audit_Package__c pkg = ElaroTestDataFactory.createAuditPackage('HIPAA');
         ElaroTestDataFactory.createEvidenceItems(pkg.Id, 10);
         ElaroTestDataFactory.createFrameworkMappings('HIPAA');
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // analyzeEventPattern Tests
     // ═══════════════════════════════════════════════════════════════
-    
+
     @isTest
     static void testAnalyzeEventPattern_ReturnsRecommendation() {
-        List&lt;Elaro_Evidence_Item__c&gt; items = [
+        List<Elaro_Evidence_Item__c> items = [
             SELECT Id FROM Elaro_Evidence_Item__c LIMIT 5
         ];
-        
-        List&lt;String&gt; eventIds = new List&lt;String&gt;();
+
+        List<String> eventIds = new List<String>();
         for (Elaro_Evidence_Item__c item : items) {
             eventIds.add(item.Id);
         }
-        
+
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
-        
+
         Test.startTest();
-        ElaroComplianceCopilotService.ComplianceRecommendation rec = 
+        ElaroComplianceCopilotService.ComplianceRecommendation rec =
             ElaroComplianceCopilotService.analyzeEventPattern(eventIds);
         Test.stopTest();
-        
+
         Assert.areNotEqual(null, rec, 'Should return recommendation');
         Assert.areNotEqual(null, rec.recommendation, 'Should have recommendation text');
         Assert.areNotEqual(null, rec.severity, 'Should have severity');
-        Assert.isTrue(rec.confidence &gt;= 0 &amp;&amp; rec.confidence &lt;= 100, 'Confidence should be 0-100');
+        Assert.isTrue(rec.confidence >= 0 && rec.confidence <= 100, 'Confidence should be 0-100');
     }
-    
+
     @isTest
     static void testAnalyzeEventPattern_EmptyList_ReturnsDefaultRecommendation() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
-        
+
         Test.startTest();
-        ElaroComplianceCopilotService.ComplianceRecommendation rec = 
-            ElaroComplianceCopilotService.analyzeEventPattern(new List&lt;String&gt;());
+        ElaroComplianceCopilotService.ComplianceRecommendation rec =
+            ElaroComplianceCopilotService.analyzeEventPattern(new List<String>());
         Test.stopTest();
-        
+
         Assert.areNotEqual(null, rec, 'Should return recommendation even for empty list');
         Assert.isTrue(rec.recommendation.contains('No events'), 'Should indicate no events');
     }
-    
+
     @isTest
     static void testAnalyzeEventPattern_NullList_ReturnsDefaultRecommendation() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
-        
+
         Test.startTest();
-        ElaroComplianceCopilotService.ComplianceRecommendation rec = 
+        ElaroComplianceCopilotService.ComplianceRecommendation rec =
             ElaroComplianceCopilotService.analyzeEventPattern(null);
         Test.stopTest();
-        
+
         Assert.areNotEqual(null, rec, 'Should return recommendation for null list');
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // generateAuditSummary Tests
     // ═══════════════════════════════════════════════════════════════
-    
+
     @isTest
     static void testGenerateAuditSummary_ReturnsSummaryText() {
         Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
-        
+
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
-        
+
         Test.startTest();
         String summary = ElaroComplianceCopilotService.generateAuditSummary(pkg.Id);
         Test.stopTest();
-        
+
         Assert.areNotEqual(null, summary, 'Should return summary');
-        Assert.isTrue(summary.length() &gt; 0, 'Summary should not be empty');
+        Assert.isTrue(summary.length() > 0, 'Summary should not be empty');
     }
-    
+
     @isTest
     static void testGenerateAuditSummary_NullPackageId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
-        
+
         Test.startTest();
         try {
             ElaroComplianceCopilotService.generateAuditSummary(null);
@@ -96,11 +96,11 @@ private class ElaroComplianceCopilotServiceTest {
         }
         Test.stopTest();
     }
-    
+
     @isTest
     static void testGenerateAuditSummary_BlankPackageId_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new ClaudeAPIMock());
-        
+
         Test.startTest();
         try {
             ElaroComplianceCopilotService.generateAuditSummary('');
@@ -110,28 +110,28 @@ private class ElaroComplianceCopilotServiceTest {
         }
         Test.stopTest();
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // predictComplianceRisks Tests
     // ═══════════════════════════════════════════════════════════════
-    
+
     @isTest
     static void testPredictComplianceRisks_ReturnsPredictions() {
         Test.setMock(HttpCalloutMock.class, new ClaudeRiskPredictionMock());
-        
+
         Test.startTest();
-        List&lt;ElaroComplianceCopilotService.RiskPrediction&gt; predictions = 
+        List<ElaroComplianceCopilotService.RiskPrediction> predictions =
             ElaroComplianceCopilotService.predictComplianceRisks('HIPAA');
         Test.stopTest();
-        
+
         Assert.areNotEqual(null, predictions, 'Should return predictions');
         // May be empty if no relevant data
     }
-    
+
     @isTest
     static void testPredictComplianceRisks_NullFramework_ThrowsException() {
         Test.setMock(HttpCalloutMock.class, new ClaudeRiskPredictionMock());
-        
+
         Test.startTest();
         try {
             ElaroComplianceCopilotService.predictComplianceRisks(null);
@@ -141,63 +141,63 @@ private class ElaroComplianceCopilotServiceTest {
         }
         Test.stopTest();
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // categorizeEvents Tests
     // ═══════════════════════════════════════════════════════════════
-    
+
     @isTest
     static void testCategorizeEvents_ReturnsMappings() {
-        List&lt;Elaro_Evidence_Item__c&gt; items = [
+        List<Elaro_Evidence_Item__c> items = [
             SELECT Id FROM Elaro_Evidence_Item__c LIMIT 3
         ];
-        
-        List&lt;String&gt; eventIds = new List&lt;String&gt;();
+
+        List<String> eventIds = new List<String>();
         for (Elaro_Evidence_Item__c item : items) {
             eventIds.add(item.Id);
         }
-        
+
         Test.setMock(HttpCalloutMock.class, new ClaudeCategorizationMock());
-        
+
         Test.startTest();
-        Map&lt;String, String&gt; mappings = 
+        Map<String, String> mappings =
             ElaroComplianceCopilotService.categorizeEvents(eventIds, 'HIPAA');
         Test.stopTest();
-        
+
         Assert.areNotEqual(null, mappings, 'Should return mappings');
     }
-    
+
     @isTest
     static void testCategorizeEvents_EmptyInput() {
         Test.setMock(HttpCalloutMock.class, new ClaudeCategorizationMock());
-        
+
         Test.startTest();
-        Map&lt;String, String&gt; mappings = 
-            ElaroComplianceCopilotService.categorizeEvents(new List&lt;String&gt;(), 'HIPAA');
+        Map<String, String> mappings =
+            ElaroComplianceCopilotService.categorizeEvents(new List<String>(), 'HIPAA');
         Test.stopTest();
-        
+
         Assert.areEqual(0, mappings.size(), 'Should return empty map for empty input');
     }
-    
+
     @isTest
     static void testCategorizeEvents_NullFramework() {
-        List&lt;Elaro_Evidence_Item__c&gt; items = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
-        
+        List<Elaro_Evidence_Item__c> items = [SELECT Id FROM Elaro_Evidence_Item__c LIMIT 1];
+
         Test.setMock(HttpCalloutMock.class, new ClaudeCategorizationMock());
-        
+
         Test.startTest();
-        Map&lt;String, String&gt; mappings = 
+        Map<String, String> mappings =
             ElaroComplianceCopilotService.categorizeEvents(
-                new List&lt;String&gt;{items[0].Id}, null);
+                new List<String>{items[0].Id}, null);
         Test.stopTest();
-        
+
         Assert.areEqual(0, mappings.size(), 'Should return empty map for null framework');
     }
-    
+
     // ═══════════════════════════════════════════════════════════════
     // Mock Classes
     // ═══════════════════════════════════════════════════════════════
-    
+
     private class ClaudeAPIMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {
             HttpResponse res = new HttpResponse();
@@ -206,7 +206,7 @@ private class ElaroComplianceCopilotServiceTest {
             return res;
         }
     }
-    
+
     private class ClaudeRiskPredictionMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {
             HttpResponse res = new HttpResponse();
@@ -215,18 +215,18 @@ private class ElaroComplianceCopilotServiceTest {
             return res;
         }
     }
-    
+
     private class ClaudeCategorizationMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {
-            Map&lt;String, Object&gt; response = new Map&lt;String, Object&gt;{
-                'content' =&gt; new List&lt;Map&lt;String, Object&gt;&gt;{
-                    new Map&lt;String, Object&gt;{
-                        'type' =&gt; 'text',
-                        'text' =&gt; '{}'
+            Map<String, Object> response = new Map<String, Object>{
+                'content' => new List<Map<String, Object>>{
+                    new Map<String, Object>{
+                        'type' => 'text',
+                        'text' => '{}'
                     }
                 }
             };
-            
+
             HttpResponse res = new HttpResponse();
             res.setStatusCode(200);
             res.setBody(JSON.serialize(response));

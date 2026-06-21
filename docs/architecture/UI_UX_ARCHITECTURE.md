@@ -15,7 +15,7 @@
 
 ### Overview
 
-Elaro provides a comprehensive, AI-powered compliance and governance platform for Salesforce organizations. The UI/UX architecture leverages Lightning Web Components (LWC) and the Salesforce Lightning Design System (SLDS) to deliver an intuitive, accessible, and performant user experience.
+Elaro provides a comprehensive compliance and governance platform for Salesforce organizations. The UI/UX architecture leverages Lightning Web Components (LWC) and the Salesforce Lightning Design System (SLDS) to deliver an intuitive, accessible, and performant user experience.
 
 ### Design Principles
 
@@ -45,7 +45,7 @@ Elaro provides a comprehensive, AI-powered compliance and governance platform fo
 **Configuration**:
 
 - **App Label**: Elaro
-- **Description**: AI-Powered Compliance & Governance Platform for Salesforce
+- **Description**: Compliance & Governance Platform for Salesforce
 - **Navigation Type**: Standard
 - **UI Type**: Lightning only (`Lightning`)
 - **Form Factors**: Large (Desktop)
@@ -83,27 +83,27 @@ Components are organized by functional category:
 
 #### Dashboards (5 components)
 
-| Component                          | File Path                                                      | Targets                                  | Description                                                     |
-| ---------------------------------- | -------------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
+| Component                    | File Path                                                | Targets                                  | Description                                                     |
+| ---------------------------- | -------------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
 | `elaroDashboard`             | `force-app/main/default/lwc/elaroDashboard/`             | AppPage, HomePage, RecordPage, Community | Comprehensive compliance dashboard with multi-framework scoring |
-| `complianceDashboard`              | `force-app/main/default/lwc/complianceDashboard/`              | AppPage, RecordPage, HomePage            | Framework-specific compliance overview                          |
-| `systemMonitorDashboard`           | `force-app/main/default/lwc/systemMonitorDashboard/`           | AppPage, HomePage, RecordPage            | System health and governor limit monitoring                     |
-| `apiUsageDashboard`                | `force-app/main/default/lwc/apiUsageDashboard/`                | AppPage, HomePage                        | API usage tracking and limits                                   |
-| `executiveKpiDashboard`            | `force-app/main/default/lwc/executiveKpiDashboard/`            | AppPage, HomePage                        | Executive-level KPI visualization                               |
+| `complianceDashboard`        | `force-app/main/default/lwc/complianceDashboard/`        | AppPage, RecordPage, HomePage            | Framework-specific compliance overview                          |
+| `systemMonitorDashboard`     | `force-app/main/default/lwc/systemMonitorDashboard/`     | AppPage, HomePage, RecordPage            | System health and governor limit monitoring                     |
+| `apiUsageDashboard`          | `force-app/main/default/lwc/apiUsageDashboard/`          | AppPage, HomePage                        | API usage tracking and limits                                   |
+| `executiveKpiDashboard`      | `force-app/main/default/lwc/executiveKpiDashboard/`      | AppPage, HomePage                        | Executive-level KPI visualization                               |
 | `elaroExecutiveKPIDashboard` | `force-app/main/default/lwc/elaroExecutiveKPIDashboard/` | AppPage, RecordPage, HomePage            | Enhanced executive dashboard                                    |
 
 #### AI/Copilot (3 components)
 
-| Component               | File Path                                           | Targets                                  | Description                                                     |
-| ----------------------- | --------------------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
-| `elaroCopilot`    | `force-app/main/default/lwc/elaroCopilot/`    | AppPage, HomePage, RecordPage, Community | AI-powered compliance assistant with natural language interface |
-| `complianceCopilot`     | `force-app/main/default/lwc/complianceCopilot/`     | AppPage, RecordPage, HomePage            | Framework-specific compliance assistant                         |
-| `elaroAiSettings` | `force-app/main/default/lwc/elaroAiSettings/` | AppPage, HomePage, RecordPage            | AI governance and configuration settings                        |
+| Component           | File Path                                       | Targets                                  | Description                                          |
+| ------------------- | ----------------------------------------------- | ---------------------------------------- | ---------------------------------------------------- |
+| `elaroCopilot`      | `force-app/main/default/lwc/elaroCopilot/`      | AppPage, HomePage, RecordPage, Community | Compliance assistant with natural language interface |
+| `complianceCopilot` | `force-app/main/default/lwc/complianceCopilot/` | AppPage, RecordPage, HomePage            | Framework-specific compliance assistant              |
+| `elaroAiSettings`   | `force-app/main/default/lwc/elaroAiSettings/`   | AppPage, HomePage, RecordPage            | AI governance and configuration settings             |
 
 #### Analytics (4 components)
 
-| Component                         | File Path                                                     | Targets                       | Description                                    |
-| --------------------------------- | ------------------------------------------------------------- | ----------------------------- | ---------------------------------------------- |
+| Component                   | File Path                                               | Targets                       | Description                                    |
+| --------------------------- | ------------------------------------------------------- | ----------------------------- | ---------------------------------------------- |
 | `elaroTrendAnalyzer`        | `force-app/main/default/lwc/elaroTrendAnalyzer/`        | AppPage, RecordPage, HomePage | Trend analysis and forecasting                 |
 | `elaroComparativeAnalytics` | `force-app/main/default/lwc/elaroComparativeAnalytics/` | AppPage, RecordPage, HomePage | Comparative analysis across frameworks/periods |
 | `elaroDynamicReportBuilder` | `force-app/main/default/lwc/elaroDynamicReportBuilder/` | AppPage, RecordPage, HomePage | Dynamic report generation                      |
@@ -125,26 +125,26 @@ Components are organized by functional category:
 | `performanceAlertPanel`      | `force-app/main/default/lwc/performanceAlertPanel/`      | AppPage, HomePage                  | Real-time performance alerts          |
 | `flowExecutionMonitor`       | `force-app/main/default/lwc/flowExecutionMonitor/`       | AppPage, HomePage                  | Flow execution tracking               |
 | `deploymentMonitorDashboard` | `force-app/main/default/lwc/deploymentMonitorDashboard/` | AppPage, HomePage                  | Deployment job monitoring             |
-| `elaroEventMonitor`    | `force-app/main/default/lwc/elaroEventMonitor/`    | AppPage, HomePage                  | Platform event monitoring             |
-| `elaroEventExplorer`   | `force-app/main/default/lwc/elaroEventExplorer/`   | AppPage, RecordPage, HomePage, Tab | Real-time event stream with filtering |
+| `elaroEventMonitor`          | `force-app/main/default/lwc/elaroEventMonitor/`          | AppPage, HomePage                  | Platform event monitoring             |
+| `elaroEventExplorer`         | `force-app/main/default/lwc/elaroEventExplorer/`         | AppPage, RecordPage, HomePage, Tab | Real-time event stream with filtering |
 
 #### Tools (4 components)
 
-| Component                        | File Path                                                    | Targets                            | Description                          |
-| -------------------------------- | ------------------------------------------------------------ | ---------------------------------- | ------------------------------------ |
+| Component                  | File Path                                              | Targets                            | Description                          |
+| -------------------------- | ------------------------------------------------------ | ---------------------------------- | ------------------------------------ |
 | `elaroAuditWizard`         | `force-app/main/default/lwc/elaroAuditWizard/`         | AppPage, RecordPage, HomePage, Tab | 5-step guided audit package workflow |
 | `elaroAuditPackageBuilder` | `force-app/main/default/lwc/elaroAuditPackageBuilder/` | AppPage, RecordPage, HomePage      | Audit package builder                |
-| `auditReportGenerator`           | `force-app/main/default/lwc/auditReportGenerator/`           | AppPage, RecordPage                | Audit report generation              |
+| `auditReportGenerator`     | `force-app/main/default/lwc/auditReportGenerator/`     | AppPage, RecordPage                | Audit report generation              |
 | `elaroROICalculator`       | `force-app/main/default/lwc/elaroROICalculator/`       | AppPage, RecordPage, HomePage      | ROI calculation tool                 |
 
 #### Utilities (4 components)
 
-| Component                   | File Path                                               | Targets                            | Description                   |
-| --------------------------- | ------------------------------------------------------- | ---------------------------------- | ----------------------------- |
-| `frameworkSelector`         | `force-app/main/default/lwc/frameworkSelector/`         | AppPage, RecordPage, HomePage      | Framework selection component |
-| `complianceGapList`         | `force-app/main/default/lwc/complianceGapList/`         | AppPage, RecordPage, HomePage      | Gap listing and filtering     |
-| `elaroReadinessScore` | `force-app/main/default/lwc/elaroReadinessScore/` | AppPage, HomePage, RecordPage      | Readiness score calculator    |
-| `controlMappingMatrix`      | `force-app/main/default/lwc/controlMappingMatrix/`      | AppPage, RecordPage, HomePage, Tab | Control mapping visualization |
+| Component              | File Path                                          | Targets                            | Description                   |
+| ---------------------- | -------------------------------------------------- | ---------------------------------- | ----------------------------- |
+| `frameworkSelector`    | `force-app/main/default/lwc/frameworkSelector/`    | AppPage, RecordPage, HomePage      | Framework selection component |
+| `complianceGapList`    | `force-app/main/default/lwc/complianceGapList/`    | AppPage, RecordPage, HomePage      | Gap listing and filtering     |
+| `elaroReadinessScore`  | `force-app/main/default/lwc/elaroReadinessScore/`  | AppPage, HomePage, RecordPage      | Readiness score calculator    |
+| `controlMappingMatrix` | `force-app/main/default/lwc/controlMappingMatrix/` | AppPage, RecordPage, HomePage, Tab | Control mapping visualization |
 
 #### Utilities (Additional)
 
@@ -402,7 +402,7 @@ graph TB
 4. `apiUsageDashboard` - API usage tracking
 5. `executiveKpiDashboard` - Executive KPIs
 6. `elaroExecutiveKPIDashboard` - Enhanced executive view
-7. `complianceCopilot` - AI assistant
+7. `complianceCopilot` - compliance assistant
 8. `elaroCopilot` - Full copilot interface
 9. `elaroAiSettings` - AI settings
 10. `elaroReadinessScore` - Readiness score
@@ -571,7 +571,7 @@ All record pages use standard Salesforce components:
 
 #### Compliance Copilot Utility Bar Component
 
-**Design**: Persistent AI assistant accessible from any page
+**Design**: Persistent compliance assistant accessible from any page
 
 **Features**:
 
