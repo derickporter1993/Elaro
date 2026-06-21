@@ -82,6 +82,7 @@ scanner-reports/
 specs/
 
 # Temporary documentation and analysis files
+/project.md
 FAILED_PRS_SUMMARY.md
 *_TEMP.md
 *_ANALYSIS.md

@@ -304,6 +304,31 @@ describe("c-elaro-copilot", () => {
       const assistantMessage = element.shadowRoot.querySelector(".assistant-message");
       expect(assistantMessage).not.toBeNull();
     });
+
+    it("renders user and assistant messages without duplicate key errors", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+      const dateNowSpy = jest.spyOn(Date, "now").mockReturnValue(1782036794238);
+
+      try {
+        const element = await createComponent();
+
+        const quickCard = element.shadowRoot.querySelector(".quick-action-card");
+        quickCard.click();
+        await flushPromises();
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
+
+        const duplicateKeyErrors = consoleErrorSpy.mock.calls.filter((call) =>
+          String(call[0]).includes('Duplicated "key" attribute value')
+        );
+
+        expect(duplicateKeyErrors).toHaveLength(0);
+      } finally {
+        dateNowSpy.mockRestore();
+        consoleErrorSpy.mockRestore();
+      }
+    });
   });
 
   describe("Loading State", () => {

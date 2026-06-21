@@ -14,6 +14,7 @@ export default class ElaroCopilot extends LightningElement {
 
   // Debounce timer
   _debounceTimer;
+  _messageSequence = 0;
 
   @wire(getQuickCommands)
   wiredQuickCommands({ error, data }) {
@@ -189,13 +190,18 @@ export default class ElaroCopilot extends LightningElement {
     this.messages = [
       ...this.messages,
       {
-        id: Date.now(),
+        id: this.createMessageId(),
         role: role,
         content: content,
         timestamp: new Date(),
         copilotResponse: copilotResponse,
       },
     ];
+  }
+
+  createMessageId() {
+    this._messageSequence += 1;
+    return `${Date.now()}-${this._messageSequence}`;
   }
 
   scrollToBottom() {
