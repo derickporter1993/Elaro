@@ -43,7 +43,7 @@ trigger ElaroPCIAccessAlertTrigger on Elaro_Raw_Event__e (after insert) {
             try {
                 pciData = (Map<String, Object>) JSON.deserializeUntyped(event.Event_Data__c);
             } catch (Exception e) {
-                System.debug(LoggingLevel.ERROR, 'Failed to parse PCI event data: ' + e.getMessage());
+                ElaroLogger.error('ElaroPCIAccessAlertTrigger', 'Failed to parse PCI event data: ' + e.getMessage(), e.getStackTraceString());
                 continue;
             }
 
