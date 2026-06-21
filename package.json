@@ -79,7 +79,7 @@
   "author": "Elaro Compliance Team",
   "license": "MIT",
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=20.19.0",
     "npm": ">=10.0.0"
   }
 }

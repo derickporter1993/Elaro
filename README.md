@@ -10,7 +10,7 @@ evidence collection, security review workflows, and AppExchange-ready delivery.
 - Main package: `force-app`
 - Health Check package: `force-app-healthcheck`
 - Salesforce API version: `66.0`
-- Node.js: `20+`
+- Node.js: `20.19+`
 - npm: `10+`
 - Local static validation: passing with documented AppExchange follow-up items
 - Org validation: requires a valid Salesforce CLI auth session
@@ -72,7 +72,7 @@ Validate both Salesforce package directories independently before release.
 ## Prerequisites
 
 - Salesforce CLI: `sf`
-- Node.js `20+`
+- Node.js `20.19+`
 - npm `10+`
 - Java runtime for Salesforce Code Analyzer
 - Authorized Salesforce org and Dev Hub for deploy, Apex, and package validation

@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: "20.17.0"
+  NODE_VERSION: "20.19.0"
   ORG_ALIAS: "elaro-ci"
 
 jobs:
