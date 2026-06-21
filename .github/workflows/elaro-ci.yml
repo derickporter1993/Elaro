@@ -93,11 +93,25 @@ jobs:
             --rule-selector Recommended:Security \
             --output-file scanner-results.sarif || true
 
-      - name: Upload SARIF to GitHub
+      - name: Filter SARIF to Security Findings
+        if: always()
+        run: |
+          if [ -f scanner-results.sarif ]; then
+            jq '
+              def security_rule:
+                ((.ruleId // "") | test("ProtectSensitiveData|Security|CRUD|FLS|SOQL|DML|Injection|Sharing|XSS|CSRF|OpenRedirect|NamedCred|Auth|Crypto|Secret|Password|Token"; "i"))
+                or ((.properties."security-severity" // .properties.security_severity_level // "") != "");
+              .runs |= map(.results = [(.results // [])[] | select(security_rule)])
+            ' scanner-results.sarif > scanner-results-security.sarif
+          else
+            printf '{"version":"2.1.0","runs":[]}\n' > scanner-results-security.sarif
+          fi
+
+      - name: Upload Security SARIF to GitHub
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: scanner-results.sarif
+          sarif_file: scanner-results-security.sarif
         continue-on-error: true
 
       - name: Upload Scanner Reports
