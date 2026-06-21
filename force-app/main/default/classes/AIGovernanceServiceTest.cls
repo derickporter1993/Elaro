@@ -181,11 +181,107 @@ private class AIGovernanceServiceTest {
         IComplianceModule.ControlResult result = service.evaluateControl('UNKNOWN-999', new Map<String, Object>());
         Test.stopTest();
 
-        Assert.areEqual('NOT_APPLICABLE', result.status, 'Unknown control should be not applicable');
+        // A control with no automated check must NOT be silently passed or marked
+        // NOT_APPLICABLE — it is NOT_EVALUATED so it is excluded from scoring.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Unknown control should be NOT_EVALUATED, not a fabricated verdict');
+        Assert.isFalse(result.passed, 'Unevaluated control must not be marked passed');
+        Assert.isTrue(result.score == 0, 'Unevaluated control must not contribute score');
+    }
+
+    @IsTest
+    static void shouldFlagTransparencyAsNotEvaluated() {
+        AIGovernanceService service = new AIGovernanceService();
+
+        Test.setMock(HttpCalloutMock.class, new ToolingApiMock());
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = service.evaluateControl('AI-005', new Map<String, Object>());
+        Test.stopTest();
+
+        // Transparency has no programmatic signal — it must be NOT_EVALUATED, never a
+        // fabricated +10 / pass.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Transparency (AI-005) must be NOT_EVALUATED, not fabricated as compliant');
+        Assert.isFalse(result.passed, 'Transparency must not be marked passed without evidence');
+        Assert.isTrue(result.score == 0, 'Transparency must not contribute a placeholder score');
+    }
+
+    @IsTest
+    static void shouldSurfaceTransparencyAsManualReviewGap() {
+        AIGovernanceService service = new AIGovernanceService();
+
+        Test.setMock(HttpCalloutMock.class, new ToolingApiMock());
+
+        Test.startTest();
+        List<IComplianceModule.Gap> gaps = service.identifyGaps(null);
+        Test.stopTest();
+
+        Boolean foundTransparencyGap = false;
+        for (IComplianceModule.Gap gap : gaps) {
+            if (gap.controlCode == 'AI-005') {
+                foundTransparencyGap = true;
+                Assert.areEqual('Manual Review Required', gap.status,
+                    'Transparency gap should require manual review, not be auto-closed');
+            }
+        }
+        Assert.isTrue(foundTransparencyGap,
+            'Transparency obligation must be surfaced as a manual-attestation gap');
+    }
+
+    @IsTest
+    static void shouldExcludeTransparencyFromScoreDenominator() {
+        AIGovernanceService service = new AIGovernanceService();
+
+        // Mock returns one detected AI system so the scorer runs the weighted path
+        // (instead of the "no AI systems = 100" early return).
+        Test.setMock(HttpCalloutMock.class, new DetectedSystemMock());
+
+        Test.startTest();
+        Decimal score = service.calculateScore(null);
+        Test.stopTest();
+
+        // The mock returns 1 detected system for each of the 5 AI metadata types => 5
+        // detected. Registry has 2 systems, both risk-classified; one is High-risk with NO
+        // oversight record. Verifiable dimensions only:
+        //   registration  = (2/5) * 40 = 16
+        //   classification = (2/2) * 30 = 30
+        //   oversight     = (0/1) * 30 =  0   (no real oversight records)
+        //   transparency  = EXCLUDED (no programmatic signal — no fabricated +10)
+        // => 46. Under the old placeholder logic this would have been 16 + 30 + 20 + 10 = 76.
+        Assert.isTrue(score == 46,
+            'Score must reflect only verifiable dimensions (expected 46), got: ' + score);
+        Assert.isTrue(score <= 70.0,
+            'Score must not include fabricated oversight/transparency credit, got: ' + score);
+    }
+
+    @IsTest
+    static void shouldEvaluateOversightFromRealRecords() {
+        AIGovernanceService service = new AIGovernanceService();
+
+        // Attach a real oversight record to the seeded High-risk system.
+        AI_System_Registry__c highRisk = [
+            SELECT Id FROM AI_System_Registry__c WHERE Risk_Level__c = 'High' LIMIT 1
+        ];
+        insert as user new AI_Human_Oversight_Record__c(
+            AI_System__c = highRisk.Id,
+            Human_Decision__c = 'Approved',
+            Justification__c = 'Reviewed model output and confirmed accuracy'
+        );
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = service.evaluateControl('AI-004', new Map<String, Object>());
+        Test.stopTest();
+
+        Assert.areEqual('AI-004', result.controlId, 'Control ID should match');
+        // The single High-risk system now has an oversight record, so the dimension is met.
+        Assert.areEqual(ElaroConstants.STATUS_COMPLIANT, result.status,
+            'Oversight should be COMPLIANT when high-risk systems have real oversight records');
+        Assert.isTrue(result.passed, 'Oversight control should pass with real records present');
     }
 
     /**
-     * Mock HTTP callout for Tooling API.
+     * Mock HTTP callout for Tooling API (no AI systems detected).
      */
     private class ToolingApiMock implements HttpCalloutMock {
         public HttpResponse respond(HttpRequest req) {
@@ -195,6 +291,30 @@ private class AIGovernanceServiceTest {
 
             Map<String, Object> response = new Map<String, Object>();
             response.put('records', new List<Map<String, Object>>());
+            res.setBody(JSON.serialize(response));
+
+            return res;
+        }
+    }
+
+    /**
+     * Mock that reports one detected AI system per Tooling metadata-type query, so the
+     * scorer exercises the weighted path instead of the "no AI systems" early return.
+     */
+    private class DetectedSystemMock implements HttpCalloutMock {
+        public HttpResponse respond(HttpRequest req) {
+            HttpResponse res = new HttpResponse();
+            res.setHeader('Content-Type', 'application/json');
+            res.setStatusCode(200);
+
+            Map<String, Object> record = new Map<String, Object>{
+                'DeveloperName' => 'Detected_System',
+                'Id' => '0Ai000000000001AAA',
+                'NamespacePrefix' => null
+            };
+            Map<String, Object> response = new Map<String, Object>{
+                'records' => new List<Map<String, Object>>{ record }
+            };
             res.setBody(JSON.serialize(response));
 
             return res;

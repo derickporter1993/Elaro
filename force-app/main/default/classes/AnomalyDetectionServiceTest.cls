@@ -150,6 +150,127 @@ private class AnomalyDetectionServiceTest {
         Assert.areNotEqual(null, anomalies, 'Anomalies list should not be null');
     }
 
+    /**
+     * Builds a synthetic LoginHistory record. LoginHistory and its fields are read-only,
+     * so we deserialize from JSON to populate them in memory for unit testing.
+     */
+    private static LoginHistory makeLogin(Id userId, Datetime loginTime, String sourceIp, String status) {
+        Map<String, Object> fields = new Map<String, Object>{
+            'attributes' => new Map<String, Object>{ 'type' => 'LoginHistory' },
+            'UserId' => userId,
+            'LoginTime' => loginTime.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss.SSSZ'),
+            'SourceIp' => sourceIp,
+            'Status' => status
+        };
+        return (LoginHistory) JSON.deserialize(JSON.serialize(fields), LoginHistory.class);
+    }
+
+    @IsTest
+    static void testAnalyzeLoginHistory_DetectsRepeatedFailures() {
+        // Build synthetic LoginHistory records in memory (LoginHistory is read-only / not insertable).
+        Id userId = UserInfo.getUserId();
+        List<LoginHistory> logins = new List<LoginHistory>();
+        for (Integer i = 0; i < 6; i++) {
+            logins.add(makeLogin(
+                userId,
+                Datetime.newInstanceGmt(2026, 6, 1, 12, 0, 0), // noon GMT = in-hours
+                '203.0.113.' + i,
+                'Invalid Password'
+            ));
+        }
+
+        Test.startTest();
+        List<AnomalyDetectionService.Anomaly> anomalies =
+            AnomalyDetectionService.analyzeLoginHistory(logins);
+        Test.stopTest();
+
+        Boolean foundFailureAnomaly = false;
+        for (AnomalyDetectionService.Anomaly a : anomalies) {
+            if (a.type == 'REPEATED_LOGIN_FAILURES') {
+                foundFailureAnomaly = true;
+                Assert.areEqual('HIGH', a.severity, 'Repeated failures should be HIGH severity');
+                Assert.areEqual(String.valueOf(userId), a.entityId, 'Anomaly should reference the failing user');
+            }
+        }
+        Assert.isTrue(foundFailureAnomaly,
+            'Detector must flag repeated failed logins as a real anomaly');
+    }
+
+    @IsTest
+    static void testAnalyzeLoginHistory_DetectsOffHoursAccess() {
+        Id userId = UserInfo.getUserId();
+        List<LoginHistory> logins = new List<LoginHistory>{
+            makeLogin(
+                userId,
+                Datetime.newInstanceGmt(2026, 6, 1, 3, 0, 0), // 3 AM GMT = off-hours
+                '198.51.100.7',
+                'Success'
+            )
+        };
+
+        Test.startTest();
+        List<AnomalyDetectionService.Anomaly> anomalies =
+            AnomalyDetectionService.analyzeLoginHistory(logins);
+        Test.stopTest();
+
+        Boolean foundOffHours = false;
+        for (AnomalyDetectionService.Anomaly a : anomalies) {
+            if (a.type == 'OFF_HOURS_ACCESS') {
+                foundOffHours = true;
+                Assert.areEqual('MEDIUM', a.severity, 'Off-hours access should be MEDIUM severity');
+            }
+        }
+        Assert.isTrue(foundOffHours,
+            'Detector must flag off-hours successful logins as a real anomaly');
+    }
+
+    @IsTest
+    static void testAnalyzeLoginHistory_NormalAccessNoAnomalies() {
+        Id userId = UserInfo.getUserId();
+        List<LoginHistory> logins = new List<LoginHistory>{
+            makeLogin(
+                userId,
+                Datetime.newInstanceGmt(2026, 6, 1, 14, 0, 0), // 2 PM GMT = in-hours
+                '198.51.100.10',
+                'Success'
+            )
+        };
+
+        Test.startTest();
+        List<AnomalyDetectionService.Anomaly> anomalies =
+            AnomalyDetectionService.analyzeLoginHistory(logins);
+        Test.stopTest();
+
+        // A single in-hours successful login is genuinely benign — empty here reflects a
+        // real evaluation, not a fabricated all-clear (the detector did run over the data).
+        Assert.areEqual(0, anomalies.size(),
+            'In-hours successful login should produce no anomalies');
+    }
+
+    @IsTest
+    static void testAnalyzeLoginHistory_BelowFailureThreshold() {
+        Id userId = UserInfo.getUserId();
+        List<LoginHistory> logins = new List<LoginHistory>();
+        for (Integer i = 0; i < 3; i++) { // below the >= 5 threshold
+            logins.add(makeLogin(
+                userId,
+                Datetime.newInstanceGmt(2026, 6, 1, 12, 0, 0),
+                '203.0.113.' + i,
+                'Invalid Password'
+            ));
+        }
+
+        Test.startTest();
+        List<AnomalyDetectionService.Anomaly> anomalies =
+            AnomalyDetectionService.analyzeLoginHistory(logins);
+        Test.stopTest();
+
+        for (AnomalyDetectionService.Anomaly a : anomalies) {
+            Assert.areNotEqual('REPEATED_LOGIN_FAILURES', a.type,
+                'Failures below threshold should not raise a repeated-failure anomaly');
+        }
+    }
+
     @IsTest
     static void testAnomalyClass_Properties() {
         Test.startTest();

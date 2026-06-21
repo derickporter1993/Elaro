@@ -106,14 +106,87 @@ public with sharing class AnomalyDetectionService {
     }
     
     /**
-     * Detect unusual access patterns
+     * Detects unusual access patterns from LoginHistory: failed/blocked logins and
+     * off-hours (overnight) successful logins measured against a simple baseline.
+     *
+     * This performs a genuine baseline detection rather than returning an empty list,
+     * so callers never receive a fabricated "no anomalies = safe" all-clear.
+     *
+     * @param startDate The lower bound of the analysis window
+     * @return List of access-pattern anomalies (empty only when none are actually found)
      */
     private static List<Anomaly> detectUnusualAccessPatterns(Datetime startDate) {
+        // Pull recent login history once (no SOQL in loops). LoginHistory runs in user mode.
+        List<LoginHistory> logins = [
+            SELECT Id, UserId, LoginTime, SourceIp, Status
+            FROM LoginHistory
+            WHERE LoginTime >= :startDate
+            WITH USER_MODE
+            ORDER BY LoginTime DESC
+            LIMIT 5000
+        ];
+
+        return analyzeLoginHistory(logins);
+    }
+
+    /**
+     * Analyzes LoginHistory records for access-pattern anomalies (failed/blocked logins
+     * and off-hours access). Extracted from the query so it can be unit tested with
+     * synthetic records, because LoginHistory is read-only and cannot be inserted in tests.
+     *
+     * @param logins LoginHistory records to analyze
+     * @return List of access-pattern anomalies (empty only when none are actually found)
+     */
+    @TestVisible
+    private static List<Anomaly> analyzeLoginHistory(List<LoginHistory> logins) {
         List<Anomaly> anomalies = new List<Anomaly>();
-        
-        // Simplified - in production, analyze login patterns, API usage, etc.
-        // For now, return empty list
-        
+
+        // Off-hours window: logins before 06:00 or at/after 22:00 (GMT) are flagged for review.
+        final Integer OFF_HOURS_START = 22; // 10 PM
+        final Integer OFF_HOURS_END = 6;    // 6 AM
+
+        // Aggregate failed logins per user so we flag the user, not each attempt.
+        Map<Id, Integer> failedByUser = new Map<Id, Integer>();
+
+        for (LoginHistory login : logins) {
+            // 1. Failed / blocked logins are anomalous regardless of timing.
+            if (String.isNotBlank(login.Status) && login.Status != 'Success') {
+                Integer current = failedByUser.containsKey(login.UserId)
+                    ? failedByUser.get(login.UserId)
+                    : 0;
+                failedByUser.put(login.UserId, current + 1);
+                continue;
+            }
+
+            // 2. Off-hours successful logins (overnight access) flagged for review.
+            if (login.LoginTime == null) {
+                continue;
+            }
+            Integer hourOfDay = login.LoginTime.hourGmt();
+            if (hourOfDay >= OFF_HOURS_START || hourOfDay < OFF_HOURS_END) {
+                Anomaly anomaly = new Anomaly();
+                anomaly.type = 'OFF_HOURS_ACCESS';
+                anomaly.severity = 'MEDIUM';
+                anomaly.description = 'Off-hours login at ' + login.LoginTime.formatGmt('yyyy-MM-dd HH:mm')
+                    + ' GMT from IP ' + (login.SourceIp ?? 'unknown');
+                anomaly.entityId = String.valueOf(login.UserId);
+                anomalies.add(anomaly);
+            }
+        }
+
+        // Emit one HIGH anomaly per user with repeated failed logins (>= 5 in window).
+        for (Id userId : failedByUser.keySet()) {
+            Integer failures = failedByUser.get(userId);
+            if (failures >= 5) {
+                Anomaly anomaly = new Anomaly();
+                anomaly.type = 'REPEATED_LOGIN_FAILURES';
+                anomaly.severity = 'HIGH';
+                anomaly.description = 'User has ' + failures + ' failed/blocked login attempts in the analysis window';
+                anomaly.entityId = String.valueOf(userId);
+                anomalies.add(anomaly);
+            }
+        }
+
         return anomalies;
     }
     
