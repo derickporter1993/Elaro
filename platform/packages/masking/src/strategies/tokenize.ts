@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import type { TokenizeStrategy } from '@platform/types';
 
 /**
@@ -90,7 +91,9 @@ function generateToken(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let token = 'TOK_';
   for (let i = 0; i < 24; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
+    // crypto.randomInt() is CSPRNG-backed and rejection-samples internally,
+    // giving a uniform, unbiased index (no modulo bias from Math.random()).
+    token += chars.charAt(randomInt(chars.length));
   }
   return token;
 }

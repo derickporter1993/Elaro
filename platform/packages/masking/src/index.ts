@@ -14,6 +14,7 @@ export { redact, partialRedact } from './strategies/redact';
 export { hash, hashWithFormatHint } from './strategies/hash';
 export { fake, fakeDeterministic } from './strategies/fake';
 export { fpeEncrypt, fpeDecrypt, registerKey, generateKey } from './strategies/fpe';
+export type { FpeObfuscationOptions } from './strategies/fpe';
 export {
   tokenize,
   detokenize,

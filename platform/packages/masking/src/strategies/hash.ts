@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 import murmurhash from 'murmurhash';
 import type { HashStrategy } from '@platform/types';
 
@@ -17,7 +17,9 @@ export function hash(
 
   const input = options.deterministic
     ? value
-    : `${value}-${Date.now()}-${Math.random()}`;
+    : // Non-deterministic mode: derive uniqueness from a CSPRNG nonce rather
+      // than the predictable/weak Date.now() + Math.random() combination.
+      `${value}-${randomBytes(16).toString('hex')}`;
 
   const salted = options.salt ? `${input}${options.salt}` : input;
 

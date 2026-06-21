@@ -4,14 +4,32 @@ import type { FpeStrategy } from '@platform/types';
 /**
  * Format-Preserving Encryption (FPE) strategy
  *
- * Uses AES-based encryption that maintains the format of the input.
- * For production use, consider a proper FPE library like node-fpe or ff3-1.
+ * Two transforms are available:
+ * - The non-format-preserving path uses authenticated AES-256-GCM and is
+ *   cryptographically sound.
+ * - The format-preserving path is a simple character-shift transform. It is
+ *   NOT a real Format-Preserving Encryption cipher (NOT NIST SP 800-38G FF1/
+ *   FF3-1) and provides only weak obfuscation. It is gated behind an explicit
+ *   opt-in flag and throws by default so it is never shipped silently.
+ *
+ * For genuine format-preserving encryption, integrate a vetted FF1/FF3-1
+ * library (e.g. node-fpe or ff3-1) instead of the obfuscation path below.
  *
  * Key management:
  * - keyId references a key stored in the secrets vault
  * - Keys should be rotated periodically
  * - Decryption is possible for authorized users
  */
+
+/**
+ * Error message returned when the non-certified format-preserving obfuscation
+ * is used without explicit opt-in.
+ */
+const INSECURE_FPE_ERROR =
+  'Format-preserving obfuscation is NOT a NIST SP 800-38G FPE cipher and is ' +
+  'cryptographically weak. To use it you must explicitly opt in by passing ' +
+  '`allowInsecureObfuscation: true`. For real format-preserving encryption, ' +
+  'integrate a vetted FF1/FF3-1 library (e.g. node-fpe or ff3-1).';
 
 // Simulated key store (in production, use KMS/Vault)
 const keyStore = new Map<string, Buffer>();
@@ -27,12 +45,27 @@ export function generateKey(keyId: string, passphrase: string): void {
 }
 
 /**
+ * Options that gate the non-certified format-preserving obfuscation path.
+ *
+ * Setting `allowInsecureObfuscation` to `true` is an explicit acknowledgement
+ * that the format-preserving transform is weak obfuscation, NOT real FPE.
+ */
+export interface FpeObfuscationOptions {
+  allowInsecureObfuscation?: boolean;
+}
+
+/**
  * Format-preserving encrypt
- * Maintains character set and length of original
+ *
+ * With `preserveFormat: false` (the default-safe path) this uses authenticated
+ * AES-256-GCM. With `preserveFormat: true` it uses a weak, non-certified
+ * format-preserving obfuscation that must be explicitly enabled via
+ * `extra.allowInsecureObfuscation`; otherwise it throws.
  */
 export function fpeEncrypt(
   value: string | null | undefined,
-  options: Omit<FpeStrategy, 'type'>
+  options: Omit<FpeStrategy, 'type'>,
+  extra: FpeObfuscationOptions = {}
 ): string {
   if (value === null || value === undefined || value.length === 0) {
     return '';
@@ -44,19 +77,26 @@ export function fpeEncrypt(
   }
 
   if (options.preserveFormat) {
-    return formatPreservingEncrypt(value, key);
+    if (!extra.allowInsecureObfuscation) {
+      throw new Error(INSECURE_FPE_ERROR);
+    }
+    return formatPreservingObfuscate(value, key);
   }
 
-  // Non-format-preserving fallback
+  // Non-format-preserving path: authenticated AES-256-GCM.
   return simpleEncrypt(value, key);
 }
 
 /**
  * Format-preserving decrypt (for authorized users)
+ *
+ * Mirrors {@link fpeEncrypt}: the format-preserving path requires
+ * `extra.allowInsecureObfuscation` and throws by default.
  */
 export function fpeDecrypt(
   encryptedValue: string,
-  options: Omit<FpeStrategy, 'type'>
+  options: Omit<FpeStrategy, 'type'>,
+  extra: FpeObfuscationOptions = {}
 ): string {
   const key = keyStore.get(options.keyId);
   if (!key) {
@@ -64,7 +104,10 @@ export function fpeDecrypt(
   }
 
   if (options.preserveFormat) {
-    return formatPreservingDecrypt(encryptedValue, key);
+    if (!extra.allowInsecureObfuscation) {
+      throw new Error(INSECURE_FPE_ERROR);
+    }
+    return formatPreservingDeobfuscate(encryptedValue, key);
   }
 
   return simpleDecrypt(encryptedValue, key);
@@ -92,13 +135,14 @@ function simpleDecrypt(encrypted: string, key: Buffer): string {
 }
 
 /**
- * Format-preserving encryption
+ * Format-preserving obfuscation (NOT NIST SP 800-38G FPE).
  *
- * This is a simplified implementation. For production:
- * - Use FF1 or FF3-1 algorithm (NIST SP 800-38G)
- * - Consider libraries like `node-fpe` or `ff3`
+ * WARNING: This is a simple per-character shift, not a real FPE cipher. It is
+ * cryptographically weak and is only reachable behind the
+ * `allowInsecureObfuscation` opt-in. For production-grade format-preserving
+ * encryption use FF1 or FF3-1 (e.g. `node-fpe` or `ff3-1`).
  */
-function formatPreservingEncrypt(value: string, key: Buffer): string {
+function formatPreservingObfuscate(value: string, key: Buffer): string {
   const result: string[] = [];
 
   for (let i = 0; i < value.length; i++) {
@@ -120,7 +164,10 @@ function formatPreservingEncrypt(value: string, key: Buffer): string {
   return result.join('');
 }
 
-function formatPreservingDecrypt(encrypted: string, key: Buffer): string {
+/**
+ * Inverse of {@link formatPreservingObfuscate} (NOT NIST SP 800-38G FPE).
+ */
+function formatPreservingDeobfuscate(encrypted: string, key: Buffer): string {
   const result: string[] = [];
 
   for (let i = 0; i < encrypted.length; i++) {
@@ -163,6 +210,9 @@ function decryptChar(
 ): string {
   const offset = char.charCodeAt(0) - base.charCodeAt(0);
   const keyByte = key[position % key.length] ?? 0;
-  const decrypted = (offset - keyByte + range) % range;
+  // JS `%` keeps the sign of the dividend, so for key bytes larger than
+  // `offset + range` a plain modulo would go negative and fall outside the
+  // alphabet. Normalise to a non-negative residue so decrypt inverts encrypt.
+  const decrypted = (((offset - keyByte) % range) + range) % range;
   return String.fromCharCode(base.charCodeAt(0) + decrypted);
 }
