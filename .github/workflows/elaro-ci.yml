@@ -25,7 +25,9 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Security Audit
-        run: npm audit --audit-level=high
+        # Scope to production dependencies: the managed package ships no JS, so
+        # dev-only test-tooling advisories (jest/sfdx-lwc-jest) must not gate CI.
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Format Check
         run: npm run fmt:check
