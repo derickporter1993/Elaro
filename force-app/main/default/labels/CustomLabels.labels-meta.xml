@@ -1644,4 +1644,532 @@
         <shortDescription>Governor limit warning message</shortDescription>
         <value>Approaching governor limits. Processing paused and will resume.</value>
     </labels>
+    <!-- Compliance Score Card Labels -->
+    <labels>
+        <fullName>CSC_ComplianceScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance score label</shortDescription>
+        <value>Compliance Score</value>
+    </labels>
+    <labels>
+        <fullName>CSC_LoadingDetails</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading framework details spinner alt text</shortDescription>
+        <value>Loading framework details</value>
+    </labels>
+    <labels>
+        <fullName>CSC_PoliciesCompliant</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Policies compliant suffix</shortDescription>
+        <value>Policies Compliant</value>
+    </labels>
+    <labels>
+        <fullName>CSC_Gaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Gaps suffix label</shortDescription>
+        <value>Gaps</value>
+    </labels>
+    <labels>
+        <fullName>CSC_FrameworkMappings</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework mappings label</shortDescription>
+        <value>Framework Mappings:</value>
+    </labels>
+    <labels>
+        <fullName>CSC_EvidenceItems</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Evidence items label</shortDescription>
+        <value>Evidence Items:</value>
+    </labels>
+    <labels>
+        <fullName>CSC_Requirements</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Requirements label</shortDescription>
+        <value>Requirements:</value>
+    </labels>
+    <labels>
+        <fullName>CSC_LatestAuditPackage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Latest audit package label</shortDescription>
+        <value>Latest Audit Package:</value>
+    </labels>
+    <labels>
+        <fullName>CSC_Status</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Status label</shortDescription>
+        <value>Status:</value>
+    </labels>
+    <labels>
+        <fullName>CSC_Period</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Period label</shortDescription>
+        <value>Period:</value>
+    </labels>
+    <labels>
+        <fullName>CSC_ViewPackage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>View package button label</shortDescription>
+        <value>View Package</value>
+    </labels>
+    <labels>
+        <fullName>CSC_FailedToLoadDetails</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Failed to load framework details fallback message</shortDescription>
+        <value>Failed to load framework details</value>
+    </labels>
+    <!-- Compliance Timeline Labels -->
+    <labels>
+        <fullName>TIMELINE_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance timeline card title</shortDescription>
+        <value>Compliance Timeline</value>
+    </labels>
+    <labels>
+        <fullName>TIMELINE_LoadingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading timeline events spinner alt text</shortDescription>
+        <value>Loading timeline events</value>
+    </labels>
+    <labels>
+        <fullName>TIMELINE_NoEvents</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No timeline events empty state</shortDescription>
+        <value>No timeline events available</value>
+    </labels>
+    <!-- Compliance Trend Chart Labels -->
+    <labels>
+        <fullName>TREND_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance trend card title</shortDescription>
+        <value>Compliance Trend</value>
+    </labels>
+    <labels>
+        <fullName>TREND_LoadingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading trend data spinner alt text</shortDescription>
+        <value>Loading trend data</value>
+    </labels>
+    <labels>
+        <fullName>TREND_NoData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No trend data empty state</shortDescription>
+        <value>No trend data available</value>
+    </labels>
+    <labels>
+        <fullName>TREND_ScoreLegend</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Chart dataset legend label for compliance score</shortDescription>
+        <value>Compliance Score</value>
+    </labels>
+    <!-- API Usage Dashboard Labels -->
+    <labels>
+        <fullName>API_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>API usage dashboard card title</shortDescription>
+        <value>API Usage &amp; Forecasting</value>
+    </labels>
+    <labels>
+        <fullName>API_LoadingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading API usage data spinner alt text</shortDescription>
+        <value>Loading API usage data</value>
+    </labels>
+    <labels>
+        <fullName>API_NoSnapshots</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No API usage snapshots empty state</shortDescription>
+        <value>No snapshots yet.</value>
+    </labels>
+    <labels>
+        <fullName>API_TableAria</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>API usage snapshots datatable aria label</shortDescription>
+        <value>API usage snapshots</value>
+    </labels>
+    <labels>
+        <fullName>API_ColTakenOn</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Taken on column label</shortDescription>
+        <value>Taken On</value>
+    </labels>
+    <labels>
+        <fullName>API_ColUsed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Used column label</shortDescription>
+        <value>Used</value>
+    </labels>
+    <labels>
+        <fullName>API_ColLimit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Limit column label</shortDescription>
+        <value>Limit</value>
+    </labels>
+    <labels>
+        <fullName>API_ColPercent</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Percent column label</shortDescription>
+        <value>Percent</value>
+    </labels>
+    <labels>
+        <fullName>API_ColProjected</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Projected exhaustion column label</shortDescription>
+        <value>Projected Exhaustion</value>
+    </labels>
+    <labels>
+        <fullName>API_LoadError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Failed to load API usage data error toast title</shortDescription>
+        <value>Failed to load API usage data</value>
+    </labels>
+    <!-- Assessment Progress Tracker Labels -->
+    <labels>
+        <fullName>AW_StageCompleted</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Completed stage check icon alt text</shortDescription>
+        <value>Completed</value>
+    </labels>
+    <labels>
+        <fullName>AW_StageStatusCompleted</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Stage completed aria suffix</shortDescription>
+        <value>completed</value>
+    </labels>
+    <labels>
+        <fullName>AW_StageStatusCurrent</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Stage current aria suffix</shortDescription>
+        <value>current</value>
+    </labels>
+    <labels>
+        <fullName>AW_StageStatusUpcoming</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Stage upcoming aria suffix</shortDescription>
+        <value>upcoming</value>
+    </labels>
+    <!-- Executive KPI Dashboard Labels -->
+    <labels>
+        <fullName>EKD_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Executive KPI dashboard card title</shortDescription>
+        <value>Executive KPI Dashboard</value>
+    </labels>
+    <labels>
+        <fullName>EKD_LoadingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading spinner alt text</shortDescription>
+        <value>Loading</value>
+    </labels>
+    <labels>
+        <fullName>EKD_ErrorLoading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error loading KPIs message prefix</shortDescription>
+        <value>Error loading KPIs:</value>
+    </labels>
+    <labels>
+        <fullName>EKD_OverallScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Overall compliance score label</shortDescription>
+        <value>Overall Compliance Score</value>
+    </labels>
+    <labels>
+        <fullName>EKD_TotalGaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Total gaps label</shortDescription>
+        <value>Total Gaps</value>
+    </labels>
+    <labels>
+        <fullName>EKD_CriticalGaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Critical gaps label</shortDescription>
+        <value>Critical Gaps</value>
+    </labels>
+    <labels>
+        <fullName>EKD_CompliantFrameworks</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliant frameworks label</shortDescription>
+        <value>Compliant Frameworks</value>
+    </labels>
+    <!-- Compliance Dashboard Labels -->
+    <labels>
+        <fullName>CD_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Compliance dashboard card title</shortDescription>
+        <value>Compliance Dashboard</value>
+    </labels>
+    <labels>
+        <fullName>CD_LoadingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading spinner alt text</shortDescription>
+        <value>Loading</value>
+    </labels>
+    <labels>
+        <fullName>CD_ErrorLoading</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error loading dashboard message prefix</shortDescription>
+        <value>Error loading dashboard:</value>
+    </labels>
+    <labels>
+        <fullName>CD_RecentEvidence</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Recent evidence section title</shortDescription>
+        <value>Recent Evidence</value>
+    </labels>
+    <!-- Risk Heatmap Labels -->
+    <labels>
+        <fullName>RH_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Risk heatmap card title</shortDescription>
+        <value>Risk Heatmap</value>
+    </labels>
+    <labels>
+        <fullName>RH_GridAria</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Risk heatmap grid aria label</shortDescription>
+        <value>Risk heatmap</value>
+    </labels>
+    <labels>
+        <fullName>RH_ScorePrefix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Score prefix label</shortDescription>
+        <value>Score:</value>
+    </labels>
+    <labels>
+        <fullName>RH_NoData</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No risk data empty state</shortDescription>
+        <value>No risk data available</value>
+    </labels>
+    <labels>
+        <fullName>RH_RiskItemAria</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Risk heatmap item aria label (framework, severity, score)</shortDescription>
+        <value>Risk for {0}: {1}, Score {2}</value>
+    </labels>
+    <!-- Audit Report Generator Labels -->
+    <labels>
+        <fullName>ARG_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Audit report generator card title</shortDescription>
+        <value>Audit Report Generator</value>
+    </labels>
+    <labels>
+        <fullName>ARG_GeneratingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generating audit report spinner alt text</shortDescription>
+        <value>Generating audit report</value>
+    </labels>
+    <labels>
+        <fullName>ARG_Framework</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Framework combobox label</shortDescription>
+        <value>Framework</value>
+    </labels>
+    <labels>
+        <fullName>ARG_StartDate</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Start date input label</shortDescription>
+        <value>Start Date</value>
+    </labels>
+    <labels>
+        <fullName>ARG_EndDate</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>End date input label</shortDescription>
+        <value>End Date</value>
+    </labels>
+    <labels>
+        <fullName>ARG_GenerateReport</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generate report button label</shortDescription>
+        <value>Generate Report</value>
+    </labels>
+    <labels>
+        <fullName>ARG_ExportPDF</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Export PDF button label</shortDescription>
+        <value>Export PDF</value>
+    </labels>
+    <labels>
+        <fullName>ARG_ReportSummary</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Report summary heading</shortDescription>
+        <value>Report Summary</value>
+    </labels>
+    <labels>
+        <fullName>ARG_OverallScore</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Overall score label</shortDescription>
+        <value>Overall Score:</value>
+    </labels>
+    <labels>
+        <fullName>ARG_Status</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Status label</shortDescription>
+        <value>Status:</value>
+    </labels>
+    <labels>
+        <fullName>ARG_TotalGaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Total gaps label</shortDescription>
+        <value>Total Gaps:</value>
+    </labels>
+    <labels>
+        <fullName>ARG_OpenGaps</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Open gaps label</shortDescription>
+        <value>Open Gaps:</value>
+    </labels>
+    <labels>
+        <fullName>ARG_TotalEvidence</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Total evidence label</shortDescription>
+        <value>Total Evidence:</value>
+    </labels>
+    <labels>
+        <fullName>ARG_ValidationMissing</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Missing required fields validation message</shortDescription>
+        <value>Please select framework and date range</value>
+    </labels>
+    <labels>
+        <fullName>ARG_GenerateFirst</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generate report first message</shortDescription>
+        <value>Please generate a report first</value>
+    </labels>
+    <labels>
+        <fullName>ARG_GenericError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Generic error fallback message</shortDescription>
+        <value>An error occurred</value>
+    </labels>
+    <!-- Elaro Executive KPI Dashboard Labels -->
+    <labels>
+        <fullName>ELKPI_CardTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Elaro executive KPI dashboard card title</shortDescription>
+        <value>Elaro Executive KPI Dashboard</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_MetricsAria</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Executive KPI metrics region aria label</shortDescription>
+        <value>Executive KPI metrics</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_KpiCardAria</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>KPI card aria label prefix</shortDescription>
+        <value>KPI: {0}</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_Target</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Target value label</shortDescription>
+        <value>Target:</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_LoadingAlt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loading KPIs spinner alt text</shortDescription>
+        <value>Loading KPIs</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_ErrorTitle</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error toast title</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_ErrorLoadingPrefix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error loading KPIs message prefix</shortDescription>
+        <value>Error loading KPIs:</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_UnknownError</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Unknown error fallback message</shortDescription>
+        <value>An unknown error occurred</value>
+    </labels>
+    <labels>
+        <fullName>ELKPI_NotApplicable</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Not applicable value placeholder</shortDescription>
+        <value>N/A</value>
+    </labels>
 </CustomLabels>

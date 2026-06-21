@@ -1,6 +1,18 @@
 import { LightningElement, api, wire } from "lwc";
 import getFrameworkDetails from "@salesforce/apex/ComplianceScoreCardController.getFrameworkDetails";
 import { NavigationMixin } from "lightning/navigation";
+import CSC_ComplianceScore from "@salesforce/label/c.CSC_ComplianceScore";
+import CSC_LoadingDetails from "@salesforce/label/c.CSC_LoadingDetails";
+import CSC_PoliciesCompliant from "@salesforce/label/c.CSC_PoliciesCompliant";
+import CSC_Gaps from "@salesforce/label/c.CSC_Gaps";
+import CSC_FrameworkMappings from "@salesforce/label/c.CSC_FrameworkMappings";
+import CSC_EvidenceItems from "@salesforce/label/c.CSC_EvidenceItems";
+import CSC_Requirements from "@salesforce/label/c.CSC_Requirements";
+import CSC_LatestAuditPackage from "@salesforce/label/c.CSC_LatestAuditPackage";
+import CSC_Status from "@salesforce/label/c.CSC_Status";
+import CSC_Period from "@salesforce/label/c.CSC_Period";
+import CSC_ViewPackage from "@salesforce/label/c.CSC_ViewPackage";
+import CSC_FailedToLoadDetails from "@salesforce/label/c.CSC_FailedToLoadDetails";
 
 export default class ComplianceScoreCard extends NavigationMixin(LightningElement) {
   @api framework;
@@ -8,6 +20,20 @@ export default class ComplianceScoreCard extends NavigationMixin(LightningElemen
   isLoadingDetails = false;
   hasError = false;
   errorMessage = "";
+
+  label = {
+    CSC_ComplianceScore,
+    CSC_LoadingDetails,
+    CSC_PoliciesCompliant,
+    CSC_Gaps,
+    CSC_FrameworkMappings,
+    CSC_EvidenceItems,
+    CSC_Requirements,
+    CSC_LatestAuditPackage,
+    CSC_Status,
+    CSC_Period,
+    CSC_ViewPackage,
+  };
 
   get frameworkKey() {
     return this.framework?.framework || this.framework?.key || null;
@@ -24,8 +50,7 @@ export default class ComplianceScoreCard extends NavigationMixin(LightningElemen
       // Error logged for debugging - framework details are optional
       this.isLoadingDetails = false;
       this.hasError = true;
-      this.errorMessage =
-        error?.body?.message || error?.message || "Failed to load framework details";
+      this.errorMessage = error?.body?.message || error?.message || CSC_FailedToLoadDetails;
     } else {
       this.isLoadingDetails = true;
       this.hasError = false;

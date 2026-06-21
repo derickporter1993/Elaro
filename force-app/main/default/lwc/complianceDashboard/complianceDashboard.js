@@ -1,10 +1,22 @@
 import { LightningElement, wire } from "lwc";
 import getDashboardSummary from "@salesforce/apex/ComplianceDashboardController.getDashboardSummary";
+import CD_CardTitle from "@salesforce/label/c.CD_CardTitle";
+import CD_LoadingAlt from "@salesforce/label/c.CD_LoadingAlt";
+import CD_ErrorLoading from "@salesforce/label/c.CD_ErrorLoading";
+import CD_RecentEvidence from "@salesforce/label/c.CD_RecentEvidence";
+import CD_UnknownError from "@salesforce/label/c.ELKPI_UnknownError";
 
 export default class ComplianceDashboard extends LightningElement {
   dashboardData;
   error;
   loading = true;
+
+  label = {
+    CD_CardTitle,
+    CD_LoadingAlt,
+    CD_ErrorLoading,
+    CD_RecentEvidence,
+  };
 
   @wire(getDashboardSummary)
   wiredDashboard({ error, data }) {
@@ -38,6 +50,6 @@ export default class ComplianceDashboard extends LightningElement {
 
   get errorMessage() {
     if (!this.error) return "";
-    return this.error?.body?.message || this.error?.message || "An unknown error occurred";
+    return this.error?.body?.message || this.error?.message || CD_UnknownError;
   }
 }

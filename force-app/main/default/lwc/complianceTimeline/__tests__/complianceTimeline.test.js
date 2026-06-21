@@ -10,6 +10,21 @@
 import { createElement } from "lwc";
 import ComplianceTimeline from "c/complianceTimeline";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.TIMELINE_CardTitle", () => ({ default: "Compliance Timeline" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.TIMELINE_LoadingAlt",
+  () => ({ default: "Loading timeline events" }),
+  { virtual: true }
+);
+jest.mock(
+  "@salesforce/label/c.TIMELINE_NoEvents",
+  () => ({ default: "No timeline events available" }),
+  { virtual: true }
+);
+
 describe("c-compliance-timeline", () => {
   afterEach(() => {
     while (document.body.firstChild) {

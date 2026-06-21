@@ -1,6 +1,22 @@
 import { LightningElement } from "lwc";
 import generateAuditReport from "@salesforce/apex/AuditReportController.generateAuditReport";
 import exportReportAsPDF from "@salesforce/apex/AuditReportController.exportReportAsPDF";
+import ARG_CardTitle from "@salesforce/label/c.ARG_CardTitle";
+import ARG_GeneratingAlt from "@salesforce/label/c.ARG_GeneratingAlt";
+import ARG_Framework from "@salesforce/label/c.ARG_Framework";
+import ARG_StartDate from "@salesforce/label/c.ARG_StartDate";
+import ARG_EndDate from "@salesforce/label/c.ARG_EndDate";
+import ARG_GenerateReport from "@salesforce/label/c.ARG_GenerateReport";
+import ARG_ExportPDF from "@salesforce/label/c.ARG_ExportPDF";
+import ARG_ReportSummary from "@salesforce/label/c.ARG_ReportSummary";
+import ARG_OverallScore from "@salesforce/label/c.ARG_OverallScore";
+import ARG_Status from "@salesforce/label/c.ARG_Status";
+import ARG_TotalGaps from "@salesforce/label/c.ARG_TotalGaps";
+import ARG_OpenGaps from "@salesforce/label/c.ARG_OpenGaps";
+import ARG_TotalEvidence from "@salesforce/label/c.ARG_TotalEvidence";
+import ARG_ValidationMissing from "@salesforce/label/c.ARG_ValidationMissing";
+import ARG_GenerateFirst from "@salesforce/label/c.ARG_GenerateFirst";
+import ARG_GenericError from "@salesforce/label/c.ARG_GenericError";
 
 export default class AuditReportGenerator extends LightningElement {
   selectedFramework = "SOX";
@@ -9,6 +25,22 @@ export default class AuditReportGenerator extends LightningElement {
   reportData;
   loading = false;
   error;
+
+  label = {
+    ARG_CardTitle,
+    ARG_GeneratingAlt,
+    ARG_Framework,
+    ARG_StartDate,
+    ARG_EndDate,
+    ARG_GenerateReport,
+    ARG_ExportPDF,
+    ARG_ReportSummary,
+    ARG_OverallScore,
+    ARG_Status,
+    ARG_TotalGaps,
+    ARG_OpenGaps,
+    ARG_TotalEvidence,
+  };
 
   get isLoading() {
     return this.loading;
@@ -53,7 +85,7 @@ export default class AuditReportGenerator extends LightningElement {
 
   handleGenerateReport() {
     if (!this.selectedFramework || !this.startDate || !this.endDate) {
-      this.error = "Please select framework and date range";
+      this.error = ARG_ValidationMissing;
       return;
     }
 
@@ -70,14 +102,14 @@ export default class AuditReportGenerator extends LightningElement {
         this.loading = false;
       })
       .catch((error) => {
-        this.error = error?.body?.message || error?.message || "An error occurred";
+        this.error = error?.body?.message || error?.message || ARG_GenericError;
         this.loading = false;
       });
   }
 
   handleExportPDF() {
     if (!this.reportData) {
-      this.error = "Please generate a report first";
+      this.error = ARG_GenerateFirst;
       return;
     }
 
@@ -89,7 +121,7 @@ export default class AuditReportGenerator extends LightningElement {
         this.loading = false;
       })
       .catch((error) => {
-        this.error = error?.body?.message || error?.message || "An error occurred";
+        this.error = error?.body?.message || error?.message || ARG_GenericError;
         this.loading = false;
       });
   }

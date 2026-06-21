@@ -14,6 +14,32 @@ import { createElement } from "lwc";
 import ApiUsageDashboard from "c/apiUsageDashboard";
 import { safeCleanupDom } from "../../__tests__/wireAdapterTestUtils";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.API_CardTitle", () => ({ default: "API Usage & Forecasting" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.API_LoadingAlt", () => ({ default: "Loading API usage data" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.API_NoSnapshots", () => ({ default: "No snapshots yet." }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.API_TableAria", () => ({ default: "API usage snapshots" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.API_ColTakenOn", () => ({ default: "Taken On" }), { virtual: true });
+jest.mock("@salesforce/label/c.API_ColUsed", () => ({ default: "Used" }), { virtual: true });
+jest.mock("@salesforce/label/c.API_ColLimit", () => ({ default: "Limit" }), { virtual: true });
+jest.mock("@salesforce/label/c.API_ColPercent", () => ({ default: "Percent" }), { virtual: true });
+jest.mock("@salesforce/label/c.API_ColProjected", () => ({ default: "Projected Exhaustion" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.API_LoadError",
+  () => ({ default: "Failed to load API usage data" }),
+  { virtual: true }
+);
+
 // Mock imperative Apex call
 let mockSnapshotsResult = null;
 let mockSnapshotsError = null;

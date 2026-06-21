@@ -13,6 +13,54 @@ import AuditReportGenerator from "c/auditReportGenerator";
 import generateAuditReport from "@salesforce/apex/AuditReportController.generateAuditReport";
 import exportReportAsPDF from "@salesforce/apex/AuditReportController.exportReportAsPDF";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.ARG_CardTitle", () => ({ default: "Audit Report Generator" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_GeneratingAlt", () => ({ default: "Generating audit report" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_Framework", () => ({ default: "Framework" }), { virtual: true });
+jest.mock("@salesforce/label/c.ARG_StartDate", () => ({ default: "Start Date" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_EndDate", () => ({ default: "End Date" }), { virtual: true });
+jest.mock("@salesforce/label/c.ARG_GenerateReport", () => ({ default: "Generate Report" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_ExportPDF", () => ({ default: "Export PDF" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_ReportSummary", () => ({ default: "Report Summary" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_OverallScore", () => ({ default: "Overall Score:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_Status", () => ({ default: "Status:" }), { virtual: true });
+jest.mock("@salesforce/label/c.ARG_TotalGaps", () => ({ default: "Total Gaps:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_OpenGaps", () => ({ default: "Open Gaps:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ARG_TotalEvidence", () => ({ default: "Total Evidence:" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.ARG_ValidationMissing",
+  () => ({ default: "Please select framework and date range" }),
+  { virtual: true }
+);
+jest.mock(
+  "@salesforce/label/c.ARG_GenerateFirst",
+  () => ({ default: "Please generate a report first" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.ARG_GenericError", () => ({ default: "An error occurred" }), {
+  virtual: true,
+});
+
 jest.mock(
   "@salesforce/apex/AuditReportController.generateAuditReport",
   () => ({ default: jest.fn() }),

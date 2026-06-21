@@ -10,6 +10,38 @@
 
 import { createElement } from "lwc";
 import ElaroExecutiveKPIDashboard from "c/elaroExecutiveKPIDashboard";
+
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock(
+  "@salesforce/label/c.ELKPI_CardTitle",
+  () => ({ default: "Elaro Executive KPI Dashboard" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.ELKPI_MetricsAria", () => ({ default: "Executive KPI metrics" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ELKPI_Target", () => ({ default: "Target:" }), { virtual: true });
+jest.mock("@salesforce/label/c.ELKPI_LoadingAlt", () => ({ default: "Loading KPIs" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ELKPI_ErrorTitle", () => ({ default: "Error" }), { virtual: true });
+jest.mock(
+  "@salesforce/label/c.ELKPI_ErrorLoadingPrefix",
+  () => ({ default: "Error loading KPIs:" }),
+  { virtual: true }
+);
+jest.mock(
+  "@salesforce/label/c.ELKPI_UnknownError",
+  () => ({ default: "An unknown error occurred" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.ELKPI_NotApplicable", () => ({ default: "N/A" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.ELKPI_KpiCardAria", () => ({ default: "KPI: {0}" }), {
+  virtual: true,
+});
+
 let mockKPICallbacks = new Set();
 
 jest.mock(

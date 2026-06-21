@@ -9,6 +9,37 @@
 
 import { createElement } from "lwc";
 import ExecutiveKpiDashboard from "c/executiveKpiDashboard";
+
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.EKD_CardTitle", () => ({ default: "Executive KPI Dashboard" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.EKD_LoadingAlt", () => ({ default: "Loading" }), { virtual: true });
+jest.mock("@salesforce/label/c.EKD_ErrorLoading", () => ({ default: "Error loading KPIs:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.EKD_OverallScore", () => ({ default: "Overall Compliance Score" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.EKD_TotalGaps", () => ({ default: "Total Gaps" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.EKD_CriticalGaps", () => ({ default: "Critical Gaps" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.EKD_CompliantFrameworks",
+  () => ({ default: "Compliant Frameworks" }),
+  { virtual: true }
+);
+jest.mock(
+  "@salesforce/label/c.ELKPI_UnknownError",
+  () => ({ default: "An unknown error occurred" }),
+  {
+    virtual: true,
+  }
+);
+
 let mockDashboardCallbacks = new Set();
 
 jest.mock(

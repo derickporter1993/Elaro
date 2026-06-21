@@ -1,10 +1,28 @@
 import { LightningElement, wire } from "lwc";
 import getDashboardSummary from "@salesforce/apex/ComplianceDashboardController.getDashboardSummary";
+import EKD_CardTitle from "@salesforce/label/c.EKD_CardTitle";
+import EKD_LoadingAlt from "@salesforce/label/c.EKD_LoadingAlt";
+import EKD_ErrorLoading from "@salesforce/label/c.EKD_ErrorLoading";
+import EKD_OverallScore from "@salesforce/label/c.EKD_OverallScore";
+import EKD_TotalGaps from "@salesforce/label/c.EKD_TotalGaps";
+import EKD_CriticalGaps from "@salesforce/label/c.EKD_CriticalGaps";
+import EKD_CompliantFrameworks from "@salesforce/label/c.EKD_CompliantFrameworks";
+import EKD_UnknownError from "@salesforce/label/c.ELKPI_UnknownError";
 
 export default class ExecutiveKpiDashboard extends LightningElement {
   dashboardData;
   error;
   loading = true;
+
+  label = {
+    EKD_CardTitle,
+    EKD_LoadingAlt,
+    EKD_ErrorLoading,
+    EKD_OverallScore,
+    EKD_TotalGaps,
+    EKD_CriticalGaps,
+    EKD_CompliantFrameworks,
+  };
 
   @wire(getDashboardSummary)
   wiredDashboard({ error, data }) {
@@ -52,6 +70,6 @@ export default class ExecutiveKpiDashboard extends LightningElement {
 
   get errorMessage() {
     if (!this.error) return "";
-    return this.error?.body?.message || this.error?.message || "An unknown error occurred";
+    return this.error?.body?.message || this.error?.message || EKD_UnknownError;
   }
 }

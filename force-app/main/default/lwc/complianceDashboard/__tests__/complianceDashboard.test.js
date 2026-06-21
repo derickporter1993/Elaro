@@ -11,6 +11,60 @@
 import { createElement } from "lwc";
 import ComplianceDashboard from "c/complianceDashboard";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.CD_CardTitle", () => ({ default: "Compliance Dashboard" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CD_LoadingAlt", () => ({ default: "Loading" }), { virtual: true });
+jest.mock("@salesforce/label/c.CD_ErrorLoading", () => ({ default: "Error loading dashboard:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CD_RecentEvidence", () => ({ default: "Recent Evidence" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.ELKPI_UnknownError",
+  () => ({ default: "An unknown error occurred" }),
+  { virtual: true }
+);
+// complianceScoreCard child component labels (rendered inside this dashboard)
+jest.mock("@salesforce/label/c.CSC_ComplianceScore", () => ({ default: "Compliance Score" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.CSC_LoadingDetails",
+  () => ({ default: "Loading framework details" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.CSC_PoliciesCompliant", () => ({ default: "Policies Compliant" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CSC_Gaps", () => ({ default: "Gaps" }), { virtual: true });
+jest.mock("@salesforce/label/c.CSC_FrameworkMappings", () => ({ default: "Framework Mappings:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CSC_EvidenceItems", () => ({ default: "Evidence Items:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CSC_Requirements", () => ({ default: "Requirements:" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.CSC_LatestAuditPackage",
+  () => ({ default: "Latest Audit Package:" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.CSC_Status", () => ({ default: "Status:" }), { virtual: true });
+jest.mock("@salesforce/label/c.CSC_Period", () => ({ default: "Period:" }), { virtual: true });
+jest.mock("@salesforce/label/c.CSC_ViewPackage", () => ({ default: "View Package" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.CSC_FailedToLoadDetails",
+  () => ({ default: "Failed to load framework details" }),
+  { virtual: true }
+);
+
 let mockDashboardCallbacks = new Set();
 let mockFrameworkDetailsCallbacks = new Set();
 

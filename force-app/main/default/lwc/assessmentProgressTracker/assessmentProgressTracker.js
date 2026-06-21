@@ -1,6 +1,10 @@
 import { LightningElement, api } from "lwc";
 import AW_PercentComplete from "@salesforce/label/c.AW_PercentComplete";
 import AW_StagePrefix from "@salesforce/label/c.AW_StagePrefix";
+import AW_StageCompleted from "@salesforce/label/c.AW_StageCompleted";
+import AW_StageStatusCompleted from "@salesforce/label/c.AW_StageStatusCompleted";
+import AW_StageStatusCurrent from "@salesforce/label/c.AW_StageStatusCurrent";
+import AW_StageStatusUpcoming from "@salesforce/label/c.AW_StageStatusUpcoming";
 
 export default class AssessmentProgressTracker extends LightningElement {
   @api stages = [];
@@ -11,10 +15,12 @@ export default class AssessmentProgressTracker extends LightningElement {
   label = {
     AW_PercentComplete,
     AW_StagePrefix,
+    AW_StageCompleted,
   };
 
   get progressLabel() {
-    return `${Math.round(this.percentComplete)}% Complete`;
+    // AW_PercentComplete value is "{0}% Complete"
+    return this.label.AW_PercentComplete.replace("{0}", Math.round(this.percentComplete));
   }
 
   get progressVariant() {
@@ -36,15 +42,26 @@ export default class AssessmentProgressTracker extends LightningElement {
         statusClass += " slds-is-active";
       }
 
+      // AW_StagePrefix value is "Stage {0}"
+      const stageLabel = this.label.AW_StagePrefix.replace("{0}", stage.stageOrder);
+      let statusSuffix;
+      if (isComplete || isPast) {
+        statusSuffix = AW_StageStatusCompleted;
+      } else if (isCurrent) {
+        statusSuffix = AW_StageStatusCurrent;
+      } else {
+        statusSuffix = AW_StageStatusUpcoming;
+      }
+
       return {
         ...stage,
         key: `stage-${stage.stageOrder}`,
         statusClass,
         isCurrent,
         isComplete: isComplete || isPast,
-        stageLabel: `Stage ${stage.stageOrder}`,
+        stageLabel,
         stepCount: stage.steps ? stage.steps.length : 0,
-        ariaLabel: `Stage ${stage.stageOrder}${isComplete || isPast ? " completed" : isCurrent ? " current" : " upcoming"}`,
+        ariaLabel: `${stageLabel} ${statusSuffix}`,
       };
     });
   }

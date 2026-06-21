@@ -12,6 +12,44 @@
 import { createElement } from "lwc";
 import ComplianceScoreCard from "c/complianceScoreCard";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.CSC_ComplianceScore", () => ({ default: "Compliance Score" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.CSC_LoadingDetails",
+  () => ({ default: "Loading framework details" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.CSC_PoliciesCompliant", () => ({ default: "Policies Compliant" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CSC_Gaps", () => ({ default: "Gaps" }), { virtual: true });
+jest.mock("@salesforce/label/c.CSC_FrameworkMappings", () => ({ default: "Framework Mappings:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CSC_EvidenceItems", () => ({ default: "Evidence Items:" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.CSC_Requirements", () => ({ default: "Requirements:" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.CSC_LatestAuditPackage",
+  () => ({ default: "Latest Audit Package:" }),
+  { virtual: true }
+);
+jest.mock("@salesforce/label/c.CSC_Status", () => ({ default: "Status:" }), { virtual: true });
+jest.mock("@salesforce/label/c.CSC_Period", () => ({ default: "Period:" }), { virtual: true });
+jest.mock("@salesforce/label/c.CSC_ViewPackage", () => ({ default: "View Package" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.CSC_FailedToLoadDetails",
+  () => ({ default: "Failed to load framework details" }),
+  { virtual: true }
+);
+
 let mockFrameworkDetailsCallbacks = new Set();
 
 // Mock the wire adapter with proper connect/disconnect interface

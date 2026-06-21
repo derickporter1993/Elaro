@@ -10,6 +10,20 @@
 import { createElement } from "lwc";
 import ComplianceTrendChart from "c/complianceTrendChart";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.TREND_CardTitle", () => ({ default: "Compliance Trend" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TREND_LoadingAlt", () => ({ default: "Loading trend data" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TREND_NoData", () => ({ default: "No trend data available" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.TREND_ScoreLegend", () => ({ default: "Compliance Score" }), {
+  virtual: true,
+});
+
 // Helper to wait for multiple microtasks
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 

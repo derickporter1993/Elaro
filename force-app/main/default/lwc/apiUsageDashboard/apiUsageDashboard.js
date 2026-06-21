@@ -2,6 +2,16 @@ import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getSnapshots from "@salesforce/apex/ApiUsageDashboardController.getRecentSnapshots";
 import PollingManager from "c/pollingManager";
+import API_CardTitle from "@salesforce/label/c.API_CardTitle";
+import API_LoadingAlt from "@salesforce/label/c.API_LoadingAlt";
+import API_NoSnapshots from "@salesforce/label/c.API_NoSnapshots";
+import API_TableAria from "@salesforce/label/c.API_TableAria";
+import API_ColTakenOn from "@salesforce/label/c.API_ColTakenOn";
+import API_ColUsed from "@salesforce/label/c.API_ColUsed";
+import API_ColLimit from "@salesforce/label/c.API_ColLimit";
+import API_ColPercent from "@salesforce/label/c.API_ColPercent";
+import API_ColProjected from "@salesforce/label/c.API_ColProjected";
+import API_LoadError from "@salesforce/label/c.API_LoadError";
 
 export default class ApiUsageDashboard extends LightningElement {
   rows = [];
@@ -12,12 +22,19 @@ export default class ApiUsageDashboard extends LightningElement {
   errorBackoffMultiplier = 1; // Exponential backoff multiplier
   maxBackoffMultiplier = 8; // Max backoff is 8x base interval
 
+  label = {
+    API_CardTitle,
+    API_LoadingAlt,
+    API_NoSnapshots,
+    API_TableAria,
+  };
+
   columns = [
-    { label: "Taken On", fieldName: "takenOn", type: "date" },
-    { label: "Used", fieldName: "used", type: "number" },
-    { label: "Limit", fieldName: "dailyLimit", type: "number" },
-    { label: "Percent", fieldName: "percent", type: "percent" },
-    { label: "Projected Exhaustion", fieldName: "projected", type: "date" },
+    { label: API_ColTakenOn, fieldName: "takenOn", type: "date" },
+    { label: API_ColUsed, fieldName: "used", type: "number" },
+    { label: API_ColLimit, fieldName: "dailyLimit", type: "number" },
+    { label: API_ColPercent, fieldName: "percent", type: "percent" },
+    { label: API_ColProjected, fieldName: "projected", type: "date" },
   ];
 
   connectedCallback() {
@@ -53,7 +70,7 @@ export default class ApiUsageDashboard extends LightningElement {
       // Log error for debugging purposes
       if (error.body?.message || error.message) {
         // Only log in non-production environments
-        this.showError("Failed to load API usage data", error.body?.message || error.message);
+        this.showError(API_LoadError, error.body?.message || error.message);
       }
 
       // Apply exponential backoff on error

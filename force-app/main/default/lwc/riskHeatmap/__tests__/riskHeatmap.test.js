@@ -10,6 +10,23 @@
 import { createElement } from "lwc";
 import RiskHeatmap from "c/riskHeatmap";
 
+// Mock custom labels to resolve to their English display values (localization-resilient)
+jest.mock("@salesforce/label/c.RH_CardTitle", () => ({ default: "Risk Heatmap" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.RH_GridAria", () => ({ default: "Risk heatmap" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.RH_ScorePrefix", () => ({ default: "Score:" }), { virtual: true });
+jest.mock("@salesforce/label/c.RH_NoData", () => ({ default: "No risk data available" }), {
+  virtual: true,
+});
+jest.mock(
+  "@salesforce/label/c.RH_RiskItemAria",
+  () => ({ default: "Risk for {0}: {1}, Score {2}" }),
+  { virtual: true }
+);
+
 describe("c-risk-heatmap", () => {
   afterEach(() => {
     while (document.body.firstChild) {

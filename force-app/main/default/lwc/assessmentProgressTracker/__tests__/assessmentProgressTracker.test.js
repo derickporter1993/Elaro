@@ -1,11 +1,25 @@
 import { createElement } from "lwc";
 import AssessmentProgressTracker from "c/assessmentProgressTracker";
 
-// Mock labels
-jest.mock("@salesforce/label/c.AW_PercentComplete", () => ({ default: "% Complete" }), {
+// Mock labels to resolve to their real values (with placeholders) for localization-resilient assertions
+jest.mock("@salesforce/label/c.AW_PercentComplete", () => ({ default: "{0}% Complete" }), {
   virtual: true,
 });
-jest.mock("@salesforce/label/c.AW_StagePrefix", () => ({ default: "Stage" }), { virtual: true });
+jest.mock("@salesforce/label/c.AW_StagePrefix", () => ({ default: "Stage {0}" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.AW_StageCompleted", () => ({ default: "Completed" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.AW_StageStatusCompleted", () => ({ default: "completed" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.AW_StageStatusCurrent", () => ({ default: "current" }), {
+  virtual: true,
+});
+jest.mock("@salesforce/label/c.AW_StageStatusUpcoming", () => ({ default: "upcoming" }), {
+  virtual: true,
+});
 
 const MOCK_STAGES = [
   {

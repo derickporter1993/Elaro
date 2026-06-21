@@ -1,10 +1,19 @@
 import { LightningElement, api } from "lwc";
+import TIMELINE_CardTitle from "@salesforce/label/c.TIMELINE_CardTitle";
+import TIMELINE_LoadingAlt from "@salesforce/label/c.TIMELINE_LoadingAlt";
+import TIMELINE_NoEvents from "@salesforce/label/c.TIMELINE_NoEvents";
 
 export default class ComplianceTimeline extends LightningElement {
   @api events = [];
   isLoading = false;
   hasError = false;
   errorMessage = "";
+
+  label = {
+    TIMELINE_CardTitle,
+    TIMELINE_LoadingAlt,
+    TIMELINE_NoEvents,
+  };
 
   get sortedEvents() {
     if (!this.events || this.events.length === 0) {

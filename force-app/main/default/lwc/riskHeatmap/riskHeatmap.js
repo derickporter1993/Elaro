@@ -1,7 +1,19 @@
 import { LightningElement, api } from "lwc";
+import RH_CardTitle from "@salesforce/label/c.RH_CardTitle";
+import RH_GridAria from "@salesforce/label/c.RH_GridAria";
+import RH_ScorePrefix from "@salesforce/label/c.RH_ScorePrefix";
+import RH_NoData from "@salesforce/label/c.RH_NoData";
+import RH_RiskItemAria from "@salesforce/label/c.RH_RiskItemAria";
 
 export default class RiskHeatmap extends LightningElement {
   @api risks = [];
+
+  label = {
+    RH_CardTitle,
+    RH_GridAria,
+    RH_ScorePrefix,
+    RH_NoData,
+  };
 
   get riskMatrix() {
     // Organize risks by severity and framework
@@ -33,9 +45,14 @@ export default class RiskHeatmap extends LightningElement {
       } else if (risk.severity === "MEDIUM") {
         severityClass = "risk-medium";
       }
+      // RH_RiskItemAria value is "Risk for {0}: {1}, Score {2}"
+      const ariaLabel = RH_RiskItemAria.replace("{0}", risk.framework ?? "")
+        .replace("{1}", risk.severity ?? "")
+        .replace("{2}", risk.score ?? "");
       return {
         ...risk,
         combinedClass: `slds-box slds-text-align_center ${severityClass}`,
+        ariaLabel,
       };
     });
   }
