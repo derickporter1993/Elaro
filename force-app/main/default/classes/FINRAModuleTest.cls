@@ -194,7 +194,14 @@ private class FINRAModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('3110(d)', result.controlId, 'Control ID should match');
-        Assert.areEqual(75, result.score, 'Score should be 75');
+        // Communications review is now evidence/audit-trail based. It must never be the
+        // old fabricated pass at score 75 — it is either PARTIAL (activity found) or
+        // NOT_EVALUATED (none), and is never marked passed without real review records.
+        Assert.isFalse(result.passed, 'Communications review must not fabricate a pass');
+        Boolean honestStatus = result.status == ElaroConstants.STATUS_PARTIAL
+            || result.status == ElaroConstants.STATUS_NOT_EVALUATED;
+        Assert.isTrue(honestStatus,
+            'Communications review must be PARTIAL or NOT_EVALUATED, was: ' + result.status);
     }
 
     @IsTest
@@ -210,8 +217,36 @@ private class FINRAModuleTest {
         Test.stopTest();
 
         Assert.areNotEqual(null, result, 'Result should not be null');
-        Assert.isTrue(result.passed, 'Record keeping should pass');
-        Assert.areEqual(90, result.score, 'Score should be 90');
+        // No retention/record-keeping evidence in setup, so the platform-provided "pass"
+        // is no longer fabricated — the control must be NOT_EVALUATED with a zero score.
+        Assert.isFalse(result.passed, 'Record keeping must not pass without evidence');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Record keeping must be NOT_EVALUATED without retention evidence');
+        Assert.areEqual(0, result.score, 'Unevaluated control score should be 0');
+    }
+
+    @IsTest
+    static void testEvaluateControl_RecordKeeping_WithEvidence() {
+        Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'FINRA' LIMIT 1];
+        insert new Elaro_Evidence_Item__c(
+            Audit_Package__c = pkg.Id,
+            Evidence_Type__c = 'RecordRetention',
+            Evidence_Date__c = Date.today(),
+            Description__c = 'Retention policy and 17a-4 preservation documented',
+            Status__c = 'COLLECTED'
+        );
+        FINRAModule module = new FINRAModule();
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = module.evaluateControl(
+            '4511(a)',
+            new Map<String, Object>{ 'auditPackageId' => pkg.Id }
+        );
+        Test.stopTest();
+
+        Assert.isTrue(result.passed, 'Record keeping should pass with retention evidence');
+        Assert.areEqual(ElaroConstants.STATUS_COMPLIANT, result.status,
+            'Should be COMPLIANT when retention evidence exists');
     }
 
     @IsTest
@@ -243,7 +278,11 @@ private class FINRAModuleTest {
         Test.stopTest();
 
         Assert.areNotEqual(null, result, 'Result should not be null');
-        Assert.areEqual(70, result.score, 'Default score should be 70');
+        // Controls with no automated check must default to NOT_EVALUATED, never a pass.
+        Assert.isFalse(result.passed, 'Default evaluation must not fabricate a pass');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Default evaluation must be NOT_EVALUATED');
+        Assert.areEqual(0, result.score, 'NOT_EVALUATED default score should be 0');
     }
 
     @IsTest

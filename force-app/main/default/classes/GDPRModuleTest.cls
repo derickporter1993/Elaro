@@ -250,8 +250,36 @@ private class GDPRModuleTest {
         Test.stopTest();
 
         Assert.areNotEqual(null, result, 'Result should not be null');
-        Assert.isTrue(result.passed, 'Security measures should pass');
-        Assert.areEqual(90, result.score, 'Score should be 90');
+        // No Art.32 security-measure evidence in setup, so the platform-provided "pass"
+        // is no longer fabricated — the control must be NOT_EVALUATED with a zero score.
+        Assert.isFalse(result.passed, 'Security measures must not pass without evidence');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Security measures must be NOT_EVALUATED without evidence');
+        Assert.areEqual(0, result.score, 'Unevaluated control score should be 0');
+    }
+
+    @IsTest
+    static void testEvaluateControl_SecurityMeasures_WithEvidence() {
+        Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'GDPR' LIMIT 1];
+        insert new Elaro_Evidence_Item__c(
+            Audit_Package__c = pkg.Id,
+            Evidence_Type__c = 'Security',
+            Evidence_Date__c = Date.today(),
+            Description__c = 'Encryption and access control measures documented',
+            Status__c = 'COLLECTED'
+        );
+        GDPRModule module = new GDPRModule();
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = module.evaluateControl(
+            'Art.32',
+            new Map<String, Object>{ 'auditPackageId' => pkg.Id }
+        );
+        Test.stopTest();
+
+        Assert.isTrue(result.passed, 'Security measures should pass with evidence');
+        Assert.areEqual(ElaroConstants.STATUS_COMPLIANT, result.status,
+            'Should be COMPLIANT when security-measure evidence exists');
     }
 
     @IsTest
@@ -268,6 +296,36 @@ private class GDPRModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('Art.33', result.controlId, 'Control ID should match');
+        // Setup includes a BreachProcedure evidence item, so this is a real, earned pass
+        // (not the old `|| true` fabrication).
+        Assert.isTrue(result.passed, 'Breach notification should pass with evidence');
+        Assert.areEqual(ElaroConstants.STATUS_COMPLIANT, result.status,
+            'Should be COMPLIANT when breach-procedure evidence exists');
+    }
+
+    @IsTest
+    static void testEvaluateControl_BreachNotification_NoEvidence() {
+        Elaro_Audit_Package__c cleanPkg = new Elaro_Audit_Package__c(
+            Package_Name__c = 'Clean GDPR Package',
+            Framework__c = 'GDPR',
+            Status__c = 'DRAFT',
+            Audit_Period_Start__c = Date.today().addDays(-30),
+            Audit_Period_End__c = Date.today()
+        );
+        insert cleanPkg;
+        GDPRModule module = new GDPRModule();
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = module.evaluateControl(
+            'Art.33',
+            new Map<String, Object>{ 'auditPackageId' => cleanPkg.Id }
+        );
+        Test.stopTest();
+
+        // No breach-procedure evidence: must NOT assume procedures exist.
+        Assert.isFalse(result.passed, 'Breach notification must not be assumed to pass');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Breach notification must be NOT_EVALUATED without evidence');
     }
 
     @IsTest
@@ -284,7 +342,11 @@ private class GDPRModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('Art.5', result.controlId, 'Control ID should match');
-        Assert.areEqual(70, result.score, 'Default evaluation score should be 70');
+        // Controls with no automated check must default to NOT_EVALUATED, never a pass.
+        Assert.isFalse(result.passed, 'Default evaluation must not fabricate a pass');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Default evaluation must be NOT_EVALUATED');
+        Assert.areEqual(0, result.score, 'NOT_EVALUATED default score should be 0');
     }
 
     @IsTest

@@ -83,16 +83,22 @@ public with sharing class GDPRModule implements IComplianceModule {
         
         Decimal totalScore = 0;
         Decimal totalWeight = 0;
-        
+
         for (IComplianceModule.Control ctrl : GDPR_CONTROLS) {
-            IComplianceModule.ControlResult result = evaluateControl(ctrl.code, 
+            IComplianceModule.ControlResult result = evaluateControl(ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => auditPackageId });
-            
+
+            // Controls that could not be evaluated are excluded from the denominator so
+            // they neither inflate nor deflate the score (never counted as a silent pass).
+            if (result.status == ElaroConstants.STATUS_NOT_EVALUATED) {
+                continue;
+            }
+
             Decimal weight = ctrl.severity == 'CRITICAL' ? 3 : ctrl.severity == 'HIGH' ? 2 : 1;
             totalWeight += weight;
             totalScore += weight * result.score / 100;
         }
-        
+
         return totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
     }
     
@@ -111,6 +117,10 @@ public with sharing class GDPRModule implements IComplianceModule {
                 gap.controlName = ctrl.name;
                 gap.description = result.finding;
                 gap.severity = ctrl.severity;
+                // Distinguish a real failure from a control we simply could not verify.
+                gap.status = (result.status == ElaroConstants.STATUS_NOT_EVALUATED)
+                    ? 'Manual Review Required'
+                    : 'Open';
                 gap.recommendation = getGDPRRecommendation(ctrl.code);
                 gaps.add(gap);
             }
@@ -166,8 +176,8 @@ public with sharing class GDPRModule implements IComplianceModule {
         
         r.passed = dsrEvidence > 0;
         r.score = dsrEvidence > 0 ? 80 : 40;
-        r.status = dsrEvidence > 0 ? 'COMPLIANT' : 'PARTIAL';
-        r.finding = dsrEvidence > 0 
+        r.status = dsrEvidence > 0 ? ElaroConstants.STATUS_COMPLIANT : ElaroConstants.STATUS_PARTIAL;
+        r.finding = dsrEvidence > 0
             ? 'Data erasure procedures documented'
             : 'Implement data erasure request handling process';
         return r;
@@ -187,8 +197,8 @@ public with sharing class GDPRModule implements IComplianceModule {
         
         r.passed = ropaEvidence > 0;
         r.score = ropaEvidence > 0 ? 85 : 30;
-        r.status = ropaEvidence > 0 ? 'COMPLIANT' : 'NON_COMPLIANT';
-        r.finding = ropaEvidence > 0 
+        r.status = ropaEvidence > 0 ? ElaroConstants.STATUS_COMPLIANT : ElaroConstants.STATUS_NON_COMPLIANT;
+        r.finding = ropaEvidence > 0
             ? 'ROPA documentation maintained'
             : 'Records of Processing Activities must be documented';
         return r;
@@ -197,12 +207,38 @@ public with sharing class GDPRModule implements IComplianceModule {
     private IComplianceModule.ControlResult evaluateSecurityMeasures(Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = 'Art.32';
-        
-        // Salesforce provides robust security by default
-        r.passed = true;
-        r.score = 90;
-        r.status = 'COMPLIANT';
-        r.finding = 'Salesforce platform provides encryption, access controls, and security monitoring';
+
+        // GDPR Art. 32 requires "appropriate technical and organisational measures"
+        // (encryption, confidentiality, integrity, resilience, regular testing). The
+        // Salesforce platform supplies a baseline, but Apex cannot confirm that the
+        // org-specific configuration and organizational measures are appropriate. Base the
+        // verdict on collected security evidence; otherwise report NOT_EVALUATED rather
+        // than asserting platform-provided compliance.
+        Integer securityEvidence = [
+            SELECT COUNT() FROM Elaro_Evidence_Item__c
+            WHERE Audit_Package__c = :pkgId
+            AND (Evidence_Type__c IN ('Security', 'Encryption', 'AccessReview',
+                                      'SecurityMeasure', 'PenTest')
+                 OR Description__c LIKE '%encryption%' OR Description__c LIKE '%security measure%')
+            WITH USER_MODE
+            LIMIT 100
+        ];
+
+        if (securityEvidence > 0) {
+            r.passed = true;
+            r.score = 85;
+            r.status = ElaroConstants.STATUS_COMPLIANT;
+            r.finding = 'Security-measure evidence found (' + securityEvidence + ' item(s)) '
+                + 'supporting Art. 32 technical and organizational measures.';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'Appropriateness of technical and organizational security measures '
+                + '(Art. 32) could not be verified from Apex. The Salesforce platform '
+                + 'provides a baseline, but documented evidence of encryption, access '
+                + 'controls, resilience, and testing is required to evaluate this control.';
+        }
         return r;
     }
     
@@ -218,20 +254,38 @@ public with sharing class GDPRModule implements IComplianceModule {
             LIMIT 100
         ];
         
-        r.passed = breachProcEvidence > 0 || true; // Assume procedures exist
-        r.score = 75;
-        r.status = 'PARTIAL';
-        r.finding = 'Breach notification procedures should be documented and tested';
+        // Breach-notification readiness (Art. 33, 72-hour reporting) is a documented
+        // procedure; it can only be attested to when evidence exists. Do NOT assume
+        // procedures are in place — base the verdict on collected evidence and otherwise
+        // report NOT_EVALUATED.
+        if (breachProcEvidence > 0) {
+            r.passed = true;
+            r.score = 85;
+            r.status = ElaroConstants.STATUS_COMPLIANT;
+            r.finding = 'Breach-notification procedure evidence found ('
+                + breachProcEvidence + ' item(s)) supporting Art. 33 72-hour reporting.';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'No breach-notification procedure evidence found for this audit '
+                + 'package. Attach documented and tested 72-hour breach notification '
+                + 'procedures to evaluate Art. 33.';
+        }
         return r;
     }
     
     private IComplianceModule.ControlResult defaultEvaluation(String ctrlId, Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = ctrlId;
-        r.passed = true;
-        r.score = 70;
-        r.status = 'PARTIAL';
-        r.finding = 'Control requires documentation and periodic review';
+        // No automated check exists for this control. Never default an unverified control
+        // to a pass — report NOT_EVALUATED so it is excluded from the score denominator
+        // and surfaced as a manual-review gap.
+        r.passed = false;
+        r.score = 0;
+        r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+        r.finding = 'No automated evaluation is available for control ' + ctrlId
+            + '. Manual review and supporting evidence are required to determine compliance.';
         return r;
     }
     

@@ -352,9 +352,17 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
     public IAccessControlService.NeedToKnowResult validateNeedToKnow(Id userId) {
         IAccessControlService.NeedToKnowResult result = new IAccessControlService.NeedToKnowResult();
         result.userId = userId;
-        result.compliant = true;
+        // Default to NOT compliant. The verdict is only flipped to compliant once the
+        // over-permission check below has actually run and found no excess access — we
+        // never assume need-to-know compliance before evaluating it.
+        result.compliant = false;
         result.excessPermissions = new List<String>();
         result.recommendations = new List<String>();
+
+        if (userId == null) {
+            result.justification = 'No user supplied; need-to-know access could not be evaluated.';
+            return result;
+        }
 
         // Get user's permission sets
         List<PermissionSetAssignment> assignments = [
@@ -369,16 +377,20 @@ public with sharing class SOC2AccessReviewService extends ComplianceServiceBase 
 
         for (PermissionSetAssignment psa : assignments) {
             if (psa.PermissionSet.PermissionsModifyAllData) {
-                result.compliant = false;
                 result.excessPermissions.add('Modify All Data (' + psa.PermissionSet.Name + ')');
                 result.recommendations.add('Remove Modify All Data and assign granular object permissions');
             }
             if (psa.PermissionSet.PermissionsViewAllData) {
-                result.compliant = false;
                 result.excessPermissions.add('View All Data (' + psa.PermissionSet.Name + ')');
                 result.recommendations.add('Remove View All Data and use sharing rules for data access');
             }
         }
+
+        // The check has run: compliant exactly when no excess permissions were found.
+        result.compliant = result.excessPermissions.isEmpty();
+        result.justification = result.compliant
+            ? 'No Modify All Data / View All Data permissions detected; access aligns with need-to-know.'
+            : 'Excess broad-access permissions detected; access exceeds need-to-know.';
 
         return result;
     }

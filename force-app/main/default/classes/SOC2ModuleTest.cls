@@ -277,8 +277,36 @@ private class SOC2ModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('CC7.4', result.controlId, 'Control ID should match');
-        Assert.isTrue(result.passed, 'Incident response should pass');
-        Assert.areEqual(80, result.score, 'Score should be 80');
+        // No incident-response evidence in setup, so the control must NOT be assumed to
+        // pass. It must be reported as NOT_EVALUATED with a zero score.
+        Assert.isFalse(result.passed, 'Incident response must not pass without evidence');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Incident response must be NOT_EVALUATED without evidence');
+        Assert.areEqual(0, result.score, 'Unevaluated control score should be 0');
+    }
+
+    @IsTest
+    static void testEvaluateControl_IncidentResponse_WithEvidence() {
+        Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c WHERE Framework__c = 'SOC2' LIMIT 1];
+        insert new Elaro_Evidence_Item__c(
+            Audit_Package__c = pkg.Id,
+            Evidence_Type__c = 'IncidentResponse',
+            Evidence_Date__c = Date.today(),
+            Description__c = 'Incident response runbook executed',
+            Status__c = 'COLLECTED'
+        );
+        SOC2Module module = new SOC2Module();
+
+        Test.startTest();
+        IComplianceModule.ControlResult result = module.evaluateControl(
+            'CC7.4',
+            new Map<String, Object>{ 'auditPackageId' => pkg.Id }
+        );
+        Test.stopTest();
+
+        Assert.isTrue(result.passed, 'Incident response should pass with evidence');
+        Assert.areEqual(ElaroConstants.STATUS_COMPLIANT, result.status,
+            'Should be COMPLIANT when incident evidence exists');
     }
 
     @IsTest
@@ -295,8 +323,17 @@ private class SOC2ModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('CC8.1', result.controlId, 'Control ID should match');
-        Assert.isTrue(result.passed, 'Change management should pass');
-        Assert.areEqual(90, result.score, 'Score should be 90');
+        // Change management is now evidence-based on the Setup Audit Trail. Depending on
+        // org activity it is either COMPLIANT (tracked changes exist) or NOT_EVALUATED
+        // (none found) — it must never be a fabricated guaranteed pass at score 90.
+        Boolean honestStatus = result.status == ElaroConstants.STATUS_COMPLIANT
+            || result.status == ElaroConstants.STATUS_NOT_EVALUATED;
+        Assert.isTrue(honestStatus,
+            'Change management must be COMPLIANT or NOT_EVALUATED, was: ' + result.status);
+        if (result.status == ElaroConstants.STATUS_NOT_EVALUATED) {
+            Assert.isFalse(result.passed, 'NOT_EVALUATED control must not be marked passed');
+            Assert.areEqual(0, result.score, 'NOT_EVALUATED control score should be 0');
+        }
     }
 
     @IsTest
@@ -313,7 +350,11 @@ private class SOC2ModuleTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('CC6.2', result.controlId, 'Control ID should match');
-        Assert.areEqual(75, result.score, 'Default score should be 75');
+        // Controls with no automated check must default to NOT_EVALUATED, never a pass.
+        Assert.isFalse(result.passed, 'Default evaluation must not fabricate a pass');
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.status,
+            'Default evaluation must be NOT_EVALUATED');
+        Assert.areEqual(0, result.score, 'NOT_EVALUATED default score should be 0');
     }
 
     @IsTest

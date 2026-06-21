@@ -106,6 +106,25 @@ public class SOC2AccessReviewServiceTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual(UserInfo.getUserId(), result.userId, 'User ID should match');
+        // The verdict must be derived from the actual check: compliant exactly when no
+        // excess broad-access permissions were found — never an optimistic default.
+        Assert.areEqual(result.excessPermissions.isEmpty(), result.compliant,
+            'Compliance must match the absence of excess permissions');
+        Assert.areNotEqual(null, result.justification,
+            'A justification should explain the evaluated verdict');
+    }
+
+    @isTest
+    static void testValidateNeedToKnow_NullUser() {
+        SOC2AccessReviewService service = new SOC2AccessReviewService();
+
+        Test.startTest();
+        IAccessControlService.NeedToKnowResult result = service.validateNeedToKnow(null);
+        Test.stopTest();
+
+        Assert.areNotEqual(null, result, 'Result should not be null');
+        // With no user supplied the check cannot run, so it must NOT default to compliant.
+        Assert.isFalse(result.compliant, 'Null user must not be reported compliant by default');
     }
 
     @isTest

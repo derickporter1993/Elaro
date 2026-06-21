@@ -154,10 +154,40 @@ public with sharing class DataResidencyService {
             ResidencyConfig config = getResidencyConfig();
 
             status.isEUDataPresent = config.primaryRegion == Region.EU;
-            status.hasAdequacyDecision = true; // US-EU adequacy framework
-            status.sccsInPlace = true; // Standard Contractual Clauses
-            status.dpaExecuted = true; // Data Processing Agreement
-            status.transferMechanism = 'EU-US Data Privacy Framework';
+
+            // Adequacy decisions, Standard Contractual Clauses, and Data Processing
+            // Agreements are LEGAL determinations that Apex cannot make or verify. We must
+            // NOT assert them as true. They are only treated as satisfied when documented
+            // legal evidence has been collected; otherwise they remain false (unknown) and
+            // the finding makes clear they require manual/legal verification.
+            Set<String> legalTransferEvidenceTypes = new Set<String>{
+                'AdequacyDecision', 'SCC', 'StandardContractualClauses', 'DPA',
+                'DataProcessingAgreement', 'TransferMechanism'
+            };
+            List<Elaro_Evidence_Item__c> transferEvidence = [
+                SELECT Evidence_Type__c
+                FROM Elaro_Evidence_Item__c
+                WHERE Evidence_Type__c IN :legalTransferEvidenceTypes
+                WITH USER_MODE
+                LIMIT 200
+            ];
+
+            Set<String> presentTypes = new Set<String>();
+            for (Elaro_Evidence_Item__c ev : transferEvidence) {
+                presentTypes.add(ev.Evidence_Type__c);
+            }
+
+            // Each flag is true only if documented legal evidence backs it.
+            status.hasAdequacyDecision = presentTypes.contains('AdequacyDecision');
+            status.sccsInPlace = presentTypes.contains('SCC')
+                || presentTypes.contains('StandardContractualClauses');
+            status.dpaExecuted = presentTypes.contains('DPA')
+                || presentTypes.contains('DataProcessingAgreement');
+
+            status.transferMechanism = transferEvidence.isEmpty()
+                ? 'Not verified - documented legal evidence (adequacy decision, SCCs, or '
+                    + 'DPA) is required to determine the cross-border transfer mechanism.'
+                : 'Determined from collected legal transfer evidence';
 
             // Check for actual EU user data
             Integer euUsers = [
@@ -168,7 +198,17 @@ public with sharing class DataResidencyService {
             ];
 
             status.euDataSubjectsCount = euUsers;
-            status.isCompliant = status.hasAdequacyDecision || status.sccsInPlace;
+
+            // Compliance is claimed ONLY when an actual legal transfer safeguard has been
+            // evidenced. If no EU data is present, cross-border transfer rules do not apply.
+            // We never derive compliance from fabricated trues.
+            if (!status.isEUDataPresent && euUsers == 0) {
+                status.isCompliant = true; // No EU data subjects -> transfer safeguards N/A
+            } else {
+                status.isCompliant = status.hasAdequacyDecision
+                    || status.sccsInPlace
+                    || status.dpaExecuted;
+            }
 
             return status;
         } catch (AuraHandledException ahe) {

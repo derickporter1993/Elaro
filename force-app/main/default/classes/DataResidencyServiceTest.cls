@@ -79,6 +79,34 @@ private class DataResidencyServiceTest {
         Assert.areNotEqual(null, status, 'Status should not be null');
         Assert.areNotEqual(null, status.transferMechanism, 'Transfer mechanism should be set');
         Assert.isTrue(status.euDataSubjectsCount >= 0, 'EU data subjects count should be non-negative');
+        // No legal transfer evidence exists in setup, so these legal determinations must
+        // NOT be fabricated as true — Apex cannot make a legal adequacy/SCC/DPA judgement.
+        Assert.isFalse(status.hasAdequacyDecision,
+            'Adequacy decision must not be asserted without documented legal evidence');
+        Assert.isFalse(status.sccsInPlace,
+            'SCCs must not be asserted without documented legal evidence');
+        Assert.isFalse(status.dpaExecuted,
+            'DPA execution must not be asserted without documented legal evidence');
+    }
+
+    @isTest
+    static void testCheckGDPRCompliance_WithLegalEvidence() {
+        insert new Elaro_Evidence_Item__c(
+            Evidence_Type__c = 'SCC',
+            Evidence_Date__c = Date.today(),
+            Description__c = 'Standard Contractual Clauses executed with processor',
+            Status__c = 'COLLECTED'
+        );
+
+        Test.startTest();
+        DataResidencyService.GDPRComplianceStatus status = DataResidencyService.checkGDPRCompliance();
+        Test.stopTest();
+
+        // With documented SCC evidence present, the corresponding flag is honestly true.
+        Assert.isTrue(status.sccsInPlace,
+            'SCCs flag should be true when SCC evidence is documented');
+        Assert.isTrue(status.isCompliant,
+            'Compliance should hold when a documented transfer safeguard exists');
     }
 
     @isTest

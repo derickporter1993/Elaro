@@ -71,16 +71,22 @@ public with sharing class SOC2Module implements IComplianceModule {
         
         Decimal totalScore = 0;
         Decimal totalWeight = 0;
-        
+
         for (IComplianceModule.Control ctrl : SOC2_CONTROLS) {
-            IComplianceModule.ControlResult result = evaluateControl(ctrl.code, 
+            IComplianceModule.ControlResult result = evaluateControl(ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => auditPackageId });
-            
+
+            // Controls that could not be evaluated are excluded from the denominator so
+            // they neither inflate nor deflate the score (never counted as a silent pass).
+            if (result.status == ElaroConstants.STATUS_NOT_EVALUATED) {
+                continue;
+            }
+
             Decimal weight = ctrl.severity == 'CRITICAL' ? 3 : ctrl.severity == 'HIGH' ? 2 : 1;
             totalWeight += weight;
             totalScore += weight * result.score / 100;
         }
-        
+
         return totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
     }
     
@@ -91,7 +97,7 @@ public with sharing class SOC2Module implements IComplianceModule {
             IComplianceModule.ControlResult result = evaluateControl(ctrl.code, 
                 new Map<String, Object>{ 'auditPackageId' => auditPackageId });
             
-            if (!result.passed || result.status != 'COMPLIANT') {
+            if (!result.passed || result.status != ElaroConstants.STATUS_COMPLIANT) {
                 IComplianceModule.Gap gap = new IComplianceModule.Gap();
                 gap.id = 'GAP-SOC2-' + ctrl.code;
                 gap.controlId = ctrl.id;
@@ -99,6 +105,10 @@ public with sharing class SOC2Module implements IComplianceModule {
                 gap.controlName = ctrl.name;
                 gap.description = result.finding;
                 gap.severity = ctrl.severity;
+                // Distinguish a real failure from a control we simply could not verify.
+                gap.status = (result.status == ElaroConstants.STATUS_NOT_EVALUATED)
+                    ? 'Manual Review Required'
+                    : 'Open';
                 gap.recommendation = getSOC2Recommendation(ctrl.code);
                 gaps.add(gap);
             }
@@ -146,7 +156,7 @@ public with sharing class SOC2Module implements IComplianceModule {
         Integer psaCount = [SELECT COUNT() FROM PermissionSetAssignment WITH USER_MODE LIMIT 1000];
         r.passed = psaCount > 0;
         r.score = r.passed ? 85 : 40;
-        r.status = r.passed ? 'COMPLIANT' : 'PARTIAL';
+        r.status = r.passed ? ElaroConstants.STATUS_COMPLIANT : ElaroConstants.STATUS_PARTIAL;
         r.finding = 'Permission set architecture in place';
         return r;
     }
@@ -158,7 +168,7 @@ public with sharing class SOC2Module implements IComplianceModule {
         Integer auditCount = [SELECT COUNT() FROM SetupAuditTrail WHERE CreatedDate >= LAST_N_DAYS:7 WITH USER_MODE LIMIT 1000];
         r.passed = auditCount > 100;
         r.score = Math.min(auditCount / 10, 100);
-        r.status = r.passed ? 'COMPLIANT' : 'PARTIAL';
+        r.status = r.passed ? ElaroConstants.STATUS_COMPLIANT : ElaroConstants.STATUS_PARTIAL;
         r.finding = auditCount + ' monitoring events in last 7 days';
         return r;
     }
@@ -166,32 +176,80 @@ public with sharing class SOC2Module implements IComplianceModule {
     private IComplianceModule.ControlResult evaluateIncidentResponse(Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = 'CC7.4';
-        r.passed = true;
-        r.score = 80;
-        r.status = 'PARTIAL';
-        r.finding = 'Incident response procedures documented';
+
+        // CC7.4 (response to security incidents) cannot be confirmed from org config.
+        // Base the verdict on collected incident-response evidence; if none exists, do
+        // NOT assume procedures are in place — report NOT_EVALUATED.
+        Integer incidentEvidence = [
+            SELECT COUNT() FROM Elaro_Evidence_Item__c
+            WHERE Audit_Package__c = :pkgId
+            AND Evidence_Type__c IN ('Incident', 'SecurityIncident', 'IncidentResponse', 'Alert')
+            WITH USER_MODE
+            LIMIT 100
+        ];
+
+        if (incidentEvidence > 0) {
+            r.passed = true;
+            r.score = 85;
+            r.status = ElaroConstants.STATUS_COMPLIANT;
+            r.finding = 'Incident response documented with ' + incidentEvidence
+                + ' evidence item(s).';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'No incident-response evidence found for this audit package. Attach '
+                + 'documented incident response procedures and records to evaluate CC7.4.';
+        }
         return r;
     }
     
     private IComplianceModule.ControlResult evaluateChangeManagement(Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = 'CC8.1';
-        
-        Integer deployCount = [SELECT COUNT() FROM SetupAuditTrail WHERE Action LIKE '%deploy%' AND CreatedDate >= LAST_N_DAYS:30 WITH USER_MODE LIMIT 100];
-        r.passed = true;
-        r.score = 90;
-        r.status = 'COMPLIANT';
-        r.finding = deployCount + ' deployments tracked in last 30 days';
+
+        // SetupAuditTrail records configuration changes/deployments. We can verify that
+        // changes are being tracked, but the audit trail alone does not prove change
+        // *authorization* (CC8.1 requires authorized, designed, tested changes). Treat the
+        // presence of tracked changes as evidence of change management; absence means we
+        // cannot attest to it, so report NOT_EVALUATED rather than fabricating a pass.
+        Integer changeCount = [
+            SELECT COUNT() FROM SetupAuditTrail
+            WHERE CreatedDate >= LAST_N_DAYS:30
+            WITH USER_MODE
+            LIMIT 1000
+        ];
+
+        if (changeCount > 0) {
+            r.passed = true;
+            r.score = 80;
+            r.status = ElaroConstants.STATUS_COMPLIANT;
+            r.finding = changeCount + ' configuration change(s) recorded in the Setup Audit '
+                + 'Trail in the last 30 days, evidencing tracked change management. Verify '
+                + 'that change authorization/approval records support these changes.';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'No configuration changes were recorded in the Setup Audit Trail for '
+                + 'the last 30 days, so change-management rigor (authorization, design, '
+                + 'testing) could not be verified. Provide change-approval evidence to '
+                + 'evaluate CC8.1.';
+        }
         return r;
     }
     
     private IComplianceModule.ControlResult defaultEvaluation(String controlId, Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = controlId;
-        r.passed = true;
-        r.score = 75;
-        r.status = 'PARTIAL';
-        r.finding = 'Control evaluation requires manual review';
+        // No automated check exists for this control. Never default an unverified control
+        // to a pass — report NOT_EVALUATED so it is excluded from the score denominator
+        // and surfaced as a manual-review gap.
+        r.passed = false;
+        r.score = 0;
+        r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+        r.finding = 'No automated evaluation is available for control ' + controlId
+            + '. Manual review and supporting evidence are required to determine compliance.';
         return r;
     }
     

@@ -63,16 +63,22 @@ public with sharing class FINRAModule implements IComplianceModule {
         
         Decimal totalScore = 0;
         Decimal totalWeight = 0;
-        
+
         for (IComplianceModule.Control ctrl : FINRA_CONTROLS) {
-            IComplianceModule.ControlResult result = evaluateControl(ctrl.code, 
+            IComplianceModule.ControlResult result = evaluateControl(ctrl.code,
                 new Map<String, Object>{ 'auditPackageId' => auditPackageId });
-            
+
+            // Controls that could not be evaluated are excluded from the denominator so
+            // they neither inflate nor deflate the score (never counted as a silent pass).
+            if (result.status == ElaroConstants.STATUS_NOT_EVALUATED) {
+                continue;
+            }
+
             Decimal weight = ctrl.severity == 'CRITICAL' ? 3 : ctrl.severity == 'HIGH' ? 2 : 1;
             totalWeight += weight;
             totalScore += weight * result.score / 100;
         }
-        
+
         return totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
     }
     
@@ -91,6 +97,10 @@ public with sharing class FINRAModule implements IComplianceModule {
                 gap.controlName = ctrl.name;
                 gap.description = result.finding;
                 gap.severity = ctrl.severity;
+                // Distinguish a real failure from a control we simply could not verify.
+                gap.status = (result.status == ElaroConstants.STATUS_NOT_EVALUATED)
+                    ? 'Manual Review Required'
+                    : 'Open';
                 gap.recommendation = getFINRARecommendation(ctrl.code);
                 gaps.add(gap);
             }
@@ -146,8 +156,8 @@ public with sharing class FINRAModule implements IComplianceModule {
         
         r.passed = supervisoryEvidence > 0;
         r.score = supervisoryEvidence > 0 ? 85 : 40;
-        r.status = r.passed ? 'COMPLIANT' : 'PARTIAL';
-        r.finding = r.passed 
+        r.status = r.passed ? ElaroConstants.STATUS_COMPLIANT : ElaroConstants.STATUS_PARTIAL;
+        r.finding = r.passed
             ? 'Supervisory procedures documented'
             : 'Written supervisory procedures should be documented';
         return r;
@@ -157,7 +167,10 @@ public with sharing class FINRAModule implements IComplianceModule {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = '3110(d)';
         
-        // Check audit trail for email/communication reviews
+        // Check the Setup Audit Trail for evidence of communication-review configuration
+        // activity. The audit trail cannot prove correspondence was actually reviewed, so
+        // a partial/positive signal is only justified when such activity exists; otherwise
+        // we cannot attest to 3110(d) and report NOT_EVALUATED.
         Integer commReviews = [
             SELECT COUNT() FROM SetupAuditTrail
             WHERE CreatedDate >= LAST_N_DAYS:30
@@ -165,23 +178,57 @@ public with sharing class FINRAModule implements IComplianceModule {
             WITH USER_MODE
             LIMIT 100
         ];
-        
-        r.passed = true;
-        r.score = 75;
-        r.status = 'PARTIAL';
-        r.finding = 'Communication review tracking should be enhanced';
+
+        if (commReviews > 0) {
+            r.passed = false;
+            r.score = 50;
+            r.status = ElaroConstants.STATUS_PARTIAL;
+            r.finding = commReviews + ' communication-related configuration change(s) found '
+                + 'in the last 30 days. Formal correspondence-review records are still '
+                + 'required to fully satisfy 3110(d).';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'No communication-review activity could be detected. Provide '
+                + 'correspondence-review records to evaluate 3110(d).';
+        }
         return r;
     }
     
     private IComplianceModule.ControlResult evaluateRecordKeeping(String ctrlId, Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = ctrlId;
-        
-        // Salesforce provides robust record keeping by default
-        r.passed = true;
-        r.score = 90;
-        r.status = 'COMPLIANT';
-        r.finding = 'Salesforce platform provides comprehensive record keeping';
+
+        // FINRA 4511 / SEC Rule 17a-4 require specific retention periods and WORM-style
+        // preservation. The Salesforce platform stores records, but it cannot prove from
+        // Apex that retention policies, immutability, and required preservation periods are
+        // configured. Base the verdict on collected record-keeping evidence; otherwise
+        // report NOT_EVALUATED instead of asserting platform-provided compliance.
+        Integer recordKeepingEvidence = [
+            SELECT COUNT() FROM Elaro_Evidence_Item__c
+            WHERE Audit_Package__c = :pkgId
+            AND (Evidence_Type__c IN ('RecordRetention', 'BooksAndRecords', 'Retention')
+                 OR Description__c LIKE '%retention%' OR Description__c LIKE '%17a-4%')
+            WITH USER_MODE
+            LIMIT 100
+        ];
+
+        if (recordKeepingEvidence > 0) {
+            r.passed = true;
+            r.score = 85;
+            r.status = ElaroConstants.STATUS_COMPLIANT;
+            r.finding = 'Record-keeping/retention evidence found (' + recordKeepingEvidence
+                + ' item(s)) supporting books-and-records requirements.';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'Record-keeping compliance (retention periods and immutable '
+                + 'preservation under FINRA 4511 / SEC Rule 17a-4) could not be verified '
+                + 'from Apex. Attach retention-policy and preservation evidence to evaluate '
+                + ctrlId + '.';
+        }
         return r;
     }
     
@@ -197,22 +244,36 @@ public with sharing class FINRAModule implements IComplianceModule {
             LIMIT 100
         ];
         
-        r.passed = bcpEvidence > 0;
-        r.score = bcpEvidence > 0 ? 80 : 50;
-        r.status = bcpEvidence > 0 ? 'COMPLIANT' : 'PARTIAL';
-        r.finding = bcpEvidence > 0 
-            ? 'BCP documentation found'
-            : 'Business continuity plan should be documented';
+        // A business continuity plan is a documented artifact; it can only be attested to
+        // when BCP evidence has been collected. With no evidence, do NOT assume a partial
+        // pass — report NOT_EVALUATED so the control is excluded from scoring and surfaced
+        // for manual review.
+        if (bcpEvidence > 0) {
+            r.passed = true;
+            r.score = 80;
+            r.status = ElaroConstants.STATUS_COMPLIANT;
+            r.finding = 'BCP documentation found (' + bcpEvidence + ' evidence item(s)).';
+        } else {
+            r.passed = false;
+            r.score = 0;
+            r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+            r.finding = 'No business continuity / disaster recovery evidence found for this '
+                + 'audit package. Attach a documented BCP to evaluate ' + ctrlId + '.';
+        }
         return r;
     }
     
     private IComplianceModule.ControlResult defaultEvaluation(String ctrlId, Id pkgId) {
         IComplianceModule.ControlResult r = new IComplianceModule.ControlResult();
         r.controlId = ctrlId;
-        r.passed = true;
-        r.score = 70;
-        r.status = 'PARTIAL';
-        r.finding = 'Manual review recommended';
+        // No automated check exists for this control. Never default an unverified control
+        // to a pass — report NOT_EVALUATED so it is excluded from the score denominator
+        // and surfaced as a manual-review gap.
+        r.passed = false;
+        r.score = 0;
+        r.status = ElaroConstants.STATUS_NOT_EVALUATED;
+        r.finding = 'No automated evaluation is available for control ' + ctrlId
+            + '. Manual review and supporting evidence are required to determine compliance.';
         return r;
     }
     
