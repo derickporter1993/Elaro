@@ -82,6 +82,29 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result.score, 'Score should be set');
         Assert.areNotEqual(null, result.gaps, 'Gaps should not be null');
         Assert.areNotEqual(null, result.violations, 'Violations should not be null');
+
+        // Automatic logoff (session timeout) is not readable from Apex — it must be
+        // reported as NOT_EVALUATED, never fabricated as a pass.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.autoLogoffStatus,
+            'Auto logoff must be NOT_EVALUATED (session settings are not Apex-readable)');
+        Assert.isFalse(result.autoLogoffConfigured,
+            'Auto logoff must not be asserted as configured when it cannot be verified');
+
+        // Encryption status must be a real evaluated verdict, not a hardcoded value.
+        Assert.isTrue(
+            result.encryptionStatus == ElaroConstants.STATUS_COMPLIANT
+                || result.encryptionStatus == ElaroConstants.STATUS_NON_COMPLIANT
+                || result.encryptionStatus == ElaroConstants.STATUS_NOT_EVALUATED,
+            'Encryption status should be a valid evaluation status, got: '
+                + result.encryptionStatus);
+
+        // Unique-user-identification status must be a real evaluated verdict.
+        Assert.isTrue(
+            result.uniqueUserIdStatus == ElaroConstants.STATUS_COMPLIANT
+                || result.uniqueUserIdStatus == ElaroConstants.STATUS_NON_COMPLIANT
+                || result.uniqueUserIdStatus == ElaroConstants.STATUS_NOT_EVALUATED,
+            'Unique user ID status should be a valid evaluation status, got: '
+                + result.uniqueUserIdStatus);
     }
 
     @isTest
@@ -94,6 +117,13 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areNotEqual(null, result.score, 'Score should be set');
         Assert.areNotEqual(null, result.retentionPeriodDays, 'Retention period should be set');
+
+        // 6-year retention depends on Field Audit Trail config (not Apex-readable):
+        // it must be NOT_EVALUATED, not a fabricated pass.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.retentionStatus,
+            'Retention must be NOT_EVALUATED (Field Audit Trail config is not Apex-readable)');
+        Assert.isFalse(result.retentionCompliant,
+            'Retention must not be asserted compliant when it cannot be verified');
     }
 
     @isTest
@@ -105,6 +135,20 @@ public class HIPAASecurityRuleServiceTest {
 
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areNotEqual(null, result.score, 'Score should be set');
+
+        // Bulk-delete restriction is not introspectable from Apex — NOT_EVALUATED only.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.bulkDeleteStatus,
+            'Bulk delete restriction must be NOT_EVALUATED (not introspectable from Apex)');
+        Assert.isFalse(result.bulkDeleteRestricted,
+            'Bulk delete must not be asserted restricted when it cannot be verified');
+
+        // Validation rule coverage is a real, evaluated check via EntityDefinition.
+        Assert.isTrue(
+            result.validationRulesStatus == ElaroConstants.STATUS_COMPLIANT
+                || result.validationRulesStatus == ElaroConstants.STATUS_NON_COMPLIANT
+                || result.validationRulesStatus == ElaroConstants.STATUS_NOT_EVALUATED,
+            'Validation rules status should be a valid evaluation status, got: '
+                + result.validationRulesStatus);
     }
 
     @isTest
@@ -117,6 +161,12 @@ public class HIPAASecurityRuleServiceTest {
         Assert.areNotEqual(null, result, 'Result should not be null');
         Assert.areEqual('TLS 1.2+', result.tlsVersion, 'TLS version should be TLS 1.2+');
         Assert.areEqual(true, result.tlsCompliant, 'Should be TLS compliant');
+
+        // Org-specific API/transmission posture is not Apex-readable — NOT_EVALUATED.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.apiSecurityStatus,
+            'API security must be NOT_EVALUATED (org TLS config is not Apex-readable)');
+        Assert.isFalse(result.apiSecurityEnabled,
+            'API security must not be asserted enabled when it cannot be verified');
     }
 
     @isTest

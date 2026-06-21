@@ -197,8 +197,11 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         result.score = 100;
 
         // §164.312(a)(2)(i) - Unique User Identification
-        result.uniqueUserIdCompliant = checkUniqueUserIds();
-        if (!result.uniqueUserIdCompliant) {
+        // Salesforce enforces globally unique usernames, but a shared-credential
+        // risk is only inferable from login telemetry, which we evaluate below.
+        result.uniqueUserIdStatus = checkUniqueUserIds();
+        if (result.uniqueUserIdStatus == ElaroConstants.STATUS_NON_COMPLIANT) {
+            result.uniqueUserIdCompliant = false;
             result.gaps.add('Shared accounts detected');
             result.score -= 15;
             result.violations.add(new Violation(
@@ -209,27 +212,30 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
                 'Ensure each user has unique credentials',
                 7.5
             ));
+        } else if (result.uniqueUserIdStatus == ElaroConstants.STATUS_NOT_EVALUATED) {
+            // Not verifiable in this context — surface honestly, do not score.
+            result.uniqueUserIdCompliant = false;
+            result.gaps.add('Unique user identification could not be automatically '
+                + 'verified (no login history available to assess shared-credential risk)');
+        } else {
+            result.uniqueUserIdCompliant = true;
         }
 
         // §164.312(a)(2)(iii) - Automatic Logoff
-        result.autoLogoffConfigured = checkAutoLogoff();
-        if (!result.autoLogoffConfigured) {
-            result.gaps.add('Auto logoff not configured');
-            result.score -= 10;
-            result.violations.add(new Violation(
-                'Missing Auto Logoff',
-                'Session timeout not properly configured',
-                'MEDIUM',
-                'HIPAA-164.312(a)(2)(iii)',
-                'Configure session timeout in Security Settings',
-                5.5
-            ));
-        }
+        // Session timeout lives in org Session Settings, which plain Apex cannot read.
+        // Mark NOT_EVALUATED instead of assuming a pass.
+        result.autoLogoffStatus = checkAutoLogoff();
+        result.autoLogoffConfigured = false;
+        result.gaps.add('Automatic logoff (session timeout) could not be automatically '
+            + 'verified from Apex; review Session Settings or provide Security Health '
+            + 'Check evidence');
 
         // §164.312(a)(2)(iv) - Encryption
-        result.encryptionEnabled = checkEncryption();
-        if (!result.encryptionEnabled) {
-            result.gaps.add('Shield Platform Encryption not enabled');
+        // Real check via Schema.DescribeFieldResult.isEncrypted() over PHI fields.
+        result.encryptionStatus = checkEncryption();
+        result.encryptionEnabled = (result.encryptionStatus == ElaroConstants.STATUS_COMPLIANT);
+        if (result.encryptionStatus == ElaroConstants.STATUS_NON_COMPLIANT) {
+            result.gaps.add('Shield Platform Encryption not enabled on detected PHI fields');
             result.score -= 20;
             result.violations.add(new Violation(
                 'Missing Encryption',
@@ -239,6 +245,9 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
                 'Enable Shield Platform Encryption for PHI fields',
                 9.0
             ));
+        } else if (result.encryptionStatus == ElaroConstants.STATUS_NOT_EVALUATED) {
+            result.gaps.add('Encryption status could not be evaluated (no PHI fields '
+                + 'detected on the inspected objects)');
         }
 
         result.compliant = result.score >= 80;
@@ -268,7 +277,12 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
 
         // Check retention period (HIPAA requires 6 years)
         result.retentionPeriodDays = 2190; // 6 years
-        result.retentionCompliant = true; // Assuming default Salesforce retention
+        // HIPAA 6-year retention depends on Field Audit Trail configuration, which is
+        // not introspectable from Apex. Do NOT assert compliance — mark NOT_EVALUATED.
+        result.retentionStatus = ElaroConstants.STATUS_NOT_EVALUATED;
+        result.retentionCompliant = false;
+        result.gaps.add('Audit log retention (6-year HIPAA requirement) could not be '
+            + 'automatically verified; confirm Field Audit Trail configuration manually');
 
         result.compliant = result.score >= 80;
         return result;
@@ -280,23 +294,22 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         result.gaps = new List<String>();
         result.score = 100;
 
-        // Check for validation rules on PHI objects
-        result.validationRulesEnabled = true; // Simplified check
-
-        // Check bulk delete restrictions
-        result.bulkDeleteRestricted = checkBulkDeleteRestrictions();
-        if (!result.bulkDeleteRestricted) {
-            result.gaps.add('Bulk delete not restricted on PHI objects');
-            result.score -= 15;
-            result.violations.add(new Violation(
-                'Bulk Delete Allowed',
-                'Users can perform bulk deletes on PHI data',
-                'MEDIUM',
-                'HIPAA-164.312(c)(1)',
-                'Restrict bulk delete operations on PHI objects',
-                6.0
-            ));
+        // Check for validation rules on PHI objects via EntityDefinition.
+        result.validationRulesStatus = checkValidationRules();
+        result.validationRulesEnabled =
+            (result.validationRulesStatus == ElaroConstants.STATUS_COMPLIANT);
+        if (result.validationRulesStatus == ElaroConstants.STATUS_NON_COMPLIANT) {
+            result.gaps.add('No active validation rules detected on PHI objects');
+        } else if (result.validationRulesStatus == ElaroConstants.STATUS_NOT_EVALUATED) {
+            result.gaps.add('Validation rule coverage could not be evaluated for PHI objects');
         }
+
+        // Check bulk delete restrictions — not reliably introspectable from Apex.
+        result.bulkDeleteStatus = checkBulkDeleteRestrictions();
+        result.bulkDeleteRestricted = false;
+        result.gaps.add('Bulk/mass-delete restrictions could not be automatically '
+            + 'verified from Apex; review profile and permission set "Mass Delete" '
+            + 'and object delete permissions manually');
 
         result.compliant = result.score >= 80;
         return result;
@@ -308,12 +321,19 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         result.gaps = new List<String>();
         result.score = 100;
 
-        // Salesforce enforces TLS 1.2+ by default
+        // Salesforce enforces TLS 1.2+ for all inbound/outbound HTTPS traffic at the
+        // platform level — this transport guarantee is attestable.
         result.tlsVersion = 'TLS 1.2+';
         result.tlsCompliant = true;
 
-        // Check API security
-        result.apiSecurityEnabled = true; // Salesforce enforces HTTPS
+        // The org-specific minimum TLS version and end-to-end ePHI transmission posture
+        // (e.g. session-level TLS enforcement) are not readable from Apex. Report the
+        // API/transmission configuration as NOT_EVALUATED rather than asserting a pass.
+        result.apiSecurityStatus = ElaroConstants.STATUS_NOT_EVALUATED;
+        result.apiSecurityEnabled = false;
+        result.gaps.add('API/transmission security configuration (minimum TLS version, '
+            + 'session-level TLS enforcement) could not be automatically verified; '
+            + 'confirm via Security Health Check');
 
         result.compliant = result.score >= 80;
         return result;
@@ -321,21 +341,96 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
 
     // ========== Private Helper Methods ==========
 
-    private Boolean checkUniqueUserIds() {
-        // Check for users with same IP from different accounts (simplified)
-        return true; // Assume compliant by default
+    /**
+     * Assesses unique-user-identification risk (§164.312(a)(2)(i)).
+     *
+     * Salesforce enforces globally unique usernames, so the real risk is shared
+     * credentials. We infer this from LoginHistory: a single user logging in from many
+     * distinct source IPs in a short window is a credential-sharing signal. When there
+     * is no login history to analyze, we cannot make a verdict and return NOT_EVALUATED.
+     *
+     * @return ElaroConstants status (COMPLIANT, NON_COMPLIANT, or NOT_EVALUATED)
+     */
+    private String checkUniqueUserIds() {
+        DateTime last30Days = DateTime.now().addDays(-30);
+
+        List<AggregateResult> ipSpread = [
+            SELECT UserId, COUNT_DISTINCT(SourceIp) ipCount
+            FROM LoginHistory
+            WHERE LoginTime >= :last30Days
+            WITH USER_MODE
+            GROUP BY UserId
+            HAVING COUNT_DISTINCT(SourceIp) > 5
+            LIMIT 50
+        ];
+
+        Integer totalLogins = [
+            SELECT COUNT()
+            FROM LoginHistory
+            WHERE LoginTime >= :last30Days
+            WITH USER_MODE
+            LIMIT 1
+        ];
+
+        if (totalLogins == 0) {
+            // No telemetry to evaluate shared-credential risk.
+            return ElaroConstants.STATUS_NOT_EVALUATED;
+        }
+
+        // Users authenticating from an unusually high number of distinct IPs signal
+        // possible credential sharing.
+        return ipSpread.isEmpty()
+            ? ElaroConstants.STATUS_COMPLIANT
+            : ElaroConstants.STATUS_NON_COMPLIANT;
     }
 
-    private Boolean checkAutoLogoff() {
-        // Salesforce session timeout is org-configurable
-        // Would check Session Settings in actual implementation
-        return true;
+    /**
+     * Automatic-logoff / session-timeout configuration (§164.312(a)(2)(iii)) lives in
+     * org Session Settings and is not readable from plain Apex.
+     *
+     * @return ElaroConstants.STATUS_NOT_EVALUATED — never assume a pass
+     */
+    private String checkAutoLogoff() {
+        return ElaroConstants.STATUS_NOT_EVALUATED;
     }
 
-    private Boolean checkEncryption() {
-        // Check if Shield Platform Encryption is enabled
-        // Simplified check
-        return false; // Assume not enabled unless proven otherwise
+    /**
+     * Encryption-at-rest check (§164.312(a)(2)(iv)) using
+     * Schema.DescribeFieldResult.isEncrypted() over detected PHI fields on PHI objects.
+     *
+     * @return COMPLIANT when every detected PHI field is encrypted, NON_COMPLIANT when
+     *         at least one detected PHI field is unencrypted, NOT_EVALUATED when no PHI
+     *         fields could be detected to evaluate
+     */
+    private String checkEncryption() {
+        Set<String> phiObjects = new Set<String>{ 'Contact', 'Lead', 'Account', 'Case' };
+        Integer phiFieldsFound = 0;
+        Integer unencryptedPhiFields = 0;
+
+        for (String objectName : phiObjects) {
+            Schema.SObjectType objType = Schema.getGlobalDescribe().get(objectName);
+            if (objType == null) {
+                continue;
+            }
+            Map<String, Schema.SObjectField> fields = objType.getDescribe().fields.getMap();
+            for (String fieldName : fields.keySet()) {
+                if (!isPHIFieldName(fieldName)) {
+                    continue;
+                }
+                phiFieldsFound++;
+                if (!fields.get(fieldName).getDescribe().isEncrypted()) {
+                    unencryptedPhiFields++;
+                }
+            }
+        }
+
+        if (phiFieldsFound == 0) {
+            // Nothing to assess — do not assert encrypted or unencrypted.
+            return ElaroConstants.STATUS_NOT_EVALUATED;
+        }
+        return unencryptedPhiFields == 0
+            ? ElaroConstants.STATUS_COMPLIANT
+            : ElaroConstants.STATUS_NON_COMPLIANT;
     }
 
     private Boolean checkAuditTrailEnabled() {
@@ -364,10 +459,58 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         return true;
     }
 
-    private Boolean checkBulkDeleteRestrictions() {
-        // Check if Mass Delete permission is restricted
-        // Simplified check
-        return true;
+    /**
+     * Bulk/mass-delete restriction check (§164.312(c)(1)).
+     *
+     * Whether mass delete is restricted depends on a combination of profile-level
+     * "Mass Delete" permission, object delete permissions, and UI restrictions that
+     * cannot be reliably introspected from Apex.
+     *
+     * @return ElaroConstants.STATUS_NOT_EVALUATED — never assume a pass
+     */
+    private String checkBulkDeleteRestrictions() {
+        return ElaroConstants.STATUS_NOT_EVALUATED;
+    }
+
+    /**
+     * Validation-rule coverage check for PHI objects (§164.312(c)(1) integrity).
+     *
+     * Queries EntityDefinition for active validation rules on the PHI objects. Real,
+     * verifiable evidence of integrity controls.
+     *
+     * @return COMPLIANT when at least one PHI object has active validation rules,
+     *         NON_COMPLIANT when none do, NOT_EVALUATED if the metadata cannot be read
+     */
+    private String checkValidationRules() {
+        Set<String> phiObjects = new Set<String>{ 'Contact', 'Lead', 'Account', 'Case' };
+        try {
+            List<EntityDefinition> entities = [
+                SELECT QualifiedApiName,
+                    (SELECT Id FROM ValidationRules WHERE Active = true)
+                FROM EntityDefinition
+                WHERE QualifiedApiName IN :phiObjects
+                WITH USER_MODE
+                LIMIT 50
+            ];
+
+            if (entities.isEmpty()) {
+                return ElaroConstants.STATUS_NOT_EVALUATED;
+            }
+
+            for (EntityDefinition entity : entities) {
+                List<ValidationRule> rules = entity.ValidationRules;
+                if (rules != null && !rules.isEmpty()) {
+                    return ElaroConstants.STATUS_COMPLIANT;
+                }
+            }
+            return ElaroConstants.STATUS_NON_COMPLIANT;
+        } catch (Exception e) {
+            // EntityDefinition child-relationship querying may be unavailable in some
+            // contexts — report honestly rather than fabricating a verdict.
+            ElaroLogger.error('HIPAASecurityRuleService.checkValidationRules',
+                e.getMessage(), e.getStackTraceString());
+            return ElaroConstants.STATUS_NOT_EVALUATED;
+        }
     }
 
     private static Boolean isPHIFieldName(String fieldName) {
@@ -396,8 +539,13 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
 
     public class AccessControlResult {
         @AuraEnabled public Boolean uniqueUserIdCompliant;
+        // Honest evaluation status (ElaroConstants.STATUS_*) for controls that may be
+        // NOT_EVALUATED rather than a true/false verdict.
+        @AuraEnabled public String uniqueUserIdStatus;
         @AuraEnabled public Boolean autoLogoffConfigured;
+        @AuraEnabled public String autoLogoffStatus;
         @AuraEnabled public Boolean encryptionEnabled;
+        @AuraEnabled public String encryptionStatus;
         @AuraEnabled public Boolean compliant;
         @AuraEnabled public Decimal score;
         @AuraEnabled public List<String> gaps;
@@ -408,6 +556,7 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         @AuraEnabled public Boolean auditTrailEnabled;
         @AuraEnabled public Integer retentionPeriodDays;
         @AuraEnabled public Boolean retentionCompliant;
+        @AuraEnabled public String retentionStatus;
         @AuraEnabled public Boolean compliant;
         @AuraEnabled public Decimal score;
         @AuraEnabled public List<String> gaps;
@@ -416,7 +565,9 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
 
     public class IntegrityControlResult {
         @AuraEnabled public Boolean validationRulesEnabled;
+        @AuraEnabled public String validationRulesStatus;
         @AuraEnabled public Boolean bulkDeleteRestricted;
+        @AuraEnabled public String bulkDeleteStatus;
         @AuraEnabled public Boolean compliant;
         @AuraEnabled public Decimal score;
         @AuraEnabled public List<String> gaps;
@@ -427,6 +578,7 @@ public with sharing class HIPAASecurityRuleService extends ComplianceServiceBase
         @AuraEnabled public String tlsVersion;
         @AuraEnabled public Boolean tlsCompliant;
         @AuraEnabled public Boolean apiSecurityEnabled;
+        @AuraEnabled public String apiSecurityStatus;
         @AuraEnabled public Boolean compliant;
         @AuraEnabled public Decimal score;
         @AuraEnabled public List<String> gaps;

@@ -62,8 +62,13 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             ));
         }
 
-        // Check audit log retention
-        if (!checkRetentionCompliance()) {
+        // Check audit log retention. Retention compliance cannot be programmatically
+        // verified (Field Audit Trail config is not Apex-readable), so we do NOT raise a
+        // violation asserting a failure. A NOT_EVALUATED status is surfaced to callers
+        // via getRetentionStatus()/evaluateAuditCompliance() for manual review instead.
+        // Only a definitive NON_COMPLIANT verdict (not currently derivable) would raise
+        // a violation here.
+        if (checkRetentionCompliance() == ElaroConstants.STATUS_NON_COMPLIANT) {
             violations.add(new Violation(
                 'Audit Retention Gap',
                 'Audit logs may not be retained for required 6-year period',
@@ -92,15 +97,28 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             // Evaluate all audit controls
             result.coverageResult = service.evaluateAuditCoverage();
             result.accessPatternResult = service.analyzeAccessPatterns();
-            result.retentionCompliant = service.checkRetentionCompliance();
+            result.retentionStatus = service.checkRetentionCompliance();
+            // Only true when actually evaluated AND compliant; NOT_EVALUATED is not a pass.
+            result.retentionCompliant =
+                (result.retentionStatus == ElaroConstants.STATUS_COMPLIANT);
 
-            // Calculate overall score
+            // Calculate overall score from the controls we could actually evaluate.
+            // A NOT_EVALUATED retention control is excluded from the average so it
+            // neither inflates nor deflates the score (never counted as a silent pass).
             Decimal coverageScore = result.coverageResult.compliant ? 100 : 70;
             Decimal patternScore = result.accessPatternResult.suspiciousCount == 0 ? 100 :
                 Math.max(50, 100 - (result.accessPatternResult.suspiciousCount * 10));
-            Decimal retentionScore = result.retentionCompliant ? 100 : 80;
 
-            result.overallScore = ((coverageScore + patternScore + retentionScore) / 3).setScale(2);
+            List<Decimal> evaluatedScores = new List<Decimal>{ coverageScore, patternScore };
+            if (result.retentionStatus != ElaroConstants.STATUS_NOT_EVALUATED) {
+                evaluatedScores.add(result.retentionCompliant ? 100 : 80);
+            }
+
+            Decimal scoreSum = 0;
+            for (Decimal s : evaluatedScores) {
+                scoreSum += s;
+            }
+            result.overallScore = (scoreSum / evaluatedScores.size()).setScale(2);
             result.compliant = result.overallScore >= 80;
 
             return result;
@@ -324,7 +342,10 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
 
             RetentionStatus status = new RetentionStatus();
             status.requiredYears = DEFAULT_RETENTION_YEARS;
-            status.compliant = service.checkRetentionCompliance();
+            status.retentionStatus = service.checkRetentionCompliance();
+            // NOT_EVALUATED is not a pass; only a verified COMPLIANT verdict sets true.
+            status.compliant =
+                (status.retentionStatus == ElaroConstants.STATUS_COMPLIANT);
 
             // Get oldest audit record
             List<SetupAuditTrail> oldest = [
@@ -343,8 +364,14 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
             // Salesforce retains Setup Audit Trail for 180 days by default
             // Field Audit Trail can be configured for longer retention
             status.configuredRetentionDays = 180; // Default Salesforce retention
-            status.recommendation = status.compliant ? 'Retention policy meets HIPAA requirements' :
-                'Enable Field Audit Trail with extended retention for HIPAA compliance';
+            status.recommendation =
+                (status.retentionStatus == ElaroConstants.STATUS_NOT_EVALUATED)
+                    ? 'Audit log retention could not be automatically verified. Confirm '
+                        + 'Field Audit Trail is enabled with extended (6-year) retention '
+                        + 'for HIPAA compliance.'
+                    : (status.compliant
+                        ? 'Retention policy meets HIPAA requirements'
+                        : 'Enable Field Audit Trail with extended retention for HIPAA compliance');
 
             return status;
         } catch (AuraHandledException ahe) {
@@ -508,16 +535,20 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
         return suspicious;
     }
 
-    private Boolean checkRetentionCompliance() {
-        // HIPAA requires 6-year retention
-        // Check if we have records going back at least 6 years
-        // (In practice, this would check Field Audit Trail configuration)
-        Date sixYearsAgo = Date.today().addYears(-DEFAULT_RETENTION_YEARS);
-
-        // Salesforce default retention is 180 days for Setup Audit Trail
-        // Field Audit Trail (with Shield) can be configured for longer
-        // This is a simplified check
-        return false; // Assume non-compliant unless Shield is configured
+    /**
+     * Evaluates HIPAA 6-year audit-log retention (§164.530(j)).
+     *
+     * Long-term retention is governed by Field Audit Trail (Shield) configuration, which
+     * is NOT introspectable from Apex — Setup Audit Trail only retains 180 days by
+     * default. We therefore cannot assert a compliant OR non-compliant verdict from
+     * code, and report NOT_EVALUATED instead of fabricating a false (which would be an
+     * unearned failure verdict).
+     *
+     * @return ElaroConstants.STATUS_NOT_EVALUATED — retention requires manual / Field
+     *         Audit Trail verification
+     */
+    private String checkRetentionCompliance() {
+        return ElaroConstants.STATUS_NOT_EVALUATED;
     }
 
     // ========== Inner Classes ==========
@@ -527,6 +558,9 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
         @AuraEnabled public AuditCoverageResult coverageResult;
         @AuraEnabled public AccessPatternResult accessPatternResult;
         @AuraEnabled public Boolean retentionCompliant;
+        // Honest evaluation status (ElaroConstants.STATUS_*); retention is typically
+        // NOT_EVALUATED since Field Audit Trail config is not Apex-readable.
+        @AuraEnabled public String retentionStatus;
         @AuraEnabled public Decimal overallScore;
         @AuraEnabled public Boolean compliant;
     }
@@ -573,6 +607,9 @@ public with sharing class HIPAAAuditControlService extends ComplianceServiceBase
     public class RetentionStatus {
         @AuraEnabled public Integer requiredYears;
         @AuraEnabled public Boolean compliant;
+        // Honest evaluation status (ElaroConstants.STATUS_*) — distinguishes a verified
+        // verdict from a control that could not be programmatically evaluated.
+        @AuraEnabled public String retentionStatus;
         @AuraEnabled public Date oldestRecordDate;
         @AuraEnabled public Integer currentRetentionDays;
         @AuraEnabled public Integer configuredRetentionDays;

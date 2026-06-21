@@ -65,6 +65,10 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
 
             Map<String, Schema.SObjectType> globalDescribe = Schema.getGlobalDescribe();
 
+            // Bulk-compute per-object access counts up front (2 queries total) to avoid
+            // issuing SOQL inside the per-object loop below.
+            Map<String, Integer> accessCounts = countUsersWithAccess(PHI_OBJECTS);
+
             for (String objectName : PHI_OBJECTS) {
                 if (globalDescribe.containsKey(objectName)) {
                     PHIObjectInfo info = new PHIObjectInfo();
@@ -83,8 +87,10 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
                     info.phiFieldCount = info.phiFields.size();
                     info.riskLevel = info.phiFieldCount > 5 ? 'HIGH' : info.phiFieldCount > 0 ? 'MEDIUM' : 'LOW';
 
-                    // Count users with access
-                    info.userAccessCount = countUsersWithAccess(objectName);
+                    // Users actually granted access to this object (defaults to 0).
+                    info.userAccessCount = accessCounts.containsKey(objectName)
+                        ? accessCounts.get(objectName)
+                        : 0;
 
                     phiObjects.add(info);
                 }
@@ -323,13 +329,21 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
     private List<Violation> evaluatePHISafeguards() {
         List<Violation> violations = new List<Violation>();
 
-        // Check OWD settings for PHI objects
+        // Check OWD (internal sharing model) for PHI objects. EntityDefinition reports
+        // 'Read' (Public Read Only) and 'ReadWrite'/'FullAccess' (Public Read/Write) as
+        // the public-access models that over-share PHI; 'Private' / 'ControlledByParent'
+        // are acceptable. A null value means we could not resolve the setting — we do
+        // NOT raise a violation in that case (no fabricated verdict either way).
+        Set<String> overSharedModels = new Set<String>{ 'Read', 'ReadWrite', 'FullAccess' };
+        // Resolve all OWD settings in a single query before the loop (no SOQL in loop).
+        Map<String, String> owdByObject = getOWDSettings(PHI_OBJECTS);
         for (String objectName : PHI_OBJECTS) {
-            String owdSetting = getOWDSetting(objectName);
-            if (owdSetting == 'Public' || owdSetting == 'PublicReadWrite') {
+            String owdSetting = owdByObject.get(objectName);
+            if (owdSetting != null && overSharedModels.contains(owdSetting)) {
                 Violation v = new Violation(
                     'PHI Object Over-Shared',
-                    'Object ' + objectName + ' has OWD set to ' + owdSetting + ' (should be Private)',
+                    'Object ' + objectName + ' has OWD internal sharing model set to '
+                        + owdSetting + ' (should be Private)',
                     'CRITICAL',
                     'HIPAA-164.530(c)',
                     'Change OWD to Private and use sharing rules for authorized access',
@@ -401,9 +415,71 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
         return false;
     }
 
-    private static Integer countUsersWithAccess(String objectName) {
-        // Simplified count - actual implementation would check object permissions
-        return [SELECT COUNT() FROM User WHERE IsActive = true WITH USER_MODE];
+    /**
+     * Counts active users actually granted read access to each given object, rather than
+     * every active user in the org. Access is determined by ObjectPermissions that grant
+     * PermissionsRead, joined to active assignees via PermissionSetAssignment. This
+     * covers both permission sets and profiles (profile permissions surface as an
+     * ObjectPermissions row on the profile's owning PermissionSet).
+     *
+     * Bulk by design: exactly two SOQL queries regardless of how many objects are passed,
+     * so it is safe to call once outside any per-object loop.
+     *
+     * @param objectNames The SObject API names to evaluate access for
+     * @return Map of object API name to the distinct count of active users with read access
+     */
+    private static Map<String, Integer> countUsersWithAccess(Set<String> objectNames) {
+        Map<String, Integer> accessCounts = new Map<String, Integer>();
+        if (objectNames == null || objectNames.isEmpty()) {
+            return accessCounts;
+        }
+
+        // Map each granting permission set to the objects (in scope) it grants read on.
+        Map<Id, Set<String>> permSetToObjects = new Map<Id, Set<String>>();
+        for (ObjectPermissions op : [
+            SELECT ParentId, SobjectType
+            FROM ObjectPermissions
+            WHERE SobjectType IN :objectNames
+            AND PermissionsRead = true
+            WITH USER_MODE
+            LIMIT 5000
+        ]) {
+            if (!permSetToObjects.containsKey(op.ParentId)) {
+                permSetToObjects.put(op.ParentId, new Set<String>());
+            }
+            permSetToObjects.get(op.ParentId).add(op.SobjectType);
+        }
+
+        if (permSetToObjects.isEmpty()) {
+            return accessCounts;
+        }
+
+        // Track distinct active assignees per object across all granting permission sets.
+        Map<String, Set<Id>> objectToUsers = new Map<String, Set<Id>>();
+        for (PermissionSetAssignment psa : [
+            SELECT AssigneeId, PermissionSetId
+            FROM PermissionSetAssignment
+            WHERE PermissionSetId IN :permSetToObjects.keySet()
+            AND Assignee.IsActive = true
+            WITH USER_MODE
+            LIMIT 50000
+        ]) {
+            Set<String> grantedObjects = permSetToObjects.get(psa.PermissionSetId);
+            if (grantedObjects == null) {
+                continue;
+            }
+            for (String objectName : grantedObjects) {
+                if (!objectToUsers.containsKey(objectName)) {
+                    objectToUsers.put(objectName, new Set<Id>());
+                }
+                objectToUsers.get(objectName).add(psa.AssigneeId);
+            }
+        }
+
+        for (String objectName : objectToUsers.keySet()) {
+            accessCounts.put(objectName, objectToUsers.get(objectName).size());
+        }
+        return accessCounts;
     }
 
     private Boolean hasFieldHistoryEnabled(String objectName) {
@@ -423,9 +499,41 @@ public with sharing class HIPAAPrivacyRuleService extends ComplianceServiceBase 
         }
     }
 
-    private String getOWDSetting(String objectName) {
-        // Simplified - actual implementation would use Organization describe
-        return 'Private'; // Default assumption
+    /**
+     * Resolves the org-wide default internal sharing model for each object via
+     * EntityDefinition.InternalSharingModel (e.g. 'Private', 'Read', 'ReadWrite',
+     * 'FullAccess', 'ControlledByParent'). Objects whose value cannot be determined are
+     * simply absent from the returned map, so callers must not treat a missing entry as
+     * a verdict (no fabricated 'Private' default).
+     *
+     * Bulk by design: a single SOQL query regardless of the number of objects.
+     *
+     * @param objectNames The SObject API names
+     * @return Map of object API name to its InternalSharingModel value
+     */
+    private Map<String, String> getOWDSettings(Set<String> objectNames) {
+        Map<String, String> owdByObject = new Map<String, String>();
+        if (objectNames == null || objectNames.isEmpty()) {
+            return owdByObject;
+        }
+        try {
+            for (EntityDefinition entity : [
+                SELECT QualifiedApiName, InternalSharingModel
+                FROM EntityDefinition
+                WHERE QualifiedApiName IN :objectNames
+                WITH USER_MODE
+                LIMIT 200
+            ]) {
+                if (entity.InternalSharingModel != null) {
+                    owdByObject.put(entity.QualifiedApiName, entity.InternalSharingModel);
+                }
+            }
+        } catch (Exception e) {
+            // Some objects/contexts do not expose InternalSharingModel; do not fabricate.
+            ElaroLogger.error('HIPAAPrivacyRuleService.getOWDSettings',
+                e.getMessage(), e.getStackTraceString());
+        }
+        return owdByObject;
     }
 
     private static String generateDisclosureLogContent(List<Compliance_Evidence__c> disclosures, Date startDate, Date endDate) {

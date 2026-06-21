@@ -68,6 +68,15 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, result.coverageResult, 'Coverage result should not be null');
         Assert.areNotEqual(null, result.accessPatternResult, 'Access pattern result should not be null');
         Assert.areNotEqual(null, result.overallScore, 'Overall score should be set');
+
+        // Retention cannot be programmatically verified — it must be NOT_EVALUATED and
+        // excluded from the score, never counted as a silent pass.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, result.retentionStatus,
+            'Retention must be NOT_EVALUATED (Field Audit Trail config is not Apex-readable)');
+        Assert.isFalse(result.retentionCompliant,
+            'Retention must not be asserted compliant when it cannot be verified');
+        Assert.isTrue(result.overallScore >= 0 && result.overallScore <= 100,
+            'Overall score should be between 0 and 100, got: ' + result.overallScore);
     }
 
     @isTest
@@ -157,6 +166,16 @@ public class HIPAAAuditControlServiceTest {
         Assert.areNotEqual(null, status, 'Status should not be null');
         Assert.areEqual(6, status.requiredYears, 'Required years should be 6');
         Assert.areNotEqual(null, status.recommendation, 'Recommendation should be set');
+
+        // Retention is not Apex-verifiable: report NOT_EVALUATED and do not claim a pass.
+        Assert.areEqual(ElaroConstants.STATUS_NOT_EVALUATED, status.retentionStatus,
+            'Retention status must be NOT_EVALUATED (Field Audit Trail config not readable)');
+        Assert.isFalse(status.compliant,
+            'Retention must not be asserted compliant when it cannot be verified');
+        Assert.isTrue(
+            status.recommendation.contains('could not be automatically verified'),
+            'Recommendation should explain the control could not be auto-verified, got: '
+                + status.recommendation);
     }
 
     @isTest

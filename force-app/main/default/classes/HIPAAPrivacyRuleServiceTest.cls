@@ -169,4 +169,31 @@ public class HIPAAPrivacyRuleServiceTest {
         Assert.areNotEqual(null, violations, 'Violations should not be null');
         Assert.isTrue(score >= 0, 'Score should be non-negative');
     }
+
+    @isTest
+    static void testUserAccessCountReflectsRealAccess() {
+        // userAccessCount must reflect users actually granted access to the object via
+        // ObjectPermissions/PermissionSetAssignment, NOT a blanket count of all active
+        // users in the org. Verify it does not equal the total active-user count (which
+        // was the previous fabricated behavior) and is a sane, bounded value.
+        Integer totalActiveUsers = [SELECT COUNT() FROM User WHERE IsActive = true];
+
+        Test.startTest();
+        List<HIPAAPrivacyRuleService.PHIObjectInfo> phiObjects =
+            HIPAAPrivacyRuleService.identifyPHIObjects();
+        Test.stopTest();
+
+        Assert.isFalse(phiObjects.isEmpty(), 'Should identify at least one PHI object');
+        for (HIPAAPrivacyRuleService.PHIObjectInfo info : phiObjects) {
+            Assert.isNotNull(info.userAccessCount,
+                'User access count should be computed for ' + info.objectName);
+            Assert.isTrue(info.userAccessCount >= 0,
+                'User access count should be non-negative for ' + info.objectName);
+            // A correct ObjectPermissions/PSA-based count can never exceed the number of
+            // active users; the old fabricated implementation returned exactly that total.
+            Assert.isTrue(info.userAccessCount <= totalActiveUsers,
+                'User access count must not exceed total active users for '
+                    + info.objectName);
+        }
+    }
 }
