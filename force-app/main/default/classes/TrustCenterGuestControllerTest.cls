@@ -218,4 +218,34 @@ private class TrustCenterGuestControllerTest {
         Assert.areEqual('HIPAA', response.views[1].Framework__c,
             'HIPAA (88%) should be second');
     }
+
+    // ─── Permission Context Test (System.runAs) ─────────────────────────
+
+    /**
+     * Defense-in-depth: the guest controller is reached by users with minimal
+     * object access (the Sites guest profile is expected to have ZERO access to
+     * sensitive objects). Even with an otherwise-VALID token, a running user who
+     * lacks read access to Trust_Center_View__c must not receive any view data,
+     * because the query runs WITH USER_MODE. This proves the controller does not
+     * rely solely on token validity to gate object data.
+     */
+    @IsTest
+    static void shouldNotLeakViewsToUserWithoutObjectAccess() {
+        String token = [
+            SELECT Link_Token__c FROM Trust_Center_Link__c LIMIT 1
+        ].Link_Token__c;
+
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            TrustCenterGuestController.TrustCenterResponse response =
+                TrustCenterGuestController.getPublicData(token);
+            Assert.areEqual(0, response.views.size(),
+                'A user without Trust_Center_View__c read access must receive no views, '
+                + 'even with a valid token');
+        }
+        Test.stopTest();
+    }
 }

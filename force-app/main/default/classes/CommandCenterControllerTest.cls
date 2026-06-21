@@ -407,4 +407,89 @@ private class CommandCenterControllerTest {
         Assert.isFalse(ctx.registeredFrameworks.isEmpty(),
             'Registered frameworks should not be empty');
     }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PERMISSION CONTEXT TESTS (System.runAs)
+    // ═══════════════════════════════════════════════════════════════
+
+    /**
+     * A Standard User without the Elaro User permission set has no read access
+     * to Compliance_Gap__c, so the WITH USER_MODE aggregate in
+     * getGapCountsBySeverity must raise an AuraHandledException rather than
+     * silently leaking counts.
+     */
+    @IsTest
+    static void shouldDenyGapCountsForUnauthorizedUser() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                CommandCenterController.getGapCountsBySeverity();
+                Assert.fail('Unauthorized user should not read gap counts');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * A Standard User without the permission set cannot edit Compliance_Gap__c,
+     * so update as user inside updateGapStatus must fail and leave the record
+     * unchanged.
+     */
+    @IsTest
+    static void shouldDenyUpdateGapStatusForUnauthorizedUser() {
+        Compliance_Gap__c gap = [
+            SELECT Id, Status__c FROM Compliance_Gap__c
+            WHERE Status__c = 'OPEN' WITH USER_MODE LIMIT 1
+        ];
+
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                CommandCenterController.updateGapStatus(gap.Id, 'REMEDIATED');
+                Assert.fail('Unauthorized user should not be able to update gaps');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+
+        Compliance_Gap__c after = [
+            SELECT Id, Status__c FROM Compliance_Gap__c WHERE Id = :gap.Id
+        ];
+        Assert.areEqual('OPEN', after.Status__c,
+            'Gap status must remain unchanged when edit is denied');
+    }
+
+    /**
+     * With the Elaro User permission set assigned, the same otherwise-minimal
+     * user can read gap counts, confirming the permission set unlocks access.
+     */
+    @IsTest
+    static void shouldAllowGapCountsWithPermissionSet() {
+        User authorized = ComplianceTestDataFactory.createTestUser();
+        insert authorized;
+
+        PermissionSet ps = [
+            SELECT Id FROM PermissionSet WHERE Name = 'Elaro_User' LIMIT 1
+        ];
+        insert new PermissionSetAssignment(
+            AssigneeId = authorized.Id, PermissionSetId = ps.Id
+        );
+
+        Test.startTest();
+        System.runAs(authorized) {
+            Map<String, Integer> counts = CommandCenterController.getGapCountsBySeverity();
+            Assert.isNotNull(counts,
+                'Authorized user should be able to read gap counts');
+        }
+        Test.stopTest();
+    }
 }

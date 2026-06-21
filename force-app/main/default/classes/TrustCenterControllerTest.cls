@@ -167,4 +167,79 @@ private class TrustCenterControllerTest {
         // Note: Passing null might not throw if service handles gracefully
         // This test validates error handling exists
     }
+
+    // ─── Permission Context Tests (System.runAs) ────────────────────────
+
+    /**
+     * This internal admin controller reads Trust_Center_View__c WITH USER_MODE.
+     * A Standard User without any Elaro permission set has no access to that
+     * object, so getPublicViews must not leak the public views created in
+     * @TestSetup; it returns nothing or raises an AuraHandledException.
+     */
+    @IsTest
+    static void shouldDenyPublicViewsForUnauthorizedUser() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                List<Trust_Center_View__c> views = TrustCenterController.getPublicViews();
+                Assert.areEqual(0, views.size(),
+                    'Unauthorized user must not see any Trust Center views');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(),
+                    'A denied read may instead surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * A Standard User without an Elaro permission set cannot create
+     * Trust_Center_Link__c records, so createShareableLink must fail.
+     */
+    @IsTest
+    static void shouldDenyCreateShareableLinkForUnauthorizedUser() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            Boolean denied = false;
+            try {
+                TrustCenterController.createShareableLink('Public', 30, 'Attacker');
+            } catch (AuraHandledException e) {
+                denied = true;
+            }
+            Assert.isTrue(denied,
+                'Unauthorized user should not be able to create shareable links');
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * With the Elaro User permission set (read access to Trust_Center_View__c)
+     * the same otherwise-minimal user can read the public views.
+     */
+    @IsTest
+    static void shouldAllowPublicViewsWithPermissionSet() {
+        User authorized = ComplianceTestDataFactory.createTestUser();
+        insert authorized;
+
+        PermissionSet ps = [
+            SELECT Id FROM PermissionSet WHERE Name = 'Elaro_User' LIMIT 1
+        ];
+        insert new PermissionSetAssignment(
+            AssigneeId = authorized.Id, PermissionSetId = ps.Id
+        );
+
+        Test.startTest();
+        System.runAs(authorized) {
+            List<Trust_Center_View__c> views = TrustCenterController.getPublicViews();
+            Assert.areEqual(2, views.size(),
+                'Authorized user should see the 2 public Trust Center views');
+        }
+        Test.stopTest();
+    }
 }

@@ -132,4 +132,78 @@ private class ElaroDashboardControllerTest {
         }
         Test.stopTest();
     }
+
+    // ─── Permission Context Tests (System.runAs) ────────────────────────
+
+    /**
+     * getAuditPackages queries Elaro_Audit_Package__c with AccessLevel.USER_MODE.
+     * A Standard User without an Elaro permission set has no access to that
+     * object, so the call must raise an AuraHandledException rather than leak
+     * audit packages.
+     */
+    @IsTest
+    static void testGetAuditPackages_unauthorizedUserDenied() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                ElaroDashboardController.getAuditPackages('ALL');
+                Assert.fail('Unauthorized user should not read audit packages');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * getAuditPackageStats queries Elaro_Audit_Package__c WITH USER_MODE for a
+     * specific record. An unauthorized user must be denied.
+     */
+    @IsTest
+    static void testGetAuditPackageStats_unauthorizedUserDenied() {
+        Elaro_Audit_Package__c pkg = [SELECT Id FROM Elaro_Audit_Package__c LIMIT 1];
+
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                ElaroDashboardController.getAuditPackageStats(pkg.Id);
+                Assert.fail('Unauthorized user should not read audit package stats');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * With the Elaro User permission set (read on the audit package objects) the
+     * same otherwise-minimal user can read audit packages.
+     */
+    @IsTest
+    static void testGetAuditPackages_authorizedUserSucceeds() {
+        User authorized = ComplianceTestDataFactory.createTestUser();
+        insert authorized;
+
+        PermissionSet ps = [
+            SELECT Id FROM PermissionSet WHERE Name = 'Elaro_User' LIMIT 1
+        ];
+        insert new PermissionSetAssignment(
+            AssigneeId = authorized.Id, PermissionSetId = ps.Id
+        );
+
+        Test.startTest();
+        System.runAs(authorized) {
+            List<ElaroDashboardController.AuditPackageInfo> packages =
+                ElaroDashboardController.getAuditPackages('ALL');
+            Assert.isNotNull(packages,
+                'Authorized user should be able to read audit packages');
+        }
+        Test.stopTest();
+    }
 }

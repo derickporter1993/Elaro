@@ -360,4 +360,85 @@ private class SECDisclosureControllerTest {
         Assert.isNotNull(status, 'Should return a non-null status map');
         Assert.areEqual('Drafting', status.get('workflowStatus'), 'Workflow status should be Drafting');
     }
+
+    // ─── Permission Context Tests (System.runAs) ────────────────────────
+
+    /**
+     * A Standard User without the Elaro SEC permission set has no access to
+     * Materiality_Assessment__c, so creating an assessment (which DMLs as the
+     * running user) must fail with an AuraHandledException.
+     */
+    @IsTest
+    static void testCreateAssessment_unauthorizedUserDenied() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            Boolean denied = false;
+            try {
+                SECDisclosureController.createAssessment(
+                    'Unauthorized incident', String.valueOf(DateTime.now())
+                );
+            } catch (AuraHandledException e) {
+                denied = true;
+            }
+            Assert.isTrue(denied,
+                'Unauthorized user should not be able to create a materiality assessment');
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * A Standard User without the Elaro SEC permission set cannot read
+     * Materiality_Assessment__c. getOpenAssessments must therefore not leak
+     * the assessment created in @TestSetup: it either returns nothing or
+     * raises an AuraHandledException.
+     */
+    @IsTest
+    static void testGetOpenAssessments_unauthorizedUserSeesNoData() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                List<Materiality_Assessment__c> results =
+                    SECDisclosureController.getOpenAssessments();
+                Assert.areEqual(0, results.size(),
+                    'Unauthorized user must not see any assessments');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(),
+                    'A denied read may instead surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * With the Elaro SEC User permission set assigned, the same otherwise-minimal
+     * user can read open assessments, confirming the permission set is what
+     * grants access to the SEC objects.
+     */
+    @IsTest
+    static void testGetOpenAssessments_authorizedUserSucceeds() {
+        User authorized = ComplianceTestDataFactory.createTestUser();
+        insert authorized;
+
+        PermissionSet ps = [
+            SELECT Id FROM PermissionSet WHERE Name = 'Elaro_SEC_User' LIMIT 1
+        ];
+        insert new PermissionSetAssignment(
+            AssigneeId = authorized.Id, PermissionSetId = ps.Id
+        );
+
+        Test.startTest();
+        System.runAs(authorized) {
+            List<Materiality_Assessment__c> results =
+                SECDisclosureController.getOpenAssessments();
+            Assert.isNotNull(results,
+                'Authorized user should be able to read open assessments');
+        }
+        Test.stopTest();
+    }
 }

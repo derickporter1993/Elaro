@@ -153,4 +153,74 @@ private class RuleEngineControllerTest {
 
         Assert.isNotNull(frameworks, 'Frameworks set should not be null');
     }
+
+    // ─── Permission Context Tests (System.runAs) ────────────────────────
+
+    /**
+     * getExecutionHistory reads Workflow_Execution__c WITH USER_MODE. A Standard
+     * User without the Elaro Rule Engine permission set has no access to that
+     * object, so the call must not leak execution history: it returns nothing
+     * or raises an AuraHandledException.
+     */
+    @IsTest
+    static void shouldDenyExecutionHistoryForUnauthorizedUser() {
+        Workflow_Execution__c exec = new Workflow_Execution__c(
+            Template_Name__c = 'Secret',
+            Framework__c = 'SOC2',
+            Status__c = 'COMPLETED',
+            Started_At__c = Datetime.now()
+        );
+        insert as user exec;
+
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                List<Workflow_Execution__c> history =
+                    RuleEngineController.getExecutionHistory(null);
+                Assert.areEqual(0, history.size(),
+                    'Unauthorized user must not see workflow execution history');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(),
+                    'A denied read may instead surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * With the Elaro Rule Engine User permission set (read on Workflow_Execution__c)
+     * the same otherwise-minimal user can read execution history.
+     */
+    @IsTest
+    static void shouldAllowExecutionHistoryWithPermissionSet() {
+        Workflow_Execution__c exec = new Workflow_Execution__c(
+            Template_Name__c = 'Visible',
+            Framework__c = 'SOC2',
+            Status__c = 'COMPLETED',
+            Started_At__c = Datetime.now()
+        );
+        insert as user exec;
+
+        User authorized = ComplianceTestDataFactory.createTestUser();
+        insert authorized;
+
+        PermissionSet ps = [
+            SELECT Id FROM PermissionSet WHERE Name = 'Elaro_Rule_Engine_User' LIMIT 1
+        ];
+        insert new PermissionSetAssignment(
+            AssigneeId = authorized.Id, PermissionSetId = ps.Id
+        );
+
+        Test.startTest();
+        System.runAs(authorized) {
+            List<Workflow_Execution__c> history =
+                RuleEngineController.getExecutionHistory(null);
+            Assert.isTrue(history.size() >= 1,
+                'Authorized user should be able to read execution history');
+        }
+        Test.stopTest();
+    }
 }

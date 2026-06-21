@@ -244,4 +244,49 @@ private class ElaroExecutiveKPIControllerTest {
         Assert.areEqual(null, metric.currentValue, 'Current value should be null');
         Assert.areEqual(null, metric.targetValue, 'Target value should be null');
     }
+
+    // ─── Permission Context Test (System.runAs) ─────────────────────────
+
+    /**
+     * The shipped Executive_KPI__mdt sample ('Overall_Compliance_Score') runs a
+     * dynamic aggregate over Compliance_Score__c. Because executeKPIQuery uses
+     * AccessLevel.USER_MODE, a Standard User without read access to that object
+     * must NOT receive a real computed value: per-KPI error isolation flags the
+     * metric as hasError instead. This proves the metadata-driven query respects
+     * the running user's object permissions rather than leaking aggregate data.
+     */
+    @isTest
+    static void testGetKPIMetrics_unauthorizedUserGetsNoLeakedValues() {
+        // Seed a Compliance_Score__c so the sample KPI has data to aggregate.
+        Compliance_Score__c score = new Compliance_Score__c(
+            Org_ID__c = UserInfo.getOrganizationId(),
+            Entity_Type__c = 'Organization',
+            Entity_Id__c = UserInfo.getOrganizationId(),
+            Risk_Score__c = 3.0,
+            Calculated_At__c = Datetime.now()
+        );
+        insert as user score;
+
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            List<ElaroExecutiveKPIController.KPIMetric> metrics =
+                ElaroExecutiveKPIController.getKPIMetrics(null);
+            Assert.isNotNull(metrics,
+                'Controller should degrade gracefully, not throw, for an unauthorized user');
+
+            // Any metric backed by an object the user cannot read must be flagged
+            // as an error rather than carrying a computed value.
+            for (ElaroExecutiveKPIController.KPIMetric m : metrics) {
+                if (m.kpiName == 'Overall_Compliance_Score') {
+                    Assert.isTrue(m.hasError == true || m.currentValue == null,
+                        'Unauthorized user must not receive a computed Compliance_Score__c value; '
+                        + 'metric should be flagged hasError or carry no value');
+                }
+            }
+        }
+        Test.stopTest();
+    }
 }

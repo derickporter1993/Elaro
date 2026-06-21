@@ -162,6 +162,113 @@ private class AIGovernanceControllerTest {
     }
 
     /**
+     * A Standard User without the Elaro AI Governance permission set has no
+     * access to AI_System_Registry__c. The controller's WITH USER_MODE query
+     * must therefore surface an AuraHandledException rather than leak data.
+     */
+    @IsTest
+    static void shouldDenyGetRegisteredSystemsForUnauthorizedUser() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                AIGovernanceController.getRegisteredSystems();
+                Assert.fail('Unauthorized user should not be able to read AI systems');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * A Standard User without the Elaro AI Governance permission set cannot
+     * create AI_System_Registry__c records, so insert as user must fail.
+     */
+    @IsTest
+    static void shouldDenyRegisterAISystemForUnauthorizedUser() {
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        AIDetectionEngine.AISystemMetadata metadata = new AIDetectionEngine.AISystemMetadata();
+        metadata.systemType = 'Einstein Bot';
+        metadata.systemName = 'DeniedBot';
+        metadata.detectionMethod = 'Metadata API Scan';
+        String metadataJson = JSON.serialize(metadata);
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                AIGovernanceController.registerAISystem(metadataJson, 'Unauthorized attempt');
+                Assert.fail('Unauthorized user should not be able to register AI systems');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+
+        List<AI_System_Registry__c> denied = [
+            SELECT Id FROM AI_System_Registry__c WHERE Name = 'DeniedBot'
+        ];
+        Assert.areEqual(0, denied.size(),
+            'No AI system should be created by an unauthorized user');
+    }
+
+    /**
+     * A Standard User without the permission set cannot record human oversight
+     * decisions because insert as user enforces object-level create permission.
+     */
+    @IsTest
+    static void shouldDenyRecordOversightDecisionForUnauthorizedUser() {
+        AI_System_Registry__c system = [SELECT Id FROM AI_System_Registry__c LIMIT 1];
+
+        User minimal = ComplianceTestDataFactory.createTestUser();
+        insert minimal;
+
+        Test.startTest();
+        System.runAs(minimal) {
+            try {
+                AIGovernanceController.recordOversightDecision(
+                    system.Id, 'AI output', 'Reject', 'Unauthorized'
+                );
+                Assert.fail('Unauthorized user should not record oversight decisions');
+            } catch (AuraHandledException e) {
+                Assert.isNotNull(e.getMessage(), 'Should surface an authorization error');
+            }
+        }
+        Test.stopTest();
+    }
+
+    /**
+     * When the Elaro AI Governance User permission set IS assigned, the read
+     * endpoint succeeds for the same otherwise-minimal user, confirming the
+     * permission set is what unlocks access.
+     */
+    @IsTest
+    static void shouldAllowGetRegisteredSystemsWithPermissionSet() {
+        User authorized = ComplianceTestDataFactory.createTestUser();
+        insert authorized;
+
+        PermissionSet ps = [
+            SELECT Id FROM PermissionSet
+            WHERE Name = 'Elaro_AI_Governance_User' LIMIT 1
+        ];
+        insert new PermissionSetAssignment(
+            AssigneeId = authorized.Id, PermissionSetId = ps.Id
+        );
+
+        Test.startTest();
+        System.runAs(authorized) {
+            List<AI_System_Registry__c> systems = AIGovernanceController.getRegisteredSystems();
+            Assert.isNotNull(systems,
+                'Authorized user should be able to read AI systems');
+        }
+        Test.stopTest();
+    }
+
+    /**
      * Mock HTTP callout for Tooling API.
      */
     private class ToolingApiMock implements HttpCalloutMock {
