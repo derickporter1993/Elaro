@@ -180,32 +180,10 @@ private class ElaroReasoningEngineTest {
     @IsTest
     static void testGetConfidenceThreshold_Defaults() {
         Test.startTest();
-        Decimal thresholdWhenNull = ElaroReasoningEngine.getConfidenceThreshold(null);
-
-        Elaro_AI_Settings__c settingsWithNullThreshold = new Elaro_AI_Settings__c(
-            Confidence_Threshold__c = null
-        );
-        Decimal thresholdWhenSettingMissing = ElaroReasoningEngine.getConfidenceThreshold(settingsWithNullThreshold);
+        Decimal threshold = ElaroReasoningEngine.getConfidenceThreshold();
         Test.stopTest();
 
-        Assert.areEqual(0.85, thresholdWhenNull, 'Should fall back to minimum confidence when settings are missing');
-        Assert.areEqual(
-            0.85,
-            thresholdWhenSettingMissing,
-            'Should fall back to minimum confidence when threshold is not defined'
-        );
-    }
-
-    @IsTest
-    static void testGetConfidenceThreshold_CustomValue() {
-        Test.startTest();
-        Elaro_AI_Settings__c settings = new Elaro_AI_Settings__c(
-            Confidence_Threshold__c = 0.92
-        );
-        Decimal threshold = ElaroReasoningEngine.getConfidenceThreshold(settings);
-        Test.stopTest();
-
-        Assert.areEqual(0.92, threshold, 'Should respect custom confidence threshold in settings');
+        Assert.areEqual(0.85, threshold, 'Should return minimum confidence threshold');
     }
 
     @IsTest

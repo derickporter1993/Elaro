@@ -55,7 +55,7 @@ public with sharing class ElaroChangeAdvisor {
             currentScores
         );
         
-        // Generate AI explanation
+        // Generate explanation
         String explanation = generateAIExplanation(
             changeType, 
             proposedConfig, 
@@ -203,7 +203,7 @@ public with sharing class ElaroChangeAdvisor {
     }
     
     /**
-     * Generates AI-powered explanation of change impact
+     * Generates Explanation of change impact
      */
     private static String generateAIExplanation(
         String changeType,

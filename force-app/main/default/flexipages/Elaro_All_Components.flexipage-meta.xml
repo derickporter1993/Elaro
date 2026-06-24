@@ -134,7 +134,7 @@
     </flexiPageRegions>
     
     <flexiPageRegions>
-        <!-- Section 6: AI & Copilot -->
+        <!-- Section 6: Copilot -->
         <itemInstances>
             <componentInstance>
                 <componentName>c:elaroCopilot</componentName>
@@ -147,13 +147,7 @@
                 <identifier>complianceCopilot1</identifier>
             </componentInstance>
         </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:elaroAiSettings</componentName>
-                <identifier>elaroAiSettings1</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>aiCopilot</name>
+        <name>copilot</name>
         <type>Region</type>
     </flexiPageRegions>
     

@@ -1,7 +1,7 @@
 /**
- * AI-powered compliance analysis service using Claude API
+ * Compliance analysis service using Claude API
  * Provides event pattern analysis, audit summaries, risk predictions, and event categorization
- * @group AI Governance
+ * @group Utilities
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */
@@ -20,7 +20,7 @@ public with sharing class ElaroComplianceCopilotService {
 
     // System prompt for compliance analysis
     private static final String SYSTEM_PROMPT =
-        'You are Elaro Compliance Copilot, an expert AI assistant specializing in ' +
+        'You are Elaro Compliance Copilot, an expert assistant specializing in ' +
         'regulatory compliance analysis for Salesforce environments. You analyze Shield Event ' +
         'Monitoring data and provide actionable compliance recommendations.\n\n' +
         'Frameworks you understand: HIPAA, SOC 2, NIST 800-53, GDPR, PCI DSS, FedRAMP, FINRA.\n\n' +

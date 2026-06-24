@@ -58,8 +58,8 @@ public class ElaroTestUserFactory {
     }
 
     /**
-     * Create Elaro AI User
-     * User with Elaro_AI_User permission set for AI features
+     * Create Elaro User
+     * User with Elaro_AI_User permission set
      * @return User with Elaro_AI_User permission set assigned
      */
     public static User createElaroAIUser() {

@@ -177,7 +177,8 @@ public with sharing class SlackIntegration {
                     'type' => 'section',
                     'text' => new Map<String, Object>{
                         'type' => 'mrkdwn',
-                        'text' => '*AI Summary:*\n' + digest.get('aiSummary')
+                        'text' => '*Summary:*
+' + digest.get('summary')
                     }
                 },
                 new Map<String, Object>{

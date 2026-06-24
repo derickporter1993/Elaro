@@ -62,14 +62,14 @@
     </fields>
     <fields>
         <fullName>AI_Confidence__c</fullName>
-        <label>AI Confidence Score</label>
+        <label>Confidence Score</label>
         <type>Number</type>
         <precision>5</precision>
         <scale>2</scale>
     </fields>
     <fields>
         <fullName>AI_Explanation__c</fullName>
-        <label>AI Explanation</label>
+        <label>Explanation</label>
         <type>LongTextArea</type>
         <length>32768</length>
         <visibleLines>2</visibleLines>

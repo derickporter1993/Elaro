@@ -35,12 +35,11 @@ public inherited sharing class FeatureFlags {
     }
 
     /**
-     * Checks whether the AI Governance module (EU AI Act / NIST AI RMF) is enabled
-     * for the current user context.
+     * Checks whether the Governance module is enabled for the current user context.
      *
-     * @return {@code true} if AI Governance is enabled or no custom setting exists; {@code false} if explicitly disabled
+     * @return {@code true} if Governance is enabled or no custom setting exists; {@code false} if explicitly disabled
      */
-    public static Boolean isAIGovernanceEnabled() {
+    public static Boolean isGovernanceEnabled() {
         Elaro_Feature_Flags__c flags = Elaro_Feature_Flags__c.getInstance();
         return flags?.AI_Governance_Enabled__c ?? true;
     }

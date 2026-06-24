@@ -195,7 +195,7 @@ public inherited sharing class SlackIntegrationQueueable implements Queueable, D
 
     /**
      * Builds and sends a daily compliance digest message to Slack containing
-     * score summary, event statistics, and an AI-generated summary.
+     * score summary, event statistics, and a generated summary.
      */
     private void executeSendDailyDigest() {
         Map<String, Object> digest = (Map<String, Object>) JSON.deserializeUntyped(this.payload);
@@ -224,7 +224,8 @@ public inherited sharing class SlackIntegrationQueueable implements Queueable, D
                     'type' => 'section',
                     'text' => new Map<String, Object>{
                         'type' => 'mrkdwn',
-                        'text' => '*AI Summary:*\n' + digest.get('aiSummary')
+                        'text' => '*Summary:*
+' + digest.get('summary')
                     }
                 },
                 new Map<String, Object>{

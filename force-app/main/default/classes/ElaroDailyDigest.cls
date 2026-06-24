@@ -1,6 +1,6 @@
 /**
  * Schedulable class for daily compliance digest
- * Sends daily summary at 6 AM with statistics, top risks, and AI summary
+ * Sends daily summary at 6 AM with statistics, top risks, and a generated summary
  * @group System Monitoring
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
@@ -118,8 +118,8 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         // Get compliance score
         digest.complianceScore = getComplianceScore();
         
-        // Generate AI summary
-        digest.aiSummary = generateAISummary(digest);
+        // Generate summary
+        digest.summary = generateSummary(digest);
         
         // Get trending information
         digest.trendingUp = getTrendingItems('UP');
@@ -241,9 +241,9 @@ public with sharing class ElaroDailyDigest implements Schedulable {
     }
     
     /**
-     * Generate AI summary for the digest
+     * Generate summary for the digest
      */
-    private static String generateAISummary(DigestData digest) {
+    private static String generateSummary(DigestData digest) {
         // Build summary from data
         List<String> summaryPoints = new List<String>();
         
@@ -384,8 +384,8 @@ public with sharing class ElaroDailyDigest implements Schedulable {
             '<tr><td style="padding:8px;border-bottom:1px solid #ddd;">Resolved</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:right;font-weight:bold;color:#4caf50;">' + digest.statistics.resolvedEvents + '</td></tr>' +
             '</table>' +
             
-            '<h2 style="color:#032d60;margin-top:20px;">🤖 AI Summary</h2>' +
-            '<p style="background:#e3f2fd;padding:15px;border-radius:8px;border-left:4px solid #2196f3;">' + digest.aiSummary + '</p>';
+            '<h2 style="color:#032d60;margin-top:20px;">📋 Summary</h2>' +
+            '<p style="background:#e3f2fd;padding:15px;border-radius:8px;border-left:4px solid #2196f3;">' + digest.summary + '</p>';
         
         if (!digest.topRisks.isEmpty()) {
             html += '<h2 style="color:#032d60;">⚠️ Top Risks</h2><ul>';
@@ -426,7 +426,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
                     'type' => 'section',
                     'text' => new Map<String, Object>{
                         'type' => 'mrkdwn',
-                        'text' => '*AI Summary:* ' + digest.aiSummary
+                        'text' => '*Summary:* ' + digest.summary
                     }
                 }
             }
@@ -464,7 +464,7 @@ public with sharing class ElaroDailyDigest implements Schedulable {
         @AuraEnabled public EventStatistics statistics;
         @AuraEnabled public List<RiskItem> topRisks;
         @AuraEnabled public Decimal complianceScore;
-        @AuraEnabled public String aiSummary;
+        @AuraEnabled public String summary;
         @AuraEnabled public List<String> trendingUp;
         @AuraEnabled public List<String> trendingDown;
     }

@@ -1,5 +1,5 @@
 /**
- * Service for generating AI-assisted remediation suggestions for compliance gaps.
+ * Service for generating Compliance-assisted remediation suggestions for compliance gaps.
  * Analyzes gap type, severity, and framework to provide actionable remediation recommendations.
  *
  * Features:
