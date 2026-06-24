@@ -13,4 +13,12 @@ export default {
     "<rootDir>/force-app-healthcheck/main/default/lwc/__tests__/setupTests.js",
   ],
   setupFilesAfterEnv: ["<rootDir>/force-app/main/default/lwc/__tests__/setupTests.js"],
+  coverageThreshold: {
+    global: {
+      lines: 85,
+      functions: 85,
+      branches: 75,
+      statements: 85,
+    },
+  },
 };

@@ -136,6 +136,17 @@ jobs:
           test -d force-app/main/default/objects && echo "✅ Objects directory found"
           test -f sfdx-project.json && echo "✅ sfdx-project.json found"
 
+      - name: Check for Unresolved Packaging Placeholders
+        run: |
+          echo "🔍 Checking sfdx-project.json for unresolved TODO placeholders..."
+          if grep -q '_TODO_' sfdx-project.json; then
+            echo "❌ ERROR: sfdx-project.json contains unresolved _TODO_ placeholders."
+            echo "These must be resolved before creating a package version:"
+            grep '_TODO_' sfdx-project.json
+            exit 1
+          fi
+          echo "✅ No _TODO_ placeholders found in sfdx-project.json"
+
   cli-build:
     runs-on: ubuntu-latest
     needs: code-quality

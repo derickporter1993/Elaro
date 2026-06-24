@@ -28,7 +28,7 @@
                     <div class="slds-section slds-is-open">
                         <h3 class="slds-section__title">
                             <span class="slds-truncate slds-p-horizontal_small" title="Pending Review">
-                                <lightning-icon icon-name="utility:clock" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                <lightning-icon icon-name="utility:clock" size="x-small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
                                 Pending Review ({pendingSuggestions.length})
                             </span>
                         </h3>
@@ -38,7 +38,7 @@
                                     <div class="slds-card__header slds-grid">
                                         <header class="slds-media slds-media_center slds-has-flexi-truncate">
                                             <div class="slds-media__figure">
-                                                <lightning-icon icon-name={suggestion.typeIcon} size="small"></lightning-icon>
+                                                <lightning-icon icon-name={suggestion.typeIcon} size="small" aria-hidden="true"></lightning-icon>
                                             </div>
                                             <div class="slds-media__body">
                                                 <h2 class="slds-card__header-title">
@@ -108,7 +108,7 @@
                     <div class="slds-section slds-is-open slds-m-top_medium">
                         <h3 class="slds-section__title">
                             <span class="slds-truncate slds-p-horizontal_small" title="Ready to Execute">
-                                <lightning-icon icon-name="utility:success" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                <lightning-icon icon-name="utility:success" size="x-small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
                                 Ready to Execute ({approvedSuggestions.length})
                             </span>
                         </h3>
@@ -118,7 +118,7 @@
                                     <div class="slds-card__header slds-grid">
                                         <header class="slds-media slds-media_center slds-has-flexi-truncate">
                                             <div class="slds-media__figure">
-                                                <lightning-icon icon-name={suggestion.typeIcon} size="small"></lightning-icon>
+                                                <lightning-icon icon-name={suggestion.typeIcon} size="small" aria-hidden="true"></lightning-icon>
                                             </div>
                                             <div class="slds-media__body">
                                                 <h2 class="slds-card__header-title">
@@ -165,7 +165,7 @@
                     <div class="slds-section slds-is-open slds-m-top_medium">
                         <h3 class="slds-section__title">
                             <span class="slds-truncate slds-p-horizontal_small" title="History">
-                                <lightning-icon icon-name="utility:date_time" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                                <lightning-icon icon-name="utility:date_time" size="x-small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
                                 History ({processedSuggestions.length})
                             </span>
                         </h3>
@@ -216,7 +216,7 @@
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeRejectModal}>
-                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse" aria-hidden="true"></lightning-icon>
                         <span class="slds-assistive-text">Close</span>
                     </button>
                     <h2 id="reject-modal-heading" class="slds-modal__title">Reject Suggestion</h2>
@@ -253,7 +253,7 @@
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
                     <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeManualApplyModal}>
-                        <lightning-icon icon-name="utility:close" size="small" variant="inverse"></lightning-icon>
+                        <lightning-icon icon-name="utility:close" size="small" variant="inverse" aria-hidden="true"></lightning-icon>
                         <span class="slds-assistive-text">Close</span>
                     </button>
                     <h2 id="manual-apply-modal-heading" class="slds-modal__title">Mark as Manually Applied</h2>

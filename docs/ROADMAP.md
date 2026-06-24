@@ -1,6 +1,6 @@
 # Elaro Product Roadmap
 
-**Last Updated**: 2026-01-09
+**Last Updated**: 2026-06-24
 
 This roadmap outlines Elaro's evolution from a compliance drift detector to a comprehensive Salesforce governance platform.
 
@@ -14,19 +14,33 @@ Elaro starts as a **compliance drift guardrail** for regulated organizations, th
 
 ---
 
-## Release Strategy
+## Current Version
 
-- **v1.x**: Compliance Drift Baseline (focus on detection & evidence)
-- **v2.x**: Multi-Org Governance (scale to enterprise)
-- **v3.x**: Automated Remediation (shift from detect to prevent)
-- **v4.x+**: Policy-as-Code & AppExchange (platform maturity)
+**v3.1.0** (Spring '26) — AppExchange readiness and enterprise-grade compliance automation.
+
+See [CHANGELOG.md](CHANGELOG.md) for the full release history.
 
 ---
 
-## ✅ v1.0 — Compliance Drift Baseline (CURRENT)
+## Release History (Completed)
 
-**Released**: 2025-01-15
-**Status**: ✅ Complete
+- **v1.0 (Mar 2025)**: Compliance Drift Baseline — detection, scoring, evidence export
+- **v2.0 (Sep 2025)**: Multi-Org Foundation — rebranded from Sentinel, real-time governor limit monitoring, Compliance Copilot
+- **v2.5 (Dec 2025)**: Extended Frameworks — GDPR, CCPA, GLBA, ISO 27001, improved scoring
+- **v3.0 (Jan 2026)**: AppExchange Readiness — security hardening, post-install automation, external service documentation
+- **v3.1 (Spring 2026)**: AppExchange Submission — static analysis clean, ProtectSensitiveData dispositions, CI hardening
+
+---
+
+## Release Strategy (Upcoming)
+
+- **v3.2**: Accessibility + platform test coverage completion (Q3 2026)
+- **v4.x**: Shield Event Monitoring integration, Gold Image drift guard, OSCAL evidence export
+- **v5.x+**: Off-platform compute (AWS), Policy-as-Code enforcement, multi-org governance
+
+---
+
+## 🚧 v3.2 — Accessibility & Platform Hardening (In Progress)
 
 ### Goals
 

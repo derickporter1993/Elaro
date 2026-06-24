@@ -58,7 +58,7 @@
           <!-- Priority -->
           <div class="slds-col slds-size_1-of-2 slds-m-bottom_small">
             <div class="slds-text-title_caps slds-m-bottom_xx-small">Priority</div>
-            <lightning-icon icon-name={priorityIcon} size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+            <lightning-icon icon-name={priorityIcon} size="x-small" class="slds-m-right_xx-small" aria-hidden="true"></lightning-icon>
             <span>{issue.priority}</span>
           </div>
 
@@ -70,6 +70,7 @@
                 icon-name="standard:user"
                 size="x-small"
                 class="slds-m-right_xx-small"
+                aria-hidden="true"
               ></lightning-icon>
               <span>{issue.assignee}</span>
             </template>
@@ -116,7 +117,7 @@
       <div class="slds-p-around_medium">
         <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
           <span class="slds-assistive-text">Error</span>
-          <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+          <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
           <span>{error}</span>
         </div>
       </div>

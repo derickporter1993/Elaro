@@ -8,8 +8,8 @@
 
         <template lwc:elseif={hasError}>
             <div class="slds-notify slds-notify_alert slds-alert_error slds-var-m-around_medium" role="alert">
-                <lightning-icon icon-name="utility:error" variant="inverse" size="x-small"
-                    class="slds-var-m-right_x-small"></lightning-icon>
+                            <lightning-icon icon-name="utility:error" variant="inverse" size="x-small"
+                                    class="slds-var-m-right_x-small" aria-hidden="true"></lightning-icon>
                 <span>{label.CC_ErrorLoading}</span>
             </div>
         </template>

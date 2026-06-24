@@ -16,6 +16,7 @@
               icon-name="custom:custom53"
               size="small"
               class="slds-m-right_x-small"
+              aria-hidden="true"
             ></lightning-icon>
             Create Jira Issue
           </h2>
@@ -51,7 +52,7 @@
             <template lwc:if={error}>
               <div class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium" role="alert">
                 <span class="slds-assistive-text">Error</span>
-                <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small"></lightning-icon>
+                <lightning-icon icon-name="utility:error" size="small" class="slds-m-right_x-small" aria-hidden="true"></lightning-icon>
                 <span>{error}</span>
               </div>
             </template>
