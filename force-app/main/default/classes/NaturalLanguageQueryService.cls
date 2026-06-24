@@ -1,10 +1,10 @@
 /**
  * Natural language to SOQL conversion service.
- * Uses AI to convert natural language queries to SOQL and execute them.
+ * Converts natural language queries to SOQL and execute them.
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group AI Governance
+ * @group Utilities
  */
 public with sharing class NaturalLanguageQueryService {
     
@@ -69,7 +69,7 @@ public with sharing class NaturalLanguageQueryService {
             String secureSOQL = addSecurityEnforced(generatedSOQL);
 
             // Execute query with security enforcement using queryWithBinds
-            // NOPMD ApexSOQLInjection - AI-generated SOQL validated by isSOQLSafe() against object allowlist and DML keyword blocklist
+            // NOPMD ApexSOQLInjection - generated SOQL validated by isSOQLSafe() against object allowlist and DML keyword blocklist
             Map<String, Object> binds = new Map<String, Object>();
             List<SObject> rawResults = Database.queryWithBinds(
                 secureSOQL, binds, AccessLevel.USER_MODE
@@ -203,7 +203,7 @@ public with sharing class NaturalLanguageQueryService {
     // ═══════════════════════════════════════════════════════════════
     
     /**
-     * Generate SOQL from natural language using AI
+     * Generate SOQL from natural language
      */
     private static String generateSOQL(String naturalLanguageQuery) {
         // Check cache
@@ -228,7 +228,7 @@ public with sharing class NaturalLanguageQueryService {
     }
     
     /**
-     * Call AI to generate SOQL
+     * Call API to generate SOQL
      */
     private static String callAIForSOQL(String query) {
         String prompt = buildSOQLPrompt(query);
@@ -257,7 +257,7 @@ public with sharing class NaturalLanguageQueryService {
         HttpResponse res = http.send(req);
         
         if (res.getStatusCode() != 200) {
-            throw new CalloutException('AI API error');
+            throw new CalloutException('API error');
         }
         
         return extractSOQLFromResponse(res.getBody());
@@ -277,7 +277,7 @@ public with sharing class NaturalLanguageQueryService {
     }
     
     /**
-     * Extract SOQL from AI response
+     * Extract SOQL from API response
      */
     private static String extractSOQLFromResponse(String response) {
         try {

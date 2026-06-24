@@ -1,7 +1,7 @@
 /**
- * AI-powered root cause analysis engine for compliance events
+ * Root cause analysis engine for compliance events
  * Uses Claude API to analyze event chains and identify root causes
- * @group AI Governance
+ * @group Utilities
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  */
@@ -55,7 +55,7 @@ public with sharing class RootCauseAnalysisEngine {
             // Build analysis context
             AnalysisContext context = buildAnalysisContext(primaryEvent, relatedEvents);
             
-            // Call AI for root cause analysis
+            // Call analysis service for root cause analysis
             RootCauseResult result = performAIAnalysis(context);
             result.eventId = eventId;
             
@@ -189,7 +189,7 @@ public with sharing class RootCauseAnalysisEngine {
     }
     
     /**
-     * Build analysis context for AI
+     * Build analysis context
      */
     private static AnalysisContext buildAnalysisContext(Elaro_Evidence_Item__c primary, 
                                                         List<Elaro_Evidence_Item__c> related) {
@@ -209,13 +209,13 @@ public with sharing class RootCauseAnalysisEngine {
     }
     
     /**
-     * Perform AI analysis
+     * Perform analysis
      */
     private static RootCauseResult performAIAnalysis(AnalysisContext context) {
         // Build prompt
         String prompt = buildRCAPrompt(context);
         
-        // Call AI (using mock in tests)
+        // Call analysis service (using mock in tests)
         String response;
         if (Test.isRunningTest()) {
             response = getMockRCAResponse();
@@ -247,7 +247,7 @@ public with sharing class RootCauseAnalysisEngine {
     }
     
     /**
-     * Call AI service
+     * Call analysis service
      */
     private static String callAI(String prompt) {
         HttpRequest req = new HttpRequest();
@@ -274,7 +274,7 @@ public with sharing class RootCauseAnalysisEngine {
         HttpResponse res = http.send(req);
         
         if (res.getStatusCode() != 200) {
-            throw new CalloutException('AI API error: ' + res.getBody());
+            throw new CalloutException('API error: ' + res.getBody());
         }
         
         return res.getBody();

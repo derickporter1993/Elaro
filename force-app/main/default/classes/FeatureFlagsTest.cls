@@ -21,7 +21,7 @@ private class FeatureFlagsTest {
         Test.startTest();
         Boolean commandCenter = FeatureFlags.isCommandCenterEnabled();
         Boolean eventMonitoring = FeatureFlags.isEventMonitoringEnabled();
-        Boolean aiGovernance = FeatureFlags.isAIGovernanceEnabled();
+        Boolean aiGovernance = FeatureFlags.isGovernanceEnabled();
         Boolean secModule = FeatureFlags.isSECModuleEnabled();
         Boolean trustCenter = FeatureFlags.isTrustCenterEnabled();
         Boolean assessmentWizard = FeatureFlags.isAssessmentWizardEnabled();
@@ -29,7 +29,7 @@ private class FeatureFlagsTest {
 
         Assert.isTrue(commandCenter, 'Command Center should default to enabled');
         Assert.isTrue(eventMonitoring, 'Event Monitoring should default to enabled');
-        Assert.isTrue(aiGovernance, 'AI Governance should default to enabled');
+        Assert.isTrue(aiGovernance, 'Governance should default to enabled');
         Assert.isTrue(secModule, 'SEC Module should default to enabled');
         Assert.isTrue(trustCenter, 'Trust Center should default to enabled');
         Assert.isTrue(assessmentWizard, 'Assessment Wizard should default to enabled');
@@ -81,10 +81,10 @@ private class FeatureFlagsTest {
     }
 
     /**
-     * Verifies that AI Governance flag returns {@code false} when explicitly disabled.
+     * Verifies that Governance flag returns {@code false} when explicitly disabled.
      */
     @IsTest
-    static void shouldReturnFalseWhenAIGovernanceDisabled() {
+    static void shouldReturnFalseWhenGovernanceDisabled() {
         Elaro_Feature_Flags__c flags = new Elaro_Feature_Flags__c(
             Command_Center_Enabled__c = true,
             Event_Monitoring_Enabled__c = true,
@@ -96,10 +96,10 @@ private class FeatureFlagsTest {
         insert as user flags;
 
         Test.startTest();
-        Boolean result = FeatureFlags.isAIGovernanceEnabled();
+        Boolean result = FeatureFlags.isGovernanceEnabled();
         Test.stopTest();
 
-        Assert.isFalse(result, 'AI Governance should be disabled when flag is false');
+        Assert.isFalse(result, 'Governance should be disabled when flag is false');
     }
 
     /**
@@ -186,7 +186,7 @@ private class FeatureFlagsTest {
         Test.startTest();
         Boolean commandCenter = FeatureFlags.isCommandCenterEnabled();
         Boolean eventMonitoring = FeatureFlags.isEventMonitoringEnabled();
-        Boolean aiGovernance = FeatureFlags.isAIGovernanceEnabled();
+        Boolean aiGovernance = FeatureFlags.isGovernanceEnabled();
         Boolean secModule = FeatureFlags.isSECModuleEnabled();
         Boolean trustCenter = FeatureFlags.isTrustCenterEnabled();
         Boolean assessmentWizard = FeatureFlags.isAssessmentWizardEnabled();
@@ -194,7 +194,7 @@ private class FeatureFlagsTest {
 
         Assert.isFalse(commandCenter, 'Command Center should be disabled');
         Assert.isFalse(eventMonitoring, 'Event Monitoring should be disabled');
-        Assert.isFalse(aiGovernance, 'AI Governance should be disabled');
+        Assert.isFalse(aiGovernance, 'Governance should be disabled');
         Assert.isFalse(secModule, 'SEC Module should be disabled');
         Assert.isFalse(trustCenter, 'Trust Center should be disabled');
         Assert.isFalse(assessmentWizard, 'Assessment Wizard should be disabled');

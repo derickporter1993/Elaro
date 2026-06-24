@@ -88,12 +88,6 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
   scoreThreshold = "70";
   selectedSeverities = ["CRITICAL", "HIGH"];
 
-  // AI settings
-  enableAI = true;
-  requireApproval = true;
-  autoRemediate = false;
-  confidenceThreshold = 85;
-
   // Setup state
   isSaving = false;
   setupComplete = false;
@@ -114,12 +108,9 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
   get isStep4() {
     return this.currentStep === "4";
   }
-  get isStep5() {
-    return this.currentStep === "5";
-  }
 
   get showConfirmation() {
-    return this.isStep5 && !this.isSaving && !this.setupComplete;
+    return this.isStep4 && !this.isSaving && !this.setupComplete;
   }
 
   // Framework getters
@@ -148,11 +139,6 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
       .join(", ");
   }
 
-  // AI getters
-  get confidenceThresholdDisplay() {
-    return this.confidenceThreshold;
-  }
-
   // Status getters for summary
   get emailNotificationStatus() {
     return this.enableEmailNotifications ? "Enabled" : "Disabled";
@@ -160,10 +146,6 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
 
   get slackNotificationStatus() {
     return this.enableSlackNotifications ? "Enabled" : "Disabled";
-  }
-
-  get aiStatus() {
-    return this.enableAI ? "Enabled" : "Disabled";
   }
 
   // Navigation getters
@@ -174,12 +156,12 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
   get isNextDisabled() {
     if (this.isSaving || this.setupComplete) return true;
     if (this.currentStep === "2" && this.selectedFrameworks.length === 0) return true;
-    if (this.currentStep === "5") return true;
+    if (this.currentStep === "4") return true;
     return false;
   }
 
   get nextButtonLabel() {
-    if (this.currentStep === "4") return "Review";
+    if (this.currentStep === "3") return "Review";
     return "Next";
   }
 
@@ -218,23 +200,6 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
     this.selectedSeverities = event.detail.value;
   }
 
-  // AI handlers
-  handleAIToggle(event) {
-    this.enableAI = event.target.checked;
-  }
-
-  handleApprovalToggle(event) {
-    this.requireApproval = event.target.checked;
-  }
-
-  handleRemediationToggle(event) {
-    this.autoRemediate = event.target.checked;
-  }
-
-  handleConfidenceChange(event) {
-    this.confidenceThreshold = event.detail.value;
-  }
-
   // Navigation handlers
   handlePrevious() {
     const step = parseInt(this.currentStep, 10);
@@ -245,7 +210,7 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
 
   handleNext() {
     const step = parseInt(this.currentStep, 10);
-    if (step < 5) {
+    if (step < 4) {
       this.currentStep = String(step + 1);
     }
   }
@@ -267,10 +232,6 @@ export default class ElaroSetupWizard extends NavigationMixin(LightningElement) 
       //   slackWebhookUrl: this.slackWebhookUrl,
       //   scoreThreshold: this.scoreThreshold,
       //   severities: this.selectedSeverities,
-      //   enableAI: this.enableAI,
-      //   requireApproval: this.requireApproval,
-      //   autoRemediate: this.autoRemediate,
-      //   confidenceThreshold: this.confidenceThreshold
       // });
 
       this.setupComplete = true;

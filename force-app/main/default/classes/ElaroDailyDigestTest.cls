@@ -186,7 +186,7 @@ private class ElaroDailyDigestTest {
         Assert.areNotEqual(null, digest.statistics, 'Should have statistics');
         Assert.areNotEqual(null, digest.topRisks, 'Should have top risks');
         Assert.areNotEqual(null, digest.complianceScore, 'Should have compliance score');
-        Assert.areNotEqual(null, digest.aiSummary, 'Should have AI summary');
+        Assert.areNotEqual(null, digest.summary, 'Should have summary');
     }
     
     @isTest
@@ -225,7 +225,7 @@ private class ElaroDailyDigestTest {
         
         Assert.areNotEqual(null, digest, 'Should return digest even with minimal data');
         Assert.areNotEqual(null, digest.complianceScore, 'Should have compliance score');
-        Assert.areNotEqual(null, digest.aiSummary, 'Should have AI summary');
+        Assert.areNotEqual(null, digest.summary, 'Should have summary');
     }
     
     // ═══════════════════════════════════════════════════════════════

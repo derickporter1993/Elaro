@@ -27,9 +27,6 @@ global without sharing class ElaroInstallHandler implements InstallHandler {
             // Log installation event
             logInstallation(context);
 
-            // Initialize AI settings if not present
-            initializeAISettings();
-
             // Create welcome audit log entry
             createWelcomeAuditLog(context);
 
@@ -77,38 +74,6 @@ global without sharing class ElaroInstallHandler implements InstallHandler {
     }
 
     /**
-     * Initialize AI settings with default values if not present
-     * Creates Elaro_AI_Settings__c custom settings record
-     */
-    private void initializeAISettings() {
-        // Check if AI settings already exist
-        Elaro_AI_Settings__c existingSettings = Elaro_AI_Settings__c.getOrgDefaults();
-
-        if (existingSettings == null || existingSettings.Id == null) {
-            // Create default AI settings
-            Elaro_AI_Settings__c defaultSettings = new Elaro_AI_Settings__c(
-                SetupOwnerId = UserInfo.getOrganizationId(), // Organization-wide default
-                AI_Enabled__c = false, // Disabled by default - admin must enable after configuring Named Credential
-                Model_Name__c = 'claude-sonnet-4-20250514', // Latest Claude model
-                Max_Tokens__c = 4096,
-                Temperature__c = 0.7,
-                Cache_Enabled__c = true,
-                Cache_TTL_Minutes__c = 60,
-                Timeout_Seconds__c = 60
-            );
-
-            try {
-                insert as user defaultSettings;
-                ElaroLogger.info( 'Created default AI settings: ' + defaultSettings.Id);
-            } catch (DmlException e) {
-                ElaroLogger.warn( 'Could not create AI settings (may already exist): ' + e.getMessage());
-            }
-        } else {
-            ElaroLogger.info( 'AI settings already exist: ' + existingSettings.Id);
-        }
-    }
-
-    /**
      * Create welcome audit log entry
      * @param context Installation context
      */
@@ -123,8 +88,8 @@ global without sharing class ElaroInstallHandler implements InstallHandler {
                                   context.isUpgrade() ? 'Upgrade' : 'Push Upgrade';
 
         String message = context.isInstall() ?
-            'Welcome to Elaro v3.0! Your AI-powered compliance platform is ready. ' +
-            'Next steps: (1) Assign permission sets, (2) Configure Named Credentials for AI/integrations, ' +
+            'Welcome to Elaro v3.0! Your compliance platform is ready. ' +
+            'Next steps: (1) Assign permission sets, (2) Configure Named Credentials for integrations, ' +
             '(3) Run initial compliance scan, (4) Configure compliance frameworks.' :
             'Elaro has been upgraded successfully. Previous version: ' +
             (context.previousVersion() != null ? String.valueOf(context.previousVersion()) : 'Unknown');
@@ -193,7 +158,7 @@ global without sharing class ElaroInstallHandler implements InstallHandler {
                 String chatterMessage = context.isInstall() ?
                     '🚀 Elaro v3.0 has been installed! Next steps:\n\n' +
                     '1️⃣ Review installation guide: Setup → Apps → Elaro\n' +
-                    '2️⃣ Configure Named Credentials for AI features\n' +
+                    '2️⃣ Configure Named Credentials for integrations\n' +
                     '3️⃣ Assign permission sets to users\n' +
                     '4️⃣ Run initial compliance scan\n\n' +
                     'Questions? Visit the Elaro documentation.' :

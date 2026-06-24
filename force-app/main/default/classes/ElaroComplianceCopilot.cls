@@ -10,7 +10,7 @@
  * @author Elaro
  * @version 1.0
  * @since v3.1.0 (Spring '26)
- * @group AI Governance
+ * @group Utilities
  */
 public with sharing class ElaroComplianceCopilot {
 

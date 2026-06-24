@@ -3,7 +3,7 @@
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Elaro Copilot</masterLabel>
-    <description>AI-powered compliance assistant with natural language interface</description>
+    <description>Compliance assistant with natural language interface</description>
     <targets>
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>

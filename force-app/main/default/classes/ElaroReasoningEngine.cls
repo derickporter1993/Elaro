@@ -4,7 +4,7 @@
  * This class uses `without sharing` because:
  * 1. Big Object queries require system-level access to read Elaro_Compliance_Graph__b records
  * 2. Cross-org compliance analysis may need to access data across different sharing contexts
- * 3. AI adjudication logging must be accessible regardless of user permissions for audit purposes
+ * 3. Adjudication logging must be accessible regardless of user permissions for audit purposes
  * 4. The reasoning engine operates on compliance metadata that should be accessible to all authorized users
  * 
  * Security is maintained through:
@@ -21,48 +21,22 @@
 public without sharing class ElaroReasoningEngine {
     private static final Decimal MIN_CONFIDENCE = 0.85;
 
-    /**
-     * Null-safe accessor for AI Settings
-     * Returns default settings if org default doesn't exist
-     */
-    private static Elaro_AI_Settings__c getAISettingsSafe() {
-        Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getInstance();
-        if (settings == null) {
-            // Return default settings object (not persisted, but safe for reading)
-            return new Elaro_AI_Settings__c(
-                Enable_AI_Reasoning__c = true,
-                Confidence_Threshold__c = MIN_CONFIDENCE
-            );
-        }
-        return settings;
-    }
-
     @TestVisible
-    private static Decimal getConfidenceThreshold(Elaro_AI_Settings__c settings) {
-        if (settings == null || settings.Confidence_Threshold__c == null) {
-            return MIN_CONFIDENCE;
-        }
-        return settings.Confidence_Threshold__c;
+    private static Decimal getConfidenceThreshold() {
+        return MIN_CONFIDENCE;
     }
 
     public static ReasoningResult explainViolation(String nodeHash, String framework) {
         Elaro_Compliance_Graph__b node = queryGraphNode(nodeHash);
-        Elaro_AI_Settings__c settings = getAISettingsSafe();
 
-        // Null-safe check for settings - use fallback reasoning if AI not enabled
-        if (settings == null || !settings.Enable_AI_Reasoning__c) {
-            return generateFallbackReasoning(node, framework);
-        }
-
-        // Simplified reasoning without Custom Metadata Type dependency
-        // In production, if Compliance_Policy__mdt is required, create it or use alternative approach
+        // Simplified reasoning
         Decimal riskScore = node.Risk_Score__c != null ? node.Risk_Score__c : 0.0;
         Boolean isViolation = riskScore >= 8.0;
         Decimal confidence = riskScore >= 8.0 ? 0.9 : riskScore >= 5.0 ? 0.7 : 0.5;
 
         String explanation = buildSimpleExplanation(node, riskScore, framework);
         String adjudicationId = logAdjudication(nodeHash, explanation, confidence);
-        Decimal confidenceThreshold = getConfidenceThreshold(settings);
+        Decimal confidenceThreshold = getConfidenceThreshold();
 
         return new ReasoningResult(
             isViolation,
@@ -145,7 +119,7 @@ public without sharing class ElaroReasoningEngine {
 
     private static String logAdjudication(String nodeHash, String explanation, Decimal confidence) {
         // Use stable inputs for deterministic hash (no time component)
-        String adjudicationHash = ElaroGraphIndexer.generateDeterministicHash('AI_ADJUDICATION', nodeHash + UserInfo.getUserId(), 'ADJUDICATION');
+        String adjudicationHash = ElaroGraphIndexer.generateDeterministicHash('ADJUDICATION', nodeHash + UserInfo.getUserId(), 'ADJUDICATION');
 
         // Note: Big Objects can only query on indexed fields, so we skip duplicate check here
         // In production, consider maintaining a separate lookup table for adjudications
@@ -154,7 +128,7 @@ public without sharing class ElaroReasoningEngine {
             Graph_Node_Id__c = adjudicationHash,
             Parent_Node_Id__c = nodeHash,
             Timestamp__c = System.now(),
-            Entity_Type__c = 'AI_ADJUDICATION',
+            Entity_Type__c = 'ADJUDICATION',
             AI_Explanation__c = explanation,
             AI_Confidence__c = confidence,
             Human_Adjudicator__c = UserInfo.getUserId(),
@@ -178,18 +152,6 @@ public without sharing class ElaroReasoningEngine {
                 'StackTrace: ' + e.getStackTraceString());
             throw new ReasoningException('Failed to log adjudication for node ' + nodeHash + ': ' + dmlMsg);
         }
-    }
-
-    private static ReasoningResult generateFallbackReasoning(Elaro_Compliance_Graph__b node, String framework) {
-        return new ReasoningResult(
-            (node.Risk_Score__c ?? 0.0) >= 8.0,
-            0.0,
-            'MANUAL_REVIEW',
-            'N/A',
-            'Manual review required for ' + escapeHtml(node.Entity_Record_Id__c ?? 'UNKNOWN'),
-            node.Graph_Node_Id__c,
-            true
-        );
     }
 
     public class ReasoningResult {
