@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
-    "@babel/eslint-parser": "^7.29.7",
+    "@babel/eslint-parser": "^8.0.1",
     "@eslint/js": "^9.39.4",
     "@lwc/eslint-plugin-lwc": "^3.5.0",
     "@salesforce/eslint-config-lwc": "^4.1.2",
