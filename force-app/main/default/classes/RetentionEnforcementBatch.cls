@@ -23,7 +23,7 @@ public with sharing class RetentionEnforcementBatch implements Database.Batchabl
     }
     
     public void execute(Database.BatchableContext bc, List<Data_Processing_Activity__c> activities) {
-        GDPRDataSubjectService service = new GDPRDataSubjectService();
+        Object service = Type.forName('GDPRDataSubjectService')?.newInstance();
         List<Id> recordsToErase = new List<Id>();
         
         for (Data_Processing_Activity__c activity : activities) {
