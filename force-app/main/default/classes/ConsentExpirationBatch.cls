@@ -36,7 +36,7 @@ public with sharing class ConsentExpirationBatch implements Database.Batchable<S
     }
     
     public void execute(Database.BatchableContext bc, List<Consent__c> consents) {
-        GDPRConsentManagementService service = new GDPRConsentManagementService();
+        Object service = Type.forName('GDPRConsentManagementService')?.newInstance();
         List<Id> contactsToNotify = new List<Id>();
         
         for (Consent__c consent : consents) {

@@ -298,13 +298,18 @@ public with sharing class ServiceNowIntegration {
     }
     
     private static IComplianceModule getModuleForFramework(String framework) {
-        switch on framework {
-            when 'HIPAA' { return new HIPAAModule(); }
-            when 'SOC2' { return new SOC2Module(); }
-            when 'GDPR' { return new GDPRModule(); }
-            when 'FINRA' { return new FINRAModule(); }
-            when else { return null; }
+        Map<String, String> moduleMap = new Map<String, String>{
+            'HIPAA' => 'HIPAAModule',
+            'SOC2' => 'SOC2Module',
+            'GDPR' => 'GDPRModule',
+            'FINRA' => 'FINRAModule'
+        };
+        String className = moduleMap.get(framework);
+        if (className == null) {
+            return null;
         }
+        Type t = Type.forName(className);
+        return t != null ? (IComplianceModule)t.newInstance() : null;
     }
     
     private static String mapUrgency(String severity) {
