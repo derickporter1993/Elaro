@@ -48,6 +48,9 @@ Desktop.ini
 *.auth
 *_auth.json
 
+# Elaro finish-loop engine working dir (evidence/state/reports)
+.elaro-loop/
+
 # Security - NEVER commit credentials
 .env
 .env.*
