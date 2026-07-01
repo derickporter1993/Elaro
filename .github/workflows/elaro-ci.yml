@@ -160,6 +160,10 @@ jobs:
         working-directory: platform
         run: npm run build
 
+      - name: Run Platform Tests
+        working-directory: platform
+        run: npm run test
+
       - name: Verify Platform Build Output
         run: |
           echo "Verifying platform build artifacts..."
