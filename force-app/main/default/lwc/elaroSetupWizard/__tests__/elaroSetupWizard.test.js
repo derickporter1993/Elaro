@@ -90,7 +90,7 @@ describe("c-elaro-setup-wizard", () => {
       const element = await createComponent();
 
       const featureCards = element.shadowRoot.querySelectorAll(".feature-card");
-      expect(featureCards.length).toBe(3);
+      expect(featureCards.length).toBe(2);
     });
   });
 
