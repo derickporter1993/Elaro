@@ -52,7 +52,6 @@ Validate both Salesforce package directories independently before release.
 - CMMC 2.0
 - NIS2
 - DORA
-- EU AI Act and NIST AI RMF
 
 ## Repository Layout
 

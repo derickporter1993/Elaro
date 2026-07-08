@@ -4,7 +4,7 @@
         <headerColor>#0176D3</headerColor>
         <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
     </brand>
-    <description>Elaro - AI-Powered Compliance &amp; Governance Platform for Salesforce</description>
+    <description>Elaro - Compliance &amp; Governance Platform for Salesforce</description>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>

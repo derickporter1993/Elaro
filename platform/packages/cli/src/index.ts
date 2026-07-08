@@ -17,8 +17,8 @@ program
   .name("elaro")
   .description(
     chalk.bold("Elaro CLI") +
-      " - AI Compliance Brain for Salesforce\n\n" +
-      "  Court-defensible compliance and AI governance platform for regulated organizations.\n" +
+    " - Compliance Brain for Salesforce\n\n" +
+    "  Court-defensible compliance and governance platform for regulated organizations.\n" +
       "  Monitors configuration drift, permission sprawl, and compliance violations."
   )
   .version(VERSION, "-v, --version", "Display CLI version")

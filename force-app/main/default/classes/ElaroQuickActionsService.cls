@@ -5,7 +5,7 @@
  * Automates fixes that would otherwise take hours of manual work.
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
- * @group AI Governance
+ * @group Utilities
  */
 public with sharing class ElaroQuickActionsService {
     

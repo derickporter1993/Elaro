@@ -11,7 +11,7 @@
     <sharingModel>ReadWrite</sharingModel>
     <fields>
         <fullName>Error_Type__c</fullName>
-        <description>Category of integration that failed: Slack, Teams, Einstein AI, API callouts, or other</description>
+        <description>Category of integration that failed: Slack, Teams, Einstein, API callouts, or other</description>
         <inlineHelpText>Type of integration that encountered the error</inlineHelpText>
         <label>Error Type</label>
         <type>Picklist</type>

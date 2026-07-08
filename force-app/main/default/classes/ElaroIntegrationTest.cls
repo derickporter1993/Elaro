@@ -106,32 +106,20 @@ private class ElaroIntegrationTest {
     }
     
     /**
-     * Test settings impact: AI settings change → Score recalculation
+     * Test settings impact: Score recalculation across frameworks
      */
     @IsTest
     static void testSettingsImpact_OnComplianceScore() {
-        // Create initial AI settings
-        Elaro_AI_Settings__c initialSettings = new Elaro_AI_Settings__c(
-            SetupOwnerId = UserInfo.getOrganizationId(),
-            Enable_AI_Reasoning__c = false,
-            Confidence_Threshold__c = 0.85
-        );
-        insert initialSettings;
-        
         PermissionSet ps = [SELECT Id FROM PermissionSet WHERE Name = 'TestIntegrationPS' LIMIT 1];
         
         Test.startTest();
-        // Step 1: Index with AI disabled (uses fallback scoring)
+        // Step 1: Index for SOC2 framework
         String nodeHash1 = ElaroGraphIndexer.indexChange('PERMISSION_SET', ps.Id, null, 'SOC2');
         
-        // Step 2: Enable AI and verify impact
-        initialSettings.Enable_AI_Reasoning__c = true;
-        update initialSettings;
-        
-        // Step 3: Re-index (would use AI if configured, but falls back if not)
+        // Step 2: Index for another framework
         String nodeHash2 = ElaroGraphIndexer.indexChange('PERMISSION_SET', ps.Id, null, 'HIPAA');
         
-        // Step 4: Calculate score
+        // Step 3: Calculate score
         ElaroComplianceScorer.ScoreResult scoreResult = ElaroComplianceScorer.calculateReadinessScore();
         Test.stopTest();
         

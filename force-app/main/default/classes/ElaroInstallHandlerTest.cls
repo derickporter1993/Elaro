@@ -54,7 +54,7 @@ private class ElaroInstallHandlerTest {
 
     /**
      * Test new installation scenario
-     * Should create AI settings and audit log
+     * Should create audit log
      */
     @isTest
     static void testOnInstall_NewInstallation_CreatesDefaultSettings() {
@@ -62,24 +62,10 @@ private class ElaroInstallHandlerTest {
         MockInstallContext context = new MockInstallContext(true, false, false, null);
         ElaroInstallHandler handler = new ElaroInstallHandler();
 
-        // Ensure no AI settings exist before test
-        delete [SELECT Id FROM Elaro_AI_Settings__c];
-
         // Act
         Test.startTest();
         handler.onInstall(context);
         Test.stopTest();
-
-        // Assert - AI Settings created
-        Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        Assert.areNotEqual(null, settings, 'AI settings should be created on new install');
-        Assert.areEqual(false, settings.AI_Enabled__c, 'AI should be disabled by default');
-        Assert.areEqual('claude-sonnet-4-20250514', settings.Model_Name__c, 'Should use latest Claude model');
-        Assert.areEqual(4096, settings.Max_Tokens__c, 'Should set default max tokens');
-        Assert.areEqual(0.7, settings.Temperature__c, 'Should set default temperature');
-        Assert.areEqual(true, settings.Cache_Enabled__c, 'Cache should be enabled by default');
-        Assert.areEqual(60, settings.Cache_TTL_Minutes__c, 'Should set default cache TTL');
-        Assert.areEqual(60, settings.Timeout_Seconds__c, 'Should set default timeout');
 
         // Assert - Audit Log created
         List<Elaro_Audit_Log__c> auditLogs = [
@@ -95,20 +81,11 @@ private class ElaroInstallHandlerTest {
 
     /**
      * Test upgrade scenario
-     * Should NOT recreate AI settings if they exist
+     * Should create upgrade audit log
      */
     @isTest
     static void testOnInstall_Upgrade_PreservesExistingSettings() {
-        // Arrange - Create existing AI settings with custom values
-        Elaro_AI_Settings__c existingSettings = new Elaro_AI_Settings__c(
-            SetupOwnerId = UserInfo.getOrganizationId(),
-            AI_Enabled__c = true, // Already enabled
-            Model_Name__c = 'claude-opus-4-5-20251101', // Custom model
-            Max_Tokens__c = 8192,
-            Temperature__c = 0.5
-        );
-        insert existingSettings;
-
+        // Arrange
         Version previousVersion = new Version(2, 5, 0);
         MockInstallContext context = new MockInstallContext(false, true, false, previousVersion);
         ElaroInstallHandler handler = new ElaroInstallHandler();
@@ -117,13 +94,6 @@ private class ElaroInstallHandlerTest {
         Test.startTest();
         handler.onInstall(context);
         Test.stopTest();
-
-        // Assert - Settings preserved (not overwritten)
-        Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        Assert.areEqual(existingSettings.Id, settings.Id, 'Should preserve existing settings record');
-        Assert.areEqual(true, settings.AI_Enabled__c, 'Should preserve AI enabled state');
-        Assert.areEqual('claude-opus-4-5-20251101', settings.Model_Name__c, 'Should preserve custom model');
-        Assert.areEqual(8192, settings.Max_Tokens__c, 'Should preserve max tokens');
 
         // Assert - Audit Log created for upgrade
         List<Elaro_Audit_Log__c> auditLogs = [
@@ -183,10 +153,6 @@ private class ElaroInstallHandlerTest {
 
         // Assert - No exception should bubble up
         Assert.areEqual(false, exceptionThrown, 'Install handler should not throw exceptions');
-
-        // AI settings should still be created if possible
-        Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        Assert.areNotEqual(null, settings, 'Should create settings even if other operations fail');
     }
 
     /**
@@ -216,9 +182,12 @@ private class ElaroInstallHandlerTest {
         ];
 
         // In test context, FeedItem creation may be restricted
-        // Verify the install handler completed and created settings/audit logs
-        Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        Assert.areNotEqual(null, settings, 'Install handler should have completed and created AI settings');
+        // Verify the install handler completed and created audit logs
+        List<Elaro_Audit_Log__c> auditLogs = [
+            SELECT Id FROM Elaro_Audit_Log__c
+            WHERE Action__c = 'Package Installation'
+        ];
+        Assert.isTrue(auditLogs.size() >= 1, 'Install handler should have completed and created audit log');
     }
 
     /**
@@ -262,11 +231,11 @@ private class ElaroInstallHandlerTest {
     }
 
     /**
-     * Test AI settings initialization when object doesn't exist
+     * Test installation when settings metadata is not present
      * (Edge case: deployment without all metadata)
      */
     @isTest
-    static void testOnInstall_MissingAISettings_HandlesGracefully() {
+    static void testOnInstall_MissingSettings_HandlesGracefully() {
         // Arrange
         MockInstallContext context = new MockInstallContext(true, false, false, null);
         ElaroInstallHandler handler = new ElaroInstallHandler();
@@ -304,12 +273,15 @@ private class ElaroInstallHandlerTest {
         Test.stopTest();
 
         // Assert - Installation completes successfully
-        Elaro_AI_Settings__c settings = Elaro_AI_Settings__c.getOrgDefaults();
-        Assert.areNotEqual(null, settings, 'Installation should complete and create settings even with limited permissions');
+        List<Elaro_Audit_Log__c> auditLogs = [
+            SELECT Id FROM Elaro_Audit_Log__c
+            WHERE Action__c = 'Package Installation'
+        ];
+        Assert.isTrue(auditLogs.size() >= 1, 'Installation should complete and create audit log even with limited permissions');
     }
 
     /**
-     * Test multiple sequential installations don't duplicate settings
+     * Test multiple sequential installations create audit logs
      */
     @isTest
     static void testOnInstall_MultipleInstalls_NoDuplicateSettings() {
@@ -323,12 +295,6 @@ private class ElaroInstallHandlerTest {
         handler.onInstall(context1); // First install
         handler.onInstall(context2); // Upgrade
         Test.stopTest();
-
-        // Assert - Only one AI settings record
-        List<Elaro_AI_Settings__c> settings = [
-            SELECT Id FROM Elaro_AI_Settings__c
-        ];
-        Assert.areEqual(1, settings.size(), 'Should only have one AI settings record');
 
         // Multiple audit logs allowed (one per install/upgrade)
         List<Elaro_Audit_Log__c> auditLogs = [

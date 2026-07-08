@@ -6,7 +6,6 @@
  * - Wizard navigation
  * - Framework selection
  * - Notification settings
- * - AI settings
  * - Setup completion
  */
 
@@ -77,21 +76,21 @@ describe("c-elaro-setup-wizard", () => {
       expect(heading.textContent).toContain("Welcome to Elaro");
     });
 
-    it("displays progress indicator with 5 steps", async () => {
+    it("displays progress indicator with 4 steps", async () => {
       const element = await createComponent();
 
       const progressIndicator = element.shadowRoot.querySelector("lightning-progress-indicator");
       expect(progressIndicator).not.toBeNull();
 
       const steps = element.shadowRoot.querySelectorAll("lightning-progress-step");
-      expect(steps.length).toBe(5);
+      expect(steps.length).toBe(4);
     });
 
     it("displays feature cards on welcome step", async () => {
       const element = await createComponent();
 
       const featureCards = element.shadowRoot.querySelectorAll(".feature-card");
-      expect(featureCards.length).toBe(3);
+      expect(featureCards.length).toBe(2);
     });
   });
 
@@ -139,14 +138,14 @@ describe("c-elaro-setup-wizard", () => {
     });
   });
 
-  describe("AI Settings (Step 4)", () => {
-    it("verifies AI settings exist in component", async () => {
+  describe("Setup Configuration (Step 4)", () => {
+    it("verifies setup step exists in component", async () => {
       const element = await createComponent();
 
       // Verify component renders correctly
       expect(element).not.toBeNull();
 
-      // The AI settings are on step 4, but we can verify the component structure
+      // The complete step is on step 4, but we can verify the component structure
       const card = element.shadowRoot.querySelector("lightning-card");
       expect(card).not.toBeNull();
     });

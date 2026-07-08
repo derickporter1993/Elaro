@@ -7,8 +7,7 @@
           <lightning-progress-step label="Welcome" value="1"></lightning-progress-step>
           <lightning-progress-step label="Frameworks" value="2"></lightning-progress-step>
           <lightning-progress-step label="Notifications" value="3"></lightning-progress-step>
-          <lightning-progress-step label="AI Settings" value="4"></lightning-progress-step>
-          <lightning-progress-step label="Complete" value="5"></lightning-progress-step>
+          <lightning-progress-step label="Complete" value="4"></lightning-progress-step>
         </lightning-progress-indicator>
       </nav>
 
@@ -28,12 +27,12 @@
                 Welcome to Elaro
               </h2>
               <p class="slds-text-body_regular slds-text-color_weak">
-                Your AI-powered compliance and governance platform for Salesforce
+                Your compliance and governance platform for Salesforce
               </p>
             </div>
 
             <div class="slds-grid slds-gutters slds-wrap slds-m-top_large">
-              <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_medium">
+              <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_medium">
                 <div class="feature-card">
                   <lightning-icon
                     icon-name="utility:shield"
@@ -47,21 +46,7 @@
                   </p>
                 </div>
               </div>
-              <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_medium">
-                <div class="feature-card">
-                  <lightning-icon
-                    icon-name="utility:Einstein"
-                    size="large"
-                    class="feature-icon"
-                    alternative-text="AI icon"
-                  ></lightning-icon>
-                  <h3 class="slds-text-heading_small">AI-Powered Analysis</h3>
-                  <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
-                    Get intelligent recommendations and automated compliance insights
-                  </p>
-                </div>
-              </div>
-              <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-m-bottom_medium">
+              <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_medium">
                 <div class="feature-card">
                   <lightning-icon
                     icon-name="utility:file"
@@ -216,85 +201,17 @@
           </section>
         </template>
 
-        <!-- Step 4: AI Settings -->
+
+        <!-- Step 4: Complete -->
         <template lwc:if={isStep4}>
-          <section class="step-panel" aria-labelledby="step4-heading">
-            <h2 id="step4-heading" class="slds-text-heading_medium slds-m-bottom_small">
-              AI Configuration
-            </h2>
-            <p class="slds-text-body_regular slds-m-bottom_large slds-text-color_weak">
-              Configure AI-powered compliance analysis settings.
-            </p>
-
-            <lightning-input
-              type="checkbox"
-              label="Enable AI-Powered Compliance Analysis"
-              checked={enableAI}
-              onchange={handleAIToggle}
-              class="slds-m-bottom_medium"
-            ></lightning-input>
-
-            <template lwc:if={enableAI}>
-              <div class="ai-settings-panel">
-                <div class="slds-grid slds-gutters slds-wrap">
-                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
-                    <lightning-input
-                      type="checkbox"
-                      label="Require Human Approval for High-Risk Recommendations"
-                      checked={requireApproval}
-                      onchange={handleApprovalToggle}
-                      class="slds-m-bottom_medium"
-                    ></lightning-input>
-
-                    <lightning-input
-                      type="checkbox"
-                      label="Enable Auto-Remediation (Advanced)"
-                      checked={autoRemediate}
-                      onchange={handleRemediationToggle}
-                      class="slds-m-bottom_medium"
-                    ></lightning-input>
-                  </div>
-
-                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
-                    <div class="slds-m-bottom_medium">
-                      <label class="slds-form-element__label" id="confidence-label">
-                        AI Confidence Threshold
-                      </label>
-                      <div class="slds-text-align_center slds-m-top_small">
-                        <span class="threshold-display" aria-labelledby="confidence-label">
-                          {confidenceThresholdDisplay}%
-                        </span>
-                      </div>
-                      <lightning-slider
-                        label="Confidence Threshold"
-                        value={confidenceThreshold}
-                        min="50"
-                        max="99"
-                        step="1"
-                        onchange={handleConfidenceChange}
-                        variant="label-hidden"
-                      ></lightning-slider>
-                      <p class="slds-text-body_small slds-text-color_weak slds-text-align_center">
-                        Only apply AI recommendations with confidence above this threshold
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </section>
-        </template>
-
-        <!-- Step 5: Complete -->
-        <template lwc:if={isStep5}>
-          <section class="step-panel completion-panel" aria-labelledby="step5-heading">
+          <section class="step-panel completion-panel" aria-labelledby="step4-heading">
             <template lwc:if={isSaving}>
               <div role="status" aria-live="polite" aria-busy="true">
                 <lightning-spinner
                   alternative-text="Saving configuration"
                   size="large"
                 ></lightning-spinner>
-                <h2 id="step5-heading-saving" class="slds-text-heading_medium slds-m-top_large">
+                <h2 id="step4-heading-saving" class="slds-text-heading_medium slds-m-top_large">
                   Saving Configuration...
                 </h2>
               </div>
@@ -309,7 +226,7 @@
                   class="success-icon"
                   alternative-text="Success"
                 ></lightning-icon>
-                <h2 id="step5-heading-complete" class="slds-text-heading_large slds-m-top_medium">
+                <h2 id="step4-heading-complete" class="slds-text-heading_large slds-m-top_medium">
                   Setup Complete!
                 </h2>
                 <p class="slds-text-body_regular slds-text-color_weak slds-m-top_small slds-m-bottom_large">
@@ -325,9 +242,6 @@
                     </li>
                     <li class="slds-m-bottom_x-small">
                       Slack integration: {slackNotificationStatus}
-                    </li>
-                    <li class="slds-m-bottom_x-small">
-                      AI analysis: {aiStatus}
                     </li>
                   </ul>
                 </div>
@@ -355,7 +269,7 @@
                   class="slds-m-bottom_medium"
                   alternative-text="Checkmark"
                 ></lightning-icon>
-                <h2 id="step5-heading-confirm" class="slds-text-heading_medium">
+                <h2 id="step4-heading-confirm" class="slds-text-heading_medium">
                   Ready to Complete Setup
                 </h2>
                 <p class="slds-text-body_regular slds-text-color_weak slds-m-top_small slds-m-bottom_large">
@@ -369,8 +283,6 @@
                     <dd class="slds-dl_horizontal__detail">{selectedFrameworksList}</dd>
                     <dt class="slds-dl_horizontal__label">Score Threshold:</dt>
                     <dd class="slds-dl_horizontal__detail">{scoreThreshold}%</dd>
-                    <dt class="slds-dl_horizontal__label">AI Enabled:</dt>
-                    <dd class="slds-dl_horizontal__detail">{aiStatus}</dd>
                   </dl>
                 </div>
 

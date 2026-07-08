@@ -87,16 +87,3 @@
 .progress-section {
   margin-bottom: 2rem;
 }
-
-.ai-settings-panel {
-  background-color: #fafaf9;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 1rem;
-}
-
-.threshold-display {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #0176d3;
-}

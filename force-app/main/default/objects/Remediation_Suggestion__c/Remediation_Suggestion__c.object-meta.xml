@@ -12,7 +12,7 @@
     <enableActivities>false</enableActivities>
     <enableReports>true</enableReports>
     <enableSearch>true</enableSearch>
-    <description>AI-generated remediation suggestions for compliance gaps</description>
+    <description>Remediation suggestions for compliance gaps</description>
     <fields>
         <fullName>Compliance_Gap__c</fullName>
         <label>Compliance Gap</label>
@@ -160,7 +160,7 @@
         <type>Percent</type>
         <precision>5</precision>
         <scale>2</scale>
-        <description>AI confidence level in this suggestion (0-100%)</description>
+        <description>Confidence level in this suggestion (0-100%)</description>
     </fields>
     <fields>
         <fullName>Risk_Reduction_Score__c</fullName>

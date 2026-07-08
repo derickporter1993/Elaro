@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Elaro Compliance Hub - Central dashboard for compliance monitoring, AI copilot, and audit readiness</description>
+    <description>Elaro Compliance Hub - Central dashboard for compliance monitoring, copilot, and audit readiness</description>
     <flexiPageRegions>
         <!-- Main Compliance Dashboard Section -->
         <itemInstances>
@@ -52,7 +52,7 @@
             </componentInstance>
         </itemInstances>
         
-        <!-- AI & Copilot Section -->
+        <!-- Copilot Section -->
         <itemInstances>
             <componentInstance>
                 <componentName>c:elaroCopilot</componentName>
@@ -63,12 +63,6 @@
             <componentInstance>
                 <componentName>c:complianceCopilot</componentName>
                 <identifier>complianceCopilot1</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:elaroAiSettings</componentName>
-                <identifier>elaroAiSettings1</identifier>
             </componentInstance>
         </itemInstances>
         

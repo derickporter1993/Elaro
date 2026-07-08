@@ -215,7 +215,7 @@ public with sharing class ElaroGraphIndexer {
         // This keeps current functionality stable while making Einstein readiness visible in logs.
         if (!isEinsteinPredictionAvailable()) {
             // Expected fallback path until Einstein integration is enabled. Logged at DEBUG to avoid
-            // emitting WARN-level noise/alerting on every scoring call when AI reasoning is toggled on.
+            // emitting WARN-level noise/alerting on every scoring call when reasoning is active.
             ElaroLogger.debug(
                 '[ElaroGraphIndexer] Einstein prediction requested but integration is not configured. '
                 + 'Using rule-based risk scoring fallback. Framework: ' + framework

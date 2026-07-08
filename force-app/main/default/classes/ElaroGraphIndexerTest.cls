@@ -209,13 +209,8 @@ private class ElaroGraphIndexerTest {
     
     @IsTest
     static void testCalculateFallbackRiskScore() {
-        // Ensure AI is disabled to test fallback risk score calculation
+        // Test fallback risk score calculation
         // Fallback uses BASE_RISK_SCORE (3.0) + objectPermissionCount
-        Elaro_AI_Settings__c aiSettings = Elaro_AI_Settings__c.getOrgDefaults();
-        if (aiSettings != null && aiSettings.Enable_AI_Reasoning__c) {
-            aiSettings.Enable_AI_Reasoning__c = false;
-            upsert aiSettings;
-        }
         
         // Create permission set with object permissions to test fallback calculation
         PermissionSet ps = new PermissionSet(Name='TestPS_Fallback', Label='Test PS Fallback');
