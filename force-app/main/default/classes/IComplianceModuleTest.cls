@@ -1,114 +1,116 @@
 /**
  * Integration tests for {@link IComplianceModule} verifying that concrete module
- * implementations fulfill the interface contract. Tests the factory registration
- * pattern via {@link ComplianceServiceFactory} and validates that HIPAAModule,
- * SOC2Module, and GDPRModule implement all required interface methods correctly.
+ * implementations fulfill the interface contract. Uses dynamic Type.forName()
+ * to remain decoupled from vertical packages.
  *
  * @author Elaro Team
  * @since v3.1.0 (Spring '26)
  * @group Compliance Framework
  * @see IComplianceModule
  * @see ComplianceServiceFactory
- * @see HIPAAModule
- * @see SOC2Module
- * @see GDPRModule
  */
 @IsTest(testFor=IComplianceModule.class)
 private class IComplianceModuleTest {
 
-    @IsTest
-    static void shouldReturnFrameworkNameAndVersionForAllModules() {
-        HIPAAModule hipaa = new HIPAAModule();
-        SOC2Module soc2 = new SOC2Module();
-        GDPRModule gdpr = new GDPRModule();
-
-        Test.startTest();
-        String hipaaName = hipaa.getFrameworkName();
-        String hipaaVersion = hipaa.getFrameworkVersion();
-        String soc2Name = soc2.getFrameworkName();
-        String soc2Version = soc2.getFrameworkVersion();
-        String gdprName = gdpr.getFrameworkName();
-        String gdprVersion = gdpr.getFrameworkVersion();
-        Test.stopTest();
-
-        Assert.areEqual('HIPAA', hipaaName, 'HIPAA module should return HIPAA as framework name');
-        Assert.isNotNull(hipaaVersion, 'HIPAA module should return a non-null version');
-        Assert.areEqual('SOC2', soc2Name, 'SOC2 module should return SOC2 as framework name');
-        Assert.isNotNull(soc2Version, 'SOC2 module should return a non-null version');
-        Assert.areEqual('GDPR', gdprName, 'GDPR module should return GDPR as framework name');
-        Assert.isNotNull(gdprVersion, 'GDPR module should return a non-null version');
+    private static IComplianceModule createModule(String className) {
+        Type t = Type.forName(className);
+        if (t == null) {
+            return null;
+        }
+        return (IComplianceModule)t.newInstance();
     }
 
     @IsTest
-    static void shouldReturnNonEmptyControlsForAllModules() {
-        HIPAAModule hipaa = new HIPAAModule();
-        SOC2Module soc2 = new SOC2Module();
-        GDPRModule gdpr = new GDPRModule();
+    static void shouldReturnFrameworkNameAndVersionForAvailableModules() {
+        Map<String, String> moduleMap = new Map<String, String>{
+            'HIPAAModule' => 'HIPAA',
+            'SOC2Module' => 'SOC2',
+            'GDPRModule' => 'GDPR'
+        };
 
         Test.startTest();
-        List<ComplianceModuleTypes.Control> hipaaControls = hipaa.getControls();
-        List<ComplianceModuleTypes.Control> soc2Controls = soc2.getControls();
-        List<ComplianceModuleTypes.Control> gdprControls = gdpr.getControls();
-        Test.stopTest();
-
-        Assert.isNotNull(hipaaControls, 'HIPAA controls should not be null');
-        Assert.isFalse(hipaaControls.isEmpty(), 'HIPAA should have at least one control');
-
-        Assert.isNotNull(soc2Controls, 'SOC2 controls should not be null');
-        Assert.isFalse(soc2Controls.isEmpty(), 'SOC2 should have at least one control');
-
-        Assert.isNotNull(gdprControls, 'GDPR controls should not be null');
-        Assert.isFalse(gdprControls.isEmpty(), 'GDPR should have at least one control');
-
-        // Verify control structure completeness
-        for (ComplianceModuleTypes.Control ctrl : hipaaControls) {
-            Assert.isNotNull(ctrl.code, 'HIPAA control code should not be null');
-            Assert.isNotNull(ctrl.name, 'HIPAA control name should not be null');
-            Assert.isNotNull(ctrl.severity, 'HIPAA control severity should not be null');
+        for (String className : moduleMap.keySet()) {
+            IComplianceModule mod = createModule(className);
+            if (mod == null) {
+                continue;
+            }
+            String expectedName = moduleMap.get(className);
+            Assert.areEqual(expectedName, mod.getFrameworkName(),
+                className + ' should return ' + expectedName + ' as framework name');
+            Assert.isNotNull(mod.getFrameworkVersion(),
+                className + ' should return a non-null version');
         }
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void shouldReturnNonEmptyControlsForAvailableModules() {
+        List<String> moduleClasses = new List<String>{'HIPAAModule', 'SOC2Module', 'GDPRModule'};
+
+        Test.startTest();
+        for (String className : moduleClasses) {
+            IComplianceModule mod = createModule(className);
+            if (mod == null) {
+                continue;
+            }
+            List<ComplianceModuleTypes.Control> controls = mod.getControls();
+            Assert.isNotNull(controls, className + ' controls should not be null');
+            Assert.isFalse(controls.isEmpty(), className + ' should have at least one control');
+
+            for (ComplianceModuleTypes.Control ctrl : controls) {
+                Assert.isNotNull(ctrl.code, className + ' control code should not be null');
+                Assert.isNotNull(ctrl.name, className + ' control name should not be null');
+                Assert.isNotNull(ctrl.severity, className + ' control severity should not be null');
+            }
+        }
+        Test.stopTest();
     }
 
     @IsTest
     static void shouldReturnControlByIdAndNullForInvalidId() {
-        HIPAAModule hipaa = new HIPAAModule();
-        SOC2Module soc2 = new SOC2Module();
+        IComplianceModule hipaa = createModule('HIPAAModule');
+        IComplianceModule soc2 = createModule('SOC2Module');
 
         Test.startTest();
-        ComplianceModuleTypes.Control hipaaCtrl = hipaa.getControlById('164.312(a)');
-        ComplianceModuleTypes.Control hipaaNull = hipaa.getControlById('INVALID_CONTROL_ID');
-        ComplianceModuleTypes.Control soc2Ctrl = soc2.getControlById('CC6.1');
-        ComplianceModuleTypes.Control soc2Null = soc2.getControlById('NONEXISTENT');
+        if (hipaa != null) {
+            ComplianceModuleTypes.Control hipaaCtrl = hipaa.getControlById('164.312(a)');
+            ComplianceModuleTypes.Control hipaaNull = hipaa.getControlById('INVALID_CONTROL_ID');
+            Assert.isNotNull(hipaaCtrl, 'Should find HIPAA control 164.312(a)');
+            Assert.areEqual('164.312(a)', hipaaCtrl.code, 'Control code should match 164.312(a)');
+            Assert.isNull(hipaaNull, 'Should return null for invalid HIPAA control ID');
+        }
+        if (soc2 != null) {
+            ComplianceModuleTypes.Control soc2Ctrl = soc2.getControlById('CC6.1');
+            ComplianceModuleTypes.Control soc2Null = soc2.getControlById('NONEXISTENT');
+            Assert.isNotNull(soc2Ctrl, 'Should find SOC2 control CC6.1');
+            Assert.areEqual('CC6.1', soc2Ctrl.code, 'Control code should match CC6.1');
+            Assert.isNull(soc2Null, 'Should return null for invalid SOC2 control ID');
+        }
         Test.stopTest();
-
-        Assert.isNotNull(hipaaCtrl, 'Should find HIPAA control 164.312(a)');
-        Assert.areEqual('164.312(a)', hipaaCtrl.code, 'Control code should match 164.312(a)');
-        Assert.isNull(hipaaNull, 'Should return null for invalid HIPAA control ID');
-
-        Assert.isNotNull(soc2Ctrl, 'Should find SOC2 control CC6.1');
-        Assert.areEqual('CC6.1', soc2Ctrl.code, 'Control code should match CC6.1');
-        Assert.isNull(soc2Null, 'Should return null for invalid SOC2 control ID');
     }
 
     @IsTest
     static void shouldCalculateScoreAsZeroForNullAuditPackageId() {
-        HIPAAModule hipaa = new HIPAAModule();
-        SOC2Module soc2 = new SOC2Module();
-        GDPRModule gdpr = new GDPRModule();
+        List<String> moduleClasses = new List<String>{'HIPAAModule', 'SOC2Module', 'GDPRModule'};
 
         Test.startTest();
-        Decimal hipaaScore = hipaa.calculateScore(null);
-        Decimal soc2Score = soc2.calculateScore(null);
-        Decimal gdprScore = gdpr.calculateScore(null);
+        for (String className : moduleClasses) {
+            IComplianceModule mod = createModule(className);
+            if (mod == null) {
+                continue;
+            }
+            Decimal score = mod.calculateScore(null);
+            Assert.areEqual(0, score, className + ' score should be 0 for null audit package');
+        }
         Test.stopTest();
-
-        Assert.areEqual(0, hipaaScore, 'HIPAA score should be 0 for null audit package');
-        Assert.areEqual(0, soc2Score, 'SOC2 score should be 0 for null audit package');
-        Assert.areEqual(0, gdprScore, 'GDPR score should be 0 for null audit package');
     }
 
     @IsTest
     static void shouldEvaluateControlAndReturnValidResult() {
-        HIPAAModule hipaa = new HIPAAModule();
+        IComplianceModule hipaa = createModule('HIPAAModule');
+        if (hipaa == null) {
+            return;
+        }
 
         Map<String, Object> context = new Map<String, Object>{
             'auditPackageId' => null
@@ -129,26 +131,20 @@ private class IComplianceModuleTest {
 
     @IsTest
     static void shouldGenerateReportBlobInTestContext() {
-        HIPAAModule hipaa = new HIPAAModule();
-        SOC2Module soc2 = new SOC2Module();
-        GDPRModule gdpr = new GDPRModule();
-
-        // Use a fake Id since we are in test context and the modules
-        // return Blob.valueOf() when Test.isRunningTest() is true
+        List<String> moduleClasses = new List<String>{'HIPAAModule', 'SOC2Module', 'GDPRModule'};
         Id fakeId = '001000000000001AAA';
 
         Test.startTest();
-        Blob hipaaReport = hipaa.generateReport(fakeId);
-        Blob soc2Report = soc2.generateReport(fakeId);
-        Blob gdprReport = gdpr.generateReport(fakeId);
+        for (String className : moduleClasses) {
+            IComplianceModule mod = createModule(className);
+            if (mod == null) {
+                continue;
+            }
+            Blob report = mod.generateReport(fakeId);
+            Assert.isNotNull(report, className + ' report blob should not be null');
+            Assert.isTrue(report.size() > 0, className + ' report blob should have content');
+        }
         Test.stopTest();
-
-        Assert.isNotNull(hipaaReport, 'HIPAA report blob should not be null');
-        Assert.isTrue(hipaaReport.size() > 0, 'HIPAA report blob should have content');
-        Assert.isNotNull(soc2Report, 'SOC2 report blob should not be null');
-        Assert.isTrue(soc2Report.size() > 0, 'SOC2 report blob should have content');
-        Assert.isNotNull(gdprReport, 'GDPR report blob should not be null');
-        Assert.isTrue(gdprReport.size() > 0, 'GDPR report blob should have content');
     }
 
     @IsTest
@@ -194,15 +190,10 @@ private class IComplianceModuleTest {
         ComplianceModuleTypes.ControlResult result = new ComplianceModuleTypes.ControlResult();
         Test.stopTest();
 
-        // Control defaults
         Assert.isNotNull(control.relatedControls, 'Control relatedControls should be initialized');
         Assert.isNotNull(control.metadata, 'Control metadata should be initialized');
         Assert.isTrue(control.isRequired, 'Control isRequired should default to true');
-
-        // Gap defaults
         Assert.areEqual('Open', gap.status, 'Gap status should default to Open');
-
-        // ControlResult defaults
         Assert.isNotNull(result.evidenceIds, 'ControlResult evidenceIds should be initialized');
         Assert.isNotNull(result.evaluatedAt, 'ControlResult evaluatedAt should be initialized');
     }

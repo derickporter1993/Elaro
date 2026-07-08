@@ -9,6 +9,27 @@
       "definitionFile": "config/elaro-scratch-def.json"
     },
     {
+      "path": "force-app-health",
+      "package": "Elaro Health Compliance",
+      "versionName": "Spring 26",
+      "versionNumber": "1.0.0.NEXT",
+      "default": false
+    },
+    {
+      "path": "force-app-finance",
+      "package": "Elaro Finance Compliance",
+      "versionName": "Spring 26",
+      "versionNumber": "1.0.0.NEXT",
+      "default": false
+    },
+    {
+      "path": "force-app-government",
+      "package": "Elaro Government Compliance",
+      "versionName": "Spring 26",
+      "versionNumber": "1.0.0.NEXT",
+      "default": false
+    },
+    {
       "path": "force-app-healthcheck",
       "package": "Elaro Health Check",
       "versionName": "Spring 26",
@@ -18,8 +39,6 @@
   ],
   "name": "Elaro",
   "namespace": "elaro",
-  "_TODO_namespace": "Register 'elaro' namespace in DevHub before creating package versions",
-  "_TODO_HC_namespace": "Register 'elaroHC' namespace in DevHub for Health Check package",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "66.0",
   "packageAliases": {

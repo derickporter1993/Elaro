@@ -79,7 +79,7 @@ scanner-reports/
 # Review state (Solentra Codebase Review System)
 .review-state/
 .porter/
-specs/
+specs/*.draft.md
 
 # Temporary documentation and analysis files
 /project.md

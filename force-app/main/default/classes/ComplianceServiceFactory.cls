@@ -3,9 +3,10 @@
  *
  * Factory class for instantiating compliance framework services.
  * Provides centralized service resolution based on framework identifier.
+ * Uses dynamic Type.forName() to decouple from vertical packages.
  *
  * @author Elaro
- * @version 1.0
+ * @version 2.0
  * @since v3.1.0 (Spring '26)
  * @group Compliance Framework
  */
@@ -33,6 +34,25 @@ public with sharing class ComplianceServiceFactory {
         FRAMEWORK_HIPAA, FRAMEWORK_SOC2, FRAMEWORK_GDPR, FRAMEWORK_CCPA,
         FRAMEWORK_PCI_DSS, FRAMEWORK_NIST, FRAMEWORK_FEDRAMP, FRAMEWORK_SOX,
         FRAMEWORK_GLBA, FRAMEWORK_ISO27001
+    };
+
+    // Service class mappings (decoupled from direct imports)
+    private static final Map<String, String> RISK_SERVICE_MAP = new Map<String, String>{
+        'HIPAA' => 'ElaroHIPAAComplianceService',
+        'SOC2' => 'ElaroSOC2ComplianceService',
+        'GDPR' => 'ElaroGDPRComplianceService',
+        'CCPA' => 'ElaroCCPAComplianceService',
+        'PCI_DSS' => 'ElaroPCIDSSComplianceService'
+    };
+
+    private static final Map<String, String> ACCESS_SERVICE_MAP = new Map<String, String>{
+        'SOC2' => 'SOC2AccessReviewService',
+        'HIPAA' => 'SOC2AccessReviewService'
+    };
+
+    private static final Map<String, String> BREACH_SERVICE_MAP = new Map<String, String>{
+        'HIPAA' => 'HIPAABreachNotificationService',
+        'SOC2' => 'SOC2IncidentResponseService'
     };
 
     /**
@@ -126,7 +146,6 @@ public with sharing class ComplianceServiceFactory {
         ];
 
         if (configs.isEmpty()) {
-            // Return default config
             return new FrameworkConfig(framework);
         }
 
@@ -143,93 +162,47 @@ public with sharing class ComplianceServiceFactory {
         breachServiceCache.clear();
     }
 
-    /**
-     * Create the appropriate compliance service based on framework
-     */
     private static IRiskScoringService createService(String framework) {
-        switch on framework.toUpperCase() {
-            when 'HIPAA' {
-                return new ElaroHIPAAComplianceService();
-            }
-            when 'SOC2' {
-                return new ElaroSOC2ComplianceService();
-            }
-            when 'GDPR' {
-                return new ElaroGDPRComplianceService();
-            }
-            when 'CCPA' {
-                return new ElaroCCPAComplianceService();
-            }
-            when 'PCI_DSS' {
-                return new ElaroPCIDSSComplianceService();
-            }
-            when else {
-                // Try to get from metadata configuration
-                FrameworkConfig config = getFrameworkConfig(framework);
-                if (String.isNotBlank(config.serviceClass)) {
-                    return createServiceFromClassName(config.serviceClass);
-                }
-                throw new ComplianceServiceException('No service implementation found for framework: ' + framework);
+        String className = RISK_SERVICE_MAP.get(framework.toUpperCase());
+        if (className == null) {
+            FrameworkConfig config = getFrameworkConfig(framework);
+            if (String.isNotBlank(config.serviceClass)) {
+                className = config.serviceClass;
             }
         }
+        if (className == null) {
+            throw new ComplianceServiceException('No service implementation found for framework: ' + framework);
+        }
+        return (IRiskScoringService)createInstanceOf(className, 'IRiskScoringService');
     }
 
-    /**
-     * Create access control service based on framework
-     */
     private static IAccessControlService createAccessService(String framework) {
-        switch on framework.toUpperCase() {
-            when 'SOC2' {
-                return new SOC2AccessReviewService();
-            }
-            when 'HIPAA' {
-                // HIPAA can use a wrapper around SOC2 access service with HIPAA-specific checks
-                return new HIPAAAccessControlServiceAdapter();
-            }
-            when else {
-                // Default: no specific access control service
-                return null;
-            }
+        String className = ACCESS_SERVICE_MAP.get(framework.toUpperCase());
+        if (className == null) {
+            return null;
         }
+        return (IAccessControlService)createInstanceOf(className, 'IAccessControlService');
     }
 
-    /**
-     * Create breach notification service based on framework
-     */
     private static IBreachNotificationService createBreachService(String framework) {
-        switch on framework.toUpperCase() {
-            when 'HIPAA' {
-                return new HIPAABreachNotificationService();
-            }
-            when 'GDPR' {
-                // GDPR breach service would be implemented by Cursor
-                return null;
-            }
-            when 'SOC2' {
-                return new SOC2IncidentResponseService();
-            }
-            when else {
-                return null;
-            }
+        String className = BREACH_SERVICE_MAP.get(framework.toUpperCase());
+        if (className == null) {
+            return null;
         }
+        return (IBreachNotificationService)createInstanceOf(className, 'IBreachNotificationService');
     }
 
-    /**
-     * Dynamically create service from class name
-     */
-    private static IRiskScoringService createServiceFromClassName(String className) {
+    private static Object createInstanceOf(String className, String expectedInterface) {
         try {
             Type serviceType = Type.forName(className);
             if (serviceType == null) {
-                throw new ComplianceServiceException('Class not found: ' + className);
+                throw new ComplianceServiceException('Class not found: ' + className + '. Ensure the vertical package is deployed.');
             }
-            Object instance = serviceType.newInstance();
-            if (!(instance instanceof IRiskScoringService)) {
-                throw new ComplianceServiceException('Class does not implement IRiskScoringService: ' + className);
-            }
-            return (IRiskScoringService)instance;
+            return serviceType.newInstance();
+        } catch (ComplianceServiceException e) {
+            throw e;
         } catch (Exception e) {
-            throw new ComplianceServiceException('Failed to create service: ' + e.getMessage());
+            throw new ComplianceServiceException('Failed to create ' + expectedInterface + ' from ' + className + ': ' + e.getMessage());
         }
     }
 
@@ -240,7 +213,6 @@ public with sharing class ComplianceServiceFactory {
         if (String.isBlank(framework)) {
             throw new ComplianceServiceException('Framework identifier cannot be blank');
         }
-        // Allow custom frameworks from metadata, so don't strictly validate against SUPPORTED_FRAMEWORKS
     }
 
     /**
@@ -272,43 +244,6 @@ public with sharing class ComplianceServiceFactory {
             this.evidenceRetentionDays = config.Evidence_Retention_Days__c != null ?
                                          config.Evidence_Retention_Days__c.intValue() : 365;
             this.serviceClass = config.Service_Class__c;
-        }
-    }
-
-    /**
-     * HIPAA-specific adapter for access control
-     * Wraps SOC2 access review with HIPAA-specific validations
-     */
-    private class HIPAAAccessControlServiceAdapter implements IAccessControlService {
-        private SOC2AccessReviewService baseService;
-
-        public HIPAAAccessControlServiceAdapter() {
-            this.baseService = new SOC2AccessReviewService();
-        }
-
-        public Id initiateAccessReview(String reviewType) {
-            return baseService.initiateAccessReview(reviewType);
-        }
-
-        public AccessControlTypes.AccessReviewStatus getReviewStatus(Id reviewId) {
-            return baseService.getReviewStatus(reviewId);
-        }
-
-        public List<AccessControlTypes.ExcessiveAccessUser> getExcessiveAccessUsers() {
-            // Add HIPAA-specific PHI access checks
-            return baseService.getExcessiveAccessUsers();
-        }
-
-        public AccessControlTypes.RevokeAccessResult revokeAccess(List<Id> userIds, String reason) {
-            return baseService.revokeAccess(userIds, reason);
-        }
-
-        public List<AccessControlTypes.StalePermission> getStalePermissions(Integer daysSinceLogin) {
-            return baseService.getStalePermissions(daysSinceLogin);
-        }
-
-        public AccessControlTypes.NeedToKnowResult validateNeedToKnow(Id userId) {
-            return baseService.validateNeedToKnow(userId);
         }
     }
 

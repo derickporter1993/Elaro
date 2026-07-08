@@ -17,7 +17,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldPublishGapsAsAlerts() {
-        IComplianceModule module = new HIPAAModule();
+        IComplianceModule module = (IComplianceModule)Type.forName('HIPAAModule').newInstance();
 
         List<ComplianceModuleTypes.Gap> gaps = new List<ComplianceModuleTypes.Gap>();
 
@@ -62,7 +62,7 @@ private class RuleEngineEventBridgeTest {
 
     @IsTest
     static void shouldHandleEmptyGaps() {
-        IComplianceModule module = new HIPAAModule();
+        IComplianceModule module = (IComplianceModule)Type.forName('HIPAAModule').newInstance();
 
         Test.startTest();
         List<RuleEngineEventBridge.ComplianceFinding> findings =

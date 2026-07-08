@@ -15,7 +15,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_PermissionSetWithModifyAll() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -35,7 +35,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_PermissionSetWithViewAll() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -54,7 +54,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_PermissionSetWithBothPermissions() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -73,7 +73,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_SharingRuleEditAccess() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -91,7 +91,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_SharingRuleAllAccess() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -109,7 +109,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_SensitiveUnencryptedField() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -128,7 +128,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_SensitiveEncryptedField() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -147,7 +147,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testCalculateRiskScore_DefaultEntityType() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         Decimal score = service.calculateRiskScore(
@@ -168,7 +168,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testGetSeverityFromScore_Critical() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         // We test indirectly by verifying risk scores produce correct severity ranges
         Decimal highScore = service.calculateRiskScore(
@@ -190,7 +190,7 @@ private class ComplianceServiceBaseTest {
 
     @IsTest
     static void testGetFrameworkName() {
-        HIPAASecurityRuleService service = new HIPAASecurityRuleService();
+        ComplianceServiceBase service = (ComplianceServiceBase)Type.forName('HIPAASecurityRuleService').newInstance();
 
         Test.startTest();
         String name = service.getFrameworkName();
