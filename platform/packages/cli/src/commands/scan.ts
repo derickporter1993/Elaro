@@ -24,6 +24,7 @@ interface ScanOptions {
   all?: boolean;
   json?: boolean;
   baseline?: boolean;
+  demo?: boolean;
 }
 
 interface ScanResult {
@@ -34,29 +35,65 @@ interface ScanResult {
   failed: number;
   warnings: number;
   criticalFindings: string[];
+  source: "live" | "demo";
 }
 
-async function runComplianceScan(framework: Framework, targetOrg?: string): Promise<ScanResult> {
-  // Execute the compliance scan via Apex
+interface ApexScanResult {
+  score: number;
+  totalChecks: number;
+  passed: number;
+  failed: number;
+  warnings: number;
+  criticalFindings: string[];
+}
+
+/**
+ * Attempts to execute a real compliance scan via Apex in the target org.
+ * Returns null if the scan cannot be executed (no auth, error, etc.).
+ */
+function executeRealScan(framework: Framework, targetOrg?: string): ApexScanResult | null {
   const orgFlag = targetOrg ? `--target-org ${targetOrg}` : "";
 
-  try {
-    const apexCode = `
-      ComplianceBaselineScanner scanner = new ComplianceBaselineScanner();
-      Map<String, Object> result = scanner.runFrameworkScan('${framework.toUpperCase()}');
-      System.debug(JSON.serialize(result));
-    `;
+  const apexCode = `
+ComplianceBaselineScanner scanner = new ComplianceBaselineScanner();
+Map<String, Object> result = scanner.runFrameworkScan('${framework.toUpperCase()}');
+System.debug(ElaroLogger.JSON_PREFIX + JSON.serialize(result));
+`;
 
-    execSync(`sf apex run ${orgFlag} --file /dev/stdin <<< "${apexCode}"`, {
+  try {
+    const output = execSync(`sf apex run ${orgFlag} --file /dev/stdin`, {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
+      input: apexCode,
+      timeout: 60000,
     });
-  } catch {
-    // Scan execution - results may vary based on org state
-  }
 
-  // Return simulated results for demonstration
-  // In production, this would parse actual Apex execution results
+    // Parse the scan result from Apex debug output
+    const jsonMatch = output.match(/ELARO_JSON::(\{[\s\S]*?\})/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[1]) as ApexScanResult;
+      return {
+        score: parsed.score ?? 0,
+        totalChecks: parsed.totalChecks ?? 0,
+        passed: parsed.passed ?? 0,
+        failed: parsed.failed ?? 0,
+        warnings: parsed.warnings ?? 0,
+        criticalFindings: parsed.criticalFindings ?? [],
+      };
+    }
+
+    return null;
+  } catch {
+    // Org not authenticated, scanner class not deployed, or other error
+    return null;
+  }
+}
+
+/**
+ * Generates simulated demo scan results for demonstration and development.
+ * Only used when --demo flag is explicitly provided.
+ */
+function generateDemoScanResult(framework: Framework): ScanResult {
   const totalChecks = Math.floor(Math.random() * 50) + 30;
   const passed = Math.floor(totalChecks * (0.7 + Math.random() * 0.25));
   const failed = Math.floor((totalChecks - passed) * 0.6);
@@ -71,15 +108,53 @@ async function runComplianceScan(framework: Framework, targetOrg?: string): Prom
     failed,
     warnings,
     criticalFindings: failed > 0 ? [`Review ${framework.toUpperCase()} compliance controls`] : [],
+    source: "demo",
   };
+}
+
+/**
+ * Runs a compliance scan for a single framework.
+ * Attempts a real scan first; falls back to demo mode only if --demo is set.
+ */
+async function runComplianceScan(framework: Framework, options: ScanOptions): Promise<ScanResult> {
+  // If demo mode is requested, generate simulated results immediately
+  if (options.demo) {
+    return generateDemoScanResult(framework);
+  }
+
+  // Attempt a real scan against the connected org
+  const realResult = executeRealScan(framework, options.targetOrg);
+
+  if (realResult) {
+    return {
+      framework: framework.toUpperCase(),
+      score: realResult.score,
+      totalChecks: realResult.totalChecks,
+      passed: realResult.passed,
+      failed: realResult.failed,
+      warnings: realResult.warnings,
+      criticalFindings: realResult.criticalFindings,
+      source: "live",
+    };
+  }
+
+  // Real scan failed and demo mode is not enabled
+  throw new Error(
+    `Failed to execute ${framework.toUpperCase()} compliance scan. ` +
+      `Ensure you are authenticated to a Salesforce org with Elaro installed, ` +
+      `or use --demo to see simulated results.`
+  );
 }
 
 function displayScanResult(result: ScanResult): void {
   const scoreColor =
     result.score >= 85 ? chalk.green : result.score >= 70 ? chalk.yellow : chalk.red;
 
+  // Show demo indicator for simulated results
+  const sourceIndicator = result.source === "demo" ? chalk.gray(" [DEMO]") : "";
+
   console.log();
-  console.log(chalk.bold(`${result.framework} Compliance Scan`));
+  console.log(chalk.bold(`${result.framework} Compliance Scan${sourceIndicator}`));
   console.log(chalk.gray("─".repeat(40)));
   console.log(`  Score:       ${scoreColor(result.score + "%")}`);
   console.log(`  Total:       ${result.totalChecks} checks`);
@@ -106,12 +181,17 @@ async function runScan(options: ScanOptions): Promise<void> {
         ? [options.framework]
         : ["hipaa", "soc2"]; // Default to common frameworks
 
-    spinner.text = `Scanning ${frameworks.length} framework(s)...`;
+    if (options.demo) {
+      spinner.warn(chalk.yellow("Running in DEMO mode — results are simulated"));
+      spinner.start(`Scanning ${frameworks.length} framework(s) in demo mode...`);
+    } else {
+      spinner.text = `Scanning ${frameworks.length} framework(s)...`;
+    }
 
     const results: ScanResult[] = [];
     for (const framework of frameworks) {
       spinner.text = `Running ${framework.toUpperCase()} scan...`;
-      const result = await runComplianceScan(framework, options.targetOrg);
+      const result = await runComplianceScan(framework, options);
       results.push(result);
     }
 
@@ -137,6 +217,12 @@ async function runScan(options: ScanOptions): Promise<void> {
     const avgColor = avgScore >= 85 ? chalk.green : avgScore >= 70 ? chalk.yellow : chalk.red;
 
     console.log(chalk.bold(`Overall Score: ${avgColor(avgScore + "%")}`));
+
+    // Demo mode notice
+    const allDemo = results.every((r) => r.source === "demo");
+    if (allDemo) {
+      console.log(chalk.yellow("  All results are simulated. Run without --demo for live scans."));
+    }
     console.log();
 
     if (options.baseline) {
@@ -158,6 +244,9 @@ async function runScan(options: ScanOptions): Promise<void> {
     spinner.fail("Scan failed");
     if (error instanceof Error) {
       console.error(chalk.red(error.message));
+      console.error();
+      console.error(chalk.gray("Tip: Use --demo flag to see simulated results:"));
+      console.error(chalk.gray("  elaro scan --demo"));
     }
     process.exit(1);
   }
@@ -173,4 +262,5 @@ export const scanCommand = new Command("scan")
   .option("-a, --all", "Run scans for all compliance frameworks")
   .option("-b, --baseline", "Save results as new baseline")
   .option("--json", "Output results in JSON format")
+  .option("--demo", "Generate simulated scan results for demonstration (no org required)")
   .action(runScan);
