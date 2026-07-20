@@ -52,12 +52,16 @@ interface ApexScanResult {
  * Returns null if the scan cannot be executed (no auth, error, etc.).
  */
 function executeRealScan(framework: Framework, targetOrg?: string): ApexScanResult | null {
+  if (targetOrg && !/^[a-zA-Z0-9._-]+$/.test(targetOrg)) {
+    throw new Error("Invalid --target-org value. Use only letters, numbers, '.', '_' or '-'.");
+  }
+
   const orgFlag = targetOrg ? `--target-org ${targetOrg}` : "";
 
   const apexCode = `
 ComplianceBaselineScanner scanner = new ComplianceBaselineScanner();
 Map<String, Object> result = scanner.runFrameworkScan('${framework.toUpperCase()}');
-System.debug(ElaroLogger.JSON_PREFIX + JSON.serialize(result));
+System.debug('ELARO_JSON::' + JSON.serialize(result));
 `;
 
   try {
@@ -69,9 +73,10 @@ System.debug(ElaroLogger.JSON_PREFIX + JSON.serialize(result));
     });
 
     // Parse the scan result from Apex debug output
-    const jsonMatch = output.match(/ELARO_JSON::(\{[\s\S]*?\})/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[1]) as ApexScanResult;
+    const jsonLine = output.split(/\r?\n/).find((line) => line.includes("ELARO_JSON::"));
+    if (jsonLine) {
+      const jsonText = jsonLine.slice(jsonLine.indexOf("ELARO_JSON::") + "ELARO_JSON::".length).trim();
+      const parsed = JSON.parse(jsonText) as ApexScanResult;
       return {
         score: parsed.score ?? 0,
         totalChecks: parsed.totalChecks ?? 0,
