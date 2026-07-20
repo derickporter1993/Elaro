@@ -157,7 +157,10 @@ private class AIGovernanceControllerTest {
             Test.stopTest();
             Assert.fail('Should throw AuraHandledException');
         } catch (AuraHandledException e) {
-            Assert.isTrue(e.getMessage().contains('Failed to register'), 'Should have error message');
+            Assert.isTrue(
+                e.getMessage().contains('Unable to register'),
+                'Error message should indicate registration failure. Actual message: ' + e.getMessage()
+            );
         }
     }
 
